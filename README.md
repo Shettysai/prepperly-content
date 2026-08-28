@@ -1,6 +1,6 @@
 # Prepperly Content
 
-The public study content for [Prepperly](https://github.com/Shettysai/prep-tracker), a
+The public study content for [Prepperly](https://github.com/Shettysai/prepperly), a
 software-engineering interview prep tracker. This repository holds the actual curriculum —
 60 topics across 10 phases, each with study notes and interview questions — as plain files.
 
