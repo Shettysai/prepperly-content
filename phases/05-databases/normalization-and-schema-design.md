@@ -140,7 +140,6 @@ Denormalise when the read is frequent and expensive, the write comparatively rar
 |---|---|
 | Normalise | Writes frequent, correctness critical |
 | Denormalise | Read-heavy, expensive aggregate, sync plan exists |
-| Copy the value | It's a historical fact (price paid) |
 
 ## Common mistakes
 

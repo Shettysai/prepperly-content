@@ -158,9 +158,6 @@ The harder truth: versioning isn't free. Every live version is code you test, se
 | Remove or rename a field | Yes | Yes |
 | Change a field's type (`"7"` → `7`) | Yes | Yes |
 | Make an optional parameter required | Yes | Yes |
-| Tighten validation on existing input | Yes | Yes |
-| Change a success status code | Yes | Yes |
-| Add a new enum value the client must handle | Usually | Depends on clients |
 
 ## Common mistakes
 

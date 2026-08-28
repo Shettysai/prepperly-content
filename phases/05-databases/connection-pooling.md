@@ -131,14 +131,12 @@ Serverless breaks the model differently: each instance holds its own pool and in
 | `waiting` high, DB CPU low | Pool too small or connections held too long | Shorten queries/transactions before growing pool |
 | `total` at max, `idle` 0 at rest | Connection leak | Release in `finally` |
 | `too many connections` | pods × pool > server limit | Reduce pool size or add PgBouncer |
-| Fine in staging, fails scaled out | Forgot to multiply by instances | Recompute total |
 | Slow after adding connections | Past the concurrency sweet spot | Reduce pool size |
 
 | Setting | Purpose |
 |---|---|
 | `max` | Connections per instance — multiply by instance count |
 | `connectionTimeoutMillis` | Fail fast rather than queue forever |
-| PgBouncer `transaction` mode | High multiplexing; breaks session state |
 
 ## Common mistakes
 

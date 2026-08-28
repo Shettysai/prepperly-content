@@ -130,7 +130,6 @@ Composite column order matters the same way: an index on `(status, created_at)` 
 | Index Only Scan | Answered from index alone | Never — the ideal |
 | Bitmap Heap Scan | Batches index matches | Normal for medium selectivity |
 | Nested Loop | Row-by-row join | Outer side is unexpectedly large |
-| Hash Join | Builds hash table | Fine; watch for disk spill |
 | Rows Removed by Filter | Rows read then discarded | Number is large |
 
 | Symptom | Likely cause | Fix |
@@ -138,7 +137,6 @@ Composite column order matters the same way: an index on `(status, created_at)` 
 | Estimated 10, actual 400k | Stale statistics | `ANALYZE` |
 | Index exists but unused | Function on the column | Expression index or rewrite |
 | Each query fast, endpoint slow | N+1 | Join or batch the queries |
-| Composite index unused | Wrong column order | Match the leftmost prefix |
 
 ## Common mistakes
 

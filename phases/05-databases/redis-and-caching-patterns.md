@@ -145,8 +145,6 @@ The deepest trap is a cache that stops being optional. If your database only sur
 | Stampede | Hot key expires under load | Lock, or refresh before expiry |
 | Avalanche | Many keys expire together | TTL jitter |
 | Penetration | Key missing everywhere | Cache the negative result |
-| Serving stale data | Update didn't invalidate | Delete key on write |
-| Writes failing when full | `noeviction` on a cache | Use `allkeys-lru` / `allkeys-lfu` |
 
 ## Common mistakes
 
@@ -164,4 +162,4 @@ The deepest trap is a cache that stops being optional. If your database only sur
 
 ## Where to go next
 
-Continue to `time-series-and-analytics-databases` — when caching can no longer hide the load, the answer is usually a database designed for a different workload shape.
+Continue to `time-series-and-analytics-databases` — when caching can no longer hide the load, the answer is a database designed for a different workload shape.
