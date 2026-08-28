@@ -13,5 +13,10 @@
     "prompt": "How would you serialize and deserialize a binary tree so it can be reconstructed exactly, including where nodes are missing?",
     "answer_markdown": "Use a pre-order traversal that explicitly records null children as a sentinel marker (like '#'), producing a string such as '2,1,#,#,3,#,#'. To deserialize, read tokens in the same pre-order sequence: the first token is the root, then recursively build the left subtree and then the right subtree, consuming '#' as an empty node. Recording the nulls is essential because without them, a single pre-order sequence isn't enough to uniquely reconstruct the tree's shape.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Why can recursive tree traversal crash on a very deep or degenerate tree, and how would you avoid that?",
+    "answer_markdown": "Each recursive call adds a frame to the call stack, and a tree that's deeply skewed toward one side (or simply very large and unbalanced) can require as many nested calls as there are nodes, exceeding the engine's fixed call stack size and throwing a stack overflow. You avoid this by converting the recursive traversal into an iterative one using an explicit stack (for depth-first) or queue (for breadth-first) that you manage on the heap, which has effectively no such fixed limit. This is the same underlying issue as unbounded recursion anywhere else, just easy to overlook because a 'small' tree in a test case hides the problem until production data arrives unbalanced.",
+    "difficulty": "medium"
   }
 ]

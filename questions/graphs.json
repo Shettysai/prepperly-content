@@ -13,5 +13,10 @@
     "prompt": "How would you detect a cycle in a directed graph, and how does that differ from cycle detection in an undirected graph?",
     "answer_markdown": "For a directed graph, run DFS while maintaining a set of nodes on the current recursion path (not just nodes visited overall); if DFS reaches a node that is already on that active path, a cycle exists, and you remove nodes from the active-path set as you backtrack out of them. For an undirected graph, a simpler check suffices: during DFS, if you encounter an already-visited neighbor that isn't the node you just came from, that's a cycle, since an edge back to your immediate parent is expected in an undirected graph and doesn't count.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "What happens if you run BFS or DFS on a graph without tracking visited nodes, and why doesn't this problem show up when traversing a tree?",
+    "answer_markdown": "Without a visited set, a traversal can revisit the same node repeatedly whenever the graph contains a cycle, since nothing stops it from walking back along an edge it already used to reach a node it's already processed — this produces an infinite loop rather than a crash, which makes it a nasty bug to spot. Trees never have this problem because a tree is defined as acyclic and connected in one direction from parent to child, so a traversal that only ever moves from a node to its children can never return to a node it started from. The moment you generalize from trees to graphs, tracking visited state stops being optional.",
+    "difficulty": "medium"
   }
 ]

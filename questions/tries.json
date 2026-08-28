@@ -13,5 +13,10 @@
     "prompt": "What's the space trade-off of using a trie compared to storing words in a simple array, and when does a trie stop being worth it?",
     "answer_markdown": "A trie saves space when many words share common prefixes, since those shared characters are stored once as shared nodes rather than repeated per word — a dictionary of English words is a good example. However, each node typically reserves a lookup structure for its possible children, so for a dataset of short, mostly unrelated strings with little prefix overlap, a trie's per-node overhead can end up using more memory than just storing the strings in an array or hash set, while also adding implementation complexity that isn't earning its keep if you never need prefix-based queries.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Why can't you tell whether a trie node represents a complete stored word just by checking whether it has children?",
+    "answer_markdown": "A word can be a strict prefix of a longer word that's also stored in the trie — for example, inserting both 'car' and 'carpet' means the node for 'car' still has a child leading toward 'carpet', so it is not a leaf, yet 'car' itself must still be reported as a valid, complete word if searched for directly. Relying on 'has no children' to mean 'end of a word' would incorrectly say 'car' isn't a stored word in that case. The correct fix is giving every node its own explicit boolean flag marking whether a word ends there, independent of whether it also happens to have children.",
+    "difficulty": "medium"
   }
 ]

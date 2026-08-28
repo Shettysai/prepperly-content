@@ -4,78 +4,141 @@ slug: trees
 summary: Binary Trees, Traversals
 tags: [data-structures, trees, recursion, complexity]
 links:
+  - title: "Binary Tree Traversals | Inorder, Preorder, Postorder | Data Structure"
+    url: "https://www.youtube.com/watch?v=p3YUlEZr2vM"
+    kind: video
   - title: Wikipedia — Tree (data structure)
     url: "https://en.wikipedia.org/wiki/Tree_(data_structure)"
     kind: resource
   - title: MDN — Recursion
     url: "https://developer.mozilla.org/en-US/docs/Glossary/Recursion"
     kind: resource
+  - title: "VisuAlgo — Tree visualizations"
+    url: "https://visualgo.net/en"
+    kind: practice
 ---
+## Before you start
+
+You need `linked-lists` (a tree node is a lot like a list node, just with more than one "next"). Comfort with basic recursion helps, but this topic will teach you enough to get by.
+
 ## In one sentence
 
-A **tree** is a way of organizing data as a hierarchy: one item at the top (the **root**), branching down into **children**, like a family tree or a folder structure on your computer.
+A **tree** is a set of connected nodes where each node has exactly one parent (except the topmost **root**, which has none), and data branches out instead of sitting in a single line.
 
 ## Why it matters
 
-Most real-world data is naturally hierarchical — file systems, HTML/DOM structure, org charts, and comment threads all branch rather than sit in a flat line. Trees let you represent that branching directly, and they're the foundation that binary search trees, heaps, and tries all build on.
+Lots of real data is naturally hierarchical, not linear: a file system's folders, an HTML page's DOM, a company's org chart, the decisions in a chess engine. A tree is the structure that represents "this contains these, which each contain these" — a linked list simply has no way to express branching, and an array has no way to express hierarchy at all.
 
-## The idea
+## The intuition
 
-Every tree starts at a single **root node**. Each node can have zero or more **children**, and a node with no children is called a **leaf**. The relationship is always parent-to-child, never circular — a tree with a cycle isn't a tree anymore, it's a graph.
+A tree is a family tree, drawn the way you'd expect: one ancestor at the top, children branching below, and their children branching further. You can only get from one person to another by tracing a path up and back down through their common ancestor — there's no shortcut sideways.
 
-A **binary tree** restricts each node to at most two children, conventionally called **left** and **right**. This restriction is what makes binary trees predictable enough to reason about depth and shape.
+## How it actually works
 
-To actually process a tree, you **traverse** it — visit every node in some order. **Depth-first traversals** go as deep as possible down one branch before backing up: **pre-order** visits a node before its children, **in-order** visits the left child, then the node, then the right child (useful for getting sorted output from a binary search tree), and **post-order** visits both children before the node itself. **Breadth-first traversal** (also called level-order) visits the tree level by level, using a queue instead of recursion, which is how you'd find the shortest path in an unweighted tree-like structure.
+Each **node** holds a value and references to its **children**. A node with no children is a **leaf**. The **depth** of a node is how many steps it is from the root; the tree's **height** is the depth of its deepest leaf. A **binary tree** restricts every node to at most two children, conventionally called `left` and `right` — the simplest and most common shape, and the one nearly every interview question means when it says "tree."
 
-## In practice
+```mermaid
+graph TD
+  R["4 (root)"] --> L["2"]
+  R --> Rt["6"]
+  L --> LL["1 (leaf)"]
+  L --> LR["3 (leaf)"]
+  Rt --> RR["7 (leaf)"]
+```
+
+You explore a tree by **traversal**, and there are two families:
+
+- **Depth-first traversals** go as deep as possible down one branch before backtracking, implemented naturally with recursion (or an explicit stack). The three orders — **preorder** (visit node, then left, then right), **inorder** (left, node, right), and **postorder** (left, right, node) — differ only in *when* you process the current node relative to its children.
+- **Breadth-first traversal** (also called **level-order**) visits all nodes at depth 1, then all at depth 2, and so on, using a queue instead of recursion — the same queue you met in `queues`.
+
+## Worked example
 
 ```js
 class TreeNode {
-  constructor(value) {
+  constructor(value, left = null, right = null) {
     this.value = value;
-    this.left = null;
-    this.right = null;
+    this.left = left;
+    this.right = right;
   }
 }
 
-function inOrder(node, result = []) {
-  if (!node) return result;
-  inOrder(node.left, result);
-  result.push(node.value);   // visit the node between its two children
-  inOrder(node.right, result);
-  return result;
+//        4
+//       / \
+//      2   6
+//     / \   \
+//    1   3   7
+const root = new TreeNode(4,
+  new TreeNode(2, new TreeNode(1), new TreeNode(3)),
+  new TreeNode(6, null, new TreeNode(7))
+);
+
+function inorder(node, out = []) {
+  if (!node) return out;
+  inorder(node.left, out);
+  out.push(node.value);
+  inorder(node.right, out);
+  return out;
 }
 
-const root = new TreeNode(2);
-root.left = new TreeNode(1);
-root.right = new TreeNode(3);
-console.log(inOrder(root)); // [1, 2, 3]
+console.log(inorder(root)); // [1, 2, 3, 4, 6, 7]
 ```
 
-In-order traversal visits left, then the node, then right — on a binary search tree this always produces values in sorted order.
+The recursion visits the left subtree fully, records the current node, then visits the right subtree — for this particular tree, inorder happens to print the values in sorted order, which is not a coincidence (see `binary-search-trees`).
+
+## A second example — when it gets harder
+
+The naive picture of a tree is small and balanced, like the one above. The case that breaks that intuition is a tree built from already-sorted input, inserted one node at a time with each new value going to the right child:
+
+```js
+// Inserting 1, 2, 3, 4, 5 in order, always going right, produces:
+// 1
+//  \
+//   2
+//    \
+//     3
+//      \
+//       4
+//        \
+//         5
+```
+
+This is technically still a valid binary tree, but it's really a linked list wearing a tree's clothing. Any operation that relies on tree height being small — like search — degrades from the O(log n) you'd expect from a "balanced" tree to O(n), because you have to walk every node to reach the bottom. This is precisely the motivation for self-balancing trees, and it's the first thing to check when a tree-based solution is mysteriously slow: is the tree actually balanced, or did the input order turn it into a chain?
 
 ## Quick reference
 
-| Traversal | Order of visits | Typical use |
+| Traversal | Order | Typical use |
 |---|---|---|
-| Pre-order | node, left, right | Copy or serialize a tree |
-| In-order | left, node, right | Get sorted output from a BST |
-| Post-order | left, right, node | Delete a tree, evaluate expression trees |
-| Level-order (BFS) | top to bottom, level by level | Shortest path, level-based processing |
+| Preorder (node, left, right) | Root first | Copying/serializing a tree |
+| Inorder (left, node, right) | Sorted order (for a BST) | Reading values in order |
+| Postorder (left, right, node) | Root last | Deleting a tree, evaluating expressions |
+| Level-order (breadth-first) | Top row to bottom row | Shortest-path-style problems, printing by level |
 
-| Metric | Balanced tree | Skewed (degenerate) tree |
-|---|---|---|
-| Height with n nodes | O(log n) | O(n) |
-| Search/insert/delete | O(log n) | O(n) |
-
-## What interviewers ask
-
-- **What's the difference between a tree and a graph?** — A tree is a special case of a graph: connected, with no cycles, and exactly one path between any two nodes. Every tree is a graph, but not every graph is a tree.
-- **How would you find the height of a binary tree?** — Recursively compute 1 + the maximum of the left and right subtree heights, with an empty node returning 0 (or -1, depending on convention). This is O(n) since you must visit every node once.
-- **How do you check if two binary trees are identical?** — Recursively compare the current nodes' values and then recurse on both left and right subtrees; if any pair of nodes differs, or one has a child the other doesn't, they're not identical. Both trees must be fully null or fully match to return true.
+| Property | Meaning |
+|---|---|
+| Height | Number of edges from root to the deepest leaf |
+| Balanced | Height is O(log n) relative to node count |
+| Degenerate | Every node has at most one child — behaves like a linked list |
 
 ## Common mistakes
 
-- Confusing a **binary tree** (at most two children, no ordering rule) with a **binary search tree** (at most two children, with the left-smaller/right-larger ordering rule) — they look similar but support very different operations.
-- Writing a recursive traversal without a base case for `null`, causing a crash on empty subtrees instead of simply returning.
-- Assuming a tree is always balanced — a tree built by inserting already-sorted data one at a time can degrade into a straight line, losing the O(log n) height advantage entirely.
+- Forgetting the base case in a recursive traversal (`if (!node) return`), causing a crash on `null` children.
+- Confusing preorder, inorder, and postorder — the fastest way to remember them is by *when* the current node is processed relative to "left, right."
+- Assuming a tree is balanced without checking — an adversarial or sorted input can produce a degenerate, list-like tree with O(n) operations.
+- Using recursion on a very deep tree without considering stack depth — an unbalanced tree with 100,000 nodes can overflow the call stack; an explicit stack-based traversal avoids that.
+
+## What interviewers ask
+
+- **What's the difference between preorder, inorder, and postorder traversal?** — They differ in when the current node is visited relative to its children: before both (preorder), between them (inorder), or after both (postorder). Interviewers often follow up by asking which one to use to, say, clone a tree (preorder) or safely delete one bottom-up (postorder).
+- **How do you traverse a tree level by level?** — Use a queue: start with the root in the queue, and repeatedly dequeue a node, process it, and enqueue its children. This is breadth-first search applied to a tree, and it's the same pattern used for shortest-path problems on graphs.
+- **What is the height of a tree, and how do you compute it?** — The height is the longest path from the root to a leaf. Recursively, a node's height is `1 + max(height(left), height(right))`, with a null node having height -1 or 0 depending on convention — always clarify which convention you're using.
+- **Can you traverse a tree without recursion?** — Yes — maintain an explicit stack (for depth-first) or queue (for breadth-first) and push/pop nodes manually, mimicking what the call stack does automatically in the recursive version. This matters for very deep trees where recursion risks a stack overflow.
+
+## Practice
+
+1. Implement preorder, inorder, and postorder traversal both recursively and iteratively (using an explicit stack).
+2. Given a binary tree, compute its maximum depth.
+3. Given a binary tree, print its values level by level (breadth-first), one line per level.
+
+## Where to go next
+
+`binary-search-trees` — trees become dramatically more useful once you add one ordering rule: everything to the left of a node is smaller, everything to the right is larger.

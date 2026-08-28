@@ -13,5 +13,10 @@
     "prompt": "How would you implement a median-tracking structure that can report the median of a stream of numbers at any point, in better than O(n log n) per query?",
     "answer_markdown": "Keep two heaps: a max-heap holding the smaller half of the numbers seen so far, and a min-heap holding the larger half, kept balanced in size (differing by at most one element). When a new number arrives, add it to the appropriate heap based on comparison to the max-heap's top, then rebalance by moving the top of one heap to the other if the size difference exceeds one. The median is then either the top of the larger heap, or the average of both tops if they're equal in size. Each insertion costs O(log n), and each median query costs O(1), which beats re-sorting the whole stream on every query.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Why is building a heap from n unsorted elements O(n) rather than O(n log n)?",
+    "answer_markdown": "It's tempting to assume building a heap means inserting n elements one at a time, each costing O(log n), for a total of O(n log n). But the standard 'heapify' build starts from the last non-leaf node and sifts down toward the root, and most nodes in a complete binary tree sit near the bottom, where a sift-down has very little distance left to travel before hitting a leaf. Summing the actual work across all nodes (a small number of nodes each doing up to log n work, but the vast majority doing very little) converges to a total of O(n), which is a classic result worth remembering rather than re-deriving under pressure.",
+    "difficulty": "hard"
   }
 ]
