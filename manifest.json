@@ -555,7 +555,7 @@
           "position": 2,
           "path": "phases/09-backend-engineering/cicd-pipelines.md",
           "questionsPath": "questions/cicd-pipelines.json",
-          "sha256": "b5dd35543ca47e31be9375c4ecb9ab1ac609ebf76d75afdb332b5c3f7d57af65"
+          "sha256": "d5699791528425bc74dae92d7e238919871cfd8204d00f748c320ace101e951a"
         },
         {
           "slug": "docker-containerization",
@@ -564,7 +564,7 @@
           "position": 3,
           "path": "phases/09-backend-engineering/docker-containerization.md",
           "questionsPath": "questions/docker-containerization.json",
-          "sha256": "e61473fe061585db414917da99193b2d20a7a8b3814cd07551b5cb8e1f37572c"
+          "sha256": "290fd6a74409347c688df9a35d199551c05fe9eaf80f19fb74cb5fbddb73fe6f"
         },
         {
           "slug": "kubernetes-basics",
