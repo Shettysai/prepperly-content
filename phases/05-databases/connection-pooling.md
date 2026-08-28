@@ -51,11 +51,11 @@ flowchart LR
 
 A pool keeps N open connections. A query borrows one, runs, and returns it. If all are busy, the request queues until one frees or a timeout fires.
 
-**Sizing is the part people get wrong**, and the instinct — "more connections, more throughput" — is backwards. A database executes queries on physical resources: CPU cores and disks. Once every core is busy, extra concurrent connections don't add throughput; they add context switching, lock contention, and memory pressure, so *everything* slows down. A commonly cited starting point is roughly `(cores × 2) + effective_spindles`, which lands most workloads between 10 and 30 connections — far smaller than people expect.
+**Sizing is the part people get wrong**, and the instinct "more connections, more throughput" is backwards. Queries execute on CPU cores and disks; once every core is busy, extra connections add context switching, lock contention, and memory pressure, so *everything* slows. A common starting point of roughly `(cores × 2)` lands most workloads at 10-30 connections — far fewer than expected.
 
 The arithmetic that catches teams out is multiplication across instances. Twenty application pods each with a pool of 20 is 400 connections against a database allowing 100. It works in staging with one pod and fails the moment you scale out. **Total connections = pods × pool size**, and that total must sit comfortably below the server limit with headroom for migrations, admin sessions, and monitoring.
 
-When many application instances make that impossible, you add an external pooler like **PgBouncer** between application and database. It multiplexes many client connections onto few server connections. Its `transaction` pooling mode assigns a server connection only for the duration of a transaction, giving very high multiplexing — at the cost of breaking anything relying on session state across transactions, such as session-level `SET` statements, prepared statements, or advisory locks.
+When many instances make that impossible, add an external pooler like **PgBouncer**, which multiplexes many client connections onto few server ones. Its `transaction` mode assigns a server connection only for a transaction's duration, giving high multiplexing but breaking anything relying on session state, such as session-level `SET` statements or advisory locks.
 
 **Exhaustion symptoms** are distinctive: request latency climbs while the database's CPU sits low and individual queries stay fast. The queue is the bottleneck, not the database, which is why "our database is slow" is so often wrong. The tells are `timeout exceeded when trying to connect` errors and a rising count of pending acquisitions.
 
@@ -131,12 +131,10 @@ Serverless breaks the model differently: each instance holds its own pool and in
 | `waiting` high, DB CPU low | Pool too small or connections held too long | Shorten queries/transactions before growing pool |
 | `total` at max, `idle` 0 at rest | Connection leak | Release in `finally` |
 | `too many connections` | pods × pool > server limit | Reduce pool size or add PgBouncer |
-| Slow after adding connections | Past the concurrency sweet spot | Reduce pool size |
 
 | Setting | Purpose |
 |---|---|
 | `max` | Connections per instance — multiply by instance count |
-| `connectionTimeoutMillis` | Fail fast rather than queue forever |
 
 ## Common mistakes
 
@@ -150,6 +148,7 @@ Serverless breaks the model differently: each instance holds its own pool and in
 
 - **How would you diagnose pool exhaustion?** — Look for high waiting counts with low database CPU and fast individual queries; that combination means requests are queuing for connections rather than the database being slow.
 - **What causes a pool to slowly die until restart?** — A connection leak on an error path, usually releasing outside a `finally`, which permanently shrinks the pool with each failed query.
+- **How do you size a pool?** — Start from the database's parallelism (roughly cores × 2), then check that pool size × instance count stays under the server limit with headroom; bigger is not better.
 - **Why are serverless functions hard on databases?** — Each instance keeps its own pool and instances scale independently, so total connections grow without coordination, which is why an external pooler is normally required.
 
 ## Practice

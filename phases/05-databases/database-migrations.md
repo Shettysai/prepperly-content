@@ -17,7 +17,7 @@ links:
 
 ## Before you start
 
-`connection-pooling` matters here — a migration holding a lock blocks every pooled connection at once. `indexing-and-transactions` explains the locks involved.
+`connection-pooling` — a migration holding a lock blocks every pooled connection at once. `indexing-and-transactions` explains the locks involved.
 
 ## In one sentence
 
@@ -25,21 +25,17 @@ A **zero-downtime migration** changes your schema while the application keeps se
 
 ## Why it matters
 
-The naive migration — change the schema and deploy the matching code together — assumes both happen instantly. Neither does. A rolling deploy runs old and new code side by side for minutes, so if the schema only suits the new code, every request still hitting old code fails.
+The naive migration — change the schema and deploy matching code together — assumes both happen instantly. Neither does. A rolling deploy runs old and new code side by side for minutes, so if the schema only suits the new code, every request hitting old code fails.
 
-The sharper danger is locks. Some `ALTER TABLE` statements take an exclusive lock, and a lock request *queues behind* running queries while blocking everything arriving after it. A migration taking 50ms on an idle table can freeze a busy one for minutes, and because every pooled connection stalls, the whole application stops.
+The sharper danger is locks. Some `ALTER TABLE` statements take an exclusive lock, and a lock request *queues behind* running queries while blocking everything arriving after it, so a migration taking 50ms on an idle table can freeze a busy one for minutes and stall every pooled connection.
 
 ## The intuition
 
 Replacing a bridge that traffic is still crossing. You cannot demolish it and build the new one, because traffic must never stop. Instead: build the new bridge alongside the old, open both, move traffic gradually, confirm nothing still uses the old one, then demolish it.
 
-That's **expand-contract**, and it maps exactly:
+That's **expand-contract**: **expand** by adding the new column or table so nothing is removed and old code is unaffected; **migrate** by writing to both, backfilling history, then moving reads to the new shape; **contract** by removing the old shape once nothing reads it.
 
-- **Expand** — add the new column or table. Nothing is removed, so old code is unaffected.
-- **Migrate** — write to both, backfill history, then move reads to the new shape.
-- **Contract** — once nothing reads the old shape, remove it.
-
-Each phase is a separate deploy, and at every instant the database supports both the currently-running code and the version being rolled out. The instinct to do it in one step is what causes the outage.
+Each phase is a separate deploy, so at every instant the database supports both the running code and the version rolling out. The instinct to do it in one step causes the outage.
 
 ## How it actually works
 
@@ -65,17 +61,15 @@ UPDATE users SET full_name = name
 WHERE id IN (SELECT id FROM users WHERE full_name IS NULL LIMIT 1000);
 ```
 
-Run repeatedly with a pause between batches: each transaction is short, locks release promptly, and replicas keep up. The `IS NULL` predicate makes it **idempotent**, so a job that dies halfway can restart safely.
+Run repeatedly with a pause between batches: each transaction is short, locks release promptly, replicas keep up, and the `IS NULL` predicate makes it **idempotent**, so a job that dies halfway restarts safely.
 
-Index creation has the same shape — `CREATE INDEX` locks the table against writes for the whole build, while `CREATE INDEX CONCURRENTLY` does not, at the cost of being slower. Knowing which operations are cheap is the practical core:
+Index creation is the same shape: `CREATE INDEX` locks the table against writes for the whole build, while `CREATE INDEX CONCURRENTLY` doesn't, at the cost of being slower. Knowing which operations are cheap is the practical core:
 
 | Operation | Lock impact |
 |---|---|
 | Add nullable column | Cheap — metadata only |
-| Add `NOT NULL` to existing column | Expensive — full table validation |
 | Add index (plain) | Blocks writes for the whole build |
 | Rename or drop column | Instant lock, but breaks running code |
-| Change column type | Usually a full table rewrite |
 
 ## Worked example
 
@@ -111,7 +105,7 @@ backfilled 2000
 backfilled 9847
 ```
 
-Two details carry the safety. The 100ms pause bounds replication lag, since a tight loop can push replicas minutes behind. And `max: 2` stops the backfill consuming connections that serve users.
+Two details carry the safety: the 100ms pause bounds replication lag, and `max: 2` stops the backfill consuming connections that serve users.
 
 ## A second example — when it gets harder
 
@@ -135,16 +129,13 @@ Failing quickly and retrying later beats blocking every connection. Adding a col
 | Phase | Deploy | Safe because |
 |---|---|---|
 | Expand | Add nullable column | Old code ignores it |
-| Dual-write | Write both shapes | Neither version breaks |
 | Backfill | Batched, idempotent updates | Short locks, bounded lag |
-| Switch reads | Read new column | Data already complete |
 | Contract | Drop old column | Nothing references it |
 
 | Rule | Reason |
 |---|---|
 | Batch every backfill | Avoids long locks and replica lag |
 | `CREATE INDEX CONCURRENTLY` | Doesn't block writes |
-| Set `lock_timeout` | Fail fast instead of queueing |
 
 ## Common mistakes
 
@@ -152,14 +143,13 @@ Failing quickly and retrying later beats blocking every connection. Adding a col
 - Backfilling with one huge `UPDATE`, locking millions of rows and pushing replicas far behind.
 - Building an index without `CONCURRENTLY` on a busy table, blocking writes for the whole build.
 - Assuming a fast migration is a safe one — the danger is the lock queue, not the duration.
-- Making backfills non-idempotent, so a job that dies halfway cannot safely resume.
 
 ## What interviewers ask
 
+- **How do you rename a column with zero downtime?** — Expand-contract: add the new column, dual-write, backfill in batches, switch reads, then drop the old one, each a separate deploy so old and new code always both work.
 - **Why can a fast migration still cause an outage?** — It requests a lock that queues behind a running query, and every request arriving after it queues too, so the application freezes even though the `ALTER` itself is instant.
+- **How do you backfill ten million rows safely?** — In small idempotent batches with pauses, keeping transactions short and replication lag bounded, using a predicate that makes re-running safe.
 - **Why is dropping a column the riskiest step?** — It's instant but irreversible and breaks any code still referencing it, so it must be a separate, delayed deploy once logs prove nothing uses it.
-- **How do you backfill ten million rows safely?** — In small idempotent batches with pauses, keeping transactions short and replication lag bounded.
-- **How do you rename a column with zero downtime?** — Expand-contract: add the new column, dual-write, backfill, switch reads, then drop the old one, each a separate deploy.
 
 ## Practice
 
@@ -169,4 +159,4 @@ Failing quickly and retrying later beats blocking every connection. Adding a col
 
 ## Where to go next
 
-Continue to `redis-and-caching-patterns` — caching is the usual response to load that migrations alone cannot fix, and stale caches after a schema change are their own class of bug.
+Continue to `redis-and-caching-patterns` — caching is the usual response to load migrations cannot fix, and stale caches after a schema change are their own class of bug.

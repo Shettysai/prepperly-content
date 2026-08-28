@@ -57,7 +57,7 @@ The planner is cost-based, using **statistics** collected by `ANALYZE` — histo
 
 Two numbers per node matter most: `cost=0.00..8.27`, the estimated startup and total cost in arbitrary units useful only for comparing alternatives, and `rows=1`, the estimated row count.
 
-Run `EXPLAIN ANALYZE` instead and the database actually executes the query, adding `actual time` and `actual rows`. **The gap between estimated and actual rows is the single most diagnostic thing in a plan.** If it estimated 10 rows and got 400,000, it likely chose a strategy suited to 10 — a nested loop where a hash join was needed — and everything downstream is wrong. That usually means stale statistics or a correlation the planner cannot see.
+Run `EXPLAIN ANALYZE` and the database executes the query, adding `actual time` and `actual rows`. **The gap between estimated and actual rows is the most diagnostic thing in a plan.** If it estimated 10 and got 400,000, it chose a strategy suited to 10 — a nested loop where a hash join was needed — and everything downstream is wrong, usually from stale statistics.
 
 Common node types, worst to best for selective queries: **Seq Scan** reads the whole table, fine when it's small or most rows match. **Index Scan** walks the index and fetches matching rows one at a time. **Index Only Scan** answers from the index alone without touching the table — the fastest case, and the payoff of a **covering index**. **Bitmap Heap Scan** gathers index matches, sorts them by physical location, and reads in one pass, the compromise for medium selectivity.
 
@@ -78,7 +78,6 @@ Seq Scan on users  (cost=0.00..10834.00 rows=1 width=72)
 Execution Time: 84.150 ms
 ```
 
-
 `Rows Removed by Filter: 499999` is the smell — half a million rows read to return one. Note it *correctly estimated* `rows=1`; it had no index to exploit, not a bad estimate.
 
 ```sql
@@ -93,7 +92,7 @@ Index Scan using idx_users_email on users
 Execution Time: 0.061 ms
 ```
 
-84ms to 0.061ms — about 1,300× — by changing nothing but the access path. The `Filter` line became an `Index Cond`, which is the distinction to look for: a filter discards rows after reading them, a condition avoids reading them.
+84ms to 0.061ms — about 1,300× — by changing only the access path. `Filter` became `Index Cond`, the distinction to look for: a filter discards rows after reading them, a condition avoids reading them.
 
 ## A second example — when it gets harder
 
@@ -128,7 +127,6 @@ Composite column order matters the same way: an index on `(status, created_at)` 
 | Seq Scan | Reads every row | Table is large and few rows match |
 | Index Scan | Uses index, fetches rows | Rarely — usually good |
 | Index Only Scan | Answered from index alone | Never — the ideal |
-| Bitmap Heap Scan | Batches index matches | Normal for medium selectivity |
 | Nested Loop | Row-by-row join | Outer side is unexpectedly large |
 | Rows Removed by Filter | Rows read then discarded | Number is large |
 
@@ -136,14 +134,12 @@ Composite column order matters the same way: an index on `(status, created_at)` 
 |---|---|---|
 | Estimated 10, actual 400k | Stale statistics | `ANALYZE` |
 | Index exists but unused | Function on the column | Expression index or rewrite |
-| Each query fast, endpoint slow | N+1 | Join or batch the queries |
 
 ## Common mistakes
 
 - Treating every Seq Scan as a bug. On a small table, or when most rows match, it's the correct choice.
 - Reading `cost` as milliseconds — it's a relative unit for comparing plans, not a time.
 - Using `EXPLAIN` without `ANALYZE`, so you see estimates only and miss the estimate-versus-actual gap.
-- Wrapping an indexed column in a function, then concluding the index "doesn't work".
 - Optimising one query when the real problem is running it a hundred times in a loop.
 
 ## What interviewers ask
@@ -151,6 +147,7 @@ Composite column order matters the same way: an index on `(status, created_at)` 
 - **A query got slow in production — what's your first step?** — Run `EXPLAIN ANALYZE` and compare estimated to actual rows; a large divergence points at stale statistics, while a Seq Scan with many rows removed by filter points at a missing index.
 - **What is the N+1 problem and how do you detect it?** — One query fetches a list and then one query runs per row; individual queries look fast, so you detect it by counting queries per request rather than by inspecting query times.
 - **You added an index and nothing improved — why?** — Common causes are a function wrapping the column, a composite index whose leftmost column isn't in the predicate, stale statistics, or a query matching too many rows to benefit.
+- **When is a sequential scan the right plan?** — On small tables, or when the query matches a large fraction of rows, since many index lookups cost more than one sweep.
 
 ## Practice
 

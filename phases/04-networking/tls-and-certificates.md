@@ -13,9 +13,6 @@ links:
   - title: Node.js docs — TLS/SSL module
     url: "https://nodejs.org/api/tls.html"
     kind: resource
-  - title: "The TLS Handshake: taking a closer look"
-    url: "https://www.thesslstore.com/blog/explaining-ssl-handshake/"
-    kind: resource
 ---
 
 ## Before you start

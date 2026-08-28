@@ -380,7 +380,7 @@
           "position": 9,
           "path": "phases/04-networking/tls-and-certificates.md",
           "questionsPath": "questions/tls-and-certificates.json",
-          "sha256": "c8a93390ef3e2faaad53ff50cf9495d1fb0e77f9774c188cea66f66b3d74dac9"
+          "sha256": "790e67e8b526a5dcaf70a47a4b95aec26b159cff7dcabc3671367d932947f553"
         },
         {
           "slug": "websockets-vs-polling",
@@ -415,7 +415,7 @@
           "position": 2,
           "path": "phases/05-databases/connection-pooling.md",
           "questionsPath": "questions/connection-pooling.json",
-          "sha256": "565c16549b5f5e20e6d905968d0b7078db23542b5845c93dc54d72f6f061ba23"
+          "sha256": "3d0734486f568fec3605a9db1e712e37470c66b77dcb7937a21638f19e842a31"
         },
         {
           "slug": "database-migrations",
@@ -424,7 +424,7 @@
           "position": 3,
           "path": "phases/05-databases/database-migrations.md",
           "questionsPath": "questions/database-migrations.json",
-          "sha256": "1289b36940c2c2d0165b8fa5e1752c431785a7f48e6bcbd06ee193629c96e8d8"
+          "sha256": "8e5b218937139a2a25172d40fd61b0dfd3af9cdbac4f723087b160ec4c722993"
         },
         {
           "slug": "indexing-and-transactions",
@@ -442,7 +442,7 @@
           "position": 5,
           "path": "phases/05-databases/normalization-and-schema-design.md",
           "questionsPath": "questions/normalization-and-schema-design.json",
-          "sha256": "ce3057708f66570d503bf5b58e80aad6b48a1443a9c539c4f77891811c1197db"
+          "sha256": "7e888f81fdc439228689bfe32bd39a61797e83153b693093bd080e44cb449ade"
         },
         {
           "slug": "query-optimization",
@@ -451,7 +451,7 @@
           "position": 6,
           "path": "phases/05-databases/query-optimization.md",
           "questionsPath": "questions/query-optimization.json",
-          "sha256": "aba3e2741657110e82376c44bc2804d8c18a0f785fe6ca449ac2017b4042c344"
+          "sha256": "2934cc8dfbd67461b886fa18c034c6acd06ed024ee94464eb52e05833df304b5"
         },
         {
           "slug": "redis-and-caching-patterns",
@@ -460,7 +460,7 @@
           "position": 7,
           "path": "phases/05-databases/redis-and-caching-patterns.md",
           "questionsPath": "questions/redis-and-caching-patterns.json",
-          "sha256": "aff9ed4737c0e547955de650df5e37bc2cbc5cc0a9800bcce58773ad67e895fd"
+          "sha256": "b8bf6d6b25ac085b929bfc137c2d386c196030dcc6bd9f7a9d1ab278525c8119"
         },
         {
           "slug": "relational-vs-nosql",
@@ -718,7 +718,7 @@
           "position": 4,
           "path": "phases/08-node-js/express-and-middleware.md",
           "questionsPath": "questions/express-and-middleware.json",
-          "sha256": "926e2db34320541c4c46d1f93c2327f483e983d2e304ca93a1fe526789831f19"
+          "sha256": "7a300f49fd6921c58d5c1632cb3834ef51fc51b901b3a51bbe34a073d462c78a"
         },
         {
           "slug": "performance-profiling",
@@ -763,7 +763,7 @@
           "position": 9,
           "path": "phases/08-node-js/typescript-in-node.md",
           "questionsPath": "questions/typescript-in-node.json",
-          "sha256": "fd27b5e68c973f616147201dc2f9287873ff712e663a4d88f91682a656e18b0e"
+          "sha256": "ded6e8e200b287cef0554adaedfac69223083a7526a2c60f8cc1a7cc4f31f0b8"
         },
         {
           "slug": "v8-engine-and-garbage-collection",
@@ -852,7 +852,7 @@
           "position": 8,
           "path": "phases/09-backend-engineering/message-brokers-in-practice.md",
           "questionsPath": "questions/message-brokers-in-practice.json",
-          "sha256": "073a08cfd377eaab0ef64ef3057ccdbdca55bc169124765efdbbe031d8021788"
+          "sha256": "f98e989fe5c00c3c363e4dafedb8038382f6693282a822ace49d37430555337f"
         },
         {
           "slug": "secrets-management",

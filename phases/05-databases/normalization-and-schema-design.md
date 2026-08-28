@@ -35,7 +35,7 @@ Imagine a spreadsheet of orders where each row carries the customer's name, emai
 
 Normalisation says: **one fact, one place**. Customer details live in a `customers` table, once, and orders reference the customer by ID. Changing an address becomes one update, and two rows cannot disagree because there's only one row.
 
-The trade is that answering "show orders with customer names" now requires a join. Normalisation optimises for *correctness of writes*; denormalisation trades some of that back for *speed of reads*.
+The trade is that "show orders with customer names" now needs a join. Normalisation optimises for *write correctness*; denormalisation trades some back for *read speed*.
 
 ## How it actually works
 
@@ -56,9 +56,9 @@ The normal forms are cumulative — each assumes the previous.
 
 The informal summary, worth memorising: **every non-key column depends on the key, the whole key, and nothing but the key.**
 
-3NF is the practical target for transactional systems. Higher forms exist (BCNF, 4NF, 5NF) but rarely change a real design.
+3NF is the practical target for transactional systems; higher forms (BCNF, 4NF, 5NF) rarely change a real design.
 
-**Denormalisation** is deliberately reintroducing duplication for read speed — and it is a legitimate engineering decision, not a failure, provided it's chosen rather than stumbled into. The cost is that you now own the job of keeping copies consistent.
+**Denormalisation** deliberately reintroduces duplication for read speed — a legitimate decision, not a failure, provided it's chosen rather than stumbled into. The cost is that you now own keeping copies consistent.
 
 One case isn't denormalisation at all, and interviewers like it: an order must store the price *at the time of purchase*. That looks duplicated from `products.price`, but it's a genuinely different fact — the historical price paid, which must not change when the product's price does. Copying values that must be frozen in time is correct design.
 
@@ -133,27 +133,25 @@ Denormalise when the read is frequent and expensive, the write comparatively rar
 | Form | Rule | Violation looks like |
 |---|---|---|
 | 1NF | One value per cell | `tags: "a,b,c"` in one column |
-| 2NF | No partial key dependency | `product_name` in `order_items` |
 | 3NF | No transitive dependency | `department_name` in `employees` |
 
 | Choose | When |
 |---|---|
 | Normalise | Writes frequent, correctness critical |
-| Denormalise | Read-heavy, expensive aggregate, sync plan exists |
 
 ## Common mistakes
 
 - Enforcing uniqueness only in application code. Without a database constraint, concurrent requests will eventually create duplicates.
-- Storing lists in one column, which blocks indexing, constraints, and correct querying.
-- Treating denormalisation as a failure rather than a measured trade-off with a maintenance cost.
-- Denormalising before measuring, adding consistency risk to fix an unconfirmed problem.
 - Over-normalising until routine screens need many joins.
+- Storing lists in one column, which blocks indexing, constraints, and correct querying.
+- Denormalising before measuring, adding consistency risk to fix an unconfirmed problem.
 
 ## What interviewers ask
 
 - **When would you deliberately denormalise?** — When a read is frequent and expensive (typically a large aggregate), writes are rarer, and you have a concrete mechanism to keep the duplicate in sync, such as updating it transactionally plus periodic reconciliation.
 - **Why store the price on the order line when products already have a price?** — Because it's a different fact: the price actually paid, which must stay frozen when the product's current price changes.
-- **How do you keep a denormalised counter correct?** — Update it in the same transaction as the underlying change so both commit or neither does, and reconcile periodically against the source of truth to correct drift.
+- **How do you keep a denormalised counter correct?** — Update it in the same transaction as the underlying change so both commit or neither does, and reconcile periodically against the source of truth.
+- **What are update, insertion, and deletion anomalies?** — Duplicated data going stale in some copies, being unable to record a fact because no parent row exists, and losing a fact when deleting an unrelated row.
 
 ## Practice
 

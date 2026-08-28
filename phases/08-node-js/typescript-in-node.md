@@ -101,13 +101,12 @@ a undefined
 Here's the misunderstanding that causes real production incidents: **types do not exist at runtime.**
 
 ```ts
-// This LOOKS type-safe. It is not.
 async function loadUserUnsafe(res: Response): Promise<{ id: number }> {
   return await res.json() as { id: number };   // a lie the compiler believes
 }
 ```
 
-`res.json()` returns `any`. That `as` is an assertion — you telling the compiler "trust me" — and it performs zero checking. If the API returns `{"id": "42"}` as a string, TypeScript is perfectly happy and your code does arithmetic on a string.
+`res.json()` returns `any`, and that `as` is an assertion — you telling the compiler "trust me" — which performs zero checking. If the API returns `{"id": "42"}` as a string, TypeScript is perfectly happy and your code does arithmetic on a string.
 
 **Every value crossing a boundary — HTTP body, database row, env var, message queue — is `unknown` until you validate it.** Types check your code; they cannot check the network.
 
