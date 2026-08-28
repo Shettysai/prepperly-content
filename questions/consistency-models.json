@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "Explain the difference between strong consistency and eventual consistency with a real example.",
-    "answer_markdown": "Strong consistency guarantees that any read immediately reflects the most recent write, which requires servers to coordinate before confirming that write — a bank balance check is a good example, since you never want to see stale money. Eventual consistency allows replicas to briefly disagree after a write and only guarantees they'll converge over time — a 'likes' counter on a post is a good fit, since a momentary mismatch between servers doesn't harm anyone. The trade-off is always speed and availability versus immediate correctness.",
+    "prompt": "What's the difference between strong consistency and eventual consistency?",
+    "answer_markdown": "Strong consistency guarantees that every read reflects the most recent write immediately, no matter which replica answers, which requires coordination between replicas before confirming any write. Eventual consistency allows temporary disagreement between replicas right after a write, only guaranteeing that all copies converge to the same value over time. Eventual consistency is much faster since it avoids that coordination cost, but it can briefly show stale data to some readers.",
     "difficulty": "easy"
   },
   {
-    "prompt": "Two users simultaneously try to book the last seat on a flight in a system using eventual consistency. Walk through what could go wrong and how you'd fix it.",
-    "answer_markdown": "Both users could hit different replicas that each still show the seat as available, so both bookings might succeed locally before the replicas sync up, resulting in an overbooked seat. To fix this, you'd either switch that specific operation to strong consistency (route seat-booking through a single authoritative source that serializes the decision) or use a conflict-resolution mechanism like a distributed lock or a compare-and-swap operation on the seat count, so only one booking wins even if requests race. This tests whether you know consistency models can be mixed within one system, applied only where correctness truly matters.",
+    "prompt": "Give an example of a case where eventual consistency is perfectly fine to use.",
+    "answer_markdown": "A 'likes' counter on a social media post is a good example. If the count briefly shows 104 on one server and 105 on another right after someone likes the post, nobody is meaningfully harmed by that temporary disagreement, and it self-corrects within moments as the update propagates. The cost of enforcing strong consistency here — coordinating every replica before confirming a single like — would far outweigh the benefit.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is causal consistency, and why might you choose it over both strong and eventual consistency?",
+    "answer_markdown": "Causal consistency guarantees that operations which depend on each other, such as a comment and the post it replies to, are seen by everyone in the same relative order, while unrelated operations can appear in different orders for different readers without breaking anything. It's a useful middle ground because it avoids the full coordination cost of strong consistency while still preventing the specific kind of confusing bug where someone sees a reply before the message it responds to.",
     "difficulty": "medium"
   },
   {
-    "prompt": "What is causal consistency, and how would a system implement it in practice?",
-    "answer_markdown": "Causal consistency guarantees that if operation B depends on operation A (like a reply depending on the original post), every node sees A before B, while unrelated operations can still be seen in different orders across nodes. Systems typically implement this using version vectors or vector clocks, which tag each write with information about which other writes it depended on, so a replica can delay applying an update until its dependencies have already been applied locally. This is a step up in complexity from eventual consistency and is used when full strong consistency would be too slow but pure eventual consistency could show confusingly out-of-order content.",
+    "prompt": "Explain the 'two people booking the last seat' scenario under both strong and eventual consistency.",
+    "answer_markdown": "Under strong consistency, both booking attempts check against the same, always up-to-date source of truth, so one booking is confirmed and the other is immediately and correctly rejected as sold out. Under eventual consistency, each request might be served by a replica that hasn't yet heard about the other's update, so both could briefly see the seat as available and both bookings could succeed locally — the resulting conflict, an oversold seat, only becomes visible once the replicas synchronize and has to be resolved after the fact.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A user posts a comment, immediately refreshes the page, and briefly doesn't see their own comment appear. Explain what's happening and name the specific consistency guarantee that would fix it.",
+    "answer_markdown": "This is a gap in a system that only offers plain eventual consistency, which makes no promise about when any specific reader — including the person who just wrote the data — will see a recent write. The fix is a stronger guarantee called read-your-own-writes, which specifically ensures that a user always sees their own recent writes immediately, typically implemented by routing that user's reads back to whichever replica handled their most recent write for a short window, without requiring full strong consistency for every other reader of that same content.",
     "difficulty": "hard"
   },
   {
-    "prompt": "Does causal consistency guarantee that all events appear in the same order for every user?",
-    "answer_markdown": "No — it only guarantees ordering for events that are causally related, like a comment and the post it replies to. Two completely unrelated posts from different users can still show up in a different order for different viewers, which is what distinguishes causal consistency from strong consistency, where every operation everywhere is seen in one single global order.",
-    "difficulty": "easy"
+    "prompt": "Why is 'eventual consistency' not really one single, fixed guarantee in practice?",
+    "answer_markdown": "In practice, systems offer a spectrum of intermediate guarantees between strict strong consistency and the loosest possible eventual consistency, including causal consistency and read-your-own-writes consistency, each solving a specific, narrower problem without paying the full coordination cost of strong consistency everywhere. Treating 'eventual consistency' as one fixed model misses that real systems often mix these guarantees deliberately per feature, applying a stronger guarantee only where a specific kind of staleness would actually be noticeable or harmful to users.",
+    "difficulty": "hard"
   }
 ]

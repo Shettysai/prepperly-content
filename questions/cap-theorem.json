@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "What does CAP theorem actually say, and why is partition tolerance basically mandatory?",
-    "answer_markdown": "CAP theorem states that during a network partition, a distributed system can guarantee either full consistency or full availability, but not both. Partition tolerance is treated as mandatory because in any real system with multiple machines connected over a network, some link will eventually fail or lag — you can't opt out of the possibility, so the real design decision is what happens when it occurs, not whether to plan for it.",
+    "prompt": "Explain the CAP theorem in your own words.",
+    "answer_markdown": "During a network partition, a distributed system must choose between guaranteeing every read reflects the absolute latest write (Consistency) or guaranteeing that it always responds to requests (Availability) — it cannot fully guarantee both at the same time in that moment. Answering with local data risks returning something stale, while waiting to confirm correctness risks not answering at all. Partition tolerance itself isn't really a choice, since network partitions are simply a fact of operating any real distributed system.",
     "difficulty": "easy"
   },
   {
-    "prompt": "Design a ticket-booking system for a popular concert. Would you lean CP or AP, and why?",
-    "answer_markdown": "You'd lean CP for the actual seat-reservation step, because overselling the same seat to two people is a worse outcome than briefly refusing a booking request — correctness matters more than uptime for that specific operation. However, you could still make the browsing/search experience AP, showing possibly-stale seat availability while people browse, and only enforcing strict consistency at the final confirm-and-pay step. This tests whether you know CAP trade-offs can be applied per-operation rather than as one blanket decision for the whole system.",
+    "prompt": "Is CA (Consistency and Availability without Partition tolerance) a realistic option for a distributed system?",
+    "answer_markdown": "Not for a genuinely distributed system, because network partitions are an unavoidable fact of running multiple machines connected over a network — cables get cut, routers fail, regions lose connectivity. CA only makes practical sense for a single machine with no network to partition in the first place, which defeats the entire purpose of being distributed.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Give a real example of a CP system and an AP system, and justify each classification.",
+    "answer_markdown": "A banking ledger is typically a CP system, because it would rather reject or block a transaction than risk double-spending or an incorrect balance during a partition. A DNS system or a shopping cart is typically an AP system, because it would rather show a user a slightly stale cart or an outdated record than refuse to load the page at all, since brief staleness there is a much smaller problem than an outage.",
     "difficulty": "medium"
   },
   {
-    "prompt": "How does PACELC extend CAP theorem, and why was it introduced?",
-    "answer_markdown": "PACELC points out that CAP only describes behavior during a Partition (P), forcing a choice between Availability and Consistency (the 'AC' half) — but even when there's no partition at all, a system still has to choose between Latency and Consistency (the 'ELC' half), because waiting to fully synchronize replicas takes time. It was introduced because CAP alone doesn't explain everyday trade-offs in normal operation, only outage behavior. Interviewers who bring this up are checking whether you know CAP's real-world limitations, not just the textbook triangle.",
+    "prompt": "Walk through the 'two buyers, one seat' scenario during a network partition for both a CP and an AP system.",
+    "answer_markdown": "In a CP system, when the link between the two nodes handling each buyer's request breaks, at least one of the requests is rejected or blocked, since neither node can confirm the current seat count is accurate without the other — this guarantees the seat is never oversold. In an AP system, both nodes keep responding using their own local data, so both bookings can succeed during the partition, and the resulting conflict — an oversold seat — has to be detected and resolved once the partition heals, typically by refunding one of the two buyers.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A colleague says 'CAP theorem means our system is always choosing between consistency and availability.' What's wrong with that framing?",
+    "answer_markdown": "CAP theorem only forces a genuine trade-off during an actual network partition. Outside of a partition, when all nodes can communicate normally, a well-designed system can offer both strong consistency and full availability at the same time — there's no permanent, always-on sacrifice required. The framing is misleading because it implies a constant trade-off rather than one that only bites during the specific, hopefully rare, event of a network partition.",
     "difficulty": "hard"
   },
   {
-    "prompt": "Can a system be CA (consistent and available) in practice?",
-    "answer_markdown": "Only if it never has to deal with a network partition, which realistically only holds for a single-node system with no network between replicas. The moment you have more than one node communicating over a network, partitions become possible, so CA isn't a practical option for any genuinely distributed system — you have to plan for what happens when the network fails.",
-    "difficulty": "easy"
+    "prompt": "Why does adding more replicas to a CP system generally make it more likely, not less, to refuse requests during a partition?",
+    "answer_markdown": "A CP system typically needs to confirm data correctness across a majority or a specific quorum of its nodes before answering safely. With more replicas spread across more locations, there are more possible ways for the network to split into groups that can't all reach each other, increasing the chance that any given node finds itself unable to confirm it's talking to enough of the cluster to safely answer. More replicas improve fault tolerance for surviving individual node failures, but they don't reduce the likelihood of a partition occurring somewhere across a larger, more spread-out set of connections.",
+    "difficulty": "hard"
   }
 ]

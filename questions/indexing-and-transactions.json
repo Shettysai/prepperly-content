@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "How does an index speed up a query, and what's the cost of adding one?",
-    "answer_markdown": "An index (usually a B-tree) keeps a sorted structure pointing to where rows live, so the database can jump directly to matching values instead of scanning the whole table. The cost is that every insert, update, or delete on that table now also has to update the index, which slows down writes and uses extra storage. This is why you index columns you filter or sort by often, not every column indiscriminately.",
+    "prompt": "Why would adding a database index ever be a bad idea?",
+    "answer_markdown": "Every index speeds up reads that filter or sort using that column, but it also slows down every write to the table, since the index itself must be updated whenever a row is inserted, updated, or deleted. Adding indexes to a write-heavy table 'just in case' can hurt overall performance more than it helps, especially if the indexed columns are rarely used in actual queries.",
     "difficulty": "easy"
   },
   {
-    "prompt": "Explain what a dirty read and a non-repeatable read are, and which isolation levels prevent each.",
-    "answer_markdown": "A dirty read happens when a transaction reads data another transaction has changed but not yet committed — if that other transaction rolls back, you've read data that never really existed; Read Committed and above prevent this. A non-repeatable read happens when you read the same row twice in one transaction and get different values because another transaction committed a change in between; Repeatable Read and above prevent this by keeping a consistent snapshot for the whole transaction. This tests whether you understand isolation levels as solving distinct, specific problems rather than just being a vague strictness scale.",
+    "prompt": "What does the Atomicity guarantee in ACID actually mean, with a concrete example?",
+    "answer_markdown": "Atomicity means a transaction is all-or-nothing: either every operation inside it takes effect, or none of them do. In a money transfer between two accounts, atomicity guarantees that both the debit from one account and the credit to the other happen together, or neither happens at all — you never end up in a state where only one side of the transfer was applied.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is a dirty read, and which isolation level prevents it?",
+    "answer_markdown": "A dirty read happens when one transaction sees another transaction's uncommitted changes, which might later be rolled back and never actually take effect. Read Committed, and every stricter isolation level above it, prevents this by only ever showing data that has already been committed, never in-progress changes from another transaction.",
     "difficulty": "medium"
   },
   {
-    "prompt": "You have a table with millions of rows and queries are slow despite having an index on the filtered column. What could be wrong?",
-    "answer_markdown": "The index might not be selective enough — if the column has few distinct values (like a boolean), the database may decide a full table scan is actually cheaper than using the index. The query might also be using a function or type conversion on the indexed column (like `WHERE LOWER(email) = ...`), which prevents the database from using a plain index unless you create a matching expression index. Finally, the query planner's statistics might be stale, causing it to misjudge costs — running something like `ANALYZE` can help. This question checks real debugging instinct, not just knowing that indexes exist.",
+    "prompt": "Explain the 'two people booking the last seat' scenario and how the choice of isolation level changes the outcome.",
+    "answer_markdown": "Two transactions each read 'seats_remaining = 1' at nearly the same moment. Under Read Committed, reading doesn't block anyone, so both transactions can see the same value before either commits, and both proceed to decrement the count, causing the flight to be oversold by one seat. Under Serializable, the database detects that the two transactions conflict and forces one of them to fail with a serialization error, which the application must catch and retry, preventing the overselling but requiring the application to handle that retry logic.",
     "difficulty": "hard"
   },
   {
-    "prompt": "Why might using stricter isolation levels everywhere hurt performance?",
-    "answer_markdown": "Stricter isolation, like Serializable, forces the database to do more work to prevent transactions from interfering with each other, often through more locking or retry logic, which increases contention when many transactions run concurrently. This can even cause deadlocks or forced retries under heavy load, so most systems default to a looser level like Read Committed and only tighten it for the specific operations that truly need it.",
-    "difficulty": "easy"
+    "prompt": "Why can a B-tree index on a boolean column be far less useful than one on an email column?",
+    "answer_markdown": "A B-tree index works by letting the database narrow down a search quickly through a range of distinct, sorted values, similar to jumping to a specific letter in a phone book. A boolean column only has two possible values, so the index can only ever split the table roughly in half, still leaving a huge number of matching rows to scan through. An email column has many unique values, so the same index can narrow a search down to a single row almost immediately, making the index dramatically more effective there.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A team argues Serializable isolation should be used everywhere 'to be safe.' What's the real trade-off they're ignoring?",
+    "answer_markdown": "Serializable isolation forces transactions to behave as if they ran one after another with no overlap, which requires significant coordination between concurrent transactions and can cause otherwise valid transactions to fail with serialization conflicts under real load. Using it everywhere means the application must be written to detect and retry these failures correctly, and it sacrifices real throughput and latency even for data where a lower isolation level would have been perfectly safe, like a page view counter that nobody cares about being briefly imprecise.",
+    "difficulty": "hard"
   }
 ]

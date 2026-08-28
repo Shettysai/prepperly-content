@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "What is DNS and why can't we just use IP addresses directly?",
-    "answer_markdown": "DNS translates human-friendly domain names into IP addresses that computers actually use to route traffic. We could use raw IPs, but they're hard to remember, and more importantly the underlying IP behind a domain can change (new server, new data center, failover) without users needing to know or care — the domain name stays stable. This is the basic 'why' interviewers want before diving into caching and resolution chains.",
+    "prompt": "Walk through what happens, in order, when you type a URL into a browser.",
+    "answer_markdown": "First, DNS resolves the domain name to an IP address, checking the operating system cache, then a recursive resolver, then potentially the full chain of root, TLD, and authoritative servers if nothing is cached. Once the browser has an IP, it opens a TCP connection to that address, performing a TLS handshake first if the site uses HTTPS. It then sends an HTTP request and renders whatever response comes back. A load balancer may sit anywhere in front of the actual servers handling that request, invisibly deciding which backend machine responds.",
     "difficulty": "easy"
   },
   {
-    "prompt": "How would you design a system to route traffic to the closest or least-loaded server for users worldwide?",
-    "answer_markdown": "A common approach combines DNS-based geo-routing (returning different IPs based on the user's region) with load balancers in each region that distribute traffic across servers using least-connections or round robin, backed by health checks to route around failures. Some systems also use anycast, where the same IP address is announced from multiple locations and network routing naturally sends users to the nearest one. This tests whether you can combine DNS and load balancing as complementary layers rather than picking just one.",
+    "prompt": "What's the difference between an L4 and an L7 load balancer?",
+    "answer_markdown": "An L4 load balancer routes traffic based only on IP address and port, without looking at the actual content of the request, making it very fast but unable to make content-aware decisions. An L7 load balancer reads the actual HTTP request — its path, headers, and cookies — and can route intelligently based on that content, such as sending image requests to servers optimized for static files, at the cost of more processing per request.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does a load balancer know that a server is unhealthy?",
+    "answer_markdown": "It performs periodic health checks, typically sending a request to a dedicated endpoint like `/health` on each backend server. If a server fails to respond correctly or within a timeout, the load balancer stops routing new traffic to it until it starts responding successfully again. Without this mechanism, a load balancer would keep sending real user traffic to a server that's already dead.",
     "difficulty": "medium"
   },
   {
-    "prompt": "Why might lowering a DNS record's TTL before a planned migration be a good idea, and what's the trade-off?",
-    "answer_markdown": "A shorter TTL means caches expire sooner, so when you actually change the IP address during migration, clients pick up the new address faster and you minimize the window where some users still hit the old server. The trade-off is more frequent DNS lookups in the meantime, adding load to your DNS servers and slightly increasing latency for every cache miss. This question checks whether you understand TTL as a tunable trade-off between staleness and lookup overhead, not just a fixed setting.",
+    "prompt": "You update a DNS record to point to a new server, but some users keep hitting the old server for hours afterward. Explain why.",
+    "answer_markdown": "Every DNS answer carries a TTL (Time To Live), which tells resolvers how long they're allowed to cache that answer before re-checking it. Any resolver along the chain — your ISP's resolver, the operating system, even the browser — that cached the old answer will keep serving it until that TTL expires, regardless of what the authoritative server now says. If the record had a 24-hour TTL, some users could be stuck on the old, stale answer for up to a full day after the change.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why would a team lower a DNS record's TTL days before a planned server migration, rather than just updating the record on the day of the cutover?",
+    "answer_markdown": "A DNS record's existing TTL is already cached everywhere at its original, longer duration, so simply changing the TTL value the day of the migration doesn't retroactively shorten how long already-cached answers remain valid elsewhere. By lowering the TTL well in advance, the team ensures that by the time the actual cutover happens, any caches holding the old answer have already expired and refreshed under the new, short TTL. This means the real IP change propagates within minutes instead of being delayed by however long the original, longer TTL was.",
     "difficulty": "hard"
   },
   {
-    "prompt": "What's the difference between DNS-based load balancing and a dedicated load balancer?",
-    "answer_markdown": "DNS load balancing just returns different IP addresses to different clients for the same domain, with no awareness of which servers are actually healthy or busy right now. A dedicated load balancer actively tracks server health and load in real time and can react instantly, like removing a crashed server from rotation, which plain DNS cannot do because DNS answers are cached and don't update per-request.",
-    "difficulty": "easy"
+    "prompt": "Explain why DNS round robin is a weaker form of load balancing than a dedicated load balancer with health checks.",
+    "answer_markdown": "DNS round robin simply hands out different IP addresses from a fixed list to different clients or on different lookups, with no awareness of whether any given server is actually healthy, overloaded, or completely down. A dedicated load balancer actively tracks server health through checks and current load, and can immediately stop routing traffic to a failing server. With DNS round robin, a dead server can keep receiving a share of traffic until someone manually notices and removes it from the DNS record, and even then, cached answers elsewhere may still point to it until their TTL expires.",
+    "difficulty": "hard"
   }
 ]

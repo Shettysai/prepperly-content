@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "What's the core trade-off between relational and NoSQL databases?",
-    "answer_markdown": "Relational databases enforce a strict schema and strong ACID guarantees, which protects data integrity but can make scaling horizontally and handling varied data harder. NoSQL databases relax those guarantees (often following BASE, eventual consistency) in exchange for flexible schemas and easier horizontal scaling. The right choice depends on whether your data needs strict correctness (money, inventory) or benefits more from flexibility and scale (logs, feeds, catalogs).",
+    "prompt": "When would you choose NoSQL over a relational database?",
+    "answer_markdown": "You'd choose NoSQL when your data doesn't naturally fit a fixed schema, when you need to scale horizontally across many cheap servers rather than one large one, or when brief staleness is acceptable in exchange for speed and flexibility. A social media feed or a product catalog with wildly varying attributes per item are good examples, since forcing every item into identical rigid columns would either waste space or require constant schema migrations.",
     "difficulty": "easy"
   },
   {
-    "prompt": "You're designing a system for an e-commerce checkout. Would you use SQL or NoSQL, and why?",
-    "answer_markdown": "The order and payment data should live in a relational database, because you need ACID guarantees — you cannot charge a customer without confirming inventory was reserved, and a half-completed transaction (money taken, no order created) is unacceptable. However, product catalog data with wildly varying attributes per category, or session/cart data that's temporary and high-volume, is a reasonable fit for a NoSQL or key-value store. This tests whether you can split a real system into parts with different consistency needs rather than picking one database for everything.",
+    "prompt": "What does ACID actually guarantee, one letter at a time?",
+    "answer_markdown": "Atomicity means a transaction is all-or-nothing — either every operation inside it succeeds, or none of them take effect. Consistency means the database never ends up in a state that violates its defined rules, like a foreign key pointing to a row that doesn't exist. Isolation means concurrent transactions can't see each other's half-finished, uncommitted work. Durability means that once a transaction is confirmed, it survives even a crash immediately afterward.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Is NoSQL always faster than a relational database?",
+    "answer_markdown": "No. NoSQL databases are faster for the specific access patterns they're optimized for, such as simple key lookups, but a well-indexed relational query can easily outperform a poorly modeled NoSQL one. The real difference isn't raw speed — it's what guarantees and structural flexibility you're trading away in exchange for performance in a particular access pattern.",
     "difficulty": "medium"
   },
   {
-    "prompt": "How can a NoSQL database still offer transactions if it doesn't use the relational model?",
-    "answer_markdown": "Some NoSQL databases, like MongoDB, added multi-document ACID transactions by internally tracking a write-ahead log and locking mechanism similar in spirit to relational engines, though usually scoped more narrowly (e.g., within a single replica set) for performance reasons. This shows that ACID and the relational model are actually separate concepts — ACID is about transaction guarantees, while 'relational' is about how data is structured. Interviewers use this to see if you conflate the two.",
+    "prompt": "How do you handle relationships in a document database if there are no joins available?",
+    "answer_markdown": "You either embed related data directly inside a document, which makes reads fast but duplicates data that must then be kept in sync everywhere it appears, or you store a reference such as an ID and perform a second lookup to fetch the related document. Both require a deliberate design decision up front, unlike a relational database, which handles relationships natively through joins and foreign keys without duplicating anything.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A team embeds all of a user's blog comments directly inside that user's profile document in MongoDB, duplicating the commenter's display name in each one. Explain the problem this creates and how a relational design would avoid it.",
+    "answer_markdown": "If a user changes their display name, every single embedded comment across every post they ever commented on now needs to be found and updated individually, since the name was duplicated rather than referenced. A relational schema would instead store the user's name once in a `users` table and reference it by ID from a `comments` table, so a join always reflects the current name automatically, with no duplicate data to keep in sync anywhere.",
     "difficulty": "hard"
   },
   {
-    "prompt": "What does BASE stand for, and how is it different from ACID?",
-    "answer_markdown": "BASE stands for Basically Available, Soft state, Eventually consistent — it prioritizes staying up and responsive over guaranteeing every read immediately reflects the latest write, which is the opposite emphasis from ACID's strict correctness guarantees. Many NoSQL systems follow BASE because it lets them scale across many servers more easily than a strict ACID system can.",
-    "difficulty": "easy"
+    "prompt": "Someone claims 'NoSQL databases don't need a schema.' What's true and what's misleading about that statement?",
+    "answer_markdown": "It's true that the database itself doesn't enforce a fixed schema — you can insert documents with completely different shapes into the same collection without error. What's misleading is the implication that structure doesn't matter at all: your application code still has to agree on and maintain a consistent shape for the data it reads and writes, or you end up with inconsistent documents that are difficult to query reliably. The schema hasn't disappeared, it has just moved from being enforced by the database to being the application's own responsibility.",
+    "difficulty": "hard"
   }
 ]

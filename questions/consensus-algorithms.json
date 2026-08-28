@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "What problem do consensus algorithms like Raft and Paxos solve?",
-    "answer_markdown": "They let a group of servers agree on a single value or sequence of events even when messages can be delayed or lost and individual servers can crash. Without this, a cluster could end up with two servers both believing they're the leader, or disagreeing about what data was actually written, breaking the illusion of one consistent system. This is the foundation for things like leader election, distributed locks, and replicated logs in real systems.",
+    "prompt": "What problem does a consensus algorithm actually solve?",
+    "answer_markdown": "It lets a group of unreliable, network-connected servers agree on a single value or ordering of events, even when some servers crash or messages between them are delayed or lost. Without this, individual servers in a cluster could make contradictory decisions, like two servers both believing they're the leader, and the whole cluster would fail to behave as one coherent system.",
     "difficulty": "easy"
   },
   {
-    "prompt": "Why does Raft require a majority of nodes to agree before committing a write, instead of just one other node?",
-    "answer_markdown": "Requiring a majority guarantees that any two decisions must share at least one common node, which prevents two conflicting values from both being considered 'committed' at the same time — if 3 out of 5 nodes agreed on value A, no other group of 3 out of 5 could simultaneously agree on a different value B, because they'd have to overlap. This is what keeps the cluster's data safe even during leader crashes or network hiccups. This tests whether you understand the majority quorum as a correctness mechanism, not an arbitrary rule.",
+    "prompt": "Why did Raft get created when Paxos already existed and solved the same problem?",
+    "answer_markdown": "Paxos is provably correct but notoriously difficult to understand and implement safely and correctly in real systems, leading to many subtly buggy implementations in practice. Raft was explicitly designed for understandability, breaking the identical guarantees into three clearer, separated sub-problems — leader election, log replication, and safety — making it far easier for engineers to reason about and implement correctly.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why does Raft rely on a majority quorum, and why are clusters usually set up with an odd number of nodes?",
+    "answer_markdown": "A majority quorum ensures that any two decisions made by the cluster, such as two separate leader elections, must overlap on at least one common node, which is exactly what prevents two conflicting values from both being confirmed at once. An odd number of nodes, like 3 or 5, avoids wasting a node's worth of hardware, since 4 nodes tolerate the exact same single failure as 3 nodes do, but require one additional machine to achieve that same fault tolerance.",
     "difficulty": "medium"
   },
   {
-    "prompt": "A 5-node Raft cluster experiences a network partition that splits it into a group of 3 and a group of 2. What happens, and why is that the correct behavior?",
-    "answer_markdown": "The group of 3 still has a majority, so it can elect a leader (if needed) and continue accepting and committing writes normally. The group of 2 does not have a majority, so it cannot elect a leader or commit new writes — it will simply be unavailable for writes until the partition heals. This is the correct, intentional behavior because it prevents a 'split-brain' scenario where both groups might otherwise accept conflicting writes independently; the system chooses consistency over availability for the minority side, which is a direct real-world instance of the CP choice in CAP theorem.",
+    "prompt": "What happens if a 5-node Raft cluster suffers a network partition that splits it into a group of 3 and a group of 2?",
+    "answer_markdown": "The group of 3 still holds a majority of the entire 5-node cluster, so it can elect a new leader if needed and continue accepting writes normally. The group of 2 does not have a majority, so it correctly refuses to elect its own leader or accept any writes, even though it can't directly tell whether the other group is simply unreachable or has actually failed. This avoids a dangerous split-brain scenario where two separate leaders might both accept conflicting writes.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A candidate node's vote requests reach only 2 out of 4 other nodes in a 5-node cluster due to a partial network issue. Explain whether it becomes leader and why.",
+    "answer_markdown": "The candidate itself counts as one vote, so receiving 2 more votes gives it 3 total votes out of 5 nodes, which is exactly a majority (more than half of 5). It becomes leader. If instead only 1 of the 4 requests succeeded, the candidate would have only 2 total votes, falling short of the 3 needed for a majority, and it would not become leader — it would have to wait for its election timeout to expire and try again in a new term.",
     "difficulty": "hard"
   },
   {
-    "prompt": "How is consensus different from simple leader-follower replication?",
-    "answer_markdown": "Plain leader-follower replication has one leader accept writes and copy them to followers, but if the leader crashes right after accepting a write and before replicating it, that write can be lost with no formal guarantee. Consensus algorithms like Raft add a quorum requirement — a write only counts as committed once a majority of nodes have it — so it's guaranteed to survive even if the leader crashes immediately afterward.",
-    "difficulty": "easy"
+    "prompt": "Why is it a mistake to assume 'any majority of reachable nodes' is sufficient for a cluster to keep making progress?",
+    "answer_markdown": "The requirement is a majority of the total cluster size, not merely a majority of whichever nodes happen to be currently reachable from a given node's perspective during a partition. A minority group that can fully communicate among itself might mistakenly believe it has enough agreement to proceed, but if it doesn't hold a majority of the entire cluster, allowing it to make independent decisions risks a split-brain scenario where two separate groups both believe they're authorized to act, potentially producing conflicting, unrecoverable results.",
+    "difficulty": "hard"
   }
 ]

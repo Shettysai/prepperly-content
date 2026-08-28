@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "What's the difference between replication and partitioning, and why do most large systems use both?",
-    "answer_markdown": "Replication copies the same data across multiple servers for redundancy and to spread out read traffic; partitioning splits the dataset into distinct pieces so no single server has to store or serve all of it. They solve different problems — safety/read-scale versus storage/write-scale — so large systems typically shard their data into partitions and then replicate each partition, getting both benefits simultaneously.",
+    "prompt": "What's the difference between replication and partitioning?",
+    "answer_markdown": "Replication copies the same data onto multiple servers, primarily for redundancy and to spread out read traffic. Partitioning, also called sharding, splits data into different pieces across servers so each one only holds a slice of the total dataset, which is how systems scale storage capacity and write throughput beyond what a single machine could handle.",
     "difficulty": "easy"
   },
   {
-    "prompt": "You're designing a sharded database for a global chat app and pick 'user ID modulo number of shards' as the partition key. What could go wrong when you add more shard servers later?",
-    "answer_markdown": "Changing the number of shards changes the modulo result for almost every user ID, meaning nearly all data would suddenly map to a different shard than where it actually lives, requiring a massive, disruptive reshuffling of data. This is exactly the problem consistent hashing solves — it's designed so that adding or removing a shard only remaps a small fraction of keys instead of nearly all of them. This question checks whether you understand why naive modulo-based sharding breaks down under real operational change.",
+    "prompt": "What happens if the leader fails in a leader-follower replication setup?",
+    "answer_markdown": "One of the followers is promoted to become the new leader, often automatically through a health check and election process, and the remaining followers begin replicating from the newly promoted leader. Any writes that had been confirmed by the old leader but hadn't yet reached a follower before the crash can be lost in this process, which is a real trade-off inherent to this design.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What's a real downside of sharding you should mention in an interview?",
+    "answer_markdown": "Queries that need to span multiple shards, such as 'find all orders above one hundred dollars across all users,' become significantly harder and slower to execute, since you either have to query every shard individually and merge the results in application code, or maintain a separate cross-shard index specifically to support that kind of lookup. This is a real operational cost that doesn't exist in a single, unsharded database.",
     "difficulty": "medium"
   },
   {
-    "prompt": "In leader-follower replication, how would you handle a client that writes data and then immediately reads it back, if the read might hit a lagging follower?",
-    "answer_markdown": "This is the 'read-your-writes' consistency problem. Common fixes include routing that specific read back to the leader for a short window after a write, tracking a version/timestamp with the write and having the client wait until a follower's replicated version catches up to it, or sticking a client to the same replica it just wrote to for a period of time. Each approach trades off some read-scaling benefit to guarantee the user doesn't see their own change appear to vanish, which is exactly the kind of consistency-vs-performance trade-off interviewers want you to reason through out loud.",
+    "prompt": "Why is `hash(key) % shardCount` a poor long-term sharding strategy, and what's used instead?",
+    "answer_markdown": "Changing the number of shards changes the modulo result for almost every existing key, meaning nearly all the data has to be physically moved to different servers all at once whenever the cluster is resized. Consistent hashing solves this by mapping both servers and keys onto a conceptual ring, so adding or removing a single server only reshuffles the small slice of keys nearest to it on the ring, rather than the entire dataset.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A system partitions user data by signup date, and most active traffic comes from users who signed up in the last month. Diagnose the problem this creates.",
+    "answer_markdown": "This creates a 'hot' shard: because most active traffic belongs to recently signed-up users, and those users are concentrated on the newest shard, that one shard absorbs a disproportionate share of the system's total load while older shards sit comparatively idle. The fix is choosing a partition key that spreads both data and active traffic more evenly, such as a hash of the user ID, rather than one that correlates with which users happen to be currently active.",
     "difficulty": "hard"
   },
   {
-    "prompt": "Why might reading data right after writing it show stale results in a replicated system?",
-    "answer_markdown": "If the write goes to the leader but the read is served by a follower, there's a small window where the follower hasn't yet received the update, a delay called replication lag. This is why systems that need 'read your own writes' behavior often route a user's reads back to the leader for a short period after they write, rather than immediately trusting any follower.",
-    "difficulty": "easy"
+    "prompt": "Explain why replication alone does not solve the write-scaling problem, even with many followers.",
+    "answer_markdown": "In a leader-follower setup, every write still has to go through the single leader, since followers only replicate the leader's changes and typically don't accept writes of their own. No matter how many followers you add to spread out read traffic, the leader remains a single bottleneck for all writes. Only partitioning, which spreads the actual dataset and its associated write load across multiple independent leaders, addresses write scaling directly.",
+    "difficulty": "hard"
   }
 ]

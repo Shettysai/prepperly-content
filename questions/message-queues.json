@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "Why would you put a message queue between a web server and an email-sending service instead of calling it directly?",
-    "answer_markdown": "Calling the email service directly means the web request has to wait for the email to actually send, and if the email service is slow or down, the request fails or hangs. Putting a queue in between lets the web server just drop a 'send this email' message and respond to the user immediately, while a separate consumer processes emails whenever it's ready, retrying on failure without affecting the user-facing request at all. This decoupling is the core reason queues exist in almost every backend system.",
+    "prompt": "Why would you introduce a message queue between two services instead of calling one directly?",
+    "answer_markdown": "A queue decouples the two services in both time and load: the caller doesn't have to wait for the receiver to be ready or fast enough to keep up. Sudden traffic spikes get absorbed and smoothed out by the queue instead of overwhelming the receiver directly, and if the receiver crashes, messages simply wait safely in the queue instead of being lost, since there's no direct, synchronous dependency between the two sides.",
     "difficulty": "easy"
   },
   {
-    "prompt": "Your system uses at-least-once delivery and you notice a payment gets charged twice for the same order. How would you fix this without switching to exactly-once delivery?",
-    "answer_markdown": "You'd make the consumer idempotent by tracking which message IDs (or order IDs) have already been processed, typically storing a unique key in the database with a constraint that prevents processing the same one twice — so even if the same message arrives again due to a retry, the second attempt is recognized as a duplicate and safely ignored. This is generally preferred over chasing exactly-once delivery, which is expensive and still often implemented as at-least-once plus idempotency under the hood anyway.",
+    "prompt": "What's the difference between a point-to-point queue and publish/subscribe?",
+    "answer_markdown": "A point-to-point queue delivers each individual message to exactly one consumer out of a pool, which is ideal for distributing units of work across multiple workers without duplicating effort. Publish/subscribe instead broadcasts each message to every subscriber interested in that topic, which is ideal for notifying multiple independent services that all need to react to the same single event.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "When would you choose Kafka over a traditional message queue like RabbitMQ?",
+    "answer_markdown": "Kafka is a better fit when you need a durable, replayable log of events that multiple independent consumers can each read at their own pace, such as an analytics pipeline where different systems process the same event stream differently and at different times. A traditional queue like RabbitMQ is better suited to situations where each message should be consumed exactly once by a single worker and then removed, such as classic background job processing.",
     "difficulty": "medium"
   },
   {
-    "prompt": "You need to broadcast an 'order placed' event to five different services (email, inventory, analytics, fraud check, loyalty points), but analytics needs to reprocess the last 24 hours of events after a bug fix. How would you design this?",
-    "answer_markdown": "A pub/sub pattern fits the broadcast requirement, but analytics' need to reprocess history points toward a log-based system like Kafka rather than a traditional fire-and-forget queue — Kafka retains messages for a configurable period and lets each consumer track its own read position (offset), so analytics can simply rewind its offset and reprocess the last 24 hours without affecting the other four consumers at all. A classic queue that deletes messages after delivery couldn't support this replay requirement without extra plumbing. This tests whether you can match a queuing technology to a requirement beyond just 'send a message.'",
+    "prompt": "How do you prevent duplicate side effects when using an at-least-once delivery guarantee?",
+    "answer_markdown": "You make the consumer idempotent by giving each message a unique identifier and having the consumer check whether it has already successfully processed that specific identifier before acting on it again. This way, if the queue redelivers the same message — for example, because the consumer crashed after doing the work but before acknowledging it — reprocessing it produces the same end result as processing it once, rather than a harmful duplicate effect like charging a card twice.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A payment consumer successfully charges a customer's card but crashes before acknowledging the message. Explain what happens next under at-least-once delivery, and how to prevent the resulting bug.",
+    "answer_markdown": "Because the queue never received an acknowledgment, it assumes the message was never processed and redelivers it to another available consumer, which then charges the same card a second time for the same purchase. This is prevented not by trying to achieve a perfect exactly-once guarantee, which is expensive and still has edge cases, but by making the charge operation idempotent: recording a unique identifier for each payment attempt and checking whether that specific identifier has already been successfully charged before processing it again.",
     "difficulty": "hard"
   },
   {
-    "prompt": "What happens if consumers can't keep up with producers, and how do you prevent it from breaking the system?",
-    "answer_markdown": "The queue keeps growing as messages pile up faster than they're processed, which can eventually exhaust memory or disk on the queue itself if left unchecked. You prevent this with backpressure (slowing or rejecting producers once the queue is too full), autoscaling the number of consumers, or monitoring queue depth so you catch the imbalance before it becomes an outage.",
-    "difficulty": "easy"
+    "prompt": "A team uses publish/subscribe to distribute image-processing jobs across a pool of ten workers, expecting the work to be spread evenly. What goes wrong, and what should they use instead?",
+    "answer_markdown": "Publish/subscribe broadcasts every message to every subscriber, so all ten workers would each receive and process the same image job independently, resulting in the same work being duplicated ten times over rather than being distributed. They should use a point-to-point queue instead, where each message is delivered to exactly one consumer from the pool, ensuring each image is processed by only one worker.",
+    "difficulty": "hard"
   }
 ]

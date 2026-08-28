@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "Why does a video call use UDP instead of TCP?",
-    "answer_markdown": "Video calls value low latency over perfect delivery — if a frame is lost, retransmitting it via TCP would arrive too late to be useful, causing lag and buffering instead. UDP lets the app just drop that frame and keep playing the next ones smoothly. This is a classic trade-off question testing whether you understand that 'reliable' isn't always 'better' — it depends on what the application actually needs.",
+    "prompt": "Walk through the TCP three-way handshake and explain why it exists.",
+    "answer_markdown": "The client sends a SYN packet meaning 'I want to start a connection.' The server replies with SYN-ACK, meaning 'acknowledged, and I want to start one too.' The client replies with ACK, confirming both sides are ready. Only after this exchange does either side send real application data. It exists so both machines explicitly agree the connection is open before committing any real data, avoiding a situation where one side thinks a connection exists and starts sending while the other isn't listening yet.",
     "difficulty": "easy"
   },
   {
-    "prompt": "Explain the TCP three-way handshake and what happens if the final ACK is lost.",
-    "answer_markdown": "Client sends SYN, server responds SYN-ACK, client responds ACK — after this the connection is considered established on both sides. If the final ACK is lost, the server is left in a half-open state waiting; it will typically retransmit its SYN-ACK until it times out and gives up, since it never confirmed the client is ready. Interviewers use the follow-up about lost ACKs to check you understand this isn't just a memorized sequence but has real failure-handling behind it.",
+    "prompt": "Why would you ever choose UDP over TCP, given that UDP offers no delivery guarantees?",
+    "answer_markdown": "You choose UDP when low latency matters more than perfect delivery, such as live video calls, gaming, or DNS lookups. In these cases, a slightly stale or missing update is far less harmful than the delay TCP would introduce while retransmitting and waiting for acknowledgment of lost data. By the time a retransmitted video frame arrives, the moment it represented has already passed, making the retransmission pointless anyway.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does TCP know a packet was lost, and what does it do about it?",
+    "answer_markdown": "TCP numbers every byte of data with a sequence number as it's sent. The receiver sends back acknowledgments (ACKs) confirming what it has received so far. If the sender doesn't receive an ACK within a timeout window, it assumes the corresponding data was lost in transit and retransmits it. This sequence numbering also lets the receiver reorder any packets that arrived out of sequence before handing the data up to the application.",
     "difficulty": "medium"
   },
   {
-    "prompt": "How can a UDP-based application build reliability on top of an inherently unreliable protocol?",
-    "answer_markdown": "It implements its own sequence numbers, acknowledgments, and retransmission logic at the application layer — essentially reinventing parts of TCP but with more control over the trade-offs. This is exactly what protocols like QUIC (which HTTP/3 uses) do: they run over UDP but add their own reliability and congestion control, avoiding some of TCP's head-of-line blocking issues. This question tests whether you know reliability is a layer you can choose to add, not something inherent to a transport protocol.",
+    "prompt": "What is head-of-line blocking in TCP, and why does it matter for real-time applications?",
+    "answer_markdown": "Head-of-line blocking happens when one lost or delayed packet forces every packet behind it — even ones that already arrived successfully — to wait, because TCP must deliver data to the application in the correct order. For a real-time game sending frequent position updates, this means one lost packet can freeze the whole stream of newer updates until the lost one is retransmitted and confirmed, causing a visible stall followed by a jump. This is a core reason latency-sensitive applications prefer UDP, where a lost packet simply doesn't block anything that came after it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A game developer says 'we send player positions over UDP and only care about the latest one.' Explain why this design choice makes sense given how TCP would behave in the same situation.",
+    "answer_markdown": "If position updates were sent over TCP and one packet was lost, TCP would block delivery of every subsequent, already-arrived position update until the lost one was retransmitted and acknowledged — a real stall in the middle of gameplay. With UDP, a lost position update is simply gone, and the next one arrives immediately; since only the most recent position actually matters for rendering the game, discarding a stale one and keeping the freshest is strictly better than pausing to guarantee delivery of an update that would already be outdated by the time it arrived.",
     "difficulty": "hard"
   },
   {
-    "prompt": "What's the difference between an IP address and a port number?",
-    "answer_markdown": "An IP address identifies a specific machine on a network, while a port number identifies which specific application or service on that machine should receive the data. This is why a server can run a web server on port 80 and a database on port 5432 at the same IP address without them interfering — the OS uses the port to route incoming data to the right process.",
-    "difficulty": "easy"
+    "prompt": "Why does DNS typically use UDP for its queries but fall back to TCP for certain responses?",
+    "answer_markdown": "Most DNS queries and responses are small enough to fit in a single UDP packet, so UDP's lack of handshake overhead makes lookups fast, which matters since DNS resolution happens before almost every network request. However, some responses — like ones carrying many records, or using DNSSEC — exceed the size a single UDP packet can reliably carry, so DNS falls back to TCP for those larger exchanges, trading some speed for TCP's reliable delivery of larger payloads.",
+    "difficulty": "hard"
   }
 ]

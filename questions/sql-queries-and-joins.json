@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "What's the difference between an INNER JOIN and a LEFT JOIN, with an example?",
-    "answer_markdown": "An INNER JOIN only returns rows where both tables have a matching value, so joining customers to orders would exclude any customer who never placed an order. A LEFT JOIN keeps every row from the left table (customers) no matter what, filling in NULLs for order columns when there's no match, so you can see customers with zero orders too. The choice matters a lot for reports — using INNER JOIN by mistake can silently hide rows you actually needed to see.",
+    "prompt": "What's the difference between INNER JOIN and LEFT JOIN?",
+    "answer_markdown": "INNER JOIN only returns rows where both tables have a matching value, dropping any row that lacks a match on the other side entirely. LEFT JOIN keeps every row from the left table regardless of whether a match exists, filling in NULL for any columns from the right table where no match was found. This means INNER JOIN can silently omit rows, while LEFT JOIN guarantees the left table's rows all appear in the result.",
     "difficulty": "easy"
   },
   {
-    "prompt": "Write a query to find the top 3 customers by total amount spent, and explain each clause.",
-    "answer_markdown": "You'd JOIN customers to orders on the foreign key, GROUP BY customer to collapse their orders into one row per customer, use SUM(orders.amount) as an aggregate to total their spending, ORDER BY that sum descending, and LIMIT 3 to keep only the top results. Example: `SELECT customers.name, SUM(orders.amount) AS total FROM customers JOIN orders ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY total DESC LIMIT 3;`. This tests whether you can combine filtering, joining, grouping, and ordering in one coherent query rather than just knowing each clause in isolation.",
+    "prompt": "What does GROUP BY do, and why does it require aggregate functions for other selected columns?",
+    "answer_markdown": "GROUP BY collapses multiple rows that share a common value into a single summary row. Because multiple original rows are being merged into one, any column you select that isn't part of the grouping needs a rule for how to combine its multiple underlying values — that's what aggregate functions like COUNT, SUM, or AVG provide. Without one, the database wouldn't know which of several possible values to display for that column.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you find all customers who have never placed an order, using a join?",
+    "answer_markdown": "Use a LEFT JOIN from customers to orders, then filter with `WHERE orders.id IS NULL`. The LEFT JOIN keeps every customer row even without a matching order, filling the order columns with NULL when there's no match, and filtering for that NULL isolates exactly the customers who had no matching row on the orders side.",
     "difficulty": "medium"
   },
   {
-    "prompt": "Why can a query with GROUP BY and HAVING be much slower than one using only WHERE, and how would you optimize it?",
-    "answer_markdown": "WHERE filters rows before any grouping or aggregation happens, so the database does less work overall; HAVING runs after grouping, meaning the database must first aggregate potentially large amounts of data before throwing rows away. To optimize, push as much filtering as possible into WHERE so fewer rows ever reach the GROUP BY step, and make sure the columns used in WHERE and the join conditions are indexed so the database isn't scanning entire tables to find matches. This question checks whether you think about query performance, not just correctness.",
+    "prompt": "Why doesn't `WHERE column != NULL` work the way most beginners expect?",
+    "answer_markdown": "NULL represents an unknown value in SQL, and under SQL's three-valued logic, no value — including NULL itself — is ever considered equal or unequal to NULL using standard comparison operators. Comparing anything to NULL with `=` or `!=` always evaluates to unknown rather than true or false, so the row is excluded either way. You have to use `IS NULL` or `IS NOT NULL` instead, which are specifically designed to test for the presence or absence of a value.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A report using INNER JOIN between customers and orders looks correct but is missing several known customers. Diagnose the likely cause and the fix.",
+    "answer_markdown": "The likely cause is that those missing customers have never placed any orders, so an INNER JOIN — which only returns rows with a match on both sides — silently excludes them from the result with no error or warning. The fix is to switch to a LEFT JOIN from customers to orders, which keeps every customer row regardless of whether they have any matching orders, filling in NULLs for the order-related columns where there's no match.",
     "difficulty": "hard"
   },
   {
-    "prompt": "What's the difference between WHERE and HAVING, with a simple example?",
-    "answer_markdown": "WHERE filters individual rows before any grouping happens, so `WHERE amount > 100` keeps only orders over $100 before anything is summarized. HAVING filters after GROUP BY has aggregated rows, so `HAVING COUNT(*) > 5` keeps only groups (like customers) with more than 5 matching rows. You can't use HAVING for row-level filters or WHERE for aggregate filters, because at the point WHERE runs, the aggregation hasn't happened yet.",
-    "difficulty": "easy"
+    "prompt": "Explain why joining two tables on a name column instead of a foreign key ID is risky, even if it seems to work in testing.",
+    "answer_markdown": "Names can collide between different real-world entities, differ in casing or spacing, or contain typos, any of which would cause a join to either miss a real match or incorrectly match two different records. A foreign key ID, by contrast, is guaranteed unique and stable by the database's own constraints, making it the reliable choice for joins. Testing with clean, small, hand-picked data can hide this risk, since it often lacks the messy duplicate or near-duplicate names that show up in real production data.",
+    "difficulty": "hard"
   }
 ]

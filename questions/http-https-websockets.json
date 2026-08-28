@@ -1,22 +1,32 @@
 [
   {
-    "prompt": "Why is HTTP described as stateless, and how do apps work around that?",
-    "answer_markdown": "Each HTTP request/response pair is independent by design — the server doesn't automatically remember previous requests from the same client. Apps work around this using cookies (a token the browser sends back automatically) or auth headers like a JWT, which the server uses to look up who is making the request. This matters because it's the reason sessions, cookies, and tokens exist at all in web development.",
+    "prompt": "What's the difference between HTTP and HTTPS?",
+    "answer_markdown": "HTTPS is HTTP wrapped in TLS (Transport Layer Security) encryption. The request and response model — methods, status codes, headers, bodies — is identical between the two. What HTTPS adds is a TLS handshake before any HTTP data is sent, which encrypts everything in transit so it can't be read or tampered with by anyone on the network path, and it also verifies the server's identity via a certificate issued by a trusted authority.",
     "difficulty": "easy"
   },
   {
-    "prompt": "When would you choose a WebSocket over a REST API, and what are the trade-offs?",
-    "answer_markdown": "Choose a WebSocket when you need frequent, low-latency, two-way updates — chat, live prices, collaborative editing — where polling a REST endpoint would be wasteful or too slow. The trade-off is complexity: WebSocket connections are stateful, so you need to handle reconnects, scale connections across servers (often needing sticky sessions or a shared pub/sub layer), and manage backpressure yourself, none of which a simple REST API needs to worry about.",
+    "prompt": "Why use a WebSocket instead of having the client poll the server every few seconds?",
+    "answer_markdown": "Polling means the client repeatedly asks 'anything new?' even when the answer is almost always no, wasting bandwidth and server capacity on requests that accomplish nothing. It also adds latency, since new data is only as fresh as the last poll interval. A WebSocket keeps one connection open and lets the server push data the instant it's available, eliminating both the wasted requests and the polling delay — ideal for chat, live dashboards, and anything needing near-instant updates.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does a WebSocket connection actually get established?",
+    "answer_markdown": "It begins as a completely normal HTTP request, but carries a special `Upgrade: websocket` header. If the server supports and agrees to the upgrade, it responds with HTTP status 101 (Switching Protocols). From that point on, the same underlying TCP connection stops speaking HTTP and stays open indefinitely, letting either side send messages at any time without issuing a new request each time.",
     "difficulty": "medium"
   },
   {
-    "prompt": "What actually happens during a TLS handshake in HTTPS, at a high level?",
-    "answer_markdown": "The client and server first agree on encryption methods, the server presents a certificate proving its identity (signed by a trusted certificate authority), and both sides use public-key cryptography to securely agree on a shared secret key without ever sending that key in plain text. From then on, they encrypt all traffic with that shared key, which is much faster than public-key encryption for every message. Interviewers ask this to see if you understand HTTPS isn't just 'HTTP plus a padlock icon' but a real cryptographic handshake with identity verification.",
+    "prompt": "What do the different HTTP status code ranges signify, and why does that categorization matter?",
+    "answer_markdown": "2xx codes mean success. 3xx codes mean the client should look elsewhere, typically a redirect. 4xx codes mean the client's request itself was invalid in some way, like requesting a resource that doesn't exist (404). 5xx codes mean the server failed to properly handle an otherwise valid request. This categorization matters because it tells you where to look when debugging: 4xx points you at the request being sent, while 5xx points you at the server's own logic or infrastructure.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A live chat feature currently polls the server every 2 seconds. Explain, with a concrete scale argument, why switching to WebSockets would matter at 10,000 concurrent users.",
+    "answer_markdown": "At 2-second polling intervals with 10,000 users, the server receives roughly 5,000 requests per second, the overwhelming majority of which return 'nothing new,' each still paying for a full HTTP request's overhead including headers and, for HTTPS, potentially re-using or re-negotiating a TLS session. Switching to one WebSocket per user eliminates nearly all of that wasted traffic — the server only sends data the instant a message actually exists, and messages appear in milliseconds instead of up to 2 seconds late. The trade-off is that the server must now hold 10,000 simultaneous open connections rather than handling brief, stateless bursts, changing capacity planning from 'requests per second' to 'concurrent open connections.'",
     "difficulty": "hard"
   },
   {
-    "prompt": "What does it mean that HTTP is stateless, and why does that matter?",
-    "answer_markdown": "It means the server treats every request independently and has no built-in memory of previous requests from the same client. This is why apps need cookies, sessions, or tokens to recognize a returning user — without one of those, the server would have no way to know you're the same person who just logged in a moment ago.",
-    "difficulty": "easy"
+    "prompt": "Does HTTPS make an application fully secure? Explain what it does and does not protect against.",
+    "answer_markdown": "No. HTTPS only protects data while it's in transit between the client and server, preventing eavesdropping or tampering by anyone on the network path, and it confirms the server's identity via its certificate. It does nothing to protect against vulnerabilities in the server's own code, such as SQL injection, broken authentication logic, or a server that stores passwords in plain text. Input validation, proper authentication, and secure server-side coding practices are still entirely the application's own responsibility.",
+    "difficulty": "hard"
   }
 ]
