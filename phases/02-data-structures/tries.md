@@ -136,4 +136,4 @@ console.log(trie2.startsWith('car')); // true — correct, but is "car" itself a
 
 ## Where to go next
 
-You've now covered every core data structure in this phase. From here, move to **Phase 3: Algorithms**, where these structures become the building blocks for searching, sorting, and traversal techniques you'll apply on top of them.
+You've now covered every core data structure in this chapter. From here, move to **Chapter 3: Algorithms**, where these structures become the building blocks for searching, sorting, and traversal techniques you'll apply on top of them.

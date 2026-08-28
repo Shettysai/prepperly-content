@@ -127,4 +127,4 @@ console.log('😀'.length);             // 2 — .length still counts raw code u
 
 ## Where to go next
 
-That completes Phase 1. From here, move to Phase 2's data structures topics — arrays and strings are where the bit-level and encoding details from this topic meet the algorithmic techniques (two pointers, sliding windows) that build on everything covered so far.
+That completes Chapter 1. From here, move to Chapter 2's data structures topics — arrays and strings are where the bit-level and encoding details from this topic meet the algorithmic techniques (two pointers, sliding windows) that build on everything covered so far.

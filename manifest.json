@@ -3,7 +3,7 @@
   "phases": [
     {
       "slug": "cs-fundamentals",
-      "name": "Phase 1: CS Fundamentals",
+      "name": "Chapter 1: CS Fundamentals",
       "position": 1,
       "targetMonth": 1,
       "topics": [
@@ -95,13 +95,13 @@
           "position": 10,
           "path": "phases/01-cs-fundamentals/string-manipulation.md",
           "questionsPath": "questions/string-manipulation.json",
-          "sha256": "b20ac1ce2678a0a63c5c91d46b3efd3e4f1ff1c56a57d3521e57b7e74af8cb8b"
+          "sha256": "e967e1ca3a3184ea9d0c510ad7659fec5844efc0cfa0aa254f69ac7f115c9a10"
         }
       ]
     },
     {
       "slug": "data-structures",
-      "name": "Phase 2: Data Structures",
+      "name": "Chapter 2: Data Structures",
       "position": 2,
       "targetMonth": 2,
       "topics": [
@@ -112,7 +112,7 @@
           "position": 1,
           "path": "phases/02-data-structures/arrays-and-strings.md",
           "questionsPath": "questions/arrays-and-strings.json",
-          "sha256": "7cd4a03ab8dd9373c219856d5ea89957935be937dc7d783f5c17cb629edd87c0"
+          "sha256": "9f2a2a38850eca164fbec0f38cb5f7eaf212ad287c48404c0aff44380f1e074e"
         },
         {
           "slug": "binary-search-trees",
@@ -166,7 +166,7 @@
           "position": 7,
           "path": "phases/02-data-structures/queues.md",
           "questionsPath": "questions/queues.json",
-          "sha256": "e437ad98a1d6c2fd4d78411604e1207d74cbf0ead9537269c6b493e1d8bdecaf"
+          "sha256": "d1e6d1a6551048655f5766b0cef7644e3f7b8560f56f6deb28f85f04a872fa6a"
         },
         {
           "slug": "stacks",
@@ -193,13 +193,13 @@
           "position": 10,
           "path": "phases/02-data-structures/tries.md",
           "questionsPath": "questions/tries.json",
-          "sha256": "f8fd49cd372e8242e2084fd2a4eed9d84243024c134fcf0906ecafde968d8a5f"
+          "sha256": "b6dc6ce941927cf47c466f72c88590a4521925e84504e11d18246c3c8bfc9198"
         }
       ]
     },
     {
       "slug": "algorithms",
-      "name": "Phase 3: Algorithms",
+      "name": "Chapter 3: Algorithms",
       "position": 3,
       "targetMonth": 3,
       "topics": [
@@ -291,13 +291,13 @@
           "position": 10,
           "path": "phases/03-algorithms/two-pointers-sliding-window.md",
           "questionsPath": "questions/two-pointers-sliding-window.json",
-          "sha256": "f43ea14e441e33aaab3d87a3b18839bc8bdd38e2dfb0efcdfa81986a7c2c6444"
+          "sha256": "d70707626585f7199eb8b88e5cca5ffff89695a5cc37c0d1e1f764ada3794561"
         }
       ]
     },
     {
       "slug": "networking",
-      "name": "Phase 4: Networking",
+      "name": "Chapter 4: Networking",
       "position": 4,
       "targetMonth": 4,
       "topics": [
@@ -341,7 +341,7 @@
     },
     {
       "slug": "databases",
-      "name": "Phase 5: Databases",
+      "name": "Chapter 5: Databases",
       "position": 5,
       "targetMonth": 5,
       "topics": [
@@ -370,7 +370,7 @@
           "position": 3,
           "path": "phases/05-databases/relational-vs-nosql.md",
           "questionsPath": "questions/relational-vs-nosql.json",
-          "sha256": "65afe1057d9e4ee06a6b78c45267384d0bc6782d9605eb0574c040d85323e747"
+          "sha256": "f3d0cb5c6812e283eb48237c603bc4ce1e1a19c7f14e25b6546c031ac7d7c092"
         },
         {
           "slug": "sql-queries-and-joins",
@@ -385,7 +385,7 @@
     },
     {
       "slug": "distributed-systems",
-      "name": "Phase 6: Distributed Systems",
+      "name": "Chapter 6: Distributed Systems",
       "position": 6,
       "targetMonth": 6,
       "topics": [
@@ -429,7 +429,7 @@
     },
     {
       "slug": "system-design",
-      "name": "Phase 7: System Design",
+      "name": "Chapter 7: System Design",
       "position": 7,
       "targetMonth": 7,
       "topics": [
@@ -482,7 +482,7 @@
     },
     {
       "slug": "node-js",
-      "name": "Phase 8: Node.js",
+      "name": "Chapter 8: Node.js",
       "position": 8,
       "targetMonth": 8,
       "topics": [
@@ -502,7 +502,7 @@
           "position": 2,
           "path": "phases/08-node-js/event-loop-and-async-io.md",
           "questionsPath": "questions/event-loop-and-async-io.json",
-          "sha256": "36325222c6b4f58a8adfab59d4ad4d46279cef0bfbc435c12cd6078586ae7acd"
+          "sha256": "2a27d46fd6a744bf6947141467bbbae125531b696393105d527085fe4344a221"
         },
         {
           "slug": "security-best-practices",
@@ -535,7 +535,7 @@
     },
     {
       "slug": "backend-engineering",
-      "name": "Phase 9: Backend Engineering",
+      "name": "Chapter 9: Backend Engineering",
       "position": 9,
       "targetMonth": 9,
       "topics": [
@@ -555,7 +555,7 @@
           "position": 2,
           "path": "phases/09-backend-engineering/cicd-pipelines.md",
           "questionsPath": "questions/cicd-pipelines.json",
-          "sha256": "d5699791528425bc74dae92d7e238919871cfd8204d00f748c320ace101e951a"
+          "sha256": "9155b579d297d7110ea341d8fea265bc0b5c88b001fbe61bcbdade980c0146f6"
         },
         {
           "slug": "docker-containerization",
@@ -579,7 +579,7 @@
     },
     {
       "slug": "interview-skills",
-      "name": "Phase 10: Interview Skills",
+      "name": "Chapter 10: Interview Skills",
       "position": 10,
       "targetMonth": 10,
       "topics": [
@@ -590,7 +590,7 @@
           "position": 1,
           "path": "phases/10-interview-skills/mock-interviews-behavioral.md",
           "questionsPath": "questions/mock-interviews-behavioral.json",
-          "sha256": "8a20475bde617e8bbdfa366ad41aa8d31a9ac971033fa7e0f068cac57bf02acd"
+          "sha256": "972f9f60d9695c4f9e9ad1c3685a6daab89b155e6a5be574543e1140e2021936"
         },
         {
           "slug": "mock-interviews-technical",

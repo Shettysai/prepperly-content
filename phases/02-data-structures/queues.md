@@ -146,4 +146,4 @@ Each `shift()` re-indexes every remaining element, so draining 100,000 items cos
 
 ## Where to go next
 
-`hash-tables` — a different kind of building block: instead of ordering items by arrival, a hash table organizes them for near-instant lookup by key, which is the next major idea in this phase.
+`hash-tables` — a different kind of building block: instead of ordering items by arrival, a hash table organizes them for near-instant lookup by key, which is the next major idea in this chapter.

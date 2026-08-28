@@ -139,4 +139,4 @@ On `[1, 3, 4, 6, 9]` looking for `10`: start at `left=0 (1), right=4 (9)`, sum i
 
 ## Where to go next
 
-You've now covered the full toolkit of Phase 3. `hash-tables` (in `02-data-structures`) pairs especially well with sliding window problems — many variable-window solutions use a hash map to track what's currently "inside" the window in O(1).
+You've now covered the full toolkit of Chapter 3. `hash-tables` (in `02-data-structures`) pairs especially well with sliding window problems — many variable-window solutions use a hash map to track what's currently "inside" the window in O(1).

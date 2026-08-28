@@ -121,4 +121,4 @@ The honest version is harder to say out loud precisely because the Result isn't 
 
 ## Where to go next
 
-This closes Phase 10. Return to `resume-review` to prepare a fresh application, or revisit `mock-interviews-technical` and `whiteboarding-practice` — behavioral prep is usually the last skill sharpened before a real interview loop, not the first.
+This closes Chapter 10. Return to `resume-review` to prepare a fresh application, or revisit `mock-interviews-technical` and `whiteboarding-practice` — behavioral prep is usually the last skill sharpened before a real interview loop, not the first.

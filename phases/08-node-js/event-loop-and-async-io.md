@@ -19,7 +19,7 @@ links:
 ---
 ## Before you start
 
-You should be comfortable with JavaScript functions, callbacks, and Promises — if `.then()` and `async/await` are unfamiliar, get comfortable with those first. No topic in this repo is a strict prerequisite, but this is the foundation the rest of Phase 8 builds on.
+You should be comfortable with JavaScript functions, callbacks, and Promises — if `.then()` and `async/await` are unfamiliar, get comfortable with those first. No topic in this repo is a strict prerequisite, but this is the foundation the rest of Chapter 8 builds on.
 
 ## In one sentence
 

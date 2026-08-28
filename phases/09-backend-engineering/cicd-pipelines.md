@@ -141,4 +141,4 @@ Neither technique changes *what* the pipeline checks, only how quickly it report
 
 ## Where to go next
 
-Phase 9 is complete — from here, `mock-interviews-technical` in Phase 10 shifts from building systems to practicing how you talk through them under interview conditions.
+Chapter 9 is complete — from here, `mock-interviews-technical` in Chapter 10 shifts from building systems to practicing how you talk through them under interview conditions.

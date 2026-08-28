@@ -20,7 +20,7 @@ links:
 
 ## Before you start
 
-Nothing from earlier phases is required. If you've completed the networking phase, that's a nice bonus — databases are what a server usually talks to after it receives a request — but this topic stands on its own.
+Nothing from earlier chapters is required. If you've completed the networking chapter, that's a nice bonus — databases are what a server usually talks to after it receives a request — but this topic stands on its own.
 
 ## In one sentence
 

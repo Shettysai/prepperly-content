@@ -27,7 +27,7 @@ An **array** is a row of same-sized boxes sitting next to each other in memory s
 
 ## Why it matters
 
-Almost every interview question touches an array or a string, because they are the simplest way to hold a group of related values in order. Without arrays you'd need a separate named variable for every item, which falls apart the moment you have more than a handful of values. Every other data structure in this phase — lists, stacks, hash tables — is either built on top of an array or exists to fix one of its weaknesses, so the trade-offs you learn here reappear, in disguise, in every topic that follows.
+Almost every interview question touches an array or a string, because they are the simplest way to hold a group of related values in order. Without arrays you'd need a separate named variable for every item, which falls apart the moment you have more than a handful of values. Every other data structure in this chapter — lists, stacks, hash tables — is either built on top of an array or exists to fix one of its weaknesses, so the trade-offs you learn here reappear, in disguise, in every topic that follows.
 
 ## The intuition
 
