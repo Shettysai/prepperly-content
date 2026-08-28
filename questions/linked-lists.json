@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "How do you find the middle of a linked list in a single pass?",
+    "answer_markdown": "Use two pointers starting at the head: a slow pointer that moves one node at a time, and a fast pointer that moves two nodes at a time. When the fast pointer reaches the end, the slow pointer is at the middle. This is O(n) time and O(1) space, versus first counting the length and then walking to n/2, which needs two passes.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you detect whether a linked list has a cycle, without using extra memory?",
+    "answer_markdown": "Floyd's tortoise-and-hare algorithm: run a slow pointer one step at a time and a fast pointer two steps at a time from the head. If there is no cycle, the fast pointer reaches `null`. If there is a cycle, the fast pointer eventually laps the slow pointer and they land on the same node. This achieves O(n) time and O(1) extra space, which is the key advantage over the simpler hash-set-of-visited-nodes approach that uses O(n) space.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you reverse a singly linked list iteratively?",
+    "answer_markdown": "Keep three pointers: `prev` (starts as null), `current` (starts at head), and a temporary `next`. On each step, save `current.next` into `next`, point `current.next` back to `prev`, then move `prev` to `current` and `current` to `next`. Repeat until `current` is null, then `prev` is the new head. This is O(n) time, O(1) space, and interviewers often follow up by asking for the recursive version to test whether you understand the call stack trade-off.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is deleting a node from a doubly linked list O(1) but from a singly linked list it's effectively O(n) if you only have a reference to the node?",
+    "answer_markdown": "Deleting a node means re-linking its neighbors to skip over it, which requires access to both the previous and next node. A doubly linked list's node already stores a pointer back to its previous node, so deletion is a constant number of pointer updates. A singly linked list node only knows what comes after it, not before, so to find the previous node you must walk from the head, which costs O(n) unless the caller already handed you that previous node.",
+    "difficulty": "hard"
+  }
+]

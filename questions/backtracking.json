@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "In your own words, what does it mean to 'backtrack' in an algorithm?",
+    "answer_markdown": "It means undoing your most recent choice and trying a different option, after discovering that the current path can't lead to a valid solution. It's the same idea as retracing your steps in a maze after hitting a dead end, rather than starting the whole maze over from scratch — you only rewind as far as necessary.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you use backtracking to generate all valid combinations of balanced parentheses for a given n (e.g., n=2 gives '(())' and '()()')?",
+    "answer_markdown": "Build the string one character at a time, tracking how many open and close parentheses have been used so far. At each step you have up to two choices: add an open paren if you haven't used all n yet, or add a close paren if doing so wouldn't exceed the number of opens used so far. Recurse after each choice, and once the string reaches length 2n, record it as a valid result — the 'un-choose' step here is simply that each recursive call works on its own count of opens/closes, so trying the next choice doesn't carry forward a bad decision.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "For the N-Queens solution shown, why is checking cols[r] === col not enough on its own to detect conflicts, and what does the diagonal check Math.abs(c - col) === Math.abs(r - row) actually verify?",
+    "answer_markdown": "Checking only cols[r] === col catches queens in the same column, but queens also attack diagonally, so two queens with different rows and different columns can still conflict if they lie on the same diagonal line. The diagonal check works because on any diagonal, the difference between row numbers always equals the difference between column numbers (moving one step diagonally changes both row and column by exactly one) — so if those two differences match, the queens share a diagonal regardless of direction.",
+    "difficulty": "hard"
+  }
+]

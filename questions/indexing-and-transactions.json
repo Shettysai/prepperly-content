@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "How does an index speed up a query, and what's the cost of adding one?",
+    "answer_markdown": "An index (usually a B-tree) keeps a sorted structure pointing to where rows live, so the database can jump directly to matching values instead of scanning the whole table. The cost is that every insert, update, or delete on that table now also has to update the index, which slows down writes and uses extra storage. This is why you index columns you filter or sort by often, not every column indiscriminately.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain what a dirty read and a non-repeatable read are, and which isolation levels prevent each.",
+    "answer_markdown": "A dirty read happens when a transaction reads data another transaction has changed but not yet committed — if that other transaction rolls back, you've read data that never really existed; Read Committed and above prevent this. A non-repeatable read happens when you read the same row twice in one transaction and get different values because another transaction committed a change in between; Repeatable Read and above prevent this by keeping a consistent snapshot for the whole transaction. This tests whether you understand isolation levels as solving distinct, specific problems rather than just being a vague strictness scale.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You have a table with millions of rows and queries are slow despite having an index on the filtered column. What could be wrong?",
+    "answer_markdown": "The index might not be selective enough — if the column has few distinct values (like a boolean), the database may decide a full table scan is actually cheaper than using the index. The query might also be using a function or type conversion on the indexed column (like `WHERE LOWER(email) = ...`), which prevents the database from using a plain index unless you create a matching expression index. Finally, the query planner's statistics might be stale, causing it to misjudge costs — running something like `ANALYZE` can help. This question checks real debugging instinct, not just knowing that indexes exist.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why might using stricter isolation levels everywhere hurt performance?",
+    "answer_markdown": "Stricter isolation, like Serializable, forces the database to do more work to prevent transactions from interfering with each other, often through more locking or retry logic, which increases contention when many transactions run concurrently. This can even cause deadlocks or forced retries under heavy load, so most systems default to a looser level like Read Committed and only tighten it for the specific operations that truly need it.",
+    "difficulty": "easy"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Why would you put a message queue between a web server and an email-sending service instead of calling it directly?",
+    "answer_markdown": "Calling the email service directly means the web request has to wait for the email to actually send, and if the email service is slow or down, the request fails or hangs. Putting a queue in between lets the web server just drop a 'send this email' message and respond to the user immediately, while a separate consumer processes emails whenever it's ready, retrying on failure without affecting the user-facing request at all. This decoupling is the core reason queues exist in almost every backend system.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Your system uses at-least-once delivery and you notice a payment gets charged twice for the same order. How would you fix this without switching to exactly-once delivery?",
+    "answer_markdown": "You'd make the consumer idempotent by tracking which message IDs (or order IDs) have already been processed, typically storing a unique key in the database with a constraint that prevents processing the same one twice — so even if the same message arrives again due to a retry, the second attempt is recognized as a duplicate and safely ignored. This is generally preferred over chasing exactly-once delivery, which is expensive and still often implemented as at-least-once plus idempotency under the hood anyway.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You need to broadcast an 'order placed' event to five different services (email, inventory, analytics, fraud check, loyalty points), but analytics needs to reprocess the last 24 hours of events after a bug fix. How would you design this?",
+    "answer_markdown": "A pub/sub pattern fits the broadcast requirement, but analytics' need to reprocess history points toward a log-based system like Kafka rather than a traditional fire-and-forget queue — Kafka retains messages for a configurable period and lets each consumer track its own read position (offset), so analytics can simply rewind its offset and reprocess the last 24 hours without affecting the other four consumers at all. A classic queue that deletes messages after delivery couldn't support this replay requirement without extra plumbing. This tests whether you can match a queuing technology to a requirement beyond just 'send a message.'",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What happens if consumers can't keep up with producers, and how do you prevent it from breaking the system?",
+    "answer_markdown": "The queue keeps growing as messages pile up faster than they're processed, which can eventually exhaust memory or disk on the queue itself if left unchecked. You prevent this with backpressure (slowing or rejecting producers once the queue is too full), autoscaling the number of consumers, or monitoring queue depth so you catch the imbalance before it becomes an outage.",
+    "difficulty": "easy"
+  }
+]

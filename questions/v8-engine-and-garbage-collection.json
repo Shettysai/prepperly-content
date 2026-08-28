@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "What is the difference between the stack and the heap in a Node.js process?",
+    "answer_markdown": "The stack holds function call frames and simple, fixed-size values, and is automatically cleaned up the moment a function returns — it's fast because there's no bookkeeping needed. The heap holds objects, arrays, and closures whose size or lifetime isn't known upfront, and it's managed by the garbage collector, which decides when it's safe to free memory based on whether anything still references it. Interviewers ask this to check you understand that GC is only a heap concern, not a stack one.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why does V8 collect the young generation more often than the old generation?",
+    "answer_markdown": "V8's generational hypothesis is that most objects die young — temporary variables from a function call, a short-lived request object — so scanning the small young generation frequently catches most garbage cheaply and quickly with the Scavenge algorithm. Objects that survive multiple young-generation collections are promoted to the old generation, which is scanned less often using the more thorough but slower Mark-Sweep-Compact algorithm, since long-lived objects are less likely to have become garbage recently. This matches collection frequency and cost to how likely an object is to actually be dead.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your Node service's memory usage climbs steadily over days and eventually gets OOM-killed. How would you find the leak?",
+    "answer_markdown": "Start by confirming it's a real leak rather than normal GC behavior by graphing process.memoryUsage().heapUsed over time under steady load — a leak shows a persistent upward trend that never drops back down even after GC. Then take two heap snapshots under load, separated by time, using Node's --inspect flag with Chrome DevTools, and compare them to see which object type's count is growing unboundedly. Common culprits to check first are unremoved event listeners, uncapped caches or arrays, and closures capturing large objects longer than intended — the fix is finding and cutting the reference that's keeping those objects reachable.",
+    "difficulty": "hard"
+  }
+]

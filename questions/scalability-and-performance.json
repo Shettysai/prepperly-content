@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "What is the difference between scalability and performance?",
+    "answer_markdown": "Performance is how fast the system responds to a single request — low latency for one user. Scalability is whether the system keeps that performance acceptable as load grows, by adding resources. A system can have great performance for one user and terrible scalability if it collapses under concurrent load, which is why interviewers ask this: many candidates conflate 'fast' with 'scalable' when they're separate properties that require separate designs.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why can't you always just add more servers to fix a performance problem?",
+    "answer_markdown": "Adding servers only helps if the bottleneck is compute capacity that's actually distributable — if the real bottleneck is a single database that every server still has to hit, adding app servers just sends more concurrent load at that same overloaded database and can make things worse. You have to identify what's actually saturated (CPU, database connections, network) before scaling; horizontal scaling multiplies whatever is already there, bottleneck included.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you design a system to gracefully degrade under load it wasn't sized for, rather than crash entirely?",
+    "answer_markdown": "Techniques include rate limiting to reject excess requests cleanly instead of queuing them until the system times out, circuit breakers that stop calling a failing downstream dependency so it can recover, and serving cached or simplified responses (like a stale product price) instead of failing outright. The goal is prioritizing critical paths — like checkout — over non-critical ones — like recommendations — when resources are scarce, since a partial outage is far better than a total one.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Why do interviewers want you to talk out loud while coding instead of just solving it silently and presenting the final answer?",
+    "answer_markdown": "Interviewers are scoring your problem-solving process, not just whether the final code compiles, because on the job they need to know how you think through ambiguity and communicate with a team. Talking out loud lets them see your reasoning, catch a wrong assumption early, and give hints if you're heading down an unproductive path. Silence also makes it impossible to distinguish 'stuck' from 'thinking,' which usually reads worse than it should. This is why candidates who narrate a correct-ish approach often score better than silent candidates who eventually reach a fully correct one.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You realize halfway through coding that your approach won't handle an edge case efficiently. What do you do in the interview?",
+    "answer_markdown": "Say so out loud immediately rather than quietly hoping it won't come up: 'I realize this breaks if the array has duplicates, let me adjust.' Briefly explain what's wrong and propose the fix, then continue, rather than scrapping everything and going silent while you rework it. Interviewers generally respond well to self-caught mistakes because it demonstrates the same debugging instinct they'd want on the job. The follow-up they often ask is how you'd have caught this earlier, which is a good moment to mention tracing through edge cases before writing code next time.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you handle a technical interview question you have genuinely never seen anything like before, with no obvious brute-force approach coming to mind?",
+    "answer_markdown": "Start by restating the problem and working through a small concrete example by hand, since manually solving one instance often reveals the pattern or approach even when it isn't obvious abstractly. Ask the interviewer clarifying questions, since sometimes a missing constraint is exactly the piece needed to make an approach click. If you're still stuck, say what you've ruled out and why, and think out loud about related problems it resembles, since interviewers will often nudge you toward the right idea when they can see you're reasoning systematically rather than guessing randomly. This is the hardest scenario because there's no memorized pattern to fall back on, so the interview is genuinely testing live problem-solving.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How much of a 45-minute technical interview should go to just understanding the problem before writing any code?",
+    "answer_markdown": "Roughly 3 to 5 minutes is typical: enough to restate the problem in your own words, confirm input constraints (size, data types, whether values can be negative or duplicated), and clarify the expected output format. Skipping this to save time is a false economy, because coding the wrong interpretation of the problem wastes far more time than the minutes spent clarifying it upfront. It also gives the interviewer an early, low-risk signal that you think carefully before diving in, which sets a good tone for the rest of the interview.",
+    "difficulty": "medium"
+  }
+]

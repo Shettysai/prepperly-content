@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What is the time complexity of finding an element in an unsorted array versus a sorted array?",
+    "answer_markdown": "An unsorted array needs a linear scan, so it's O(n) in the worst case since you might have to check every element. A sorted array lets you use binary search, cutting the search space in half each step, giving O(log n). The trade-off is that keeping an array sorted costs extra work on every insertion, so the right choice depends on whether you search more often than you insert.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why do we care about the worst case instead of the average case?",
+    "answer_markdown": "The worst case gives a guarantee — it tells you the absolute upper bound on how slow the algorithm can get, which matters for reliability in production systems. Average case is useful too, but it depends on assumptions about the input distribution that may not hold. Interviewers often ask you to state both, and to explain when average-case analysis (like for quicksort) is more informative than worst-case.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Two functions both run in O(n) time. Does that mean they take the same amount of time in practice?",
+    "answer_markdown": "No. Big O describes growth rate, not actual speed — it hides constant factors. One O(n) function might do one operation per item while another does fifty, and Big O treats both the same because as n grows large enough, the constant becomes irrelevant. In practice, for small or moderate inputs, the function with the smaller constant can be much faster, which is why real systems still benchmark actual runtimes.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you find the time complexity of a recursive function like a naive Fibonacci implementation?",
+    "answer_markdown": "Draw the recursion tree: naive recursive Fibonacci calls itself twice per call without caching results, so the number of calls roughly doubles at each level down to depth n, giving O(2^n) — exponential time. Adding memoization to cache already-computed results collapses this to O(n), because each unique subproblem is solved only once. This is a common follow-up to test whether you understand dynamic programming.",
+    "difficulty": "hard"
+  }
+]

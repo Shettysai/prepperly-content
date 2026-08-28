@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "Explain why Node.js can handle thousands of concurrent connections with a single thread.",
+    "answer_markdown": "Node's JavaScript execution is single-threaded, but I/O operations (file reads, network calls, DNS) are handed off to libuv, which uses the operating system's async APIs and a background thread pool to do the actual waiting. When that work finishes, the result comes back as a callback that gets queued and run on the main thread. So the single thread is never sitting idle waiting for I/O — it's free to handle other requests while the waiting happens elsewhere, which is why Node is efficient for I/O-heavy workloads specifically.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What would this code print, and why: `console.log('a'); setTimeout(() => console.log('b'), 0); Promise.resolve().then(() => console.log('c')); console.log('d');`?",
+    "answer_markdown": "It prints a, d, c, b. Synchronous code (a, d) always runs first since it's already executing. Then Node drains the microtask queue completely before moving to the next event loop phase, so the Promise callback (c) runs next. Only after that does Node enter the timers phase and run the setTimeout callback (b), because setTimeout only guarantees 'no earlier than 0ms,' not 'before microtasks.'",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You have a Node API that occasionally freezes for a few seconds under load. How would you investigate whether the event loop is being blocked?",
+    "answer_markdown": "You'd look for synchronous CPU-heavy code running on a request path — things like a large synchronous JSON.parse, a tight loop, or a synchronous crypto call — since any of these hog the single JS thread and prevent all other callbacks, including other users' requests, from running until it finishes. Tools like Node's built-in `--prof` flag, clinic.js, or simply logging event loop lag (measuring delay on a repeating `setImmediate`) can confirm and locate the blocking code. The fix is usually to move the heavy work to a worker thread or break it into smaller async chunks so the event loop gets a chance to breathe between them.",
+    "difficulty": "hard"
+  }
+]

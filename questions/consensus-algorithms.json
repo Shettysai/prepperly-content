@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What problem do consensus algorithms like Raft and Paxos solve?",
+    "answer_markdown": "They let a group of servers agree on a single value or sequence of events even when messages can be delayed or lost and individual servers can crash. Without this, a cluster could end up with two servers both believing they're the leader, or disagreeing about what data was actually written, breaking the illusion of one consistent system. This is the foundation for things like leader election, distributed locks, and replicated logs in real systems.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why does Raft require a majority of nodes to agree before committing a write, instead of just one other node?",
+    "answer_markdown": "Requiring a majority guarantees that any two decisions must share at least one common node, which prevents two conflicting values from both being considered 'committed' at the same time — if 3 out of 5 nodes agreed on value A, no other group of 3 out of 5 could simultaneously agree on a different value B, because they'd have to overlap. This is what keeps the cluster's data safe even during leader crashes or network hiccups. This tests whether you understand the majority quorum as a correctness mechanism, not an arbitrary rule.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A 5-node Raft cluster experiences a network partition that splits it into a group of 3 and a group of 2. What happens, and why is that the correct behavior?",
+    "answer_markdown": "The group of 3 still has a majority, so it can elect a leader (if needed) and continue accepting and committing writes normally. The group of 2 does not have a majority, so it cannot elect a leader or commit new writes — it will simply be unavailable for writes until the partition heals. This is the correct, intentional behavior because it prevents a 'split-brain' scenario where both groups might otherwise accept conflicting writes independently; the system chooses consistency over availability for the minority side, which is a direct real-world instance of the CP choice in CAP theorem.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How is consensus different from simple leader-follower replication?",
+    "answer_markdown": "Plain leader-follower replication has one leader accept writes and copy them to followers, but if the leader crashes right after accepting a write and before replicating it, that write can be lost with no formal guarantee. Consensus algorithms like Raft add a quorum requirement — a write only counts as committed once a majority of nodes have it — so it's guaranteed to survive even if the leader crashes immediately afterward.",
+    "difficulty": "easy"
+  }
+]

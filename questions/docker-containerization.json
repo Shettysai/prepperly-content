@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What's the difference between a Docker image and a Docker container?",
+    "answer_markdown": "An image is a read-only, static blueprint containing the app's code, dependencies, and configuration. A container is a running instance created from that image, with its own writable layer on top. You can create many containers from the same image, just like you can create many objects from the same class. Interviewers ask this to check you understand containers aren't the images themselves, which matters when debugging why changes to a running container don't persist after a rebuild.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does a container differ from a virtual machine?",
+    "answer_markdown": "A virtual machine virtualizes an entire computer, including its own OS kernel, which makes it heavier and slower to start, often taking minutes. A container shares the host machine's kernel and only isolates the application and its dependencies, so it starts in seconds and uses far less memory. This makes containers better suited for quickly scaling many instances of the same app. The trade-off is slightly weaker isolation than a VM, since a kernel-level exploit can potentially affect the host or other containers.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why would you use a multi-stage Dockerfile build, and what problem does it solve?",
+    "answer_markdown": "A multi-stage build lets you use one stage with full build tools (like a compiler or dev dependencies) to build your app, then copy only the final compiled output into a second, much smaller final stage. This keeps the shipped image small and free of build tools that aren't needed at runtime, which reduces attack surface and speeds up deploys. Without it, your production image would carry unnecessary weight and potential vulnerabilities from build-time dependencies. This is a harder question because it requires understanding image layering, not just container basics.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why might a running container lose its data, and how do you prevent that?",
+    "answer_markdown": "Anything written to a container's own writable layer disappears once that container is removed, since containers are designed to be disposable and replaceable. To keep data around, you mount a volume, which stores data outside the container's lifecycle, on the host or in a managed storage system. A database container, for example, should always use a volume for its data directory. A natural follow-up is asking how volumes behave differently from bind mounts.",
+    "difficulty": "medium"
+  }
+]

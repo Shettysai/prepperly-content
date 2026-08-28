@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What problem does continuous integration solve that manual testing doesn't?",
+    "answer_markdown": "Manual testing depends on someone remembering to run it, and it happens after changes pile up, making failures harder to trace to a specific commit. CI runs automatically on every push, so a broken change is caught within minutes while it's still fresh and easy to fix. It also enforces that everyone's code is tested the same way, removing 'it works on my machine' as an excuse. This matters because integration bugs get exponentially harder to fix the longer they go unnoticed.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain the difference between continuous delivery and continuous deployment.",
+    "answer_markdown": "Both start the same way: code passes CI and gets built into a deployable artifact. Continuous delivery stops there and waits for a person to approve the actual release to production. Continuous deployment skips that manual gate entirely, so anything that passes automated checks goes live immediately. Teams often choose delivery over deployment when they need compliance sign-off or want a human check before customer-facing changes, even though both are heavily automated.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you design a CI/CD pipeline for a Node.js API that needs zero-downtime deploys?",
+    "answer_markdown": "You'd run install, lint, and test stages first, then build a versioned artifact (like a Docker image) only if those pass. For zero downtime, you'd deploy using a rolling or blue-green strategy, where new instances start and pass health checks before old ones are terminated, so there's never a moment with zero healthy instances. You'd also want a fast rollback path, like keeping the previous image tagged and ready to redeploy. This is a hard question because it forces you to connect CI/CD concepts to real infrastructure decisions like load balancer health checks, not just pipeline syntax.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why might a team choose continuous delivery over continuous deployment even though both are automated?",
+    "answer_markdown": "Continuous delivery keeps a manual approval step before production, which matters for regulated industries, customer-facing risk, or releases that need coordinated timing like marketing launches. Continuous deployment removes that gate for speed, which works well for teams with strong automated test coverage and feature flags to de-risk changes. The trade-off is speed versus control, not one being objectively better. A good follow-up is asking how feature flags let teams get deployment speed while still controlling what users actually see.",
+    "difficulty": "medium"
+  }
+]

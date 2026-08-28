@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Why is HTTP described as stateless, and how do apps work around that?",
+    "answer_markdown": "Each HTTP request/response pair is independent by design — the server doesn't automatically remember previous requests from the same client. Apps work around this using cookies (a token the browser sends back automatically) or auth headers like a JWT, which the server uses to look up who is making the request. This matters because it's the reason sessions, cookies, and tokens exist at all in web development.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "When would you choose a WebSocket over a REST API, and what are the trade-offs?",
+    "answer_markdown": "Choose a WebSocket when you need frequent, low-latency, two-way updates — chat, live prices, collaborative editing — where polling a REST endpoint would be wasteful or too slow. The trade-off is complexity: WebSocket connections are stateful, so you need to handle reconnects, scale connections across servers (often needing sticky sessions or a shared pub/sub layer), and manage backpressure yourself, none of which a simple REST API needs to worry about.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What actually happens during a TLS handshake in HTTPS, at a high level?",
+    "answer_markdown": "The client and server first agree on encryption methods, the server presents a certificate proving its identity (signed by a trusted certificate authority), and both sides use public-key cryptography to securely agree on a shared secret key without ever sending that key in plain text. From then on, they encrypt all traffic with that shared key, which is much faster than public-key encryption for every message. Interviewers ask this to see if you understand HTTPS isn't just 'HTTP plus a padlock icon' but a real cryptographic handshake with identity verification.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What does it mean that HTTP is stateless, and why does that matter?",
+    "answer_markdown": "It means the server treats every request independently and has no built-in memory of previous requests from the same client. This is why apps need cookies, sessions, or tokens to recognize a returning user — without one of those, the server would have no way to know you're the same person who just logged in a moment ago.",
+    "difficulty": "easy"
+  }
+]

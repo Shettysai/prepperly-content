@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Why does an interviewer often prefer a candidate who talks through a slightly imperfect solution over one who silently writes a perfect one?",
+    "answer_markdown": "Whiteboarding is meant to simulate how you'd communicate a design or approach to teammates on the job, so the interviewer is scoring your reasoning process, not only your final answer. A silent candidate gives no visibility into how they got there, which makes it impossible to judge whether they truly understood the problem or got lucky, and it also means the interviewer can't offer a helpful nudge if something is slightly off. A candidate who narrates their thinking, even with a small mistake, demonstrates the actual skill the interview is testing.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you organize a whiteboard when tackling a system design question, versus an algorithm question?",
+    "answer_markdown": "For system design, work top-down: sketch the major components first, like client, API layer, database, and cache, before drilling into any one piece, so the overall shape is visible early and you can steer toward whatever the interviewer wants more depth on. For an algorithm question, it helps to trace a concrete example step by step, showing the state of your data structure changing at each step, which both clarifies your approach to the interviewer and often catches logic bugs before you write the final solution. Both approaches share the same principle: make your reasoning visible in a structured way rather than jumping straight to a dense final answer.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Midway through a whiteboard system design, the interviewer says 'let's assume 10x more traffic' — how do you handle that live, on the board?",
+    "answer_markdown": "Don't erase your existing diagram; instead, point to the specific component most likely to break first under that load, like a single database instance, and reason out loud about why it would struggle. Propose a targeted change, such as adding a cache in front of it or read replicas, and sketch that addition onto the existing diagram rather than redesigning everything from scratch. This is a hard scenario because it tests whether you can adapt an existing design incrementally under live pressure rather than needing to start over, which mirrors how real systems evolve.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the value of restating the problem out loud before you start drawing anything on the whiteboard?",
+    "answer_markdown": "Restating the problem confirms you and the interviewer share the same understanding before you invest time in a diagram or solution built on a wrong assumption. It also gives the interviewer a natural moment to correct a misunderstanding cheaply, before any work is done, rather than watching you build out an entire approach to the wrong problem. This small step costs under a minute but prevents the most common and costly whiteboarding failure: solving a problem slightly different from the one actually asked.",
+    "difficulty": "easy"
+  }
+]

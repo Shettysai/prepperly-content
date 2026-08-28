@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What problem does the OSI model solve?",
+    "answer_markdown": "It gives every piece of networking hardware and software a shared, layered vocabulary so components built by different vendors can interoperate. Each layer has one job and only needs to understand the layer directly above and below it. This means you can change your Wi-Fi card without touching your browser's code, because they operate at completely different layers. Interviewers ask this to check you understand layering as a design principle, not just the list of layer names.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Where does a load balancer typically operate, and why does it matter?",
+    "answer_markdown": "Load balancers can work at layer 4 (transport, routing by IP/port without looking at content) or layer 7 (application, routing by things like URL path or HTTP headers). A layer 4 load balancer is faster but dumber; a layer 7 one can make smarter routing decisions, like sending `/api` traffic to one service and `/images` to another, but costs more CPU to inspect each request. This distinction comes up constantly in system design interviews.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does the real internet not strictly follow all 7 OSI layers?",
+    "answer_markdown": "The internet is built on the TCP/IP model, which only has 4 layers: Link, Internet, Transport, and Application. It merges OSI's Physical and Data Link into one, and squashes Session, Presentation, and Application into one. OSI is mostly used today as an educational and diagnostic framework — saying 'it's a layer 3 issue' is still useful shorthand even though no real router implements OSI layer-by-layer.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "If a web page loads slowly, how would layering help you narrow down where the problem is?",
+    "answer_markdown": "You can isolate the issue by layer: check if DNS resolves quickly (application-adjacent), whether the TCP handshake completes fast (transport), whether routing hops are slow (network), and whether the physical link itself is dropping packets (physical/data link). Thinking in layers lets you rule out entire categories of causes quickly instead of guessing randomly, which is exactly why network engineers still use OSI language day to day even though no stack implements it literally.",
+    "difficulty": "medium"
+  }
+]

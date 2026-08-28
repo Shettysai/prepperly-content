@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What is a Pod in Kubernetes, and why doesn't Kubernetes just manage containers directly?",
+    "answer_markdown": "A Pod is the smallest unit Kubernetes schedules and manages, and it can hold one or more containers that share the same network address and storage volumes. Kubernetes uses Pods instead of raw containers because some apps need tightly coupled helper containers, like a logging sidecar, that must share the same network namespace as the main app. Most Pods hold just a single container in practice, but the abstraction gives flexibility when it's needed. This is a common opening question because it establishes whether you understand the base unit everything else builds on.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why do you need a Service when you already have Pods running your app?",
+    "answer_markdown": "Pods are ephemeral: they can be destroyed and recreated, and each new Pod gets a new internal IP address. If other parts of your system talked to Pods directly, they'd break every time a Pod restarted. A Service provides one stable name and address that automatically routes traffic to whichever Pods are currently healthy, and it also load-balances requests across them. This decouples 'where to send traffic' from 'which exact Pods are alive right now.'",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A Deployment says replicas: 3 but you only see 2 Pods running. How would you debug this?",
+    "answer_markdown": "You'd start with `kubectl get pods` to see the state and any restart counts, then `kubectl describe pod <name>` to see recent events, which often reveal the real cause like an image pull failure, a failing health check, or insufficient CPU/memory on the nodes. You'd also check `kubectl logs` on the crashing Pod to see application-level errors. This is a hard question because it tests practical troubleshooting instinct rather than definitions — Kubernetes will keep trying to reach the desired replica count, so a persistent gap usually means something is failing repeatedly, like a crash loop.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the difference between scaling a Deployment's replicas and scaling the number of nodes in a cluster?",
+    "answer_markdown": "Scaling replicas adds more copies of your app's Pods to handle more traffic, but those Pods still need somewhere to run. Scaling nodes adds more underlying machines to the cluster, increasing the total capacity available for Pods across all apps. If you scale replicas beyond what your current nodes can fit, new Pods stay stuck in a pending state until more node capacity is added. A good follow-up is asking about the Horizontal Pod Autoscaler, which automates the replica-scaling decision based on metrics like CPU usage.",
+    "difficulty": "medium"
+  }
+]

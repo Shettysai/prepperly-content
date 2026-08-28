@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "What problem does sharding solve that adding a bigger server can't?",
+    "answer_markdown": "Vertical scaling (a bigger server) has a ceiling — there's a limit to how much CPU, RAM, and disk one machine can have, and beyond that you simply can't buy your way out. Sharding solves this by spreading data across many machines, so total capacity grows by adding shards rather than by finding an even bigger single machine. It's the database equivalent of horizontal scaling.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is consistent hashing preferred over plain hash-based sharding at scale?",
+    "answer_markdown": "With plain `hash(key) % N` sharding, changing the number of shards N changes the result for almost every key, meaning nearly all your data needs to move when you scale up or down — an expensive, risky migration. Consistent hashing places shards and keys on a conceptual ring so that adding or removing one shard only affects the keys that were mapped near that shard's position, leaving the rest untouched. This makes resharding a system that's actively growing far cheaper and safer.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you design sharding for a multi-tenant SaaS product where some customers are far bigger than others?",
+    "answer_markdown": "Sharding directly by tenant ID with hash-based routing risks a hot shard if one large customer's data and traffic dwarf everyone else's sharing that shard. A common fix is directory-based sharding: maintain a lookup table mapping tenant to shard, so you can deliberately place large tenants on their own dedicated shard and pack many small tenants together on shared shards, rebalancing the mapping as usage changes. The follow-up is usually how you keep that directory itself from becoming a bottleneck — typically by caching it aggressively since it changes rarely.",
+    "difficulty": "hard"
+  }
+]

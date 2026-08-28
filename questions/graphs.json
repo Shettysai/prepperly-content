@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "When would you use an adjacency list versus an adjacency matrix to represent a graph?",
+    "answer_markdown": "An adjacency list stores, per node, only the neighbors it actually connects to, using O(V + E) space, which is efficient for sparse graphs where most node pairs aren't connected — the common case for things like social networks or road maps. An adjacency matrix uses a fixed V-by-V grid regardless of how many edges actually exist, costing O(V^2) space, but gives O(1) lookups for whether a specific edge exists, which is worth it for dense graphs or when edge-existence checks dominate the workload.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you find the shortest path between two nodes in an unweighted graph, and why does BFS guarantee correctness here but DFS doesn't?",
+    "answer_markdown": "Use BFS from the start node, tracking the distance to each node as you discover it and marking nodes visited to avoid revisiting them. BFS explores the graph in expanding 'waves' by distance from the start, so the first time it reaches the target node, it has necessarily done so via the fewest possible edges. DFS instead commits to one path and follows it as deep as possible before backtracking, so it can easily find a longer path to the target before ever considering a shorter one, giving no shortest-path guarantee.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you detect a cycle in a directed graph, and how does that differ from cycle detection in an undirected graph?",
+    "answer_markdown": "For a directed graph, run DFS while maintaining a set of nodes on the current recursion path (not just nodes visited overall); if DFS reaches a node that is already on that active path, a cycle exists, and you remove nodes from the active-path set as you backtrack out of them. For an undirected graph, a simpler check suffices: during DFS, if you encounter an already-visited neighbor that isn't the node you just came from, that's a cycle, since an edge back to your immediate parent is expected in an undirected graph and doesn't count.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "When would you use Linear Search even though Binary Search is faster?",
+    "answer_markdown": "When the data isn't sorted and sorting it first would cost more than just scanning once, or when the list is small enough that the difference doesn't matter, or when you're searching a linked list where you can't jump to the middle in O(1) time. Linear Search is also simpler and needs no precondition, which matters for one-off searches.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Trace through Binary Search looking for 2 in [1, 2, 3, 4, 5, 6, 7]. How many comparisons does it take?",
+    "answer_markdown": "low=0, high=6, mid=3 → value 4, too big, so high=2. Next: low=0, high=2, mid=1 → value 2, found. That's 2 comparisons. In general the number of comparisons is roughly log2(n), so for 7 elements you'd expect around 3 in the worst case, and this search happened to find it fast.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You have a sorted array with up to a few duplicate values, and you need to find the first occurrence of a target value, not just any occurrence. How do you adapt Binary Search?",
+    "answer_markdown": "Run Binary Search as normal, but when you find a match at `mid`, don't return immediately — record it as a candidate answer and keep searching the left half (set high = mid - 1) to see if an earlier occurrence exists. Keep updating the candidate whenever you find an earlier match, and return the leftmost recorded index once low exceeds high. This variant is a common follow-up because it tests whether you understand what each half-elimination step actually guarantees, not just the basic template.",
+    "difficulty": "hard"
+  }
+]

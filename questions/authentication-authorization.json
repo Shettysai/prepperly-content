@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Explain the difference between authentication and authorization in your own words.",
+    "answer_markdown": "Authentication confirms *who* a user is, typically through credentials like a password or a token. Authorization then decides *what* that authenticated user is allowed to do, usually based on roles or permissions. A user can be authenticated but still not authorized for a specific action, like a logged-in viewer trying to delete a post. Interviewers ask this because confusing the two leads to real bugs, like checking only `req.user` exists instead of checking the user's role.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Compare session-based authentication and JWT-based authentication. When would you choose one over the other?",
+    "answer_markdown": "Sessions store a small ID in a cookie and keep the actual user data server-side, usually in a database or Redis, which makes revoking access instant. JWTs embed the user's identity in a signed token the server can verify without a lookup, which scales better across multiple servers but makes early revocation hard. Choose sessions when you need tight control over logging users out immediately, and JWTs when you want stateless, horizontally scalable authentication, such as across microservices. A common middle ground is short-lived JWTs with a refresh token that can be revoked.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How does OAuth 2.0 let you log into an app using your Google account without giving that app your Google password?",
+    "answer_markdown": "OAuth 2.0 works by redirecting you to Google, where you log in and approve the app's request; Google then gives the app a token proving you approved it, without ever sharing your password with the app. The app uses that token to fetch basic profile info or perform limited actions on your behalf. This is called delegated authorization. A good follow-up is asking about the difference between OAuth (authorization) and OpenID Connect (which adds identity/authentication on top of OAuth).",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What security risks come with storing a JWT in localStorage, and how would you mitigate them?",
+    "answer_markdown": "Any JavaScript running on the page, including injected malicious scripts from an XSS vulnerability, can read localStorage and steal the token. A safer pattern is storing the token in an httpOnly cookie, which JavaScript cannot access, combined with CSRF protections since cookies are sent automatically by the browser. This is a hard question because it requires weighing XSS risk against CSRF risk rather than picking a single \"correct\" storage location.",
+    "difficulty": "hard"
+  }
+]

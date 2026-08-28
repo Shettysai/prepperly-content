@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "How would you find the k-th largest element in an unsorted array using a heap?",
+    "answer_markdown": "Maintain a min-heap of size k as you scan the array: push each element, and whenever the heap grows past size k, pop the smallest element off. Once you've processed the whole array, the root of the heap is exactly the k-th largest element. This runs in O(n log k) time, which beats fully sorting the array (O(n log n)) whenever k is meaningfully smaller than n, because you never pay to fully order elements you'll discard.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why can you find the minimum of a heap in O(1) but removing it takes O(log n)?",
+    "answer_markdown": "The minimum is always stored at the root by the heap property, so reading it is a single array access at index 0, giving O(1). Removing it, however, leaves a gap at the root that must be filled — typically by moving the last element into the root's position — and that element usually violates the heap property, so it must be 'sunk down' by repeatedly swapping with its smaller child until the property holds again. That sink-down touches at most one node per level, so it costs time proportional to the heap's height, which is O(log n) for n elements.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you implement a median-tracking structure that can report the median of a stream of numbers at any point, in better than O(n log n) per query?",
+    "answer_markdown": "Keep two heaps: a max-heap holding the smaller half of the numbers seen so far, and a min-heap holding the larger half, kept balanced in size (differing by at most one element). When a new number arrives, add it to the appropriate heap based on comparison to the max-heap's top, then rebalance by moving the top of one heap to the other if the size difference exceeds one. The median is then either the top of the larger heap, or the average of both tops if they're equal in size. Each insertion costs O(log n), and each median query costs O(1), which beats re-sorting the whole stream on every query.",
+    "difficulty": "hard"
+  }
+]

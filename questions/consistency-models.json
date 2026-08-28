@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Explain the difference between strong consistency and eventual consistency with a real example.",
+    "answer_markdown": "Strong consistency guarantees that any read immediately reflects the most recent write, which requires servers to coordinate before confirming that write — a bank balance check is a good example, since you never want to see stale money. Eventual consistency allows replicas to briefly disagree after a write and only guarantees they'll converge over time — a 'likes' counter on a post is a good fit, since a momentary mismatch between servers doesn't harm anyone. The trade-off is always speed and availability versus immediate correctness.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Two users simultaneously try to book the last seat on a flight in a system using eventual consistency. Walk through what could go wrong and how you'd fix it.",
+    "answer_markdown": "Both users could hit different replicas that each still show the seat as available, so both bookings might succeed locally before the replicas sync up, resulting in an overbooked seat. To fix this, you'd either switch that specific operation to strong consistency (route seat-booking through a single authoritative source that serializes the decision) or use a conflict-resolution mechanism like a distributed lock or a compare-and-swap operation on the seat count, so only one booking wins even if requests race. This tests whether you know consistency models can be mixed within one system, applied only where correctness truly matters.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is causal consistency, and how would a system implement it in practice?",
+    "answer_markdown": "Causal consistency guarantees that if operation B depends on operation A (like a reply depending on the original post), every node sees A before B, while unrelated operations can still be seen in different orders across nodes. Systems typically implement this using version vectors or vector clocks, which tag each write with information about which other writes it depended on, so a replica can delay applying an update until its dependencies have already been applied locally. This is a step up in complexity from eventual consistency and is used when full strong consistency would be too slow but pure eventual consistency could show confusingly out-of-order content.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Does causal consistency guarantee that all events appear in the same order for every user?",
+    "answer_markdown": "No — it only guarantees ordering for events that are causally related, like a comment and the post it replies to. Two completely unrelated posts from different users can still show up in a different order for different viewers, which is what distinguishes causal consistency from strong consistency, where every operation everywhere is seen in one single global order.",
+    "difficulty": "easy"
+  }
+]

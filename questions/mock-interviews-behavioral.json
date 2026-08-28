@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Walk me through how you'd structure an answer to 'Tell me about a time you missed a deadline.'",
+    "answer_markdown": "You'd use STAR: briefly set the Situation (what the deadline was and why it mattered), state the Task (what you specifically owned), then spend most of the answer on Action — what you actually did when you realized you'd miss it, like communicating early, re-prioritizing, or asking for help. Close with the Result: what actually happened and, importantly, what you changed afterward so it's less likely to recur. Interviewers ask this to see accountability; the strongest answers own the miss honestly instead of blaming external factors, while still showing a concrete lesson learned.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do you pick which story to tell when a question could fit several of your experiences?",
+    "answer_markdown": "Pick the story with the clearest, most specific Action section for exactly what's being asked, not just the most impressive-sounding outcome. If asked about conflict, choose the story where your actions during the disagreement are the most detailed and honest, even if the result was modest, over a story with a bigger result but a vague description of what you actually did. It also helps to have pre-mapped 5-6 core stories to the most common question categories beforehand, so you're selecting under pressure from a known set rather than improvising from scratch. A good follow-up is asking how you'd adapt one story to answer two different questions.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "An interviewer says 'that answer felt rehearsed, can you go deeper on the Action part?' How do you respond in the moment?",
+    "answer_markdown": "Treat it as a specific request for more Action detail, not criticism of the story itself — pause briefly, then walk through the actual sequence of decisions you made, including one you second-guessed or a specific conversation you had. Adding a concrete detail, like an exact tradeoff you weighed or a exact number, immediately signals authenticity because rehearsed answers rarely include that level of granularity. This is a harder scenario because it requires improvising real detail live rather than reciting a prepared script, which is exactly what the interviewer is testing for.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What makes a Result section weak, and how would you strengthen one that just says 'and it worked out well'?",
+    "answer_markdown": "A weak Result is vague and unverifiable, giving the interviewer nothing to evaluate the actual impact of your actions. Strengthen it by adding a concrete number (time saved, bugs prevented, team size affected) or, if no number applies, a specific lesson that changed how you work afterward. For example, replacing 'it worked out well' with 'we shipped two days early and I now build in a buffer day for third-party integrations' gives the interviewer something real to remember you by.",
+    "difficulty": "medium"
+  }
+]

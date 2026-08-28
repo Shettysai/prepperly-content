@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "How would you write an efficient function to check if a number is prime?",
+    "answer_markdown": "Loop from 2 up to the square root of the number, checking if any of them divide it evenly; if none do, it's prime. You only need to check up to the square root because if the number had a factor larger than its square root, it would necessarily also have a matching factor smaller than the square root, so you'd have found it already. This turns an O(n) check into an O(√n) check, which matters a lot for large numbers.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why does `-7 % 3` give a different answer in JavaScript than you might expect from math class?",
+    "answer_markdown": "JavaScript's `%` operator returns a result with the same sign as the dividend, so `-7 % 3` is `-1`, not the mathematically 'clean' positive remainder of `2` you'd get in true modular arithmetic. This trips people up when using modulo to wrap array indices, since a negative result breaks indexing. The fix is `((n % m) + m) % m`, which normalizes the result to always be non-negative.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How is modulo arithmetic used in the design of a hash table?",
+    "answer_markdown": "A hash function converts a key (like a string) into a large number, but the underlying array only has a fixed number of slots, so you take that number modulo the array's length to get a valid index. This spreads keys across the available buckets in a way that (for a decent hash function) is roughly even, which is essential for hash tables to achieve their average O(1) lookup time. A good follow-up is asking what happens when two keys land on the same index — that's a hash collision, handled separately.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Two numbers have a GCD of 1. What does that tell you about them, and what's this property called?",
+    "answer_markdown": "A GCD of 1 means the two numbers share no common factors other than 1 — they are called coprime (or relatively prime). This shows up in cryptography (RSA relies on selecting coprime numbers) and in simplifying fractions, since a fraction is already in lowest terms exactly when its numerator and denominator are coprime. It's a good check for whether someone understands GCD conceptually, not just how to compute it.",
+    "difficulty": "hard"
+  }
+]

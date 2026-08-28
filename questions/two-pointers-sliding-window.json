@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "Why does the Two Pointers technique for Two Sum require the array to already be sorted?",
+    "answer_markdown": "The technique decides which pointer to move based on whether the current sum is too big or too small, and that decision is only reliable if moving a pointer has a predictable effect on the sum — which is only true when the array is sorted, since moving left forward always increases the value at that position and moving right backward always decreases it. On an unsorted array, moving a pointer could move the sum in either direction, so the greedy left/right decision no longer guarantees correctness.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Describe how you'd solve 'find the maximum sum of any contiguous subarray of size k' using Sliding Window, and why it's faster than the brute-force approach.",
+    "answer_markdown": "Compute the sum of the first k elements as your initial window. Then slide the window forward one element at a time: subtract the element leaving the window on the left and add the element entering on the right, updating the max sum seen. This is O(n) because each element is added once and removed once across the whole scan, versus brute force which recomputes the sum of every window of size k from scratch, giving O(n*k).",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you adapt Sliding Window to find the longest substring with at most two distinct characters, and what makes the 'shrink' step trickier than in the no-repeats version?",
+    "answer_markdown": "Expand the window by moving right and track character counts in a map. Whenever the map has more than two distinct keys, shrink from the left, decrementing the count of the character leaving and removing it from the map entirely once its count hits zero, repeating until only two distinct characters remain. It's trickier than the no-repeats version because shrinking isn't a single jump to 'just past the duplicate' — you may need to remove multiple characters one at a time from the left, and you must correctly detect when a character's count drops to zero to actually reduce the distinct-character count, not just its frequency.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Why is looping through an array usually faster than traversing a linked list of the same size?",
+    "answer_markdown": "Array elements sit next to each other in memory, so when the CPU loads one element into cache, it typically pulls in several neighboring elements too, meaning the next few accesses are cache hits. A linked list's nodes can be scattered anywhere in memory, so following each `next` pointer is likely to cause a cache miss. Both have O(n) traversal complexity, but the array's memory layout makes it faster in practice — a good example of hardware mattering beyond Big O.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the memory hierarchy, and why do we need multiple layers instead of just one large fast memory?",
+    "answer_markdown": "The memory hierarchy is the chain of storage from registers to cache to RAM to disk, each layer bigger but slower than the one before. We can't build one large, uniformly fast memory because fast memory is physically expensive and limited in size — so architects use a small amount of very fast memory close to the CPU and progressively larger, cheaper, slower memory further away. The system relies on the fact that programs tend to reuse recently accessed data, so the fast small cache still catches most requests.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you explain a cache miss to someone who has never studied hardware?",
+    "answer_markdown": "A cache miss is when the CPU looks for data in its small, fast nearby memory (the cache) and doesn't find it, forcing it to fetch it from the much slower main memory instead — like reaching for a tool on your desk, not finding it, and having to walk to the storage closet. Frequent cache misses slow a program down significantly even if the algorithm itself is efficient, which is why data layout and access patterns matter for real-world performance.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does understanding CPU cache behavior change how you'd design a data structure for a performance-critical system?",
+    "answer_markdown": "You'd favor structures with contiguous memory layout, like arrays, over pointer-heavy structures like linked lists, when access patterns are sequential, since contiguous data is far more cache-friendly. You might also group data that's accessed together into the same structure (data locality) rather than scattering related fields across separate objects. This is why some high-performance systems use 'struct of arrays' layouts instead of 'array of structs' — it maximizes cache line utilization for the specific access pattern used.",
+    "difficulty": "hard"
+  }
+]

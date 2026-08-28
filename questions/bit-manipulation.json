@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "How would you check whether a given number is a power of two?",
+    "answer_markdown": "A power of two has exactly one bit set in binary (like 1, 10, 100). Using `n & (n - 1)`, which clears the lowest set bit, gives 0 only when there was exactly one bit set to begin with. So the check is `n > 0 && (n & (n - 1)) === 0`. This runs in constant time, versus repeatedly dividing by 2 in a loop.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do you swap two numbers without using a temporary variable?",
+    "answer_markdown": "You can do it with three XOR operations: `a ^= b; b ^= a; a ^= b;`. This works because XOR is reversible — XORing a value with itself cancels it out — so each step reconstructs one of the original values using the other. In practice this is rarely used in real code since it's less readable than a temp variable, but interviewers ask it to test whether you understand XOR's properties.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Given an array where every number appears three times except one number that appears once, how would you find it?",
+    "answer_markdown": "Simple XOR doesn't work here because it only cancels pairs, not triples. One approach is to count the number of set bits at each bit position across all numbers; since duplicated numbers contribute a multiple of three to each bit position's count, any bit position where the count isn't a multiple of three must come from the unique number. This is a harder bit-manipulation problem that tests whether you can generalize past the simpler XOR trick.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why might you use a bitmask instead of an array of booleans to represent a set of flags?",
+    "answer_markdown": "A bitmask packs many true/false flags into a single integer, which uses far less memory and lets you check, set, or combine multiple flags in one CPU operation instead of looping over an array. It's commonly used for permission systems, feature flags, or algorithm state (like tracking visited nodes in a small graph). The trade-off is readability — an array of named booleans is easier for other developers to understand at a glance.",
+    "difficulty": "medium"
+  }
+]

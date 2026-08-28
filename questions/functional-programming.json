@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What is a pure function, and why do functional programmers prefer them?",
+    "answer_markdown": "A pure function's output depends only on its input, and it causes no observable side effects outside itself — no mutating arguments, no touching global state, no I/O. They're preferred because they're trivially testable (call it with an input, check the output) and safe to run in any order or in parallel, since they can't interfere with anything else. The tricky follow-up is that a real program needs side effects somewhere (to save data, respond to requests), so the goal is minimizing and isolating them, not eliminating them entirely.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain closures with a practical example.",
+    "answer_markdown": "A closure is created when a function is defined inside another function and keeps access to that outer function's variables even after the outer function has returned. A practical example is a counter factory: `makeCounter()` returns a function that increments and returns a `count` variable defined in `makeCounter`'s scope, giving each counter its own private, persistent state without a class. Closures are also the mechanism behind patterns like memoization and event handler state in the browser.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you refactor a function that mutates its input array into a pure function?",
+    "answer_markdown": "Instead of using methods like `.push()`, `.splice()`, or index assignment that change the array in place, you'd build and return a new array using methods like `.map()`, `.filter()`, or the spread operator, leaving the original untouched. For example, instead of `arr.push(x)`, you'd write `return [...arr, x]`. This matters in real codebases because a function that quietly mutates its argument can cause bugs far away from where the mutation happened, since the caller may still be using that same array elsewhere.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What's the performance trade-off of favoring immutability in a large application?",
+    "answer_markdown": "Creating a new copy of data on every change (instead of mutating in place) costs extra memory and CPU time, which can matter for very large data structures updated frequently. Libraries like Immutable.js or techniques like structural sharing (where unchanged parts of a data structure are reused rather than copied) exist specifically to reduce this cost. The trade-off is usually worth it for the predictability gained, but it's a genuine cost, not a free lunch, which is why interviewers ask this to see if you understand the trade-offs rather than treating immutability as an absolute rule.",
+    "difficulty": "hard"
+  }
+]

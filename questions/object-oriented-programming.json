@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What are the four pillars of object-oriented programming?",
+    "answer_markdown": "Encapsulation (hiding internal details behind a clean interface), inheritance (reusing behavior from a parent class), polymorphism (the same method call behaving differently depending on the object's actual type), and abstraction (modeling only what's relevant and hiding unnecessary complexity). Interviewers usually want you to give a concrete example of each, not just define them, to check you understand the concepts rather than having memorized a list.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What's the difference between method overriding and method overloading?",
+    "answer_markdown": "Overriding is when a subclass redefines a method it inherited from a parent class, replacing that behavior for its own type — this is core to polymorphism. Overloading is defining multiple versions of the same method name that differ by their parameters, which many languages support but JavaScript does not natively (you simulate it by checking argument count or type inside one function). This distinction trips people up because JavaScript's flexibility makes both concepts feel blurred together.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why might you choose composition over inheritance when designing a class structure?",
+    "answer_markdown": "Inheritance creates a tight, permanent relationship between classes, and deep inheritance chains become fragile — a change in a base class can unexpectedly break every subclass. Composition builds objects by combining smaller, focused pieces (like giving a `Car` an `Engine` object rather than making `Car` inherit from `Engine`), which is more flexible because you can swap pieces independently. The general guidance is to prefer composition unless there's a genuine 'is-a' relationship, not just a 'has some behavior in common' relationship.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How does JavaScript implement classes and inheritance under the hood?",
+    "answer_markdown": "JavaScript's `class` syntax is largely sugar over its original prototype-based system: every object has an internal link to another object (its prototype), and property lookups walk up this prototype chain if they're not found directly on the object. `extends` sets up this chain between a subclass's prototype and its parent's, which is why methods defined on a parent class are accessible on child instances. Knowing this matters because it explains behavior like why changing a prototype method affects every existing instance.",
+    "difficulty": "hard"
+  }
+]

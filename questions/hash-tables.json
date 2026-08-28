@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Why are hash table lookups considered O(1) on average, but O(n) in the worst case?",
+    "answer_markdown": "On average, a good hash function spreads keys evenly across the underlying array, so each slot holds few or no colliding entries and a lookup resolves in roughly constant time. In the worst case, many or all keys hash to the same slot, turning that slot's chain into a plain list you must scan linearly, which degrades the lookup to O(n). Interviewers ask this to check you understand that hash table performance depends on hash function quality and load factor, not just the data structure's name.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you find the first pair of numbers in an array that sum to a target value, and why is a hash table the right tool?",
+    "answer_markdown": "Walk through the array once, and for each number, check whether (target - number) is already in a hash set you've been building; if it is, you've found your pair, and if not, add the current number to the set and continue. This is O(n) time and O(n) space, versus the naive nested-loop approach that checks every pair in O(n^2). The hash set is the right tool because it turns 'have I seen this complement before' into an O(1) average lookup instead of a scan.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What are the two main strategies for handling hash collisions, and what are the trade-offs?",
+    "answer_markdown": "Chaining stores a small list (or tree, in some engines' optimizations) at each array slot, and colliding entries are simply appended to that slot's list; it's simple and tolerates a high load factor gracefully, but each slot needs extra memory for the list structure. Open addressing instead finds another empty slot within the same array when a collision occurs, using a probing sequence like linear or quadratic probing; it uses memory more compactly but degrades faster as the load factor rises and needs special handling (like tombstones) for deletions so probing sequences aren't broken.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does a hash table resize itself, and what does that cost?",
+    "answer_markdown": "As more items are inserted, the load factor (items divided by array size) rises, increasing the chance of collisions and pushing operations away from O(1) toward O(n). To keep operations fast, most implementations resize once the load factor crosses a threshold (commonly around 0.7), allocating a larger underlying array and re-hashing every existing key into its new slot. A single resize costs O(n), but because resizes happen exponentially less often as the table grows, the amortized cost per insert averaged over the table's lifetime stays O(1).",
+    "difficulty": "hard"
+  }
+]

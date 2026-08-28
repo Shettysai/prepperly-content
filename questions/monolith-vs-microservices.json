@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "What is the core trade-off between a monolith and microservices?",
+    "answer_markdown": "A monolith is simpler to build, test, and deploy because everything runs in one process with one database, but it forces the whole team and app to scale and release together. Microservices let teams deploy and scale independently, but every internal function call becomes a network call that can fail, time out, or arrive out of order. You're trading simplicity for independence — and independence costs you in operational complexity, monitoring, and consistency guarantees.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why shouldn't a small startup start with microservices?",
+    "answer_markdown": "Microservices solve organizational problems — multiple teams stepping on each other in one codebase, or one part of the system needing very different scaling than the rest. A small startup usually has one team and unclear requirements, so splitting services early means guessing wrong boundaries and paying network, deployment, and debugging overhead before there's a team-size problem to justify it. Most successful systems start monolithic and extract services only when a specific, measured pain shows up.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you handle a transaction that used to be one database commit but now spans two microservices?",
+    "answer_markdown": "You can't use a single ACID transaction across two services' databases, so you typically use the saga pattern: each service does its local transaction and publishes an event, and if a later step fails, earlier steps run compensating actions (like refunding a payment) to undo their work. This trades strong consistency for eventual consistency — the system is temporarily inconsistent but converges to a correct state. An interviewer is checking whether you understand that distributed transactions are fundamentally harder than local ones, not just 'the same but over the network'.",
+    "difficulty": "hard"
+  }
+]

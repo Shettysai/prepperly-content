@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "What makes an algorithm 'greedy'?",
+    "answer_markdown": "It makes the choice that looks best at the current step, commits to it, and never revisits that decision later, rather than exploring multiple possibilities and comparing outcomes. This makes greedy algorithms fast and simple, but only correct for problems where a locally best choice is guaranteed to never block a better overall solution.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "In the Activity Selection problem, why does sorting by end time (rather than start time) guarantee the optimal number of meetings?",
+    "answer_markdown": "Picking the meeting that ends earliest, among all that don't conflict with what you've already chosen, always leaves the maximum possible amount of time free for whatever comes next — so it can never be a worse choice than any alternative available at that point. Sorting by start time doesn't have this property, because an early-starting meeting might run very long and block several shorter meetings that would have collectively fit better.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Explain why a greedy value-per-weight approach fails on the 0/1 Knapsack problem but succeeds on the Fractional Knapsack version.",
+    "answer_markdown": "In 0/1 Knapsack you must take an item whole or not at all, so greedily grabbing the item with the best value-per-weight ratio can use up capacity that would have been better spent on a combination of other items — there's no way to 'partially back out' of a bad greedy choice, so it can lock in a suboptimal total. In Fractional Knapsack you're allowed to take any fraction of an item, so taking the best-ratio item first (and only as much of it as fits) never wastes capacity — you can always top off the remaining space with a fraction of the next-best item, which is why the greedy strategy provably reaches the optimal total value there.",
+    "difficulty": "hard"
+  }
+]

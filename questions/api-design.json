@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "What's the difference between PUT and PATCH?",
+    "answer_markdown": "PUT replaces the entire resource with what you send — any field you omit is treated as cleared or reset to default. PATCH applies a partial update, changing only the fields included in the request body and leaving the rest untouched. Interviewers ask this to check you understand that PUT is meant to be idempotent and full-replacement, while PATCH is for partial, targeted edits.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you design pagination for an endpoint returning millions of rows?",
+    "answer_markdown": "Offset-based pagination (`?page=500&limit=20`) gets slow at large offsets because the database still has to scan and skip all prior rows, and it breaks if rows are inserted between requests. Cursor-based pagination instead uses a stable pointer, like the last-seen ID or timestamp, so the query filters directly (`WHERE id > last_id LIMIT 20`) instead of scanning and skipping. The follow-up an interviewer often asks is how you'd make the cursor opaque to the client, usually by base64-encoding it so the client treats it as an unstructured token.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is statelessness considered a core REST principle, and what does it cost you?",
+    "answer_markdown": "Statelessness means each request carries all the information the server needs (like an auth token) rather than relying on server-side session memory from a previous request. This lets you add more servers behind a load balancer freely, since any server can handle any request — there's no session data tying a client to one specific machine. The cost is that every request repeats some data (like re-sending the token), and you push session-like state (shopping carts, wizards) into a database or client storage instead of server memory.",
+    "difficulty": "hard"
+  }
+]

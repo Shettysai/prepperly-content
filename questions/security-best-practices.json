@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "Why is bcrypt preferred over a fast hash like MD5 or SHA-256 for storing passwords?",
+    "answer_markdown": "Bcrypt is deliberately slow and configurable (via a 'cost factor'), which matters because password security depends on making brute-force guessing expensive — a fast hash lets an attacker with a stolen database try billions of guesses per second on cheap hardware, while bcrypt limits that to a much smaller number. MD5 and plain SHA-256 were designed for speed and integrity checking, not for resisting brute force, which is exactly the wrong property for password storage.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "A login endpoint has no rate limiting. What's the risk, and how would you fix it?",
+    "answer_markdown": "Without rate limiting, an attacker can attempt unlimited password guesses against any account, turning even a reasonably strong password into something crackable given enough attempts, and can also use the endpoint for basic denial-of-service by flooding it with requests. The fix is adding a rate limiter (like express-rate-limit) scoped to the login route, capping attempts per IP or per account within a time window, and ideally combining it with account lockout or CAPTCHA after repeated failures for extra protection.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you defend a Node API against NoSQL injection in a MongoDB-backed app, where the classic SQL-injection defenses don't directly apply?",
+    "answer_markdown": "NoSQL injection in MongoDB typically exploits query operators passed as objects — for example, sending `{ \"password\": { \"$ne\": null } }` as the password field in a JSON body can bypass a naive equality check if the app blindly passes req.body into a query. The defense is strict input validation that rejects non-primitive types where a primitive (like a string) is expected, plus using a schema validation library so an object can never sneak into a field meant to hold a plain string. This is the same root cause as SQL injection — trusting the shape of client input — just expressed differently because MongoDB queries are JSON objects instead of strings.",
+    "difficulty": "hard"
+  }
+]

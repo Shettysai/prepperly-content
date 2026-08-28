@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Rewrite the bullet 'Responsible for maintaining the company's internal tools' to show impact instead of duty.",
+    "answer_markdown": "A stronger version names a specific tool, what you changed about it, and a measurable effect, for example: 'Rebuilt the internal deployment dashboard, cutting the average time engineers spent tracking a release from 15 minutes to under 2.' The original tells the reader nothing about what you actually did or whether it mattered; the rewrite gives a concrete action and an outcome they can ask follow-up questions about. Interviewers ask candidates to justify exactly this kind of rewrite to confirm the number is real and that the candidate, not just the team, drove it.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You don't have a hard metric for a project you're proud of — how do you still write a strong bullet?",
+    "answer_markdown": "Use a reasonable proxy for impact instead of forcing a fake percentage: team size affected, frequency of a task automated, scale of data handled, or before/after time saved. For example, 'Automated a manual weekly report that took the team roughly 3 hours, freeing that time for feature work' is concrete and honest without a precise percentage. The key is specificity, not necessarily a number — 'automated a report' with real detail beats a vague made-up statistic. This matters because interviewers will ask you to explain any number, so it's better to be accurately specific than falsely precise.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "An interviewer challenges a metric on your resume: 'How exactly did you measure that 80% improvement?' You genuinely don't remember the exact methodology. How do you respond?",
+    "answer_markdown": "Be honest about what you do remember rather than inventing a precise methodology on the spot: describe the before-and-after state you observed, roughly how it was measured (a monitoring dashboard, a load test, user-reported response times), and acknowledge if the number was an approximation at the time. Fabricating a confident but false explanation is far riskier than an honest 'I recall it came from our monitoring dashboard comparing before and after, though I'd want to pull the exact report to be precise.' This is a hard question because it tests integrity under pressure, and interviewers are specifically listening for whether you inflate or backpedal credibly.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why do many companies use automated keyword scanning on resumes, and how should that change how you write yours?",
+    "answer_markdown": "Companies receive far more applications than a human can individually review, so automated systems scan for keywords matching the job posting, like specific languages, frameworks, or tools, to filter candidates before a human sees the resume. This means using the exact terms from the posting (writing 'Node.js' instead of just 'JavaScript backend,' for instance) can be the difference between being seen and being filtered out, as long as it's an honest reflection of your experience. The risk is over-optimizing for the scanner at the expense of readability for the human who reads it next, so the resume still needs clear, specific bullets once it passes that filter.",
+    "difficulty": "medium"
+  }
+]

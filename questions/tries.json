@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "Why is a trie better suited to autocomplete than a hash set of words?",
+    "answer_markdown": "A hash set can only answer 'does this exact word exist' in O(1) average time, but has no efficient way to find all words sharing a given prefix without iterating over every stored word. A trie stores words character by character along shared paths, so walking to the node representing a typed prefix takes time proportional only to the prefix's length, and every word beneath that node in the tree is a valid completion, which is exactly the autocomplete use case.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you implement a function that returns all words in a trie starting with a given prefix?",
+    "answer_markdown": "First walk the trie from the root following the prefix's characters; if any character is missing, return an empty list immediately since no words share that prefix. Once you reach the node representing the end of the prefix, perform a depth-first search from that node, and every time you pass through a node marked as end-of-word, reconstruct the full word (prefix plus the path taken) and add it to the results. This runs in time proportional to the prefix length plus the total size of the matching subtree, rather than scanning the entire dictionary.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What's the space trade-off of using a trie compared to storing words in a simple array, and when does a trie stop being worth it?",
+    "answer_markdown": "A trie saves space when many words share common prefixes, since those shared characters are stored once as shared nodes rather than repeated per word — a dictionary of English words is a good example. However, each node typically reserves a lookup structure for its possible children, so for a dataset of short, mostly unrelated strings with little prefix overlap, a trie's per-node overhead can end up using more memory than just storing the strings in an array or hash set, while also adding implementation complexity that isn't earning its keep if you never need prefix-based queries.",
+    "difficulty": "hard"
+  }
+]

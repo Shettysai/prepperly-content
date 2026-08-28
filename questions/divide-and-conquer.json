@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "What are the three steps every divide-and-conquer algorithm follows?",
+    "answer_markdown": "Divide the problem into smaller sub-problems of the same type, conquer each sub-problem (typically by recursing until it's trivially small), and combine the sub-results into the final answer. Merge Sort is the textbook example: split the array, recursively sort each half, then merge the sorted halves back together.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you find the closest pair of points among a large set of 2D points using divide and conquer, and why is it faster than checking every pair?",
+    "answer_markdown": "Sort points by x-coordinate, split them into a left half and right half, and recursively find the closest pair within each half. Then, for the combine step, check only the points near the dividing line — since any closer cross-boundary pair must lie within a narrow strip around it — and compare that smaller set of candidates. This avoids the O(n^2) brute-force comparison of every possible pair, bringing the total down to O(n log n) because the divide step is logarithmic and the combine step at each level only costs O(n).",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Using the Master Theorem's intuition, explain why Binary Search is O(log n) while Merge Sort is O(n log n), even though both divide the problem in half at every step.",
+    "answer_markdown": "Both split into sub-problems half the size, giving log n levels of recursion, but the difference is what happens at each level: Binary Search only recurses into ONE half (discarding the other), so the total work across all levels is just O(1) per level times log n levels, giving O(log n). Merge Sort recurses into BOTH halves and then does an O(n) combine (the merge step) at every level, so the work per level is O(n), multiplied by log n levels, giving O(n log n) — the combine cost is what separates the two despite the shared halving pattern.",
+    "difficulty": "hard"
+  }
+]

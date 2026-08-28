@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "How would you find the intersection of two large arrays efficiently?",
+    "answer_markdown": "Convert the first array into a `Set`, which takes O(n) time and gives O(1) average lookup. Then iterate the second array and check membership in that set, keeping only matches — this is O(m) for the second pass, giving O(n + m) total instead of the naive O(n × m) of comparing every pair. This is a very common warm-up question because it tests whether you reach for the right data structure instead of brute-forcing with nested loops.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is De Morgan's law, and how is it useful when reading code?",
+    "answer_markdown": "De Morgan's laws state that `!(a && b)` is equivalent to `!a || !b`, and `!(a || b)` is equivalent to `!a && !b`. This is useful for simplifying negated compound conditions in code — for example, turning `if (!(isAdmin && isActive))` into the more readable `if (!isAdmin || !isActive)`. Interviewers ask this to see if you can reason about boolean logic symbolically, which comes up constantly when reviewing or refactoring conditionals.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How many different 4-digit PINs are possible if repeated digits are allowed, and how does that change if they must be unique?",
+    "answer_markdown": "With repetition allowed, each of the 4 positions can independently be any of 10 digits, giving 10 × 10 × 10 × 10 = 10,000 possible PINs. If digits must be unique, the first position has 10 choices, the second only 9 remaining, then 8, then 7, giving 10 × 9 × 8 × 7 = 5,040. This is a basic combinatorics question, and interviewers use it to gauge whether you can reason about counting problems, which underlies estimating brute-force search spaces and password strength.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the difference between a truth table and just testing your code with a few sample inputs?",
+    "answer_markdown": "A truth table systematically lists every possible combination of true/false inputs to a boolean expression, guaranteeing you've checked all cases, not just the ones you happened to think of. Testing with a few sample inputs can easily miss an edge case, especially once a condition has three or more boolean variables combined with mixed AND/OR/NOT logic. Building a small truth table by hand is a fast way to verify a tricky conditional actually behaves the way you intend before it ships.",
+    "difficulty": "medium"
+  }
+]

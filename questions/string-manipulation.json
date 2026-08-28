@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "How would you check if two strings are anagrams of each other?",
+    "answer_markdown": "One approach sorts the characters of both strings alphabetically and checks if the sorted results are equal, which takes O(n log n) time. A faster approach counts how many times each character appears in both strings (using an object or array as a frequency map) and compares the counts, which is O(n). Mentioning both, and explaining why the frequency-count approach is faster, shows you can reason about trade-offs rather than reaching for the first solution that works.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why does `'café'.length` sometimes differ depending on how the string was created?",
+    "answer_markdown": "Some characters, like accented letters, can be represented in Unicode either as a single combined code point or as a base letter plus a separate combining accent mark — two different byte sequences that render identically but aren't the same underlying string. This means two visually identical strings can have different `.length` values and won't be equal with `===`. The fix is Unicode normalization, using `String.prototype.normalize()`, before comparing user-entered text.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you efficiently find the first non-repeating character in a string?",
+    "answer_markdown": "Build a frequency map by looping through the string once and counting occurrences of each character, which takes O(n) time. Then loop through the string a second time, checking the frequency map, and return the first character whose count is 1. This two-pass approach is O(n) overall, much better than the naive approach of checking each character against every other character, which would be O(n²).",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What's the difference between ASCII, Unicode, and UTF-8, and why does it matter for a backend developer?",
+    "answer_markdown": "ASCII is an old, limited encoding covering only 128 characters, mostly English letters and basic symbols. Unicode is a standard assigning a unique number to virtually every character in every language, but doesn't specify how those numbers are stored as bytes. UTF-8 is the most common encoding that actually stores Unicode code points as bytes, using variable length (1 to 4 bytes) so it stays backward-compatible with ASCII. This matters practically because mismatched encodings between a database, an API, and a frontend are a classic source of garbled text bugs (mojibake), especially with non-English text or emoji.",
+    "difficulty": "hard"
+  }
+]

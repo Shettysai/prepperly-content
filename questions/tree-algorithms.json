@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "Given a binary tree, how would you find its height (the longest path from root to a leaf)?",
+    "answer_markdown": "Use DFS recursively: the height of a node is 1 plus the max of its left and right subtree heights, and an empty node has height 0. This naturally bottoms out at the leaves and builds the answer back up as the recursion unwinds, which is a classic post-order-style DFS pattern.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why does BFS guarantee the shortest path in an unweighted tree or graph, but DFS does not?",
+    "answer_markdown": "BFS explores all nodes at distance 1 before any node at distance 2, and all of distance 2 before distance 3, and so on — so the first time it reaches a target node, no shorter path could exist, because every shorter-distance node was already fully explored. DFS instead commits to one path and follows it to the end before backtracking, so it might stumble onto a target through a long, winding path long before it ever tries a shorter one.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You need to serialize and later reconstruct a binary tree exactly. Which traversal(s) would you use, and why does pre-order alone work but in-order alone does not?",
+    "answer_markdown": "Pre-order (node, then left, then right) records the root first, which tells you immediately where to split the remaining sequence into left and right subtrees as you rebuild recursively — combined with a marker for null children, pre-order alone is enough to reconstruct the exact tree. In-order alone doesn't work because many different trees can produce the same in-order sequence (it just reflects left-to-right order of values, e.g. it's what gives you sorted order on a BST), so you lose the structural information about which node was the root.",
+    "difficulty": "hard"
+  }
+]

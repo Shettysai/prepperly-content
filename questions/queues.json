@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Why is a plain array a poor choice for a queue that dequeues frequently, and what's a better approach?",
+    "answer_markdown": "Dequeuing from the front of an array with `shift()` requires re-indexing every remaining element, making each dequeue O(n) and the whole sequence O(n^2) for n operations. A better approach uses a linked list with head and tail pointers, or a circular buffer with index counters, both of which make enqueue and dequeue true O(1) operations because nothing has to shift. Interviewers ask this to see if you notice the hidden cost inside a built-in method rather than assuming all array operations are cheap.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you implement a queue using two stacks, and why does it still average out to O(1) per operation?",
+    "answer_markdown": "Maintain an 'in' stack for enqueuing and an 'out' stack for dequeuing. Enqueue always pushes onto 'in'. To dequeue, if 'out' is empty, pop every element off 'in' and push it onto 'out', which reverses the order into FIFO, then pop from 'out'. Although a single dequeue can cost O(n) when the transfer happens, each element is only ever moved from 'in' to 'out' once over its lifetime, so amortized across many operations the average cost per operation is O(1).",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you find the maximum value in every sliding window of size k across an array, efficiently?",
+    "answer_markdown": "Use a deque that stores indices, keeping it in decreasing order of the values they point to. For each new element, remove indices from the back whose values are smaller than the current one (they can never be the max again), then remove the front index if it has slid out of the window, and the front of the deque is always the current window's max. This processes each index at most twice (once in, once out), giving O(n) total time versus the naive O(n*k) of recomputing the max for every window.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the difference between a queue and a priority queue?",
+    "answer_markdown": "A plain queue serves items strictly in the order they arrived, FIFO, with no regard for their content. A priority queue instead serves items based on an assigned priority, so a low-priority item that arrived first can be served after a high-priority item that arrived later. Priority queues are typically implemented with a heap rather than a simple list, because a heap gives O(log n) insertion and O(log n) removal of the highest (or lowest) priority element, whereas keeping a list fully sorted would cost more on insertion.",
+    "difficulty": "medium"
+  }
+]

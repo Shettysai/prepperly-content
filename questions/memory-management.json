@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What's the difference between the stack and the heap?",
+    "answer_markdown": "The stack holds function call frames and local primitive variables, growing and shrinking automatically as functions are called and return, which makes it fast but limited in size. The heap holds objects and data whose size or lifetime isn't known ahead of time, and it's managed either by manual allocation/deallocation or by a garbage collector. Understanding this split explains both stack overflow errors and why objects behave differently from primitives when passed around.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does JavaScript's garbage collector decide what to free?",
+    "answer_markdown": "Modern JavaScript engines use a mark-and-sweep approach: starting from root references (like global variables and currently-running function scopes), the collector marks every object it can reach, then frees anything left unmarked. This means memory is only freed once nothing in your live code can reach it anymore, not simply when a variable goes out of scope. A good follow-up is asking why circular references between two objects don't cause a leak here, unlike in simple reference-counting systems.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You notice a Node.js server's memory usage keeps climbing over days. How would you investigate?",
+    "answer_markdown": "Start by taking heap snapshots at different points in time using Node's built-in inspector or a tool like Chrome DevTools, then compare them to see which object types are growing unexpectedly. Common causes are event listeners that are added but never removed, caches with no eviction policy, or closures capturing large objects longer than intended. This is a real production debugging skill, not just theory, and interviewers ask it to see if you've actually operated a long-running service.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why can't you just increase stack size to avoid all recursion-related crashes?",
+    "answer_markdown": "Increasing stack size raises the ceiling but doesn't remove it — unbounded or badly designed recursion will still eventually overflow, and larger stacks use more memory per thread, which adds up if you run many concurrent processes or threads. The better fix is usually to convert deep recursion into an iterative approach or ensure recursion depth is bounded by the problem size, such as recursing on a balanced tree rather than a long list.",
+    "difficulty": "medium"
+  }
+]

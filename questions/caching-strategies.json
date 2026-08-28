@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "What is the difference between LRU and LFU eviction?",
+    "answer_markdown": "LRU evicts whichever item hasn't been accessed for the longest time, tracking recency. LFU evicts whichever item has been accessed the fewest total times, tracking frequency. LRU is more common because it's cheaper to implement and adapts quickly to changing access patterns, while LFU can better protect consistently popular items but can get stuck favoring old items that were frequently used in the past but aren't anymore, unless it also decays counts over time.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do you prevent a cache stampede when a popular cached item expires?",
+    "answer_markdown": "A cache stampede happens when a hot key expires and hundreds of concurrent requests all miss the cache at once and hammer the database simultaneously to refill it. Common fixes are locking so only one request recomputes the value while others wait or serve slightly stale data, or using a soft TTL where one request proactively refreshes the value slightly before it fully expires. Interviewers ask this to see if you've thought past 'just add a TTL' into what happens at real traffic scale.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "When would caching actually hurt more than help?",
+    "answer_markdown": "Caching adds overhead and complexity when data changes on nearly every read, so the cache is invalidated almost immediately and you're paying for cache writes and management without meaningful hit rate. It's also risky for data that must always be perfectly current, like account balances, unless you're deliberate about consistency. The follow-up an interviewer might ask is how you'd measure whether a cache is actually helping — the answer is tracking hit rate; a low hit rate means the cache isn't earning its complexity.",
+    "difficulty": "medium"
+  }
+]

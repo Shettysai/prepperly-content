@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "Why can't you just use BFS to find the shortest path in a weighted graph, like finding the cheapest flight route?",
+    "answer_markdown": "BFS finds the path with the fewest edges, treating every edge as equal cost, but a cheap route might involve more stops than an expensive direct one. BFS has no concept of edge weight, so it would happily report a 3-flight route as 'shorter' than a 1-flight route even if the single flight is far cheaper. Dijkstra's algorithm accounts for the actual cost of each edge, not just the number of edges.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain the 'relaxation' step in Dijkstra's algorithm and why once a node is marked visited, its distance is final.",
+    "answer_markdown": "Relaxation is checking, for a visited node's neighbor, whether going through the current node offers a shorter path than what's currently recorded — if so, you update the neighbor's distance. A node's distance becomes final once visited because Dijkstra's always processes the unvisited node with the smallest current distance next; since all edge weights are non-negative, no future path through a higher-distance node could ever produce a cheaper route to something already settled at a lower distance.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You're building a pathfinding feature for a game map where you know the (x, y) coordinates of every location. Would you use Dijkstra's or A*, and what heuristic would you pick?",
+    "answer_markdown": "A*, because knowing coordinates lets you estimate remaining distance to the goal, and A* uses that to explore only promising paths instead of expanding uniformly in every direction like Dijkstra's does. A good heuristic here is straight-line (Euclidean) distance from the current node to the goal, since it never overestimates the true remaining path cost — an 'admissible' heuristic — which is required for A* to guarantee it still finds the optimal path.",
+    "difficulty": "hard"
+  }
+]

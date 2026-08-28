@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What's the difference between concurrency and parallelism?",
+    "answer_markdown": "Concurrency means dealing with multiple tasks by interleaving them, so progress happens on more than one task over time even on a single CPU core. Parallelism means multiple tasks literally execute at the exact same instant, which requires multiple CPU cores. A single-core machine can be concurrent but never truly parallel; a multi-core machine can be both. Interviewers often follow up by asking where JavaScript fits, since it's concurrent (via the event loop) but not parallel for your own code (it's single-threaded).",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does Node.js use a single thread for JavaScript execution, and isn't that a bottleneck?",
+    "answer_markdown": "A single thread avoids the complexity and bugs (race conditions, deadlocks) that come with shared-memory multithreading, which matches JavaScript's design for the browser. It's not usually a bottleneck for I/O-heavy applications like web servers, because slow operations like database queries or file reads are delegated to the operating system or a background thread pool, and the main thread picks the result back up later. It can become a bottleneck for CPU-heavy work (like image processing), which is why Node.js offers worker threads for that case.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What happens, at a high level, when you run a program from the command line?",
+    "answer_markdown": "The operating system creates a new process, allocating it a private chunk of memory and loading the program's code into it. The OS scheduler then gives this process CPU time in short slices, switching between it and other running processes so fast it appears they all run at once. When the program calls something like reading a file, the OS temporarily suspends it, does the actual disk work, and resumes the process once the data is ready. This is a good question for checking whether you understand what's happening beneath your code, not just how to write it.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is a deadlock?",
+    "answer_markdown": "A deadlock happens when two or more threads or processes are each waiting for a resource the other is holding, so neither can proceed — like two people each waiting for the other to go first in a narrow doorway. It's a classic risk in multithreaded programs that use locks, and it's avoided by careful lock ordering, using timeouts, or avoiding the need for multiple simultaneous locks in the first place.",
+    "difficulty": "easy"
+  }
+]

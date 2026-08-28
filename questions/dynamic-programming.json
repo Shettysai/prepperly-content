@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "Why is the naive recursive Fibonacci solution so slow for larger n, like n = 40?",
+    "answer_markdown": "Each call to fib(n) makes two more calls, fib(n-1) and fib(n-2), and those branch again, so the total number of calls roughly doubles with each increase in n — that's O(2^n) time. Many of those calls compute the exact same value repeatedly (fib(3) gets computed many separate times inside a call to fib(10), for example), which is pure wasted work that memoization eliminates.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You're given the classic Coin Change problem: given coin denominations [1, 2, 5] and a target amount, find the minimum number of coins needed. How would you approach it with DP?",
+    "answer_markdown": "Define dp[i] as the minimum coins needed to make amount i, with dp[0] = 0. For each amount from 1 up to the target, try every coin denomination that's less than or equal to the amount, and set dp[i] = min(dp[i], dp[i - coin] + 1) — meaning 'the best way to make i is one more coin on top of however we best made the remaining amount.' This is a bottom-up tabulation approach, and it works because the sub-problem 'cheapest way to make a smaller amount' is reused across many larger amounts, which is exactly the overlapping-sub-problems signal that DP applies.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you convert the memoized Fibonacci solution into a tabulated (bottom-up) version, and why might you prefer tabulation for very large n?",
+    "answer_markdown": "Build an array (or just two variables) starting at dp[0]=0 and dp[1]=1, then loop from 2 to n setting dp[i] = dp[i-1] + dp[i-2], returning dp[n] at the end — no recursion at all. Tabulation is preferable for very large n because pure recursion, even memoized, still builds up a call stack of depth n and can hit a stack overflow, while the iterative loop uses a fixed, small amount of stack space regardless of how large n gets.",
+    "difficulty": "hard"
+  }
+]

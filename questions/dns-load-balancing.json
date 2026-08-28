@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What is DNS and why can't we just use IP addresses directly?",
+    "answer_markdown": "DNS translates human-friendly domain names into IP addresses that computers actually use to route traffic. We could use raw IPs, but they're hard to remember, and more importantly the underlying IP behind a domain can change (new server, new data center, failover) without users needing to know or care — the domain name stays stable. This is the basic 'why' interviewers want before diving into caching and resolution chains.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you design a system to route traffic to the closest or least-loaded server for users worldwide?",
+    "answer_markdown": "A common approach combines DNS-based geo-routing (returning different IPs based on the user's region) with load balancers in each region that distribute traffic across servers using least-connections or round robin, backed by health checks to route around failures. Some systems also use anycast, where the same IP address is announced from multiple locations and network routing naturally sends users to the nearest one. This tests whether you can combine DNS and load balancing as complementary layers rather than picking just one.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why might lowering a DNS record's TTL before a planned migration be a good idea, and what's the trade-off?",
+    "answer_markdown": "A shorter TTL means caches expire sooner, so when you actually change the IP address during migration, clients pick up the new address faster and you minimize the window where some users still hit the old server. The trade-off is more frequent DNS lookups in the meantime, adding load to your DNS servers and slightly increasing latency for every cache miss. This question checks whether you understand TTL as a tunable trade-off between staleness and lookup overhead, not just a fixed setting.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the difference between DNS-based load balancing and a dedicated load balancer?",
+    "answer_markdown": "DNS load balancing just returns different IP addresses to different clients for the same domain, with no awareness of which servers are actually healthy or busy right now. A dedicated load balancer actively tracks server health and load in real time and can react instantly, like removing a crashed server from rotation, which plain DNS cannot do because DNS answers are cached and don't update per-request.",
+    "difficulty": "easy"
+  }
+]

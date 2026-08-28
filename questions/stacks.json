@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "How would you check whether a string of parentheses, brackets, and braces is balanced?",
+    "answer_markdown": "Push each opening bracket onto a stack as you scan left to right. For each closing bracket, pop the stack and confirm it matches the expected opening type; if the stack is empty when you hit a closing bracket, or anything is left on the stack at the end, the string is unbalanced. This runs in O(n) time and O(n) space, and it's a classic stack question because nesting is exactly the last-opened-must-close-first pattern a stack captures for free.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you evaluate a postfix (Reverse Polish Notation) expression using a stack?",
+    "answer_markdown": "Scan tokens left to right; push numbers onto the stack, and when you hit an operator, pop the top two numbers, apply the operator, and push the result back. At the end, the single remaining value on the stack is the answer. This works because postfix notation already encodes evaluation order without needing parentheses, and a stack naturally holds the 'pending operands' waiting for their operator.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you implement a queue using two stacks, and what's the amortized time complexity?",
+    "answer_markdown": "Keep an 'in' stack for enqueuing and an 'out' stack for dequeuing. To enqueue, push onto 'in'. To dequeue, if 'out' is empty, pop everything from 'in' and push it onto 'out' (which reverses the order to FIFO), then pop from 'out'. Each element is moved from 'in' to 'out' at most once, so although a single dequeue can occasionally cost O(n), the amortized cost per operation across a sequence is O(1).",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why does the JavaScript call stack overflow on deep recursion, and how would you fix a function that hits this limit?",
+    "answer_markdown": "Every function call adds a frame to the call stack holding its arguments, local variables, and return address; frames are only removed when the function returns. Deep or infinite recursion piles up frames faster than they're popped, eventually exceeding the engine's reserved stack space and throwing a RangeError. You can fix it by converting the recursion to an iterative loop with an explicit stack data structure you manage yourself, since that lives on the heap instead of the fixed-size call stack.",
+    "difficulty": "medium"
+  }
+]

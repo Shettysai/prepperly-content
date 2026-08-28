@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "Why doesn't a single Node.js process use all the CPU cores on a machine automatically?",
+    "answer_markdown": "Node.js JavaScript execution is single-threaded by design — one process runs on one thread, which the OS schedules onto one core at a time. Using more cores requires deliberately running more processes (via the cluster module) or more threads (via worker_threads); it doesn't happen automatically, unlike some multi-threaded runtimes, because Node's core execution model was built around a single event loop.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You have an Express API where one endpoint does heavy image processing and it's making all other endpoints slow. What's the right fix?",
+    "answer_markdown": "The right fix is a worker thread, not clustering — the problem is that the image-processing code is CPU-bound and runs synchronously on the main thread, blocking the event loop so no other request on that process can be handled while it runs. Moving that specific work into a worker thread lets it run on a separate thread, freeing the main thread to keep handling other requests concurrently. Clustering wouldn't fix this directly since each cluster worker would still individually block on its own image-processing requests — it would only reduce how often it happens by spreading requests across more processes.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "If cluster workers are separate processes with separate memory, how would you keep something like a rate-limiter's request counts consistent across all of them?",
+    "answer_markdown": "Since cluster workers don't share memory, an in-process counter (like a plain object) would give each worker its own independent count, letting a client bypass a rate limit meant to apply globally by hitting different workers. The fix is to move that shared state to an external store all workers can read and write, like Redis, using atomic increment operations so concurrent requests across workers don't race. This is a common real-world gotcha: clustering solves throughput but reintroduces the need for shared state to live outside any single process.",
+    "difficulty": "hard"
+  }
+]

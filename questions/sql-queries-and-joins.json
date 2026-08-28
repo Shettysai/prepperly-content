@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What's the difference between an INNER JOIN and a LEFT JOIN, with an example?",
+    "answer_markdown": "An INNER JOIN only returns rows where both tables have a matching value, so joining customers to orders would exclude any customer who never placed an order. A LEFT JOIN keeps every row from the left table (customers) no matter what, filling in NULLs for order columns when there's no match, so you can see customers with zero orders too. The choice matters a lot for reports — using INNER JOIN by mistake can silently hide rows you actually needed to see.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Write a query to find the top 3 customers by total amount spent, and explain each clause.",
+    "answer_markdown": "You'd JOIN customers to orders on the foreign key, GROUP BY customer to collapse their orders into one row per customer, use SUM(orders.amount) as an aggregate to total their spending, ORDER BY that sum descending, and LIMIT 3 to keep only the top results. Example: `SELECT customers.name, SUM(orders.amount) AS total FROM customers JOIN orders ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY total DESC LIMIT 3;`. This tests whether you can combine filtering, joining, grouping, and ordering in one coherent query rather than just knowing each clause in isolation.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why can a query with GROUP BY and HAVING be much slower than one using only WHERE, and how would you optimize it?",
+    "answer_markdown": "WHERE filters rows before any grouping or aggregation happens, so the database does less work overall; HAVING runs after grouping, meaning the database must first aggregate potentially large amounts of data before throwing rows away. To optimize, push as much filtering as possible into WHERE so fewer rows ever reach the GROUP BY step, and make sure the columns used in WHERE and the join conditions are indexed so the database isn't scanning entire tables to find matches. This question checks whether you think about query performance, not just correctness.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the difference between WHERE and HAVING, with a simple example?",
+    "answer_markdown": "WHERE filters individual rows before any grouping happens, so `WHERE amount > 100` keeps only orders over $100 before anything is summarized. HAVING filters after GROUP BY has aggregated rows, so `HAVING COUNT(*) > 5` keeps only groups (like customers) with more than 5 matching rows. You can't use HAVING for row-level filters or WHERE for aggregate filters, because at the point WHERE runs, the aggregation hasn't happened yet.",
+    "difficulty": "easy"
+  }
+]

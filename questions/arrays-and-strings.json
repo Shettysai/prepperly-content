@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Why is accessing an array element by index O(1) while searching for a value is O(n)?",
+    "answer_markdown": "Indexing is O(1) because the array's elements sit contiguously in memory, so the engine computes the exact memory address with one multiplication (index times element size) plus the base address. Searching for a value, by contrast, requires checking elements one by one since there is no shortcut telling you where a specific value lives, giving O(n) in the worst case. This distinction is why looking things up by position is cheap but looking things up by content is not, unless you add a separate index like a hash table.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why can concatenating strings in a loop become a performance problem, and how do you avoid it?",
+    "answer_markdown": "JavaScript strings are immutable, so every `+=` allocates a brand new string and copies the previous contents plus the addition into it. Doing this n times means copying roughly 1+2+3+...+n characters in total, which is O(n²). The fix is to push each piece into an array and call `.join('')` once at the end, which touches each character a constant number of times for O(n) total work. Interviewers want you to notice the hidden repeated allocation, not just recite that strings are immutable.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you find the first non-repeating character in a string, and what's the time complexity?",
+    "answer_markdown": "Build a frequency map by counting each character in one pass (O(n)), then walk the string a second time and return the first character whose count is 1 (O(n)). Total time is O(n) and space is O(k) where k is the size of the character set. A naive approach that checks each character against the whole string is O(n²), so the interviewer is really testing whether you reach for a hash map instead of nested loops.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How does a JavaScript array grow when you keep pushing elements past its current capacity?",
+    "answer_markdown": "Internally, engines like V8 allocate a backing store larger than what you're currently using. When a push exceeds that capacity, the engine allocates a new, larger block (often growing by some multiple of the old size), copies all existing elements over, and frees the old block. Because this doubling-style growth happens infrequently relative to the number of pushes, the average cost per push is O(1), described as amortized constant time, even though any individual push occasionally costs O(n) during a resize.",
+    "difficulty": "hard"
+  }
+]

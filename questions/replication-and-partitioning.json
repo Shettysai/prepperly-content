@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What's the difference between replication and partitioning, and why do most large systems use both?",
+    "answer_markdown": "Replication copies the same data across multiple servers for redundancy and to spread out read traffic; partitioning splits the dataset into distinct pieces so no single server has to store or serve all of it. They solve different problems — safety/read-scale versus storage/write-scale — so large systems typically shard their data into partitions and then replicate each partition, getting both benefits simultaneously.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You're designing a sharded database for a global chat app and pick 'user ID modulo number of shards' as the partition key. What could go wrong when you add more shard servers later?",
+    "answer_markdown": "Changing the number of shards changes the modulo result for almost every user ID, meaning nearly all data would suddenly map to a different shard than where it actually lives, requiring a massive, disruptive reshuffling of data. This is exactly the problem consistent hashing solves — it's designed so that adding or removing a shard only remaps a small fraction of keys instead of nearly all of them. This question checks whether you understand why naive modulo-based sharding breaks down under real operational change.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "In leader-follower replication, how would you handle a client that writes data and then immediately reads it back, if the read might hit a lagging follower?",
+    "answer_markdown": "This is the 'read-your-writes' consistency problem. Common fixes include routing that specific read back to the leader for a short window after a write, tracking a version/timestamp with the write and having the client wait until a follower's replicated version catches up to it, or sticking a client to the same replica it just wrote to for a period of time. Each approach trades off some read-scaling benefit to guarantee the user doesn't see their own change appear to vanish, which is exactly the kind of consistency-vs-performance trade-off interviewers want you to reason through out loud.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why might reading data right after writing it show stale results in a replicated system?",
+    "answer_markdown": "If the write goes to the leader but the read is served by a follower, there's a small window where the follower hasn't yet received the update, a delay called replication lag. This is why systems that need 'read your own writes' behavior often route a user's reads back to the leader for a short period after they write, rather than immediately trusting any follower.",
+    "difficulty": "easy"
+  }
+]

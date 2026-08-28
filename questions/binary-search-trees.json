@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "How do you search for a value in a binary search tree, and why is it faster than searching an unsorted list?",
+    "answer_markdown": "Starting at the root, compare the target value to the current node: if equal you're done, if smaller go left, if larger go right, repeating until you find it or fall off the tree. It's faster than an unsorted list because each comparison eliminates an entire subtree of possibilities rather than just one element, giving O(log n) time on a balanced tree instead of O(n) for a linear scan — the same principle as binary search on a sorted array.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you validate that a given binary tree satisfies the binary search tree property?",
+    "answer_markdown": "You cannot just check each node against its immediate children, because a node could be locally valid but still violate the ordering with a grandparent further up. Instead, recurse while carrying a valid (min, max) range: the root starts with an unbounded range, and each time you go left you tighten the max to the parent's value, each time you go right you tighten the min. If any node falls outside its inherited range, the tree is invalid. This runs in O(n) time since every node is visited once.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you delete a node from a BST that has two children, and why can't you just remove it directly?",
+    "answer_markdown": "You can't remove it directly because it has two subtrees depending on it, and simply deleting it would disconnect one of them. The standard fix is to find the in-order successor — the smallest value in the node's right subtree (or symmetrically, the in-order predecessor, the largest in the left subtree) — copy that value into the node being deleted, and then recursively delete the successor from the right subtree, where it's guaranteed to have at most one child and is trivial to remove.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why might a BST built from already-sorted input perform no better than a linked list, and how do AVL or red-black trees prevent this?",
+    "answer_markdown": "If you insert values in increasing order, every new node is larger than everything before it, so it always becomes the right child of the previous largest node, producing a tree that is really just a chain with O(n) height instead of O(log n). AVL trees and red-black trees prevent this by performing rotations — local restructurings of the tree — after every insert or delete that would otherwise unbalance it, guaranteeing the height stays O(log n) regardless of insertion order, at the cost of extra bookkeeping on each modification.",
+    "difficulty": "hard"
+  }
+]

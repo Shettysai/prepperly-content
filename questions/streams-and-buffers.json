@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "Why would you use a readable stream instead of fs.readFile to serve a large file over HTTP?",
+    "answer_markdown": "fs.readFile loads the entire file into memory before you can send any of it, which means high memory use per request and a delay before the first byte goes out — bad for large files or many concurrent requests. A readable stream piped to the HTTP response starts sending data as soon as the first chunk is read, keeps memory use low and constant, and lets Node handle many concurrent large-file downloads without each one holding the whole file in RAM.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is backpressure, and what happens if you ignore it?",
+    "answer_markdown": "Backpressure is the signal a writable stream sends when its internal buffer is full and it can't accept more data yet, telling the source to pause. If you ignore it — for example, by pushing data with a manual data-event listener and write() calls without checking the returned boolean — the writable stream's internal buffer keeps growing unboundedly while it waits to catch up, which can exhaust memory and crash the process on a fast source and slow destination. Using .pipe() avoids this because it automatically pauses and resumes the source based on the destination's readiness.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you build a Transform stream that uppercases text passing through it, and why is Transform the right choice here?",
+    "answer_markdown": "You'd extend stream.Transform and implement a _transform(chunk, encoding, callback) method that converts the chunk to a string, uppercases it, and calls this.push() with the result before calling callback() to signal it's ready for the next chunk. Transform is the right choice because the data needs to be both consumed (readable side) and produced (writable side) in the same step, chunk by chunk, without ever needing the whole input in memory — which is exactly what lets it be piped between any other readable and writable stream in a chain.",
+    "difficulty": "hard"
+  }
+]

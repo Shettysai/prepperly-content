@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Why does a video call use UDP instead of TCP?",
+    "answer_markdown": "Video calls value low latency over perfect delivery — if a frame is lost, retransmitting it via TCP would arrive too late to be useful, causing lag and buffering instead. UDP lets the app just drop that frame and keep playing the next ones smoothly. This is a classic trade-off question testing whether you understand that 'reliable' isn't always 'better' — it depends on what the application actually needs.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain the TCP three-way handshake and what happens if the final ACK is lost.",
+    "answer_markdown": "Client sends SYN, server responds SYN-ACK, client responds ACK — after this the connection is considered established on both sides. If the final ACK is lost, the server is left in a half-open state waiting; it will typically retransmit its SYN-ACK until it times out and gives up, since it never confirmed the client is ready. Interviewers use the follow-up about lost ACKs to check you understand this isn't just a memorized sequence but has real failure-handling behind it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How can a UDP-based application build reliability on top of an inherently unreliable protocol?",
+    "answer_markdown": "It implements its own sequence numbers, acknowledgments, and retransmission logic at the application layer — essentially reinventing parts of TCP but with more control over the trade-offs. This is exactly what protocols like QUIC (which HTTP/3 uses) do: they run over UDP but add their own reliability and congestion control, avoiding some of TCP's head-of-line blocking issues. This question tests whether you know reliability is a layer you can choose to add, not something inherent to a transport protocol.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the difference between an IP address and a port number?",
+    "answer_markdown": "An IP address identifies a specific machine on a network, while a port number identifies which specific application or service on that machine should receive the data. This is why a server can run a web server on port 80 and a database on port 5432 at the same IP address without them interfering — the OS uses the port to route incoming data to the right process.",
+    "difficulty": "easy"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "prompt": "Why is Merge Sort's time complexity O(n log n)?",
+    "answer_markdown": "The array is split in half repeatedly, which takes log n levels of splitting (halving n until you reach 1). At every level, merging all the pieces back together costs O(n) total work, since every element gets touched once per level during merging. Multiplying the log n levels by the O(n) work per level gives O(n log n).",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain how Quick Sort's partition step works, and why a bad pivot causes O(n²) behavior.",
+    "answer_markdown": "Partitioning picks a pivot value and rearranges the array so smaller elements end up to its left and larger ones to its right, then places the pivot in its final sorted position. If the pivot always ends up being the smallest or largest element (e.g., always picking the last element of an already-sorted array), one side of the partition is empty and the other has n-1 elements, so instead of halving the problem each time you only shrink it by one — that's n recursive levels each doing O(n) work, giving O(n²).",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You need to sort 10 million log entries stored on disk, too large to fit in memory at once. Which would you reach for, Merge Sort or Quick Sort, and why?",
+    "answer_markdown": "Merge Sort, because it accesses data sequentially — you can sort chunks that fit in memory, write them to disk, then merge sorted chunks together reading them in streaming fashion (this is the basis of real external sorting). Quick Sort relies on random-access swaps across the whole array during partitioning, which is expensive when data lives on disk rather than in RAM. This is also why database engines and big external sorts are built on merge-based strategies.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "What's the core trade-off between relational and NoSQL databases?",
+    "answer_markdown": "Relational databases enforce a strict schema and strong ACID guarantees, which protects data integrity but can make scaling horizontally and handling varied data harder. NoSQL databases relax those guarantees (often following BASE, eventual consistency) in exchange for flexible schemas and easier horizontal scaling. The right choice depends on whether your data needs strict correctness (money, inventory) or benefits more from flexibility and scale (logs, feeds, catalogs).",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You're designing a system for an e-commerce checkout. Would you use SQL or NoSQL, and why?",
+    "answer_markdown": "The order and payment data should live in a relational database, because you need ACID guarantees — you cannot charge a customer without confirming inventory was reserved, and a half-completed transaction (money taken, no order created) is unacceptable. However, product catalog data with wildly varying attributes per category, or session/cart data that's temporary and high-volume, is a reasonable fit for a NoSQL or key-value store. This tests whether you can split a real system into parts with different consistency needs rather than picking one database for everything.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How can a NoSQL database still offer transactions if it doesn't use the relational model?",
+    "answer_markdown": "Some NoSQL databases, like MongoDB, added multi-document ACID transactions by internally tracking a write-ahead log and locking mechanism similar in spirit to relational engines, though usually scoped more narrowly (e.g., within a single replica set) for performance reasons. This shows that ACID and the relational model are actually separate concepts — ACID is about transaction guarantees, while 'relational' is about how data is structured. Interviewers use this to see if you conflate the two.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What does BASE stand for, and how is it different from ACID?",
+    "answer_markdown": "BASE stands for Basically Available, Soft state, Eventually consistent — it prioritizes staying up and responsive over guaranteeing every read immediately reflects the latest write, which is the opposite emphasis from ACID's strict correctness guarantees. Many NoSQL systems follow BASE because it lets them scale across many servers more easily than a strict ACID system can.",
+    "difficulty": "easy"
+  }
+]
