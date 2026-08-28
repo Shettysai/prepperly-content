@@ -1,0 +1,27 @@
+[
+  {
+    "prompt": "What are the four things you should do in the first 60 seconds after any interview question, and in what order?",
+    "answer_markdown": "Restate the question in your own words, ask one or two clarifying questions, state your plan out loud, then start. The order matters: restating first proves you heard the question and locks in a shared definition before you invest any time. Clarifying second catches the missing information every question deliberately contains. Stating the plan third lets the interviewer redirect you for free, before you have spent twenty minutes going the wrong way. The deeper purpose is that this script gives your mouth something useful to do while your brain catches up, so the panic-inducing blank silence never happens.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is 'does that sound reasonable?' considered one of the highest-value sentences you can say in an interview?",
+    "answer_markdown": "It converts a silent assumption into a checkpoint. If your plan is wrong, the interviewer corrects you immediately at zero cost, rather than watching you build on a bad foundation for twenty minutes. It also signals that you treat the interview as a collaboration rather than an exam, which is closer to how real engineering work happens. Most interviewers actively want to help you succeed, but they can only steer you if they know where you are going. Candidates who never expose their plan give the interviewer no opening to help.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A candidate says they think better in silence and that narrating slows them down. What is wrong with this reasoning in an interview context?",
+    "answer_markdown": "It optimises for the wrong outcome. In a real interview you are not scored on the elegance of your private reasoning, you are scored on what the interviewer can observe, and silence is indistinguishable from being stuck. The candidate may genuinely be making progress, but from outside the two look identical, so they get graded as if they were frozen. Silence also removes the interviewer's ability to give a hint, because hints require knowing what you are currently trying. The compromise is to announce the silence first: saying 'let me think for a few seconds' makes the pause read as deliberate thinking rather than paralysis.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "The first 60 seconds script is described as working for any question type, including behavioural ones. How does clarifying help on a question like 'tell me about a time you disagreed with your manager'?",
+    "answer_markdown": "It does two jobs at once. Asking something like 'would you rather hear about a technical disagreement or one about priorities?' genuinely narrows what you need to produce, which makes finding a story easier. At the same time, the seconds the interviewer spends answering are seconds you spend searching your memory, so the question buys real thinking time without any awkward pause. This is what experienced candidates do naturally, and it works because the question is legitimate rather than a stalling tactic. The alternative, going silent while you hunt for a story, produces the same delay but reads as being caught off guard.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What separates a clarifying question that helps you from one that wastes time, and give an example of each?",
+    "answer_markdown": "The test is whether the answer changes what you do next. 'How large can the input get?' is worth asking because a thousand items and a billion items call for different approaches, so the answer redirects your solution. 'What language should I use?' is not worth asking, because you would write the same algorithm either way and nothing about your plan changes. Asking consequential questions signals that you know which details drive a solution, which is exactly the judgement being tested. Asking several inconsequential ones burns your clarifying budget and suggests you cannot tell what matters.",
+    "difficulty": "medium"
+  }
+]

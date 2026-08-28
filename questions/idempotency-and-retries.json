@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What does it mean for an operation to be idempotent, and which HTTP methods are idempotent?",
+    "answer_markdown": "An operation is idempotent if performing it multiple times leaves the system in exactly the same state as performing it once. GET is idempotent because reads change nothing, PUT is idempotent because it sets a resource to a specified state regardless of what was there before, and DELETE is idempotent because deleting something already deleted leaves it deleted. POST is not idempotent by default, since it typically creates a new resource on every call — which is why POST endpoints need an explicit idempotency key to be safely retryable.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Your service calls a payment API and the request times out. Did the charge go through, and what should you do?",
+    "answer_markdown": "You cannot tell. A timeout is indistinguishable between 'the request never arrived' and 'the request was processed successfully but the response was lost coming back' — both look identical from the client. This is precisely why the operation needs to be idempotent: if the payment API accepts an idempotency key, you simply retry with the same key, and the server either performs the charge (if it never happened) or returns the stored result of the original charge (if it did). Making the operation safe to repeat dissolves the dilemma entirely, because the question of whether the first attempt succeeded stops mattering.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does an idempotency key work end to end, and what are the two implementation details people get wrong?",
+    "answer_markdown": "The client generates a unique key — typically a UUID — identifying the intent of the operation, and sends it with the request; the same logical operation reuses the same key across retries while a genuinely new operation gets a fresh one. The server stores the outcome against that key and returns the stored response for any repeat within the retention window, commonly 24 hours. The first thing people get wrong is checking for the key and then writing it as two separate steps, which lets two concurrent retries both find nothing and both do the work — the key must be reserved atomically, which a unique database constraint provides for free. The second is storing only successful responses; failures must be stored too, otherwise a retry of a failed request might succeed and make the outcome depend on timing.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is a retry storm, and why does exponential backoff alone not fully solve it?",
+    "answer_markdown": "A retry storm happens when a service becomes slow or unavailable, all its clients retry immediately, that retry traffic multiplies the load, the service degrades further, and the cycle feeds itself — the service cannot recover because the retries have become the load. Exponential backoff spaces attempts out over increasing intervals, giving the service breathing room, but it does not fix synchronisation: every client that failed at the same moment computes the same delay and retries at the same moment, arriving in tight clusters that can re-overload the recovering service. Adding jitter — randomising the actual wait, for example picking uniformly between zero and the current backoff ceiling — spreads those clusters into a smooth trickle of traffic.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Is exactly-once delivery possible in a distributed system? Explain your answer.",
+    "answer_markdown": "No. The sender can never distinguish between 'the message was lost in transit' and 'the message arrived but the acknowledgement was lost coming back', and whichever behaviour it chooses is wrong in one of those two cases: if it doesn't retry it risks zero deliveries, and if it does retry it risks two. There is no third option, and no protocol design creates one. What you do instead is choose at-least-once delivery — always retry, accepting duplicates — and make the processing idempotent by deduplicating on a message ID or writing the result and the processed marker in a single transaction. That produces exactly-once *effects*, which is what people actually want. In an interview, saying 'at-least-once delivery with idempotent consumers' shows you understand this; claiming exactly-once delivery is a red flag.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why is retrying at every layer of a service stack dangerous, and where should retries live?",
+    "answer_markdown": "Retries multiply rather than add. If three layers in a call chain each retry three times, a single user request can generate up to 27 requests against the deepest service, and the worst-case latency is the product of all the backoff schedules rather than the sum — often far beyond any reasonable timeout. During an outage this amplification is exactly what turns a degraded service into a dead one. The fix is to retry at exactly one layer, usually the one closest to the failure that still knows whether the operation is safe to repeat, and to have every other layer fail fast and propagate the error. Pairing this with an overall deadline budget, where remaining attempts are abandoned once the time is spent, bounds the damage.",
+    "difficulty": "hard"
+  }
+]

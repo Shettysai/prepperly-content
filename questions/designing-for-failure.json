@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "What is a cascading failure and what usually causes it?",
+    "answer_markdown": "A cascading failure is when one component's failure consumes a resource shared with others — connection pool slots, threads, memory — until components that had nothing to do with the original problem also fail. The classic cause is a network call with no timeout: the call hangs, holding a connection, and as more requests arrive they each hang on the same dead dependency until every connection in the pool is occupied. At that point your service is perfectly healthy but cannot serve any request at all, including ones that never needed the failed dependency. This is how a non-critical service like recommendations takes down an entire product page.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain the three states of a circuit breaker.",
+    "answer_markdown": "Closed is the normal state: calls pass through to the dependency and failures are counted. When the failure count crosses a configured threshold, the breaker moves to Open, where every call fails immediately without touching the network — this protects the caller from waiting on something known to be broken and simultaneously removes load from the struggling dependency so it can recover. After a cooldown period the breaker moves to Half-open and allows a single trial request through: if it succeeds the breaker closes and normal traffic resumes, and if it fails the breaker returns to Open for another cooldown. The half-open state is what makes recovery automatic without flooding a recovering service with full traffic the instant it comes back.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How should you choose a timeout value, and what is a timeout budget?",
+    "answer_markdown": "Base it on measurement rather than a round number: set the timeout slightly above the dependency's observed p99 latency, so you tolerate normal variation but cut off genuinely stuck calls. Too low and you fail requests that would have succeeded; too high and you hold resources long past the point where the answer is still useful. A timeout budget is the constraint that the timeouts along a call chain must fit inside the caller's own deadline — if your API must answer in 3 seconds and it calls three services in sequence, they cannot each be given 2 seconds, because the caller will have abandoned the request while your service is still working on the third call. The fix is to pass the remaining budget down through the chain and have each layer refuse to start work it cannot complete in the time left.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is a bulkhead in system design, and what does it protect against?",
+    "answer_markdown": "A bulkhead partitions resources so that one dependency's failure cannot exhaust everything, named after the sealed compartments in a ship's hull that stop one breach from sinking the vessel. In practice it usually means giving each dependency its own connection pool or thread pool rather than sharing one — 20 connections for recommendations and 20 for payments, rather than a shared pool of 40. If recommendations starts hanging, it can consume only its own 20 connections and payments continues working normally, whereas with a shared pool the failing dependency would eventually take every connection. The cost is lower peak utilisation, since each pool is sized for its own dependency's worst case and cannot lend spare capacity to another.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is a dependency that is slow but successful more dangerous than one returning errors?",
+    "answer_markdown": "A dependency returning 500s is easy to handle: the errors are visible in metrics, the circuit breaker counts them and trips, and the fallback path engages. A dependency that responds successfully in 8 seconds instead of 80 milliseconds triggers none of that — health checks pass, the error rate looks fine, and dashboards show a healthy system. Meanwhile your connection pool steadily fills with successful-but-slow requests until you have no capacity left, and the failure surfaces as your own service dying for reasons that appear unrelated. The defence is to make circuit breakers trip on latency as well as errors, treating any response slower than the configured timeout as a failure for counting purposes.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is retry amplification and how do you control it?",
+    "answer_markdown": "Retries multiply rather than add across layers: if three services in a call chain each retry three times, a single user request can produce up to 27 requests at the deepest service. The damage is worst precisely when it hurts most — during an outage, when load should be dropping to let a struggling service recover, it instead increases by an order of magnitude and ensures the service never gets the breathing room it needs. Control it by retrying at exactly one layer, typically the one closest to the failure that still knows the operation is safe to repeat, and having every other layer fail fast. Additionally, cap total attempts against an overall deadline budget, and let an open circuit breaker suppress retries entirely, since retrying against a dependency you already know is down is pure waste.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is the point of chaos testing, given you already designed for failure?",
+    "answer_markdown": "Designing for failure produces a set of beliefs — that recommendations failing degrades gracefully, that the timeout budget holds, that one dependency cannot affect another. Those beliefs concern interactions between many components under load, which are too complex to verify by reasoning alone, so chaos testing checks them empirically by breaking things deliberately in a controlled way and observing what happens. Start small, such as adding 500ms of latency to a single dependency in staging. The valuable result is almost never confirmation that the fallback worked; it is discovering an unexpected coupling — a different service that also degraded because it shared a connection pool or thread pool with the one you broke, a relationship nobody had documented and nobody would have found by reading code.",
+    "difficulty": "medium"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why can't you just use a normal database transaction across three microservices?",
+    "answer_markdown": "A database transaction's atomicity guarantee comes from a single database engine controlling all the data involved — it can hold locks, write to one log, and decide to commit or roll back everything together. When stock, payments, and shipping each live in their own service with their own database, no single engine owns all three, so there is no `ROLLBACK` that can reach across them. If stock is reserved and the card is charged but shipping fails, you have money taken for an order that will never ship and no automatic way to undo the first two steps. That gap is exactly what 2PC and sagas exist to fill.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain two-phase commit and why it is generally avoided in microservice architectures.",
+    "answer_markdown": "In 2PC a coordinator runs two rounds: first it asks every participant to prepare, and each durably promises it can commit and votes yes or no; then, if all voted yes, the coordinator tells everyone to commit, otherwise everyone aborts. It genuinely delivers atomicity across services. The problem is that each participant holds its locks from the moment it votes yes until the decision arrives, and if the coordinator crashes in that window the participants are stuck — they cannot commit because the decision might be abort, and cannot abort because it might be commit. They block, holding locks, until the coordinator recovers. That makes the coordinator a single point of failure that freezes everyone, and throughput is capped by the slowest participant on every single operation.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is a saga, and what does it trade away compared to 2PC?",
+    "answer_markdown": "A saga is a sequence of local transactions, where each step commits immediately in its own service's database and publishes an event that triggers the next step. If a later step fails, compensating transactions run in reverse order to semantically undo the completed steps — refund the card, release the stock. It trades atomicity and isolation for availability and scale: no participant ever blocks holding locks waiting on a coordinator, but the system passes through visible intermediate states where stock is reserved and money is taken with no shipment. Importantly, a saga never truly rolls back — it moves forward through corrections, since you cannot un-charge a card, only issue a refund that leaves its own record.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "When would you choose choreography over orchestration for a saga?",
+    "answer_markdown": "Choreography, where each service listens for events and reacts independently with no central controller, is a reasonable fit for short sagas of two or three steps — it avoids introducing an extra component and keeps services loosely coupled. Orchestration, where one component holds the sequence explicitly and calls each service, is better beyond that because the workflow lives in one readable place. The decisive argument is debuggability: in a ten-step choreographed saga, the workflow exists nowhere in the codebase as a description — it is emergent behaviour spread across ten event handlers — so when order 4471 is stuck, there is no single file that tells you what should have happened next. Orchestration costs more moving parts but makes the process inspectable.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the outbox pattern and which specific problem does it solve?",
+    "answer_markdown": "It solves the dual-write problem: a service needs to both change its database and publish an event, but those are two separate systems with no shared transaction. If you write the order and then publish, a crash in between loses the event permanently — the order exists and nothing downstream ever learns of it. If you publish then write, you can announce an order that does not exist. The outbox pattern makes both atomic by inserting the event as a row in an `outbox` table inside the very same local database transaction that writes the order, so they commit or fail together. A separate publisher process then reads unsent outbox rows, publishes them, and marks them sent — retrying safely after any crash, since the row is still there. The result is at-least-once delivery, which is why consumers must be idempotent.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What happens when a compensating transaction itself fails, and how do you handle steps that cannot be compensated?",
+    "answer_markdown": "A failed compensation is the dangerous case: if the refund API times out, you have taken money with no order and no automatic path back. Compensations must therefore be retryable indefinitely and idempotent — a refund executed twice must not pay out twice — which is why they are normally durable queued jobs with backoff rather than inline calls, and why after a bounded number of failures they must go to a dead-letter queue that alerts a human, since silent failure here means silently keeping a customer's money. For genuinely irreversible steps, like a sent email, the technique is semantic locking: order the saga so irreversible actions happen last, and keep the entity in an explicit pending state such as `PENDING_PAYMENT` until then, so anything reading it knows not to treat it as final.",
+    "difficulty": "hard"
+  }
+]

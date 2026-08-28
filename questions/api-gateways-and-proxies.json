@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the difference between a reverse proxy, a load balancer, and an API gateway?",
+    "answer_markdown": "All three sit in front of backend servers and act as the single front door, hiding the internal topology from clients, which is why they are easy to confuse. The difference is emphasis rather than category: a load balancer's primary job is distributing traffic across interchangeable backends, a reverse proxy's is being the central entry point where shared concerns like TLS termination and caching live, and an API gateway adds API-specific duties such as authentication, rate limiting, and versioning on top of application-layer routing. One NGINX process can play all three roles at once, so the useful answer names the job being done rather than the product.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain L4 versus L7 load balancing and when you would choose each.",
+    "answer_markdown": "An L4 balancer works at the transport layer, seeing only IP addresses and ports, and forwards TCP bytes without inspecting them. That makes it very fast, usable with any protocol including databases and message brokers, and able to pass encrypted traffic through untouched. An L7 proxy parses the actual HTTP request, which enables routing by URL path or header, sticky sessions from a cookie, retrying idempotent requests, and TLS termination, at the cost of CPU spent decrypting and parsing. Choose L4 for raw throughput or non-HTTP protocols, and L7 whenever a decision depends on what the request actually says.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why might round robin be the wrong load balancing algorithm?",
+    "answer_markdown": "Round robin assumes every request costs roughly the same, since it only equalises request counts. If most requests take 5ms but a few take 2 seconds, a server that happens to receive several slow requests in a row builds a queue while its neighbour sits idle, so tail latency collapses even though the count-based distribution looks perfectly even. Least connections fixes this by routing to whichever backend has the fewest requests currently in flight, which tracks actual outstanding work rather than assuming uniformity.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the difference between a forward proxy and a reverse proxy?",
+    "answer_markdown": "A forward proxy acts on behalf of clients: it sits at the edge of a client network, and outbound requests pass through it for filtering, caching, or anonymity, so the destination server sees the proxy rather than the real client. A reverse proxy acts on behalf of servers: it receives inbound traffic and forwards it to backends, so the client believes it is talking directly to the service and never learns the internal topology. The distinction is simply which side of the conversation the proxy represents.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why are sticky sessions usually a workaround rather than a solution?",
+    "answer_markdown": "Sticky sessions pin a user to one backend so that server can keep their session in local memory. That creates two problems: when the server restarts or fails, those users lose their sessions and get logged out, and load can skew badly because heavy users stay pinned to whichever machine they landed on. The underlying issue is that state is living in the wrong place. Moving sessions to a shared store like Redis makes every backend interchangeable, so any server can serve any request and the balancer is free to distribute traffic properly.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why can a health check pass while the service is actually broken?",
+    "answer_markdown": "A health check that only verifies the TCP port is open confirms a process is listening and nothing more. An application can accept connections while returning 500 for every request, because its database connection pool is exhausted or a dependency is down, and the socket-level check still succeeds. The load balancer therefore keeps sending traffic to a server that fails everything. A useful health check exercises a real endpoint that touches critical dependencies, so it fails when the service genuinely cannot serve requests.",
+    "difficulty": "hard"
+  }
+]

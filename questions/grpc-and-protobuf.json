@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "When would you choose gRPC over REST?",
+    "answer_markdown": "For internal service-to-service communication where you control both ends, particularly at high call volumes. You get a compiled contract from the .proto file so mismatches are caught at build time rather than in production, compact binary messages instead of repeating field names in every payload, native streaming in both directions, and HTTP/2 multiplexing over long-lived connections. REST remains the better choice for public APIs and anything browser-facing, because it is universally supported, debuggable with curl, and does not require consumers to generate stubs from a schema you share.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What are the four gRPC call types?",
+    "answer_markdown": "Unary, where the client sends one message and gets one back, like a normal function call. Server streaming, where the client sends one request and reads a stream of responses, suited to subscriptions such as live price updates. Client streaming, where the client sends a stream and receives a single response, suited to uploading chunks and getting a summary. And bidirectional streaming, where both sides stream independently, suited to chat or continuous sync. Each maps onto an HTTP/2 stream, which is why streaming is native rather than bolted on.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why do protobuf field numbers matter more than field names?",
+    "answer_markdown": "Only the field numbers travel on the wire; names exist purely for the generated code. That means renaming a field is completely safe for compatibility, because the encoded message is unchanged. But changing a field's number, or reusing a number that previously meant something else, causes deployed clients to interpret the bytes as the old field, silently misreading data rather than failing loudly. This is why retired field numbers should be marked reserved so a future field cannot accidentally inherit an old meaning.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why can't browsers call gRPC services directly?",
+    "answer_markdown": "gRPC requires precise control over HTTP/2 frames, including trailers and stream management, and browser JavaScript has no API exposing that level of the connection. The fetch and XHR APIs deliberately abstract it away. The workaround is gRPC-Web, a modified protocol the browser can speak, combined with a proxy that translates it into real gRPC for backend services. Because that is meaningful extra infrastructure, the common architecture uses REST or GraphQL at the public edge and reserves gRPC for internal service-to-service calls.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You scaled out your gRPC backends during a traffic spike but load stayed concentrated on the original instances. What happened?",
+    "answer_markdown": "gRPC opens one long-lived HTTP/2 connection per client and multiplexes every call over it. An L4 load balancer balances connections rather than requests, so once a client's single connection is assigned to a backend, all of that client's traffic stays pinned there for the connection's lifetime. New backends receive nothing because no new connections are being made. The fix is either an L7 proxy that understands HTTP/2 and balances individual requests across backends, or client-side load balancing where the client knows all backend addresses and distributes calls itself.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do you evolve a protobuf schema without breaking deployed clients?",
+    "answer_markdown": "Adding a new field is safe, because proto3 fields are all optional and unknown fields are ignored rather than rejected, so an old client simply skips data it does not understand. Renaming is safe since only numbers are transmitted. What breaks compatibility is removing a field and later reusing its number, or changing a field's type, since both cause old and new code to disagree about what the bytes mean. The safe procedure is to stop using a field, mark its number reserved so nothing can claim it, and only then remove the declaration.",
+    "difficulty": "hard"
+  }
+]

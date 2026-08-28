@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "A query that was fast is now slow in production. What is your first step?",
+    "answer_markdown": "Run EXPLAIN ANALYZE on it and read the plan rather than guessing. The most diagnostic thing is the gap between estimated and actual row counts: if the planner expected 10 rows and got 400,000, it chose a strategy suited to 10, such as a nested loop where a hash join was needed, and everything downstream is wrong. That usually points to stale statistics, fixed by running ANALYZE. A sequential scan with a large 'Rows Removed by Filter' count instead points to a missing index. Reading the plan turns a guess into a specific, testable diagnosis.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Is a sequential scan always a problem?",
+    "answer_markdown": "No, and treating it as one is a common mistake. On a small table, reading everything in one pass is genuinely faster than consulting an index and then making separate trips to fetch each matching row. The same is true when a query matches a large fraction of the table, since thousands of individual index lookups cost more than a single sweep. A sequential scan is only a problem when the table is large and the query returns few rows, which is exactly the case an index is designed for.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is the N+1 problem, and how do you detect it?",
+    "answer_markdown": "It happens when code runs one query to fetch a list and then one additional query per item in that list, so displaying 100 posts triggers 101 queries. It is hard to spot because every individual query is genuinely fast, often under a millisecond, so database dashboards report excellent performance while the endpoint takes hundreds of milliseconds from network round trips alone. You detect it by counting queries per request rather than inspecting query durations. The fix is a single join or a batched query that fetches everything in one round trip.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You added an index but the query did not get faster. Give three possible reasons.",
+    "answer_markdown": "First, a function may be wrapping the indexed column, as in WHERE lower(email) = '...', because the index stores raw values and cannot match transformed ones. Second, the index may be composite with the wrong column order, since a leftmost prefix must be usable: an index on (status, created_at) does little for a query filtering only on created_at. Third, statistics may be stale, so the planner does not realise the index is now selective enough to be worth using. A fourth possibility is that the query simply matches too much of the table for an index to beat a scan.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is a covering index and why is an Index Only Scan the ideal plan?",
+    "answer_markdown": "A covering index contains every column a particular query needs, both the ones it filters on and the ones it returns. Because all the required data is present in the index itself, the database can answer entirely from the index and never visit the table, which is what an Index Only Scan means. That eliminates the random fetches into the table that a normal index scan performs, and those fetches are usually the expensive part. The trade-off is a wider index that costs more storage and slows writes slightly.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What does the cost value in a query plan mean?",
+    "answer_markdown": "It is an estimate in arbitrary internal units, not milliseconds. The planner uses it only to compare candidate strategies against each other and choose the cheapest, so a cost of 10834 does not predict any particular runtime. The two numbers shown are startup cost, before the first row can be returned, and total cost. To get real timings you need EXPLAIN ANALYZE, which actually executes the query and reports actual time alongside the estimates, letting you see where the planner's model diverged from reality.",
+    "difficulty": "easy"
+  }
+]

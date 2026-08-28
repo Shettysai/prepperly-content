@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "Why does an API need rate limiting at all?",
+    "answer_markdown": "Without limits, a single client can exhaust the capacity that every other client depends on, and it usually happens by accident rather than malice — a retry loop with no backoff, a script someone forgot to stop, an integration polling every 10 milliseconds. The service cannot distinguish that from legitimate demand, so it keeps trying to serve it until it falls over and everyone is affected. Rate limiting converts an unbounded failure into a bounded one: the runaway caller receives errors while everyone else continues normally. It is also the mechanism that makes tiered pricing possible, since a free tier and a paid tier are ultimately just different limits.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain how the token bucket algorithm works and what its two parameters control.",
+    "answer_markdown": "The bucket holds tokens up to a maximum size, and tokens are added at a fixed refill rate. Each incoming request consumes one token; if no token is available the request is rejected with a 429. The bucket size controls the maximum burst — how many requests a client that has been idle can make all at once — while the refill rate controls the sustained long-run rate. In practice the refill is done lazily rather than with a timer: on each request you compute how many tokens should have accrued since the last check based on elapsed time, add them capped at the bucket size, and then test. That means state is just two numbers per client, which is what makes it cheap enough to run per user at scale.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is the difference between the token bucket and the leaky bucket, and which suits a public API better?",
+    "answer_markdown": "The leaky bucket releases requests at a strictly constant rate regardless of how many are waiting, producing perfectly smooth output but forbidding bursts entirely — even a client arriving alone after a quiet period must wait its turn in the schedule. The token bucket accumulates tokens during idle periods, so a client that has been quiet can make a burst of requests immediately, after which it is throttled down to the refill rate. Public APIs almost always want the token bucket, because real client usage is naturally bursty — a page load might fire ten requests at once — and rejecting those after an hour of silence is user-hostile without protecting anything. The leaky bucket earns its place when something downstream genuinely requires a smooth, fixed rate.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the fixed-window boundary problem, and how does a sliding window counter address it?",
+    "answer_markdown": "A fixed window counts requests per clock interval and resets the counter at the boundary, so a client can spend its entire quota in the last second of one window and its entire quota again in the first second of the next — achieving twice the intended rate across a two-second span while never technically exceeding the limit. A sliding window counter keeps both the current window's count and the previous window's, then estimates the true rate by weighting the previous window according to how much of it is still within view: if 25% of the current minute has elapsed, it counts this minute's requests plus 75% of last minute's. That costs one extra counter per client and almost entirely removes the boundary spike, without the per-request memory a fully accurate sliding window log would need.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you enforce a rate limit correctly across ten application servers?",
+    "answer_markdown": "You cannot keep the counter in process memory, because each instance would then enforce the limit independently and ten instances would collectively allow ten times the intended rate. The state must be shared, and Redis is the standard choice — either `INCR` on a key with an expiry set when the key is first created, or a small Lua script performing the token-bucket arithmetic. Atomicity is the critical requirement: a read-then-write sequence lets multiple instances all read the same under-limit value simultaneously and all decide to allow, so far more requests pass than the limit permits. `INCR` is atomic by nature, and a Lua script executes as a single atomic unit on the Redis server, which is why more complex limiter logic is written that way rather than as multiple round trips.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why aren't per-user rate limits enough, and what is load shedding?",
+    "answer_markdown": "Per-user limits only constrain individuals, not the aggregate. If 50,000 users each stay comfortably within a 100-requests-per-minute limit, that is 5 million requests a minute — and if the service is sized for 1 million, the limiter cheerfully approves exactly the traffic that takes it down, because no single client did anything wrong. You therefore need limits at multiple scopes: global to cap total work, per-endpoint so an expensive route cannot starve cheap ones, per-IP to catch unauthenticated abuse, and per-user for fairness and pricing. Load shedding sits beneath all of these and is different in kind: it is triggered by the server's own health signals — queue depth, latency, CPU — rather than by client identity, and it rejects requests because serving them would cause the service to fail everyone. It should be admission control rather than queueing, since queueing requests you cannot serve only adds latency before the inevitable failure.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why must a 429 response include a Retry-After header?",
+    "answer_markdown": "Without it, a rejected client has no information about when to try again, so the typical behaviour is to retry immediately — and those retries are themselves new requests that must be evaluated by the rate limiter, consuming capacity. Under load this creates a feedback loop where the rate limiter's own rejections generate a substantial share of the traffic hitting it, and the limiter becomes part of the problem it exists to solve. Returning `Retry-After` lets a well-behaved client back off deliberately for a known interval, and pairing it with headers showing remaining quota and reset time lets clients pace themselves so they avoid being rejected in the first place. Counting rejected requests against the limit is the complementary defence for clients that ignore the header.",
+    "difficulty": "medium"
+  }
+]

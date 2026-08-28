@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is your greatest weakness?",
+    "answer_markdown": "Give four parts: name it plainly, state one real cost, describe the mechanism you built, and say honestly where you are now. For example: 'I under-communicate when something is going badly — my instinct is to go quiet and grind. That cost us on a vendor integration where I was blocked for four days before saying so; my lead had solved the same problem before and it took him twenty minutes. So I have a rule now, two hours blocked and I post in the team channel, plus a short daily note of what I'm working on. It's better, not fixed.' The mechanism is what earns the score — it is checkable, whereas 'I'm working on it' is not. Interviewers are testing self-awareness and coachability, and a real flaw with a real system around it answers both.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why does 'I'm a perfectionist' fail so reliably, given that it can be genuinely true?",
+    "answer_markdown": "It fails because it is uninformative, not because it is dishonest. The interviewer needs to record something in the self-awareness box, and a weakness that doubles as a strength gives them nothing to write, so they record 'evasive' instead. It is also the single most common answer, which means it signals a candidate reciting rather than reflecting. If perfectionism genuinely is your problem, it can be salvaged by making the cost real and specific: 'I spent three days polishing an internal tool that two people use, while a customer-facing bug sat in my queue' is a genuine admission with a genuine cost, and it no longer reads as a humblebrag.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Your real biggest weakness is close to the core of the job you are applying for. What do you do?",
+    "answer_markdown": "Pick an adjacent true weakness rather than either lying or self-sabotaging. Honesty does not require handing the interviewer a disqualifying answer, and a weakness at the exact centre of the role's requirements will end the conversation regardless of how good your mechanism is. If the role is stakeholder-heavy and you freeze with non-technical audiences, offer the adjacent truth: 'I default to technical framing even when the audience isn't technical — I presented latency percentiles to an operations manager and lost her in ninety seconds. Now I write the one-line version first, and a non-engineer reads anything going outside engineering.' That is honest, it demonstrates the mechanism, and it addresses the job's real requirement without declaring yourself unable to do it.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "The interviewer says 'can you give me another one?' What does that mean and how should you respond?",
+    "answer_markdown": "It usually means your first answer was too safe, or they are checking whether you had exactly one prepared line. Have a second genuine weakness ready — the candidate who produces one and then stalls is visibly reciting, while one who has two sounds like someone who has actually thought about themselves. Keep the second answer to the same four-part structure but shorter, since you have already established the format. If you truly cannot think of one, that itself is worth saying honestly rather than inventing something on the spot, but the fix is to prepare two before you ever walk in.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How is 'what would your last manager say you need to improve?' harder than the standard weakness question?",
+    "answer_markdown": "It is externally sourced, so you cannot choose a comfortable weakness — you have to report someone else's assessment of you, and interviewers can hear when a candidate substitutes their own preferred answer. Use real feedback you have actually received, which means you need to remember it: the last three pieces of critical feedback from reviews or one-on-ones are the raw material. Saying 'nobody's ever raised anything' is the worst available answer, because it reads either as untrue or as evidence you have never asked, and both are bad. As with the standard question, follow the feedback with what you changed, since the point is to show you act on input rather than merely absorb it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What separates a strong strengths answer from a weak one?",
+    "answer_markdown": "Evidence versus adjectives, plus relevance to the specific role. 'I'm a strong communicator' is a claim the interviewer has heard from every candidate and can neither verify nor score. 'I write the design doc before the code, and two other teams now use my template' is the same strength stated as something that happened, which is both memorable and checkable. Choose the strength the job description actually leans on rather than your favourite one — the same person can honestly present themselves as detail-oriented or as fast-moving, and which one you lead with should depend on what the role needs. One strength with real evidence beats three with none.",
+    "difficulty": "easy"
+  }
+]

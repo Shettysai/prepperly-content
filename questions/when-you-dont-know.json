@@ -1,0 +1,27 @@
+[
+  {
+    "prompt": "What are the four steps for answering a question you genuinely cannot answer?",
+    "answer_markdown": "Admit it in one short sentence, anchor on the nearest thing you do know, reason out loud from first principles, then offer how you would find out properly. The whole sequence takes about 90 seconds and the reasoning step is where nearly all the points are. The admission must be brief because lingering on the gap or apologising repeatedly is what makes it look damaging, when a single acknowledgement costs almost nothing. The final step, describing how you would actually resolve it, is the sentence that reads as senior, because it mirrors what experienced engineers do at work every week.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is bluffing worse than admitting you do not know something?",
+    "answer_markdown": "A bluff cannot survive a single follow-up question, and interviewers routinely ask one. Once it collapses, you have converted a small knowledge gap into a much larger problem, because the interviewer must now reconsider whether anything else you said confidently was reliable. A confident wrong answer also gives them concrete evidence of poor judgement rather than merely an unfilled gap. Admitting the gap and then reasoning aloud produces genuinely scoreable material, so the honest route is not just safer, it usually scores higher than the bluff would have even if it had gone unchallenged.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What does 'anchoring' mean in this context, and why do candidates who skip it lose points they could have earned?",
+    "answer_markdown": "Anchoring means finding the nearest thing you do understand and reasoning from there, for example connecting an unfamiliar term to a problem you have actually encountered. Candidates skip it because a missing word makes them conclude they know nothing about the topic, when very often they have lived the exact problem and simply never learned its name. Someone who has watched a cache expire and flood their database has met a thundering herd without knowing the term. Asking 'can I reason about what this might mean from the name?' costs one sentence and frequently recovers the entire question, which is why stopping at 'I don't know' is the most common avoidable failure here.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "An interviewer asks whether you have used a particular technology that you have not. What is the right answer?",
+    "answer_markdown": "Answer honestly and immediately, then bridge to the closest thing you have used and say what makes them similar. 'No, but I've used X, which solves a comparable problem because of Y' is a complete and perfectly good answer. Saying yes to something you have not used is a trap, because the natural follow-up is a specific question about it that you cannot answer, and the failure is then about honesty rather than experience. Interviewers ask this question knowing most candidates will not have used everything on the list, so a clean 'no' with a relevant bridge is closer to the expected answer than an overclaim.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How many times should you apologise when you do not know something, and what should replace the extra apologies?",
+    "answer_markdown": "Once, at most, and then move straight into work. Repeated apologies spend time you could use on reasoning and actively amplify how large the gap seems, since the interviewer takes their cue on severity partly from your reaction. Replace them with the anchoring and reasoning steps: what the problem would have to involve, what approaches might address it, and what each would cost. One unknown question is completely normal in any interview, and the real risk is letting the embarrassment carry into the next several answers, which is what actually costs candidates the offer.",
+    "difficulty": "medium"
+  }
+]

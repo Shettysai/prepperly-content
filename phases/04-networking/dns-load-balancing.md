@@ -4,9 +4,6 @@ slug: dns-load-balancing
 summary: Resolution, L4/L7 Load Balancers
 tags: [networking, scalability]
 links:
-  - title: How Does DNS Load Balancing Work? (video)
-    url: "https://www.youtube.com/watch?v=IbxdM_nBbTA"
-    kind: video
   - title: MDN — DNS overview
     url: "https://developer.mozilla.org/en-US/docs/Glossary/DNS"
     kind: resource

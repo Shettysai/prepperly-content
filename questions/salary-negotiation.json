@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "A recruiter asks for your salary expectations on the first call. What exactly do you say?",
+    "answer_markdown": "Deflect once, politely, and turn the question around: 'I'd rather not anchor before we've both worked out whether this is a fit — I'm sure your band for this level is reasonable. What range is budgeted?' If they insist they need a number to proceed, give a researched range whose bottom is your target, not your minimum, because recruiters hear the bottom of any range you give: 'based on market data for this level in this city, I'd be looking at 34 to 40 total, with the caveat that I'd want to understand the scope first.' Whoever names a number first sets the range everyone argues around, which is why deflecting is worth practising until it sounds relaxed rather than evasive. In many jurisdictions the band must be disclosed on request, so asking costs nothing.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is a BATNA and why does it matter more than any negotiating tactic?",
+    "answer_markdown": "Your BATNA is your best alternative to a negotiated agreement — what you do if this deal fails. It might be a competing offer, your current job, or simply the ability to keep interviewing for another two months. It matters because it is the actual source of your leverage, and unlike a tactic it is not a bluff: a candidate who knows their walk-away number sounds calm, and one who does not sounds like they are asking permission. You never have to state your BATNA aloud, and you should never invent one, since recruiters talk and a called bluff ends the conversation. Decide your walk-away number before any compensation conversation starts, never during one.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "The offer arrives on a call and it is below what you wanted. What do you do in that moment?",
+    "answer_markdown": "Do not counter in the moment. Thank them, sound genuinely pleased — enthusiasm and a counter are entirely compatible, just not in the same breath — and ask for the offer in writing plus a few days to consider it. Countering live means improvising a number under pressure without your research in front of you, and it forfeits the chance to write a properly justified case. Getting it in writing also surfaces the composition of the package, which you need before you can decide which lever to push. Then send one counter email with one number and an external justification; one well-argued counter is professional, while three rounds of haggling burns goodwill for small gains.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "They say base salary is final. Is the negotiation over?",
+    "answer_markdown": "No, and base being rigid is often genuine — bands are real, and setting someone above band creates internal-equity problems the recruiter cannot solve. The sign-on bonus is the reliable alternative: it is a one-time cost, frequently from a different budget, and it does not disturb the band at all, so 'would a sign-on of X bridge the gap?' succeeds far more often than pushing base again. Other levers worth asking about are the initial equity grant, start date, remote days in writing, an early six-month compensation review, and — highest value if it moves — the level itself. The single line that most often closes a deal is offering flexibility on composition, because it hands the recruiter a way to say yes.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What does 'I'd probably accept regardless' do to a counter email, and what other phrases have the same effect?",
+    "answer_markdown": "It ends the negotiation in one clause, because you have told them the current number is sufficient and any increase is now pure cost to them. The same damage comes from hedges that signal you do not expect to be taken seriously: 'I was hoping for a bit more', 'is there any flexibility at all?', and 'just thought I'd ask'. Vague asks invite token responses — 'any flexibility' typically returns two percent — while a specific number with a justification and a closing commitment gets a real answer. Write your counter, then delete every instance of 'just', 'a bit', and 'I was hoping', and read what survives; that is usually the email you should have sent.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "The recruiter says the offer expires Friday. How should you read that?",
+    "answer_markdown": "Treat an exploding offer as a pressure tactic first and a real constraint second, because it usually is one. Asking for one more week is a normal request and rarely refused, and the asking itself is informative: a company that genuinely cannot extend a deadline by a few days will explain why, while one applying pressure will often simply grant it. If the extension is flatly refused with no reason, that is real information about how the company treats people, and it belongs in your decision rather than only in your negotiation. Separately, never accept a verbal promise of a future raise or review in exchange for signing now — if it is not in the letter, it does not exist.",
+    "difficulty": "hard"
+  }
+]

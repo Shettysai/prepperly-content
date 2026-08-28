@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the difference between a unit test and an integration test, and roughly what mix should a project have?",
+    "answer_markdown": "A unit test exercises one function or module in isolation with its dependencies replaced, so it runs in milliseconds and points at the exact broken line when it fails. An integration test wires several real components together — a route handler, a real router, a real test database — and verifies they actually work as a group. You need both because they catch different failures: units pin down logic and edge cases, while integration tests catch interface mismatches, like two functions that each work perfectly but disagree about whether an ID is a string or a number. Most projects want many fast unit tests and a smaller number of integration tests over the critical paths, because integration tests are slow and more prone to flakiness. The point is not a magic ratio but coverage of both kinds of risk.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You need to test an async function that should reject. What is the correct assertion, and what goes wrong if you get it slightly wrong?",
+    "answer_markdown": "The correct form is `await assert.rejects(myFn(), /expected message/)`. Two mistakes are common. First, using `assert.throws` instead — that only catches synchronous throws and cannot observe a rejected Promise, so it fails or passes for the wrong reason. Second, and far more dangerous, forgetting the `await`: `assert.rejects(...)` returns a Promise, so without awaiting it the test function finishes before the assertion resolves and the test reports success no matter what the code did. That produces a green test that verifies nothing, which is worse than having no test at all because it manufactures false confidence. Interviewers like this one precisely because the broken version looks correct.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What should you mock in a test, and what should you never mock?",
+    "answer_markdown": "Mock the boundaries you do not own and cannot control: third-party HTTP APIs, payment and email providers, the system clock, randomness, and sometimes the filesystem. These are slow, unreliable, or non-deterministic, and calling them for real makes tests flaky or expensive. Never mock your own internal modules or the code under test. When a test mocks the function next door, it stops asserting behaviour and starts asserting your current implementation, so it breaks every time you refactor while still catching no real bugs. A useful signal: if mocking is painful, the design is usually too tightly coupled — passing dependencies in as arguments makes both the code and the test simpler.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Is 100% code coverage a good target? Why or why not?",
+    "answer_markdown": "No, not as a target in itself. Coverage measures which lines executed during the test run, not whether anything meaningful was checked about them — a test with no assertions at all still produces coverage. That makes it easy to hit a high number with tests that would not catch a real regression, and chasing the last few percent usually means writing low-value tests for trivial getters and generated code. Coverage is genuinely useful in the negative direction: it reliably shows you which important paths have no test at all, which is worth acting on. A realistic goal is thorough coverage of business logic and error paths, and honest gaps elsewhere.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A test passes when the suite runs in order but fails when run alone or in a different order. What is happening, and how do you fix it?",
+    "answer_markdown": "The test depends on state left behind by an earlier test — a populated database row, a module-level variable, a mock that was never restored, or a file on disk. It is not really testing its own setup; it is borrowing someone else's. This is dangerous because test runners parallelise and reorder, so the suite becomes unreliable and people start re-running until it goes green, which destroys trust in genuine failures. The fix is to make every test create everything it needs and clean up after itself, using `beforeEach` and `afterEach` hooks rather than a one-time `before`. Mocking through the test context, like `t.mock.method()`, helps because the runner restores those automatically when the test ends.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Your function calls `fetch` directly and is proving impossible to test without hitting the network. What does that tell you, and how do you fix it?",
+    "answer_markdown": "It tells you the function has a hidden dependency baked into it, which is a design problem showing up as a testing problem. Because the HTTP client is imported and called directly, there is no seam where a test can substitute a fake, so your only options are the real network or heavyweight module interception. The fix is dependency injection: accept the client as a parameter, so production passes the real `fetch` and the test passes a small stub that returns a canned response. The same applies to clocks and random number generators — pass `now` in rather than calling `Date.now()` inline, and your assertions become deterministic. The general rule is that hard-to-test code is usually badly-coupled code, and the difficulty is useful feedback rather than an obstacle.",
+    "difficulty": "hard"
+  }
+]

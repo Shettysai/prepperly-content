@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "A Node service is slow in production. Walk through how you would find the cause.",
+    "answer_markdown": "Start by classifying the symptom, because each kind of slowness has a different tool. If CPU is pinned, capture a CPU profile with `node --cpu-prof` and read it as a flame graph, looking for the widest frame in code you actually wrote. If the service is fine when idle but degrades under concurrency, measure event loop lag with `monitorEventLoopDelay()` — that points at synchronous work blocking the single thread. If memory climbs until the process restarts, take heap snapshots before and after a workload and diff them. The mistake interviewers are watching for is jumping straight to optimising something you assume is slow; the whole value of profiling is that the real bottleneck is usually not where you guessed.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is event loop lag, and why is it arguably the most important metric for a Node service?",
+    "answer_markdown": "Event loop lag is the delay between when a callback was scheduled to run and when it actually ran. If you ask for a timer in 20ms and it fires at 300ms, something occupied the thread for 280ms without yielding. It matters more in Node than equivalent metrics in threaded servers because there is only one thread running your JavaScript: when it is blocked, every concurrent request is stalled simultaneously, not just the one that triggered the slow code. That makes it a direct measure of user-visible latency across the whole service. You should alert on the p99 rather than the mean, since a healthy-looking average routinely conceals multi-hundred-millisecond stalls.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your service's memory grows steadily and a forced garbage collection barely reclaims anything. Is the garbage collector broken?",
+    "answer_markdown": "Almost certainly not. The garbage collector frees objects that are unreachable from a root; if memory survives a full GC, it means something in your code still holds a live reference to it. The collector is working exactly as designed — the bug is that your program is retaining data it no longer needs. Typical causes all share this shape: a `Map` or object used as a cache that nothing ever deletes from, event listeners added per request and never removed, a module-level array that only ever grows, or a closure capturing a large object. You find the specific one by diffing two heap snapshots and following the retaining path that DevTools shows, then fix it with bounded caches, TTLs, or matching listener removal.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do you read a flame graph, and what does a wide bar actually mean?",
+    "answer_markdown": "A flame graph is built from periodic samples of the call stack. The horizontal axis is not time passing left to right — it is aggregated time, so the width of a frame represents the proportion of samples in which that function was on the stack. Vertical stacking shows call depth, with callers below and callees above. A wide bar therefore means a lot of time was spent in that function or something it called. The practical technique is to find the widest frame in code you own, since wide frames inside Node or libuv internals often just mean the process was legitimately waiting on I/O rather than burning CPU.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is watching the average response time a poor way to detect performance problems?",
+    "answer_markdown": "Averages hide outliers by construction. If most requests take 5ms and a small fraction take 2 seconds, the mean can still look perfectly healthy, yet those slow requests are real users having a bad experience — and in Node they often indicate the event loop was blocked, meaning other requests were stalled too. Percentiles expose this: p99 tells you what the worst-off one percent of requests experienced. In the event loop lag example, a mean of about 22ms coexisted with a maximum over 200ms, so the average alone would have shown nothing wrong. Alert on high percentiles, and use the mean only for capacity trends.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What does `node --inspect` do, and what is the security concern with it?",
+    "answer_markdown": "It starts the V8 inspector, which listens on `127.0.0.1:9229` by default and speaks the Chrome DevTools Protocol. You can attach Chrome DevTools or VS Code to set breakpoints, step through live code, record CPU profiles, and take heap snapshots against a running process — which is far more powerful than adding log statements. The security concern is that the inspector grants full control of the JavaScript execution environment, so anyone who can reach that port can run arbitrary code inside your process. That is why Node binds it to localhost only by default, and why you should never expose it on a public interface or bind it to 0.0.0.0 on a production host; tunnel over SSH instead if you need remote access.",
+    "difficulty": "medium"
+  }
+]

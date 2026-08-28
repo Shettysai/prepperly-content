@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why is the textbook 'pick two of CAP' framing misleading in a real design discussion?",
+    "answer_markdown": "It implies you have a genuine three-way choice, but in any system spread across machines, network partitions will happen whether you plan for them or not — partition tolerance is a fact of the environment, not an option you select. So the real choice is only ever between consistency and availability, and only during a partition. Worse, partitions are rare, and CAP says nothing at all about the overwhelming majority of time when the network is healthy, which is precisely when your system is doing its actual work. That makes it a poor tool for reasoning about the trade-offs you make on every single request.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is PACELC and what does it add to CAP?",
+    "answer_markdown": "PACELC reads: if there is a Partition, choose between Availability and Consistency; Else — during normal operation — choose between Latency and Consistency. The first half restates CAP, but the second half is the genuinely useful addition, because it makes explicit that strong consistency has an unavoidable latency cost even when nothing is broken. A write that must be acknowledged by replicas in three regions cannot go faster than the speed of light between those regions, so you pay that cost on every request, permanently, not just during rare failures. This reframes consistency from something you get for free when the network is fine into something with a continuous, measurable price.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why should consistency be chosen per operation rather than per system?",
+    "answer_markdown": "A single product almost always contains operations with wildly different costs of being wrong, and applying one setting to all of them means over-paying for most and under-protecting some. A follower count that is stale by thirty seconds harms nobody, so it should be served fast from a local replica. An account balance shown immediately before a transfer must be current. A coupon-redemption check must be linearizable or you lose money to double redemption. A social feed is eventually consistent and no user could ever detect otherwise. Answering an interview question with 'it's an AP system' signals you are applying a label rather than reasoning; naming specific operations, placing each on a side, and justifying it by the cost of being wrong is what a senior answer looks like.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is read-your-writes consistency and why is it a good middle ground?",
+    "answer_markdown": "Read-your-writes guarantees that a user always sees their own updates, while other users may still see slightly stale data. It is usually implemented by routing that specific user's reads to the primary replica for a short window after they perform a write, rather than to whichever replica is nearest. It is valuable because it targets exactly the inconsistency that users can actually perceive and complain about — someone who saves a profile change and then doesn't see it will assume the save failed and try again, generating support tickets and duplicate writes. Meanwhile a user seeing a friend's like count differ by one from what the friend sees will never notice. You buy the perception fix at a small fraction of the cost of global strong consistency.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Retail sites often don't use strong consistency for inventory, even though overselling is possible. Explain the reasoning.",
+    "answer_markdown": "Checking a globally consistent stock count on every product view and add-to-cart would add substantial latency to the most-trafficked pages, and conversion rates are measurably sensitive to page latency — so strong consistency would cost real revenue on every single visit. Overselling, by contrast, is rare and has a cheap resolution path: apologise, refund, perhaps offer a discount. The business absorbs the occasional error through a process rather than paying continuously in latency to prevent it. Crucially the same reasoning inverts for concert tickets, where overselling means a fan with a ticket and no seat, reputational damage and possibly regulatory exposure — so seat allocation gets a strongly consistent reservation, while the browsing page showing 'about 50 left' stays eventually consistent because a stale count there harms nobody.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why is saying 'the system is eventually consistent' insufficient, and what should you say instead?",
+    "answer_markdown": "'Eventually' is unbounded — it could mean 50 milliseconds or four hours, and those two systems have completely different user experiences and completely different sets of bugs. Without a number, nobody can tell whether the system is behaving correctly, and no one can write a test or an alert for it. The engineering statement is a staleness budget with monitoring attached: 'we accept up to 2 seconds of replication lag, we measure it continuously, and we alert at 5 seconds'. That turns a vague property into something with a defined correct state, an observable metric, and a threshold that tells you when the assumption your design rests on has stopped holding.",
+    "difficulty": "hard"
+  }
+]

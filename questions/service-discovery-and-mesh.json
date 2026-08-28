@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why can't you just hardcode the IP address of a service you need to call?",
+    "answer_markdown": "In any container or cloud platform, instance addresses are temporary. A service gets redeployed onto a different host, autoscaled from two instances to six, or restarted after a crash — and every one of those events can change its address. A hardcoded address works right up until the first deployment and then silently sends traffic nowhere. Something must be able to answer 'where is this service right now, and which instances are actually healthy', freshly, on every call — that is what a service registry provides.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is the difference between client-side and server-side service discovery?",
+    "answer_markdown": "In client-side discovery, the calling service queries the registry itself, receives a list of healthy addresses, and chooses one — meaning it also performs its own load balancing. This avoids an extra network hop and gives fine-grained routing control, but every service in every language must embed discovery logic. In server-side discovery, the caller sends to a single fixed address — a load balancer or a platform virtual IP — which consults the registry and forwards the request. The caller stays simple and language-agnostic at the cost of an extra hop and needing the balancer itself to be highly available. Kubernetes Services are the server-side model.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What does a service mesh actually give you that a plain HTTP client doesn't?",
+    "answer_markdown": "A mesh puts a proxy sidecar next to every service instance, intercepting all inbound and outbound traffic, so retries, timeouts, mutual TLS encryption, traffic splitting for canary releases, and consistent golden-signal metrics are applied to every call without the application knowing. The key benefit is uniformity: those behaviours are identical across services written in five different languages, and you change them by editing central configuration rather than shipping new code in each service. A shared HTTP client library can provide similar features, but only for services in the one language it supports, and updating it means redeploying every service that uses it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What are the real costs of adopting a service mesh, and when is it not worth it?",
+    "answer_markdown": "You are operating a fleet of proxies: every request pays extra latency going through a sidecar on both ends, every pod consumes additional CPU and memory, and the control plane that distributes configuration becomes a component on your critical path that can itself fail. Debugging gets harder because there is now an extra piece of infrastructure between any two services that can misroute or drop traffic, and engineers must learn its configuration model. Because that operational cost is roughly fixed while the benefit scales with the number of services and languages, a mesh rarely pays for itself below roughly ten services — at that scale a shared client library gives most of the value far more cheaply.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A network glitch stops heartbeats from all six healthy instances of a service for a few seconds. What does a naive registry do, and why is that dangerous?",
+    "answer_markdown": "A naive registry expires every instance whose heartbeat is overdue, so it returns an empty list of healthy instances. Every caller then fails immediately, producing a total outage of a service where all six instances are running perfectly and would have answered any request sent to them. The registry has confused 'I cannot hear you' with 'you are dead', and amplified a brief network blip into a full outage. Real registries defend against this with self-preservation: if the fraction of instances expiring simultaneously exceeds a threshold, the registry concludes the problem is its own connectivity, stops evicting, and keeps serving the last known list.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Explain the principle of 'failing static' and why it applies to control planes generally.",
+    "answer_markdown": "Failing static means that when a component responsible for distributing decisions loses confidence in its information or goes down entirely, it freezes and keeps serving the last known-good answer instead of returning nothing or declaring everything dead. For a service registry, serving a few stale addresses is recoverable — the caller gets a connection error and retries a different instance — whereas serving an empty list is not, because there is nothing left to retry against. The same reasoning applies to DNS caching, configuration distribution, and feature flags: if the control plane fails, the data plane should keep running on its last configuration rather than halting. It is a deliberate choice to accept bounded staleness in exchange for avoiding a correlated, total failure.",
+    "difficulty": "hard"
+  }
+]

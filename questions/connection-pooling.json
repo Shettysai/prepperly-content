@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why do connection pools exist?",
+    "answer_markdown": "Opening a database connection is expensive: it requires a TCP handshake, TLS negotiation, and authentication, and on PostgreSQL it spawns an entire server-side process consuming several megabytes. Doing that per query would add tens of milliseconds to work that should take one. A pool keeps a small set of connections open and lets requests borrow and return them, so that setup cost is paid once. It also serves a second purpose that matters just as much: by capping how many connections exist, it limits the concurrent load any single application can impose on the database.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do you size a connection pool, and why is bigger not better?",
+    "answer_markdown": "Start from the database's actual parallelism, since queries execute on physical CPU cores and disks. Once every core is busy, additional concurrent connections add context switching, lock contention, and memory pressure rather than throughput, so everything slows down. A common starting point of roughly cores times two puts most workloads between 10 and 30 connections, which is far smaller than people expect. Then verify the total across all instances: pool size multiplied by instance count must sit below the server's connection limit with headroom left for migrations, monitoring, and admin sessions.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Request latency is climbing but the database's CPU is low and individual queries are fast. What is happening?",
+    "answer_markdown": "This is the signature of pool exhaustion. Requests are spending their time queued waiting to borrow a connection rather than waiting on the database, so the database looks healthy because it genuinely is. Confirm it by checking the pool's waiting count: a large number of pending acquisitions alongside zero idle connections proves the queue is the bottleneck. Adding database CPU would change nothing. The fix is either shortening how long connections are held, by speeding up queries or transactions, or finding a connection leak.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A service works after restart, then dies a few minutes later, every time. What would you suspect?",
+    "answer_markdown": "A connection leak on an error path. The classic cause is releasing the connection after the query instead of in a finally block, so any thrown error skips the release and that connection is lost permanently. With a pool of 20, a 0.1% error rate, and 100 requests per second, you lose a connection roughly every ten seconds and the service dies in about three minutes, recovering only on restart. The diagnostic tell is a total count pinned at maximum with idle count at zero even when traffic is quiet, since the connections exist but can never be borrowed again.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why is holding a transaction open across an external API call dangerous?",
+    "answer_markdown": "It ties up both a pooled connection and any row locks the transaction has taken for the entire duration of that network call. If charging a credit card takes two seconds, twenty concurrent checkouts will exhaust a pool of twenty, and every other query in the application stalls behind a third-party payment provider you do not control. The locks also block unrelated writes to those rows. The fix is keeping transactions short: perform the external call outside the transaction, then open a brief transaction purely to record the result.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why do serverless architectures create connection problems, and what is the usual solution?",
+    "answer_markdown": "Each function instance maintains its own connection pool, and instances scale up independently with no coordination between them, so hundreds of concurrent invocations can each try to hold several connections. The total easily exceeds the database's limit, at which point new connections are refused entirely, including those needed by monitoring and admin tooling. The usual solution is placing an external pooler such as PgBouncer or a managed database proxy between the functions and the database, which multiplexes many short-lived client connections onto a small stable set of real server connections.",
+    "difficulty": "medium"
+  }
+]

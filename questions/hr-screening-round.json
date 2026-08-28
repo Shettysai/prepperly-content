@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What's your notice period?",
+    "answer_markdown": "Give a precise number with any lever attached, and never an estimate. 'Officially 90 days. I've confirmed our policy allows buy-out of the last 30 and two people on my team have done it, so realistically 60 days from signing — if you need faster I can ask about a further reduction.' The reason this filters so hard is that the recruiter is filling a slot on a calendar, and a candidate who says 'three months, but maybe less, I'm not sure' reads as someone who has not actually decided to leave. This is the most commonly fumbled logistical question and the cheapest one to prepare: look up your exact contractual notice, find out whether buy-out is permitted, and know your earliest realistic start date before the call.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is criticising your current employer such a reliable way to fail an HR screen?",
+    "answer_markdown": "Because the recruiter is not evaluating whether your criticism is fair — they are predicting how you will describe them in two years. Everything you say may be true, and the answer still fails, because it demonstrates a willingness to speak negatively about an employer to a stranger who has known you for ten minutes. The replacement is a forward-facing reason: 'I've been there three years and shipped what I wanted to ship — the scheduling service is stable and someone else runs it well now. What I want next is multi-tenant scale, and that work isn't on our roadmap.' Write your answer, delete every clause about anyone else, and if nothing survives you do not yet have a durable reason for leaving — which you will need in every round, not just this one.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "There's a six-month gap on your CV. How long should your explanation be?",
+    "answer_markdown": "About twelve seconds. Name it, size it, date it, and close it: 'I was laid off in March when the team was cut, about 40 of us went. I took two months to look properly rather than take the first thing, and I used the time to finish a Go project that's on my GitHub. I started at Lumen in September.' The length of the explanation, not the gap itself, is what makes it sound like a problem — ninety seconds of hedging about a 'transitional period' makes six months sound like something being concealed. If you would rather not detail the reason, name the category, state that it is resolved, and confirm your availability, since those are the recruiter's only actual concerns.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does the HR screen reject more candidates than most people realise, and on what grounds?",
+    "answer_markdown": "Because rejection is nearly free for the recruiter and advancing you is expensive — a full loop costs several engineers' time, so a screener running forty calls for six slots is looking for reasons to say no. The grounds are usually logistical rather than technical: a notice period outside their hiring window, a compensation range with no overlap, a location or authorisation mismatch, or a story that does not line up with the CV. Two things are also scored without ever being announced — how you speak about previous employers, and whether you sound like you want this specific job, since a lukewarm candidate gets deprioritised behind an equally qualified enthusiastic one. Almost none of these rejections come with feedback; you simply do not hear back.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You have three jobs in four years. How do you address it before they ask?",
+    "answer_markdown": "Raise it yourself in one clean sentence and take responsibility for the pattern rather than producing separate excuses for each role. 'Two short stints in there, and I know how that reads. The first was a nine-month startup that ran out of runway — the whole engineering team went. The second I left after a year because the role turned out to be a rewrite of what I'd been hired to build fresh, and I should have asked harder questions before joining. I did ask harder questions this time.' The final clause is what does the work, because the recruiter's concern is recurrence: two independent excuses read as bad luck twice, while an acknowledged pattern with a stated correction reads as someone who learned something.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "The recruiter asks what you currently earn, and in your jurisdiction the question is legal. What now?",
+    "answer_markdown": "Deflect once — 'I'd rather we base it on the scope of this role, which is broader than what I do now' — and if they say it is a required field in their process, giving it is not fatal. What matters is what you say immediately afterwards: follow it with your researched target range so the last number in the conversation is yours rather than your previous employer's. The cost of disclosing is that it anchors your offer to an old budget instead of this role's market value, which is why the deflection is worth attempting even when it is likely to fail. Prepare three figures before any screening call — your target, your walk-away, and the range you would say aloud — so none of this is improvised.",
+    "difficulty": "hard"
+  }
+]

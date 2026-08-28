@@ -1,0 +1,27 @@
+[
+  {
+    "prompt": "You've told a STAR story and the interviewer asks 'so what was your specific contribution?' What went wrong, and how do you recover?",
+    "answer_markdown": "You said 'we' too often in the Action section, so the interviewer cannot tell which decisions were yours. Recover by naming two or three concrete things you personally did and the choice behind each one: 'I proposed replaying peak traffic against staging, I traced it to the connection pool rather than the vendor, and I pushed for the circuit breaker on top of the pool increase.' Do not over-correct into claiming the whole team's work — a credible answer usually includes what someone else contributed too. The underlying fix is to draft your stories in the first person from the start; the interviewer is scoring you individually, and a team narrative scores nobody.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your story genuinely has no metric — you mentored a junior engineer and there is no dashboard. How do you build a scoreable Result?",
+    "answer_markdown": "Use a before-and-after you personally observed, which is a legitimate measurement even without instrumentation. 'Her PRs stopped needing a second review round — that went from most of them to roughly one in five over about two months, and she now runs the onboarding session I used to run' is specific, honest, and checkable in a follow-up. The alternative failure modes are both worse: 'she got a lot better' gives the interviewer nothing to score, and inventing a percentage collapses the moment they ask how you measured it. A durable change in someone else's behaviour is often stronger evidence than a number anyway, because it survived after you stopped paying attention to it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How many stories should be in a story bank, and how does one story answer several different questions?",
+    "answer_markdown": "Five or six real stories is the right size — enough coverage without becoming a script you cannot recall under pressure. The trick is that a single story contains several Action beats, and different questions ask you to emphasise different beats. A story about debugging a payments timeout before a deadline can answer 'tell me about pressure' (emphasise the deadline and triage), 'tell me about a disagreement' (emphasise arguing against the assumed vendor cause), and 'tell me about ownership' (emphasise writing the runbook so on-call did not need you). You never change the facts, only which beats you expand. Tag each story in your bank with the question types it covers, and any gap in that tag coverage tells you which story you still need to find.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You time yourself and your Situation section runs 45 seconds of a 2-minute answer. What specifically do you cut?",
+    "answer_markdown": "Apply one test to every sentence: could the interviewer follow your Action without this detail? If yes, cut it. Team size, org structure, the quarter, the client's history, and how the project came to exist almost always fail this test. What survives is usually the one fact that creates the stakes — 'checkout was timing out for about 3% of users at peak' — which is often a single sentence. Aim for 15 seconds; the Situation exists only to make the Action legible, and every second it takes is a second stolen from the part actually being scored.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "An interviewer asks 'how did you measure that 40% improvement?' and you realise you are not certain the number is right. What do you say?",
+    "answer_markdown": "Say so immediately and give the basis you actually have. 'That's from memory of our dashboard at the time — what I'm confident about is that the p99 alert stopped firing, and it had been firing most days before' is a strong answer, because it distinguishes what you know from what you are estimating. The instinct to defend a shaky number is the trap: a follow-up you cannot support turns a scoring question into a credibility question, and interviewers assume that someone loose with one figure is loose with others. Calibrated uncertainty reads as senior; every experienced engineer has approximated a metric, and none of them like a colleague who states approximations as facts.",
+    "difficulty": "hard"
+  }
+]

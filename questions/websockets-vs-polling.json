@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Would you use WebSockets or SSE for a live notification feed, and why?",
+    "answer_markdown": "SSE is the better fit because notifications flow in only one direction, from server to client, and SSE is purpose-built for that. It is ordinary HTTP, so proxies, load balancers, and gateways handle it without special configuration, unlike WebSockets which need explicit support for the upgrade and long-lived connections. The browser's EventSource also reconnects automatically after a drop and sends a Last-Event-ID header, so a server that numbers its events can replay whatever was missed. Choosing WebSockets here means building reconnection and replay yourself for a channel you only ever use one way.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain the difference between polling, long polling, SSE, and WebSockets.",
+    "answer_markdown": "Polling means the client asks for updates on a timer, so most requests return nothing and average latency is half the interval. Long polling means the server holds each request open until data exists or a timeout fires, giving near-instant delivery but still costing a fresh request cycle per message. SSE keeps one HTTP response open indefinitely and streams events down it, server to client only. WebSockets start as an HTTP request with an Upgrade header, then switch the TCP connection to a bidirectional frame protocol so both sides can send at any time. The deciding question is usually whether the client genuinely needs to send frequently too.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do you scale WebSockets across multiple servers?",
+    "answer_markdown": "Each connection lives in the memory of one specific server, so a message received by server A can only be pushed to clients connected to server A. With two servers, users connected to different machines silently stop receiving each other's messages, and this bug is invisible in single-server development. The fix is a shared pub/sub layer, commonly Redis: the server receiving a message publishes it to a channel, every server subscribes, and each pushes to its own local connections. Connection state stays local while message routing becomes shared. Sticky sessions do not solve this, since the problem is delivery between servers rather than which server a client reaches.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is a thundering herd in the context of reconnections, and how do you prevent it?",
+    "answer_markdown": "Persistent connections drop constantly as networks change and proxies time out. If a server restarts and every disconnected client reconnects immediately, tens of thousands of connection attempts arrive simultaneously and overwhelm the server just as it is recovering, potentially knocking it down again in a loop. The prevention is exponential backoff with jitter: each client waits progressively longer between attempts, and a randomised component spreads reconnections across a window instead of synchronising them into a spike.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you make sure a client does not lose messages sent while it was disconnected?",
+    "answer_markdown": "You need the server to assign every event a monotonically increasing ID and to buffer recent events. On reconnect, the client reports the last ID it successfully received and the server replays everything after it. SSE standardises this: the browser automatically sends a Last-Event-ID header carrying the last id field it saw, so the server can resume from that point. With WebSockets there is no built-in equivalent, so you must implement sequence numbers, buffering, and replay yourself, which is a frequently overlooked source of silent data loss.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why do persistent connections need heartbeats?",
+    "answer_markdown": "Intermediaries like load balancers, reverse proxies, and NAT devices close connections they consider idle, often after around 60 seconds of no traffic. A legitimately quiet WebSocket or SSE stream looks idle and gets silently dropped, which appears as random disconnects that are easy to misattribute to client bugs. Sending a periodic ping or comment frame keeps the path considered active and, as a bonus, lets each side detect a peer that has gone away without a clean close, since a failed heartbeat reveals a connection that is open in name only.",
+    "difficulty": "medium"
+  }
+]

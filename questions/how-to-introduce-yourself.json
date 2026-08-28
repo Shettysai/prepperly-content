@@ -1,0 +1,27 @@
+[
+  {
+    "prompt": "What are the three blocks of a 90-second self-introduction, and what goes in each?",
+    "answer_markdown": "Present, Past, and Future. Present is about 30 seconds covering your current role and what you actually work on day to day. Past is about 40 seconds covering the one or two things from your CV that best match this specific job, ideally with one number attached. Future is about 20 seconds explaining why this company and this role, which is the block almost everyone skips and the one that makes the answer feel aimed rather than recited. The structure works because it moves from what is most relevant now backwards only as far as it stays relevant, instead of starting at birth and working forwards.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is listing your technologies during a self-introduction a weak move?",
+    "answer_markdown": "The list is already on your CV, so reading it aloud adds no information and signals you had nothing else to say. It also tells the interviewer nothing about whether you can actually use any of those tools, since naming a technology and having solved a problem with it are very different claims. Worse, hedged entries like 'a little Docker' volunteer a weakness nobody asked about. One concept used in context, such as explaining how you handled retries safely so a payment was never charged twice, demonstrates more capability than ten tool names.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A fresher with no commercial experience has to answer 'tell me about yourself'. How should they use the template without sounding underqualified?",
+    "answer_markdown": "Use exactly the same three blocks, drawing Past from a final-year project, an internship, or coursework rather than jobs. Pick a project with a real problem in it, name the specific technical thing it forced you to learn, and attach any number you have, such as how many people used it. Never apologise for the level, since phrases like 'I'm only a fresher' invite the interviewer to discount everything that follows. The Future block matters most here: connecting the hard part of your project to the work this role involves shows direction, which is what employers look for when there is no track record to assess.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you decide which items from your CV belong in the Past block?",
+    "answer_markdown": "Read the job description first and underline the three things it mentions most, then find whatever on your CV lines up with them. Those matches are your Past block, and everything else gets cut, not because it is unimportant but because it is not important for this role. This is why the same person should give a different introduction to different companies. Add one number from whatever you kept, since a single concrete figure makes the whole story land as real rather than rehearsed. A useful final filter is to delete any sentence that would be equally true for another candidate.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "'Walk me through your resume' and 'tell me about yourself' sound similar. How should your answers differ?",
+    "answer_markdown": "'Tell me about yourself' wants a 90-second pitch built from the most relevant highlights, in Present-Past-Future order, and it is not chronological. 'Walk me through your resume' genuinely does want chronological order, so you start earlier and move forward through your roles. Even then you should not give equal weight to each entry: linger on the roles that relate to this job and move quickly through the rest, explaining transitions briefly rather than in detail. Treating the two questions identically is a common mistake, and giving a full chronological history to the first one is what produces the rambling answer that starts at birth.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Latency or bandwidth: which matters more for page load time, and why?",
+    "answer_markdown": "Latency, in almost every case. A page load is dozens of small dependent exchanges where each step waits on the previous one, so total time is dominated by the number of round trips rather than how much data fits through per second. Bandwidth only becomes the limiting factor for large transfers like video or big downloads. This is also why the two have diverged historically: bandwidth has grown enormously while latency has barely improved, because latency is bounded by the speed of light through fibre and no upgrade removes that distance.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is TTFB, and what does a high TTFB with a fast server tell you?",
+    "answer_markdown": "Time to first byte measures from the start of a request to the arrival of the first response byte, which bundles DNS resolution, the TCP handshake, the TLS handshake, and server processing time. If your server's own processing is known to be fast, a high TTFB means the time is going into network round trips and physical distance rather than your code. That distinction matters because it redirects you from optimising queries, which would change nothing, toward reducing round trips through connection reuse, a CDN, or HTTP/3.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Walk through the latency budget of a first page load to a server 100ms away.",
+    "answer_markdown": "There are about four round trips before any HTML arrives. DNS resolution costs one round trip at roughly 100ms, the TCP three-way handshake another, the TLS 1.3 handshake another, and finally the HTTP request to first byte another, totalling roughly 400ms plus server processing. None of that has transferred meaningful content yet. Every additional resource fetched sequentially adds another round trip, which is why the count of requests and whether they can proceed in parallel dominates page speed far more than payload size.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "HTTP/2 already multiplexes requests, so why was HTTP/3 created?",
+    "answer_markdown": "HTTP/2 removed head-of-line blocking at the application layer by letting many requests share one connection as independent streams, but it still runs over TCP, and TCP guarantees in-order delivery of the entire byte stream. So if one packet is lost, every multiplexed stream stalls until it is retransmitted, even streams whose data already arrived. HTTP/3 replaces TCP with QUIC over UDP, which tracks streams independently so a lost packet only stalls its own stream. QUIC also merges the transport and TLS handshakes into a single round trip and uses a connection ID rather than an IP address, so switching from Wi-Fi to mobile data does not drop the connection.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why might HTTP/2 be slower than HTTP/1.1 for some users?",
+    "answer_markdown": "HTTP/1.1 used roughly six parallel connections per host, which accidentally provided isolation: a lost packet stalled only the connection it belonged to, and the other five kept working. HTTP/2 concentrates every stream onto a single TCP connection, so on a lossy network a single lost packet blocks all of them through transport-level head-of-line blocking. Users on poor mobile connections can therefore experience HTTP/2 as slower even though it is faster on clean networks, which is exactly the problem HTTP/3 was designed to eliminate.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "An endpoint makes 50 sequential API calls that each take 2ms of server time on a 100ms link. Where should you optimise?",
+    "answer_markdown": "The total is about 5 seconds, of which only 100ms is server work and the rest is 50 round trips of network waiting. Optimising the server from 2ms to 1ms saves 50ms out of 5,000, which is essentially nothing. Running the calls in parallel drops the total to roughly one round trip, and returning the needed data in the original response removes the extra trips entirely. The lesson is to fix the interaction pattern rather than the code inside each call, because the bottleneck is the number of sequential round trips.",
+    "difficulty": "medium"
+  }
+]

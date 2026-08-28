@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why put a message queue between the notification API and the delivery providers?",
+    "answer_markdown": "Delivery providers like APNs, FCM, and email gateways are third parties you do not control, and they will be slow, rate-limited, or unavailable at times. A queue lets the notification API acknowledge the calling service immediately rather than making it wait on a provider round trip, so an order-confirmation request never blocks on a slow SMS gateway. It also absorbs bursts, since queue depth grows while workers drain at a sustainable rate, and it gives you a natural place to implement retries without the original caller ever knowing a failure occurred. Fundamentally the queue decouples accepting a notification from delivering it, which are two operations with completely different reliability characteristics.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why use a separate queue per channel instead of one shared queue?",
+    "answer_markdown": "Head-of-line blocking. With a single shared queue, jobs are processed roughly in order, so if the SMS provider starts timing out and its jobs pile up with retries, every email and push notification queued behind them is delayed too — even though those channels are perfectly healthy. Separate queues per channel contain the failure to the affected channel, letting the others drain at full speed. The same reasoning applies to priority: a 2FA code must not sit behind a ten-million-recipient marketing campaign, so latency-critical traffic gets its own queue and dedicated workers rather than competing with bulk sends.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is exponential backoff with jitter better than retrying immediately at a fixed interval?",
+    "answer_markdown": "Immediate or fixed-interval retries attack a provider that is already struggling, often turning a brief degradation into a sustained outage. Exponential backoff increases the wait after each failure — 1s, 2s, 4s, 8s — giving the provider room to recover while still delivering promptly if the failure was transient. Jitter, a random offset added to each delay, solves a second problem: without it, thousands of jobs that failed at the same moment would all retry at the same moment, producing a synchronised thundering herd that re-overwhelms the recovering service. A cap on the maximum delay prevents unbounded waits, and once the retry budget is exhausted the job should go to a dead letter queue rather than being silently dropped.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A worker sends a push notification and then crashes before acknowledging the queue message. What happens, and how do you prevent the user seeing it twice?",
+    "answer_markdown": "The queue never receives the acknowledgement, so it assumes the job failed and redelivers it to another worker, which sends the same notification again — this is inherent to at-least-once delivery and cannot be eliminated by queue configuration. The fix is an idempotency key: a deterministic hash of the user ID, the originating event ID, and the channel, recorded atomically before sending and checked on every attempt. Because the key derives from the event rather than from the delivery attempt, a redelivered job produces the same key and is recognised as a duplicate. Including the channel in the key is deliberate, since one event legitimately produces both a push and an email and those must not deduplicate against each other.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How many workers do you need to send a 10-million-recipient campaign in 30 minutes, and what does the answer depend on?",
+    "answer_markdown": "10 million sends over 1,800 seconds is about 5,556 sends per second. If each provider call takes 200ms, a single sequential worker manages 5 sends per second, so you need roughly 1,112 workers. The dominant term is provider latency, not your own compute — these workers spend almost all their time waiting on a network call, so they are I/O-bound rather than CPU-bound. That matters for the real answer: instead of provisioning 1,112 machines, you run high concurrency within each worker process, since thousands of in-flight HTTP requests cost very little CPU. It is also worth noting that this single campaign roughly equals the entire system's steady-state average QPS, which is why bulk sends are what you size capacity for.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "The system delivers correctly but users are disabling notifications. What is wrong, and how do you fix it in the design?",
+    "answer_markdown": "Technical correctness is not the same as a good outcome — a system that faithfully sends 200 notifications for 200 likes has worked exactly as specified and still failed. The design needs three explicit controls. Aggregation collapses related events into one message on a short delay, so '5 people liked your post' replaces five separate pushes. A per-user rate limit acts as a hard ceiling regardless of how many events arrive, protecting users from any upstream bug or campaign mistake. And quiet hours suppress non-urgent notifications overnight, which requires scheduling in the user's own timezone — meaning a '9am' send is a different absolute instant for every user. These are product requirements enforced by the system, not optional polish.",
+    "difficulty": "hard"
+  }
+]

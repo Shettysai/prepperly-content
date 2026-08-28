@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why is 7 characters the standard length for a short key, and how would you justify it in an interview?",
+    "answer_markdown": "A short key is a base62 encoding (0-9, a-z, A-Z), so 7 characters gives 62^7 ≈ 3.52 trillion distinct keys. The justification is arithmetic, not preference: at 10 million new links per day you consume about 3.65 billion keys per year, so 7 characters lasts roughly 960 years. Six characters gives only 56.8 billion keys — about 15 years at that rate, which is uncomfortably close. Showing this calculation is the point of the question; interviewers want to see you size the key space against the actual write rate rather than pick a number that 'looks right'.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You hash the long URL with MD5 and truncate to 7 base62 characters. Why does this break, and how soon?",
+    "answer_markdown": "Truncating a hash throws away entropy, so distinct URLs can map to the same key — and the birthday paradox means collisions arrive far earlier than the key-space size suggests. The expected number of inserts before the first collision is roughly sqrt(pi/2 * N), which for N = 62^7 is about 2.35 million — only a few hours at 116 writes per second. The fix is a read-before-write collision check with a salt-and-retry on conflict, but that adds a database read to every write and gets slower as the table fills. This is exactly why a distributed ID generator, which avoids collisions structurally, is the stronger answer.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Should the redirect return 301 or 302, and what does the choice cost you?",
+    "answer_markdown": "Use 302 (temporary) by default. A 301 tells the browser the mapping is permanent, so the browser caches it and future visits to that short link never reach your servers at all. That is faster and cheaper, but it means you lose all click analytics for repeat visitors, and you can never disable, expire, or repoint a link — the browser will keep sending users to the old destination indefinitely. Choose 301 only if you have explicitly decided you need neither analytics nor the ability to revoke a link, which is rare for a real service.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do you generate unique keys across many servers without a single counter becoming a bottleneck?",
+    "answer_markdown": "Pre-allocate ranges. A coordination service hands each server a block of IDs — server A gets 1 to 1,000,000, server B gets the next million — and each server then issues IDs from its own block with zero coordination per write. Collisions are impossible by construction, there is no per-write lookup, and the coordination service is contacted only once per million writes rather than once per write. A Snowflake-style ID (timestamp + machine ID + sequence counter) achieves the same result with no central service at all, at the cost of longer keys. Both beat a single auto-increment counter, which is simultaneously a write bottleneck and a single point of failure.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A sequential counter produces keys that anyone can enumerate. How do you make keys unguessable without reintroducing collisions?",
+    "answer_markdown": "Keep the collision-free sequential ID internally, but apply a bijective (one-to-one and reversible) transform before base62 encoding — XOR with a secret constant, or run the ID through a Feistel permutation. Because the transform is a bijection, distinct IDs still map to distinct outputs, so you keep the zero-collision guarantee while the emitted keys look scattered rather than adjacent. Simply switching to random key generation would solve guessability but bring collisions back, requiring a check on every write; the bijection gives you both properties at once.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "At 23,000 peak reads per second, what is the first thing you scale, and why not the database?",
+    "answer_markdown": "Cache first. Link popularity is heavily Zipfian — a small fraction of links absorb most of the traffic — so an LRU cache in front of the store typically achieves a 90%+ hit rate, cutting database load by an order of magnitude for a fraction of the cost of sharding. Sharding is the second step, and when you do it, shard by hash of the short key, because every query is a point lookup by key; range sharding would be wrong here since no query scans a range. Storage is not the constraint at all — under 2 TB per year fits on one machine, so the pressure is entirely read QPS and tail latency, which is why edge caching beats a bigger database.",
+    "difficulty": "medium"
+  }
+]

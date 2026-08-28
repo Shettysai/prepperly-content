@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Explain 1NF, 2NF, and 3NF in plain terms.",
+    "answer_markdown": "First normal form means one value per cell: no comma-separated lists and no repeating columns like phone1, phone2, phone3. Second normal form applies when the primary key is composite and requires every non-key column to depend on the whole key rather than just part of it, so product_name does not belong in an order_items table keyed by order and product. Third normal form forbids a non-key column depending on another non-key column, so department_name does not belong beside department_id in an employees table. The summary worth memorising is that every non-key column must depend on the key, the whole key, and nothing but the key.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What are update, insertion, and deletion anomalies?",
+    "answer_markdown": "They are the three ways duplicated data causes corruption. An update anomaly occurs when a fact is stored in many rows and you change only some copies, so the database now holds contradictory answers. An insertion anomaly occurs when you cannot record a fact because no parent row exists yet, such as being unable to add a department until someone works there. A deletion anomaly occurs when removing a row destroys unrelated information, such as deleting the last employee erasing the department entirely. Normalisation eliminates all three by storing each fact exactly once.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "When would you deliberately denormalise?",
+    "answer_markdown": "When a read is both frequent and expensive, writes are comparatively rare, and you have a concrete plan for keeping the duplicate in sync. The classic case is a like count on a social post: counting rows in a table of hundreds of millions of likes is unavoidably slow because no index makes counting free, so you store a counter column instead. The cost is real, since likes are now recorded in two places and the counter can drift. Production systems handle this by updating the counter in the same transaction as the like and running periodic reconciliation. Denormalising without measuring the query first is how schemas rot.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Products already have a price column, so why store price again on the order line?",
+    "answer_markdown": "Because it is a different fact rather than duplication. The product table holds the current selling price, while the order line must hold the price actually paid at the moment of purchase, which has to stay frozen forever. If you joined to the live product price instead, raising a price next month would silently rewrite the value of every historical order, corrupting revenue reporting, invoices, and refunds. Copying values that must be fixed in time is correct design, and recognising the difference between duplication and a historical record is what the question is testing.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why enforce uniqueness with a database constraint rather than in application code?",
+    "answer_markdown": "Application-level checks are vulnerable to race conditions. Two concurrent requests can both query for an existing email, both find none, and both proceed to insert, creating a duplicate that the check was supposed to prevent. The window is small but at scale it is hit regularly. A UNIQUE constraint is enforced by the database at write time and holds regardless of how many application instances run or how they interleave, making the invalid state genuinely impossible rather than merely unlikely. It also protects against bugs in any other code path or manual query that writes to the table.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is the cost of over-normalising a schema?",
+    "answer_markdown": "Splitting every attribute into its own lookup table produces a schema that is technically pure but requires many joins to display a single screen, which is both slow and painful to work with. Each join adds planning and execution cost and makes queries harder to read and maintain. Normalisation optimises for write correctness by ensuring one fact lives in one place, but that benefit has diminishing returns, and 3NF is the practical target for transactional systems. Beyond that, further decomposition usually costs more in query complexity than it returns in integrity.",
+    "difficulty": "medium"
+  }
+]

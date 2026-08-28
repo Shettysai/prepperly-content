@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why does a system need leader election at all, if it already runs multiple instances?",
+    "answer_markdown": "You run multiple instances for redundancy and capacity, but some work must happen exactly once regardless of how many instances exist — a nightly billing run, a database compaction, consuming one partition of a queue. If all five instances run the billing job, every customer is billed five times. You could name one instance the leader in configuration, but then that instance dying becomes an outage that needs a human to fix. Leader election lets the group choose a leader itself and choose a new one automatically within seconds when the current leader fails.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is a lease, and why is it safer than a plain distributed lock?",
+    "answer_markdown": "A lease is a lock with an expiry time: the holder must actively renew it before the TTL runs out, or it lapses automatically. This matters because a plain lock with no expiry, held by a process that crashes, stays held forever — nothing can release it since the only party that could has died, and the system blocks until a human intervenes. A lease expires without requiring any cooperation from the holder, so a crashed leader is replaced automatically after at most one TTL. The trade-off is choosing that TTL: too short causes spurious failovers under normal load, too long delays recovery from real failures.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How is leader election typically implemented using etcd or ZooKeeper?",
+    "answer_markdown": "The coordination service provides one essential primitive: a linearizable compare-and-set write that either fully succeeds or fully fails, with no in-between state. Every candidate attempts to write its own ID to the same key, conditional on that key not already existing, so exactly one write wins and that node becomes leader. The winner attaches a lease to the key and must renew before the TTL expires; the losing candidates watch the key and race again the instant it disappears. Crucially, the candidates are not voting among themselves — they delegate the hard part to etcd, which internally runs Raft across its own nodes to make that single write atomic, so your application inherits consensus without implementing it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is split brain, and why can't you prevent it by tuning the lease timeout?",
+    "answer_markdown": "Split brain is two nodes simultaneously believing they are the leader, both acting on that belief. It happens when a leader's process pauses — a long garbage-collection pause, a hypervisor suspending the VM, a network partition — for longer than its lease TTL. The coordination service correctly expires the lease and grants leadership elsewhere, but when the original process resumes it has no idea that time passed and continues writing as leader. You cannot fix this by shortening the timeout, because a pause can always exceed whatever value you choose, and shorter timeouts cause spurious failovers during normal load spikes. The window shrinks but never closes, which is why the real solution makes the second leader harmless rather than trying to prevent it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is a fencing token, and why must the check happen at the resource rather than in the leader?",
+    "answer_markdown": "A fencing token is a strictly increasing number issued by the lease service every time it grants leadership. The leader includes its token with every write to the protected resource, and the resource records the highest token it has ever seen and rejects any write carrying a lower one. So when a paused leader wakes holding token 33 while the current leader is on 34, its write is refused — it never even learns it was demoted, and does not need to. The check must live in the resource because a stale leader genuinely believes it is valid: asked to check itself, it will happily conclude it holds leadership and proceed. Only the resource has seen the newer token, so only the resource can detect the staleness. This is why a lock service alone can never make distributed locking safe.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do clock problems undermine leases, and what should you use instead of wall-clock time?",
+    "answer_markdown": "The lease holder and the coordination service each measure the TTL independently using their own clocks. If the holder's clock runs slightly slow, it believes it still has lease time remaining after the service has already expired it, and keeps acting as leader during that gap. Virtual machines make this worse: a suspended and resumed VM can jump forward by seconds with nothing inside the process noticing. The mitigation is to never compare absolute timestamps across machines, and instead use a monotonic clock — `process.hrtime.bigint()` in Node — which measures elapsed duration and is immune to NTP adjustments and wall-clock jumps. The holder should also renew early, at roughly a third of the TTL, and step down voluntarily if a renewal fails. None of this closes the window completely, which is precisely why fencing tokens are load-bearing rather than optional: timing can give you liveness, but only ordering gives you safety.",
+    "difficulty": "hard"
+  }
+]

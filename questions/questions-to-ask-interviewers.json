@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Do you have any questions for us?",
+    "answer_markdown": "Ask two or three questions matched to who is in front of you, then follow up on their answer rather than moving to the next prepared question. To a peer engineer: 'what's the thing about this codebase you'd warn a new joiner about?', 'walk me through the last incident you were paged for — did anything change afterwards?', and 'how long does a typical PR sit before review?' All three are answerable only from experience, none has a corporate script, and each maps to a real cost of the job. The test for any question is whether the answer could be produced from the careers page; if it could, cut it. This is still being scored — your curiosity is a proxy for your experience, since a candidate who asks how on-call is staffed has been on call.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What should you ask a hiring manager that you would not ask a peer engineer?",
+    "answer_markdown": "Ask about success criteria, how work gets chosen, and attrition — the things they own and an IC does not. 'What does someone in this role need to have done by month six for you to be glad you hired them?' turns directly into your first-quarter plan and is a question only serious candidates ask. 'How does work get chosen — roadmap-driven from product, or do engineers propose things and get them staffed?' is probably the best single predictor of whether you will have autonomy. 'Who was the last person to leave this team, and why?' is uncomfortable, which is exactly why the answer is informative. Save code review conventions and tooling for the engineers; asking a manager about them wastes a scarce question on someone who is one step removed from the answer.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You ask how on-call works and get 'it's pretty quiet mostly.' What does that tell you?",
+    "answer_markdown": "It tells you either that nobody tracks pages, or that the person answering would rather not give you the number — both of which are worth knowing. A healthy answer to that question contains figures: rotation frequency, roughly how many pages a month, and what compensation or time back exists for night work. Vagueness about a quantity that is trivially measurable is the signal, not the words themselves. The right move live is a gentle follow-up asking for a number, and then to note whether the discomfort recurs: one interviewer being awkward about a topic is noise, but three separate people going vague about the same thing is a strong and reliable signal.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "The interviewers covered everything and you genuinely have no prepared question left. What do you say?",
+    "answer_markdown": "Never say 'no, you've covered it all' — it lands as disinterest regardless of how engaged you were for the previous hour. Convert something they said into a question instead: 'you mentioned the migration is about halfway done — what's the part you expect to be hardest in the second half?' This is better than any question you prepared, because it proves you were listening and it puts the conversation on ground they have already shown they want to discuss. Having one generic-but-genuine fallback also helps, such as asking what would make them glad they hired someone into this role, since it is useful information no matter what has already been covered.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is asking the same three questions of five different interviewers a problem?",
+    "answer_markdown": "Interviewers on a loop compare notes afterwards, so the repetition is visible, and it signals you prepared a list rather than thinking about who you were speaking to. It also wastes your own opportunity: five interviewers represent five different vantage points on the same job, and asking a director about code review conventions or an IC about headcount planning gets you a worse answer than the person could have given. Match the question to the role — engineers for daily reality, the hiring manager for success criteria and autonomy, a skip-level for strategic risk and org stability, the recruiter for process and timeline. Two well-targeted questions per person beats a rehearsed list of eight.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "The interviewer asks 'what haven't we asked you that we should have?' How do you use it?",
+    "answer_markdown": "Treat it as a gift and answer with substance rather than deflecting. Name a genuine strength the loop did not surface and support it with one concrete example, ideally something relevant to the role that simply did not come up: 'you haven't asked about incident response, and that's most of what I've done for two years — I rewrote our on-call runbook after an outage where the existing one sent people to a dashboard that no longer existed.' Keep it to thirty seconds and one example. The failure modes are answering 'I think you covered everything', which wastes the opening, and using it to relitigate a question you feel went badly, which draws attention back to your weakest moment.",
+    "difficulty": "hard"
+  }
+]
