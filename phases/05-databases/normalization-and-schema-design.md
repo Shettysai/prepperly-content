@@ -144,6 +144,10 @@ Denormalise when the read is frequent and expensive, the write comparatively rar
 ## Common mistakes
 
 - Enforcing uniqueness only in application code. Without a database constraint, concurrent requests will eventually create duplicates.
+- Storing lists in one column, which blocks indexing, constraints, and correct querying.
+- Treating denormalisation as a failure rather than a measured trade-off with a maintenance cost.
+- Denormalising before measuring, adding consistency risk to fix an unconfirmed problem.
+- Over-normalising until routine screens need many joins.
 
 ## What interviewers ask
 

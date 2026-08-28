@@ -148,11 +148,18 @@ Failing quickly and retrying later beats blocking every connection. Adding a col
 
 ## Common mistakes
 
+- Renaming or dropping a column in the same deploy as the code change, breaking instances still running old code.
+- Backfilling with one huge `UPDATE`, locking millions of rows and pushing replicas far behind.
+- Building an index without `CONCURRENTLY` on a busy table, blocking writes for the whole build.
+- Assuming a fast migration is a safe one — the danger is the lock queue, not the duration.
+- Making backfills non-idempotent, so a job that dies halfway cannot safely resume.
 
 ## What interviewers ask
 
 - **Why can a fast migration still cause an outage?** — It requests a lock that queues behind a running query, and every request arriving after it queues too, so the application freezes even though the `ALTER` itself is instant.
 - **Why is dropping a column the riskiest step?** — It's instant but irreversible and breaks any code still referencing it, so it must be a separate, delayed deploy once logs prove nothing uses it.
+- **How do you backfill ten million rows safely?** — In small idempotent batches with pauses, keeping transactions short and replication lag bounded.
+- **How do you rename a column with zero downtime?** — Expand-contract: add the new column, dual-write, backfill, switch reads, then drop the old one, each a separate deploy.
 
 ## Practice
 

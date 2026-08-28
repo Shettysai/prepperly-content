@@ -148,11 +148,18 @@ The deepest trap is a cache that stops being optional. If your database only sur
 
 ## Common mistakes
 
+- Updating the cache on write instead of deleting it, creating a race where a stale value persists.
+- Using identical TTLs everywhere, synchronising expiry into an avalanche.
+- Forgetting to cache negative results, so lookups for missing keys always reach the database.
+- Running a cache with `noeviction`, turning full memory into failed writes.
+- Depending on the cache for survival without testing a cold start.
 
 ## What interviewers ask
 
 - **What is a cache stampede and how do you prevent it?** — A hot key expires and every concurrent request misses at once, all hitting the database together; prevent it with a lock so one request refreshes while others wait, or by refreshing before expiry.
 - **Which eviction policy for a pure cache, and why not `noeviction`?** — `allkeys-lru` or `allkeys-lfu`, so full memory discards cold keys; `noeviction` makes writes fail instead, converting a capacity issue into an outage.
+- **On update, do you delete the cache key or overwrite it?** — Delete: concurrent updates can write values out of order and leave the cache stale, whereas a deleted key is repopulated correctly by the next read.
+- **What breaks if Redis restarts?** — Every request misses at once, so unless the database can serve full traffic cold, the cache is a load-bearing dependency rather than an optimisation.
 
 ## Practice
 

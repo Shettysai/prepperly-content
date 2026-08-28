@@ -415,7 +415,7 @@
           "position": 2,
           "path": "phases/05-databases/connection-pooling.md",
           "questionsPath": "questions/connection-pooling.json",
-          "sha256": "317da90c4b9e90c2deb0875cc9864569b90402e9c8ee65aa8d43140e142e075c"
+          "sha256": "565c16549b5f5e20e6d905968d0b7078db23542b5845c93dc54d72f6f061ba23"
         },
         {
           "slug": "database-migrations",
@@ -424,7 +424,7 @@
           "position": 3,
           "path": "phases/05-databases/database-migrations.md",
           "questionsPath": "questions/database-migrations.json",
-          "sha256": "8ddb1302f094f19b199782f7954f612f6488974f4a28a0eb1f7f44dde9fdce83"
+          "sha256": "1289b36940c2c2d0165b8fa5e1752c431785a7f48e6bcbd06ee193629c96e8d8"
         },
         {
           "slug": "indexing-and-transactions",
@@ -442,7 +442,7 @@
           "position": 5,
           "path": "phases/05-databases/normalization-and-schema-design.md",
           "questionsPath": "questions/normalization-and-schema-design.json",
-          "sha256": "ac528d535bf03bffb07963f8346790cd135792b2d0b33827f78b11df41a8d8af"
+          "sha256": "ce3057708f66570d503bf5b58e80aad6b48a1443a9c539c4f77891811c1197db"
         },
         {
           "slug": "query-optimization",
@@ -451,7 +451,7 @@
           "position": 6,
           "path": "phases/05-databases/query-optimization.md",
           "questionsPath": "questions/query-optimization.json",
-          "sha256": "aba088f06a518f9db669c22f7aa0bb7f7b99701eea9a2f7b893114430b43db85"
+          "sha256": "aba3e2741657110e82376c44bc2804d8c18a0f785fe6ca449ac2017b4042c344"
         },
         {
           "slug": "redis-and-caching-patterns",
@@ -460,7 +460,7 @@
           "position": 7,
           "path": "phases/05-databases/redis-and-caching-patterns.md",
           "questionsPath": "questions/redis-and-caching-patterns.json",
-          "sha256": "5955613d9ba9c860877fa752ddbc9a5607e16dfb99d3a4f2e826ff56bfb1b6c2"
+          "sha256": "aff9ed4737c0e547955de650df5e37bc2cbc5cc0a9800bcce58773ad67e895fd"
         },
         {
           "slug": "relational-vs-nosql",
@@ -789,7 +789,7 @@
           "position": 1,
           "path": "phases/09-backend-engineering/api-versioning.md",
           "questionsPath": "questions/api-versioning.json",
-          "sha256": "16ad3509592525ea722fe351f6023c772ffb5de6a745aa1e49e824a0cb70c08a"
+          "sha256": "b0bdb9bc39acdfb26eb28c6b59a29b2ae94260246ef9689ddb2f99c72d31fb9a"
         },
         {
           "slug": "authentication-authorization",
@@ -825,7 +825,7 @@
           "position": 5,
           "path": "phases/09-backend-engineering/infrastructure-as-code.md",
           "questionsPath": "questions/infrastructure-as-code.json",
-          "sha256": "f1f2c3300ce195498a9787f44cad4f5a24ceaef75fccc773a17f52c338d9d019"
+          "sha256": "f1f27bcde3906b6e2bd0e1fbe6e85c34b9d679c55560144cd967bc0cc01f2d03"
         },
         {
           "slug": "kubernetes-basics",
@@ -852,7 +852,7 @@
           "position": 8,
           "path": "phases/09-backend-engineering/message-brokers-in-practice.md",
           "questionsPath": "questions/message-brokers-in-practice.json",
-          "sha256": "7078590fc72a18f68601624358966e629915b34ddebe9ba9cf8c49cf6af29c00"
+          "sha256": "073a08cfd377eaab0ef64ef3057ccdbdca55bc169124765efdbbe031d8021788"
         },
         {
           "slug": "secrets-management",
@@ -861,7 +861,7 @@
           "position": 9,
           "path": "phases/09-backend-engineering/secrets-management.md",
           "questionsPath": "questions/secrets-management.json",
-          "sha256": "e0e152f1bfb35caa5cfd04a2eb992a23996725e256e6708d40b9d6e41b5b4da7"
+          "sha256": "0f83dc61bc7c92b5f8af655afe23c5c72cce3dd0a5d2ce7c4ef45e8f349edbb4"
         },
         {
           "slug": "web-security-fundamentals",
@@ -870,7 +870,7 @@
           "position": 10,
           "path": "phases/09-backend-engineering/web-security-fundamentals.md",
           "questionsPath": "questions/web-security-fundamentals.json",
-          "sha256": "62754350350196e24b6ec50c91c22c450279983aa80585e4b930a9067520f12e"
+          "sha256": "db8af08ace356a2b140485389dd7dc7bbf2fb12a8e73966f5c599d476c3ae3a5"
         }
       ]
     },

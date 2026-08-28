@@ -35,13 +35,9 @@ The dominant leak path is embarrassingly simple: **credentials committed to git*
 
 Rank storage by how many people can read it and how long it lives.
 
-**Hardcoded in source** is worst: it's in the repo, in every clone, in history forever, visible to everyone with read access.
+**Hardcoded in source** is worst: in the repo, in every clone, in history forever. **Environment variables** are a real improvement — config lives outside the code, so one image runs anywhere with different values — but they're visible to the whole process, dumped by crash handlers, and shown by `docker inspect`. **A secrets manager** (Vault, AWS Secrets Manager, Azure Key Vault) is the mature answer: encrypted storage, per-service authenticated access, logged reads, automated rotation.
 
-**Environment variables** are a real improvement — configuration lives outside the code, so the same image runs in dev and prod with different values. That's why the practice is near-universal. But env vars are visible to the whole process, get dumped by crash handlers, and appear in `docker inspect`.
-
-**A secrets manager** — Vault, AWS Secrets Manager, Azure Key Vault — is the mature answer. Secrets are stored encrypted, access is authenticated per-service, every read is logged, and rotation is automated. The app asks for a secret at startup and gets a short-lived one.
-
-The pattern to internalise: **secrets flow in at runtime; they never sit in the artefact.** Your container image, your repo, and your build logs should all be safe to hand to a stranger.
+The pattern to internalise: **secrets flow in at runtime; they never sit in the artefact.** Your image, repo, and build logs should all be safe to hand to a stranger.
 
 ```mermaid
 flowchart LR
@@ -75,21 +71,18 @@ function encrypt(plaintext, key) {
   const iv = randomBytes(12);                     // UNIQUE per encryption, always
   const c = createCipheriv('aes-256-gcm', key, iv);
   const ct = Buffer.concat([c.update(plaintext, 'utf8'), c.final()]);
-  // iv | tag | ciphertext  — iv and tag are not secret, store them together
-  return Buffer.concat([iv, c.getAuthTag(), ct]).toString('base64');
+  return Buffer.concat([iv, c.getAuthTag(), ct]).toString('base64');  // iv|tag|ct
 }
 
 function decrypt(blob, key) {
   const b = Buffer.from(blob, 'base64');
-  const iv = b.subarray(0, 12), tag = b.subarray(12, 28), ct = b.subarray(28);
-  const d = createDecipheriv('aes-256-gcm', key, iv);
-  d.setAuthTag(tag);                              // throws below if this fails
-  return Buffer.concat([d.update(ct), d.final()]).toString('utf8');
+  const d = createDecipheriv('aes-256-gcm', key, b.subarray(0, 12));
+  d.setAuthTag(b.subarray(12, 28));               // throws below if this fails
+  return Buffer.concat([d.update(b.subarray(28)), d.final()]).toString('utf8');
 }
 
 const secret = 'postgres://user:s3cr3t@db:5432/app';
 const stored = encrypt(secret, key);
-
 console.log('stored   :', stored.slice(0, 48) + '...');
 console.log('roundtrip:', decrypt(stored, key));
 console.log('same input twice differs:', encrypt(secret, key) !== encrypt(secret, key));

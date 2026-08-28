@@ -40,11 +40,11 @@ That's the trade: **latency and coupling for complexity**. You gain resilience a
 
 Two shapes, and picking the wrong one causes most confusion.
 
-A **queue** is a to-do list. Each task should be done once, by one worker. Add workers to go faster, because they split the list. RabbitMQ and SQS are built around this.
+A **queue** is a to-do list: each task done once, by one worker. Add workers to go faster, because they split the list. RabbitMQ and SQS are built around this.
 
-A **log** is a diary. Messages are appended and *kept*, and many independent consumers each read through at their own pace, each tracking their own position. Reading doesn't remove anything, so a new consumer can start from the beginning and replay all of history. That's Kafka.
+A **log** is a diary: messages are appended and *kept*, and many independent consumers each read at their own pace, tracking their own position. Reading removes nothing, so a new consumer can start from the beginning and replay history. That's Kafka.
 
-The distinction that matters: in a queue, a consumed message is gone. In a log, it stays, so five teams can consume `order.placed` independently and a sixth can join next year and catch up on everything.
+The distinction that matters: in a queue a consumed message is gone; in a log it stays, so five teams consume `order.placed` independently and a sixth can join next year and catch up.
 
 ```mermaid
 flowchart LR
