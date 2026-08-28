@@ -38,15 +38,9 @@ The good news is that the fixes are well understood, cheap, and mostly mechanica
 
 Think about a bank teller taking instructions on a slip of paper.
 
-**Injection** is writing your instruction on the slip where the amount should go, and the teller executing it because they can't tell the form's structure from the customer's writing.
+**Injection** is writing your instruction where the amount should go, and the teller executing it because they can't tell the form's structure from the customer's writing. **IDOR** — insecure direct object reference — is asking for account 12346 instead of your own 12345 and the teller handing it over because you asked politely. **CSRF** is tricking someone else into signing your slip. **SSRF** is convincing the teller to walk into the back office and read something you're not allowed to see, because they'll go wherever you point them.
 
-**IDOR** — insecure direct object reference — is asking for account 12346 instead of your own 12345 and the teller handing it over because you asked politely.
-
-**CSRF** is tricking someone else into signing your slip.
-
-**SSRF** is convincing the teller to walk into the back office and read something you're not allowed to see, because they'll go wherever you point them.
-
-The common thread: the system can't distinguish *what the user is allowed to influence* from *what the system decides*.
+The common thread: the system can't distinguish *what the user may influence* from *what the system decides*.
 
 ```mermaid
 flowchart LR

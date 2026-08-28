@@ -141,6 +141,10 @@ Composite column order matters the same way: an index on `(status, created_at)` 
 ## Common mistakes
 
 - Treating every Seq Scan as a bug. On a small table, or when most rows match, it's the correct choice.
+- Reading `cost` as milliseconds — it's a relative unit for comparing plans, not a time.
+- Using `EXPLAIN` without `ANALYZE`, so you see estimates only and miss the estimate-versus-actual gap.
+- Wrapping an indexed column in a function, then concluding the index "doesn't work".
+- Optimising one query when the real problem is running it a hundred times in a loop.
 
 ## What interviewers ask
 

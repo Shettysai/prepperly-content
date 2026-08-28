@@ -141,6 +141,10 @@ Serverless breaks the model differently: each instance holds its own pool and in
 ## Common mistakes
 
 - Increasing pool size to fix slowness, which usually worsens it by pushing the database past its concurrency sweet spot.
+- Releasing outside a `finally`, so any thrown error leaks a connection permanently.
+- Sizing per instance and forgetting to multiply by the number of running instances.
+- Holding a transaction open across an HTTP call, tying up a connection and locks for seconds.
+- Blaming the database when latency rises but its CPU is idle and queries are fast.
 
 ## What interviewers ask
 
