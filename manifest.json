@@ -14,79 +14,79 @@
           "position": 1,
           "path": "phases/01-cs-fundamentals/big-o-notation.md",
           "questionsPath": "questions/big-o-notation.json",
-          "sha256": "504013c237f8885aafacbd8cef8ead5f93e2176adec4e0360cf13e56e17cdb38"
-        },
-        {
-          "slug": "memory-management",
-          "title": "Memory Management",
-          "summary": "Stack vs Heap, Pointers",
-          "position": 2,
-          "path": "phases/01-cs-fundamentals/memory-management.md",
-          "questionsPath": "questions/memory-management.json",
-          "sha256": "946cbf70c6072d7ae2fd0f49ba00811626d900b80a12027431bb5ee3cabbd0b6"
+          "sha256": "9a447500795c7325fa09bda82ee6dba588cc8484ffcb2ab7b517c8e1fc88d069"
         },
         {
           "slug": "bit-manipulation",
           "title": "Bit Manipulation",
           "summary": "AND, OR, XOR, Shifts",
-          "position": 3,
+          "position": 2,
           "path": "phases/01-cs-fundamentals/bit-manipulation.md",
           "questionsPath": "questions/bit-manipulation.json",
-          "sha256": "ae9247ffcf23721f77877ee58a0491974937fff91909d0174ea6f739f33fbe40"
+          "sha256": "b4bfefae86495002fadaf8bb3a4a8ed698e910bb13fd1254b53b54d65964d31a"
         },
         {
           "slug": "computer-architecture",
           "title": "Computer Architecture",
           "summary": "CPU cache, Registers",
-          "position": 4,
+          "position": 3,
           "path": "phases/01-cs-fundamentals/computer-architecture.md",
           "questionsPath": "questions/computer-architecture.json",
-          "sha256": "fb068631e6e7932e0a471034c96c98b2696c4a199f402d2b920c60fafc304153"
-        },
-        {
-          "slug": "operating-systems",
-          "title": "Operating Systems",
-          "summary": "Processes, Threads, Concurrency",
-          "position": 5,
-          "path": "phases/01-cs-fundamentals/operating-systems.md",
-          "questionsPath": "questions/operating-systems.json",
-          "sha256": "8f54c328c94aab35beb4dc89613c11eeeda351949302484a49e77855a582d108"
-        },
-        {
-          "slug": "object-oriented-programming",
-          "title": "Object-Oriented Programming",
-          "summary": "Inheritance, Polymorphism",
-          "position": 6,
-          "path": "phases/01-cs-fundamentals/object-oriented-programming.md",
-          "questionsPath": "questions/object-oriented-programming.json",
-          "sha256": "56d6deb7f88d19b502f4f7d3b19a8050f276ae8eb367f30f25895079ab481499"
-        },
-        {
-          "slug": "functional-programming",
-          "title": "Functional Programming",
-          "summary": "Pure functions, Closures",
-          "position": 7,
-          "path": "phases/01-cs-fundamentals/functional-programming.md",
-          "questionsPath": "questions/functional-programming.json",
-          "sha256": "f75efcde74ac765de52268770939d168feca2a63deaca9d04cf061de2a46d905"
+          "sha256": "099ef353931349dd072697ebb4fa580cdbcc33d1ccdce3955499640ea8a142a5"
         },
         {
           "slug": "discrete-math",
           "title": "Discrete Math",
           "summary": "Boolean logic, Set theory",
-          "position": 8,
+          "position": 4,
           "path": "phases/01-cs-fundamentals/discrete-math.md",
           "questionsPath": "questions/discrete-math.json",
-          "sha256": "c3f5d5ed44d1ad85c769bf753fc1aa6d9702482b8f3b6cfa7ca2e6e6263b5d11"
+          "sha256": "9131ef5a4422879648afa2a43a6d441b57c6652ab897fa370f0890d2cf2f1a48"
+        },
+        {
+          "slug": "functional-programming",
+          "title": "Functional Programming",
+          "summary": "Pure functions, Closures",
+          "position": 5,
+          "path": "phases/01-cs-fundamentals/functional-programming.md",
+          "questionsPath": "questions/functional-programming.json",
+          "sha256": "73c63db2044d43168885f4a0189597c5c4a262675f97e9f20f75c5a0ea44cc30"
+        },
+        {
+          "slug": "memory-management",
+          "title": "Memory Management",
+          "summary": "Stack vs Heap, Pointers",
+          "position": 6,
+          "path": "phases/01-cs-fundamentals/memory-management.md",
+          "questionsPath": "questions/memory-management.json",
+          "sha256": "e86c2c5ac8952ef5f35de199a984ec78945fc842df2cfb455cbeac763c3a59e6"
         },
         {
           "slug": "number-theory",
           "title": "Number Theory",
           "summary": "Primes, Modulo arithmetic",
-          "position": 9,
+          "position": 7,
           "path": "phases/01-cs-fundamentals/number-theory.md",
           "questionsPath": "questions/number-theory.json",
-          "sha256": "442e1ad52e6ad381a3fce4840887dfb3d023688fb5d71e8b1a89bfab854ce7ba"
+          "sha256": "6f63bb87e12c01c568ab19e4cbc874b8702d36e27f84ba4310f5c6ac7dcce2e6"
+        },
+        {
+          "slug": "object-oriented-programming",
+          "title": "Object-Oriented Programming",
+          "summary": "Inheritance, Polymorphism",
+          "position": 8,
+          "path": "phases/01-cs-fundamentals/object-oriented-programming.md",
+          "questionsPath": "questions/object-oriented-programming.json",
+          "sha256": "2cd8edfbf3d349089be62684f6a8123a93275b54640c2d0b7ec97c31a3f8caa5"
+        },
+        {
+          "slug": "operating-systems",
+          "title": "Operating Systems",
+          "summary": "Processes, Threads, Concurrency",
+          "position": 9,
+          "path": "phases/01-cs-fundamentals/operating-systems.md",
+          "questionsPath": "questions/operating-systems.json",
+          "sha256": "1b255a90f9f423b2d88428e12ef785b55699ba4dbe2c4dd2838407efc4b35ef6"
         },
         {
           "slug": "string-manipulation",
@@ -95,7 +95,7 @@
           "position": 10,
           "path": "phases/01-cs-fundamentals/string-manipulation.md",
           "questionsPath": "questions/string-manipulation.json",
-          "sha256": "4681cd889ed8eb176571fde0096195a4d5b31908493ab48433969e8849d3ec55"
+          "sha256": "b20ac1ce2678a0a63c5c91d46b3efd3e4f1ff1c56a57d3521e57b7e74af8cb8b"
         }
       ]
     },
@@ -112,79 +112,79 @@
           "position": 1,
           "path": "phases/02-data-structures/arrays-and-strings.md",
           "questionsPath": "questions/arrays-and-strings.json",
-          "sha256": "e2b681e0c010299a0cde8a1742c6d88197eb7d5d27ec2525c4401a75afc374d8"
-        },
-        {
-          "slug": "linked-lists",
-          "title": "Linked Lists",
-          "summary": "Singly, Doubly, Circular",
-          "position": 2,
-          "path": "phases/02-data-structures/linked-lists.md",
-          "questionsPath": "questions/linked-lists.json",
-          "sha256": "6dd80473d18d74abba4678b05112eee1b9d1646b43674bf0f4df0010aa82df6a"
-        },
-        {
-          "slug": "stacks",
-          "title": "Stacks",
-          "summary": "LIFO principles, Implementation",
-          "position": 3,
-          "path": "phases/02-data-structures/stacks.md",
-          "questionsPath": "questions/stacks.json",
-          "sha256": "1699695dcfa12a7f89d50f6e3df15f69f09c4e669ec17018c2224c052846a565"
-        },
-        {
-          "slug": "queues",
-          "title": "Queues",
-          "summary": "FIFO principles, Deque",
-          "position": 4,
-          "path": "phases/02-data-structures/queues.md",
-          "questionsPath": "questions/queues.json",
-          "sha256": "79937f9308d29c785ba2fd6d8e56478b7049acbb6ff55f67ac0374986247d257"
-        },
-        {
-          "slug": "hash-tables",
-          "title": "Hash Tables",
-          "summary": "Collision resolution, Load factor",
-          "position": 5,
-          "path": "phases/02-data-structures/hash-tables.md",
-          "questionsPath": "questions/hash-tables.json",
-          "sha256": "c665f62c3435d812cb426230609946fab6e8217a11858b7254ef98bd8ec0af8d"
-        },
-        {
-          "slug": "trees",
-          "title": "Trees",
-          "summary": "Binary Trees, Traversals",
-          "position": 6,
-          "path": "phases/02-data-structures/trees.md",
-          "questionsPath": "questions/trees.json",
-          "sha256": "58fd03a2233e0322eb4ee834abf2084b2d9a9ab11e41766f00e09e98aa79a13a"
+          "sha256": "7cd4a03ab8dd9373c219856d5ea89957935be937dc7d783f5c17cb629edd87c0"
         },
         {
           "slug": "binary-search-trees",
           "title": "Binary Search Trees",
           "summary": "Insertion, Deletion, Searching",
-          "position": 7,
+          "position": 2,
           "path": "phases/02-data-structures/binary-search-trees.md",
           "questionsPath": "questions/binary-search-trees.json",
-          "sha256": "294086963d08e359b40accd1c1d21c4158ed9fb3d9c8355e988ce66fcdee6210"
-        },
-        {
-          "slug": "heaps",
-          "title": "Heaps",
-          "summary": "Min-heap, Max-heap, Priority Queues",
-          "position": 8,
-          "path": "phases/02-data-structures/heaps.md",
-          "questionsPath": "questions/heaps.json",
-          "sha256": "0313743214d2ed6b85fdf1a0d519c45112fc715236bb6e175cf15737964873c9"
+          "sha256": "c67a380832143263a0df5c5368953a5994bd64f0a9507545e718aaf5acb3c37d"
         },
         {
           "slug": "graphs",
           "title": "Graphs",
           "summary": "Directed, Undirected, Adjacency List/Matrix",
-          "position": 9,
+          "position": 3,
           "path": "phases/02-data-structures/graphs.md",
           "questionsPath": "questions/graphs.json",
-          "sha256": "f90e9089c2ada77966ede5266c318e8623b704110b5df2b9813305ee0b0f95e9"
+          "sha256": "dbee168e9d0020c7513a168a47b1412592bb87c7a4d8a6a50748737482465534"
+        },
+        {
+          "slug": "hash-tables",
+          "title": "Hash Tables",
+          "summary": "Collision resolution, Load factor",
+          "position": 4,
+          "path": "phases/02-data-structures/hash-tables.md",
+          "questionsPath": "questions/hash-tables.json",
+          "sha256": "f6fd8e03ad02e7bf70b275e009723bc12421505c77d8766dda38a80558bd3032"
+        },
+        {
+          "slug": "heaps",
+          "title": "Heaps",
+          "summary": "Min-heap, Max-heap, Priority Queues",
+          "position": 5,
+          "path": "phases/02-data-structures/heaps.md",
+          "questionsPath": "questions/heaps.json",
+          "sha256": "286ead2aaa6e56861af2647356092f3713e463e39447439e7c7a635c9871fea0"
+        },
+        {
+          "slug": "linked-lists",
+          "title": "Linked Lists",
+          "summary": "Singly, Doubly, Circular",
+          "position": 6,
+          "path": "phases/02-data-structures/linked-lists.md",
+          "questionsPath": "questions/linked-lists.json",
+          "sha256": "ebe53902b35a5d11af809b1b0182abd7457992ca763b129625975a657b472ed9"
+        },
+        {
+          "slug": "queues",
+          "title": "Queues",
+          "summary": "FIFO principles, Deque",
+          "position": 7,
+          "path": "phases/02-data-structures/queues.md",
+          "questionsPath": "questions/queues.json",
+          "sha256": "e437ad98a1d6c2fd4d78411604e1207d74cbf0ead9537269c6b493e1d8bdecaf"
+        },
+        {
+          "slug": "stacks",
+          "title": "Stacks",
+          "summary": "LIFO principles, Implementation",
+          "position": 8,
+          "path": "phases/02-data-structures/stacks.md",
+          "questionsPath": "questions/stacks.json",
+          "sha256": "64cfecbc59e03d9274f3025c1a4e26677a00fc3b1964bc9db7edd0037d6d39a4"
+        },
+        {
+          "slug": "trees",
+          "title": "Trees",
+          "summary": "Binary Trees, Traversals",
+          "position": 9,
+          "path": "phases/02-data-structures/trees.md",
+          "questionsPath": "questions/trees.json",
+          "sha256": "4be0518dc1aab3f40424d363721acc1707ee01ef2955c2fd6da4c5626c54be53"
         },
         {
           "slug": "tries",
@@ -193,7 +193,7 @@
           "position": 10,
           "path": "phases/02-data-structures/tries.md",
           "questionsPath": "questions/tries.json",
-          "sha256": "9fef6563d454024b06c74b580ca554954955bd21a3e8e95a6b4ff47a9db93dec"
+          "sha256": "f8fd49cd372e8242e2084fd2a4eed9d84243024c134fcf0906ecafde968d8a5f"
         }
       ]
     },
@@ -204,40 +204,40 @@
       "targetMonth": 3,
       "topics": [
         {
-          "slug": "sorting",
-          "title": "Sorting",
-          "summary": "Bubble, Insertion, Selection",
-          "position": 1,
-          "path": "phases/03-algorithms/sorting.md",
-          "questionsPath": "questions/sorting.json",
-          "sha256": "6f2ff8e0d35d77a838cc9d117ef818c516dc7cabfd385af9c772da612a6d14eb"
-        },
-        {
           "slug": "advanced-sorting",
           "title": "Advanced Sorting",
           "summary": "Merge Sort, Quick Sort",
-          "position": 2,
+          "position": 1,
           "path": "phases/03-algorithms/advanced-sorting.md",
           "questionsPath": "questions/advanced-sorting.json",
-          "sha256": "ad64cd297bd2aaa7d54c45c38eb02caba76b437c8ae3ecaa9ccfc771928e9874"
+          "sha256": "73fe45bec10869174cfb71b18792a24c43228fa613c2bf5f0a6295863e291235"
         },
         {
-          "slug": "searching",
-          "title": "Searching",
-          "summary": "Linear Search, Binary Search",
+          "slug": "backtracking",
+          "title": "Backtracking",
+          "summary": "N-Queens, Sudoku solver",
+          "position": 2,
+          "path": "phases/03-algorithms/backtracking.md",
+          "questionsPath": "questions/backtracking.json",
+          "sha256": "26c600dd426bf4fcf685e88a61bd39e3b9c98ad5d3f3c34d3ff4a01ea8bf7e5b"
+        },
+        {
+          "slug": "divide-and-conquer",
+          "title": "Divide and Conquer",
+          "summary": "Master theorem, Closest pair",
           "position": 3,
-          "path": "phases/03-algorithms/searching.md",
-          "questionsPath": "questions/searching.json",
-          "sha256": "dd96800e1a05e8be9feb18081374e6f2d0d3515d9350355aa0da6a414fbf6dde"
+          "path": "phases/03-algorithms/divide-and-conquer.md",
+          "questionsPath": "questions/divide-and-conquer.json",
+          "sha256": "ca8e0901868c1c7e954a7ea3b95a6a305aad8c6b9bd33dfb14403bf407f01241"
         },
         {
-          "slug": "tree-algorithms",
-          "title": "Tree Algorithms",
-          "summary": "BFS, DFS",
+          "slug": "dynamic-programming",
+          "title": "Dynamic Programming",
+          "summary": "Memoization, Tabulation",
           "position": 4,
-          "path": "phases/03-algorithms/tree-algorithms.md",
-          "questionsPath": "questions/tree-algorithms.json",
-          "sha256": "d16adb2dee02226e9e40e5f3157e01c809c7eae9ebe2896ee58eeec01aff8944"
+          "path": "phases/03-algorithms/dynamic-programming.md",
+          "questionsPath": "questions/dynamic-programming.json",
+          "sha256": "47b4e424bc58fbf2464cacf0d0c2e7705e335ff22de40ea92fe890c0ab72090d"
         },
         {
           "slug": "graph-algorithms",
@@ -246,43 +246,43 @@
           "position": 5,
           "path": "phases/03-algorithms/graph-algorithms.md",
           "questionsPath": "questions/graph-algorithms.json",
-          "sha256": "d226c60766c9b04687f828ec13e43eda6a703b9caa29fb539bcde2ea517a3504"
-        },
-        {
-          "slug": "dynamic-programming",
-          "title": "Dynamic Programming",
-          "summary": "Memoization, Tabulation",
-          "position": 6,
-          "path": "phases/03-algorithms/dynamic-programming.md",
-          "questionsPath": "questions/dynamic-programming.json",
-          "sha256": "900db034a768631d15b2da051fe01f2a57caaca9476a2a08a86b2fa2bda2080f"
+          "sha256": "e8a729b3c02e1685303596667a06bcf2a5f3ae113d6c23b11f5bcb0126e0b2a1"
         },
         {
           "slug": "greedy-algorithms",
           "title": "Greedy Algorithms",
           "summary": "Activity selection, Huffman coding",
-          "position": 7,
+          "position": 6,
           "path": "phases/03-algorithms/greedy-algorithms.md",
           "questionsPath": "questions/greedy-algorithms.json",
-          "sha256": "f39421e7d042e34fd0b1d56455b74562a5a08400d6c10cb2142a7504fb7c6fc9"
+          "sha256": "07ec6024c924d11648ddd26c8d091787b1b292200eba403b447557d96251000b"
         },
         {
-          "slug": "backtracking",
-          "title": "Backtracking",
-          "summary": "N-Queens, Sudoku solver",
+          "slug": "searching",
+          "title": "Searching",
+          "summary": "Linear Search, Binary Search",
+          "position": 7,
+          "path": "phases/03-algorithms/searching.md",
+          "questionsPath": "questions/searching.json",
+          "sha256": "1729383a476d3586ba939d1123f6d5e87809b87c666668dd540521bf5870de59"
+        },
+        {
+          "slug": "sorting",
+          "title": "Sorting",
+          "summary": "Bubble, Insertion, Selection",
           "position": 8,
-          "path": "phases/03-algorithms/backtracking.md",
-          "questionsPath": "questions/backtracking.json",
-          "sha256": "263a33724eb99063f304d7b70b9efd334cf3f8ef4586c33529bc7561f4353b64"
+          "path": "phases/03-algorithms/sorting.md",
+          "questionsPath": "questions/sorting.json",
+          "sha256": "77ff5b4317000ed37147690424213f1b5ceb6104d6725506e209e9bbf0c4ed9a"
         },
         {
-          "slug": "divide-and-conquer",
-          "title": "Divide and Conquer",
-          "summary": "Master theorem, Closest pair",
+          "slug": "tree-algorithms",
+          "title": "Tree Algorithms",
+          "summary": "BFS, DFS",
           "position": 9,
-          "path": "phases/03-algorithms/divide-and-conquer.md",
-          "questionsPath": "questions/divide-and-conquer.json",
-          "sha256": "986b84e93eb56556d21bd3be2eed4e1f1e74a5cea93f4b778eaed7b3efb3dc81"
+          "path": "phases/03-algorithms/tree-algorithms.md",
+          "questionsPath": "questions/tree-algorithms.json",
+          "sha256": "19b6677bfca0e2d2fee2f05b522458c6cbceee99edbe43726a0827c7026413c8"
         },
         {
           "slug": "two-pointers-sliding-window",
@@ -291,7 +291,7 @@
           "position": 10,
           "path": "phases/03-algorithms/two-pointers-sliding-window.md",
           "questionsPath": "questions/two-pointers-sliding-window.json",
-          "sha256": "34b44d4753ea8480958c6787eff333a58485b9b047f35cd88eac9f7e8149d416"
+          "sha256": "f43ea14e441e33aaab3d87a3b18839bc8bdd38e2dfb0efcdfa81986a7c2c6444"
         }
       ]
     },
@@ -302,40 +302,40 @@
       "targetMonth": 4,
       "topics": [
         {
-          "slug": "osi-model",
-          "title": "OSI Model",
-          "summary": "7 Layers, Protocols",
+          "slug": "dns-load-balancing",
+          "title": "DNS, Load Balancing",
+          "summary": "Resolution, L4/L7 Load Balancers",
           "position": 1,
-          "path": "phases/04-networking/osi-model.md",
-          "questionsPath": "questions/osi-model.json",
-          "sha256": "4019b20a387fff16cc5fd44d7aa4ef5075625e9b7161e9c878f5277eebb07d04"
-        },
-        {
-          "slug": "tcp-ip-udp",
-          "title": "TCP/IP, UDP",
-          "summary": "Handshakes, Connections",
-          "position": 2,
-          "path": "phases/04-networking/tcp-ip-udp.md",
-          "questionsPath": "questions/tcp-ip-udp.json",
-          "sha256": "f3b97aa60c286c21c67443f1b607e2824122a8fd62067b77acd9b2ca5e440c51"
+          "path": "phases/04-networking/dns-load-balancing.md",
+          "questionsPath": "questions/dns-load-balancing.json",
+          "sha256": "c1b0103f48ef49571173332d2ee07abf904ccdea25211ffd42f03dd057a8105b"
         },
         {
           "slug": "http-https-websockets",
           "title": "HTTP/HTTPS, WebSockets",
           "summary": "Methods, Status codes",
-          "position": 3,
+          "position": 2,
           "path": "phases/04-networking/http-https-websockets.md",
           "questionsPath": "questions/http-https-websockets.json",
-          "sha256": "3a62da2cfe97182aff1546f4f2d1dbe6a72975759bdd7fa9609bd9d47fe41799"
+          "sha256": "0d9ce2cbf357726b6cfde9d619508306d70c478ab6a0a115629b3cef0627e285"
         },
         {
-          "slug": "dns-load-balancing",
-          "title": "DNS, Load Balancing",
-          "summary": "Resolution, L4/L7 Load Balancers",
+          "slug": "osi-model",
+          "title": "OSI Model",
+          "summary": "7 Layers, Protocols",
+          "position": 3,
+          "path": "phases/04-networking/osi-model.md",
+          "questionsPath": "questions/osi-model.json",
+          "sha256": "f61ae3e418cd3cbb5a0501c1fef998093ff1881c25ad135623ec9eaf764a4e3b"
+        },
+        {
+          "slug": "tcp-ip-udp",
+          "title": "TCP/IP, UDP",
+          "summary": "Handshakes, Connections",
           "position": 4,
-          "path": "phases/04-networking/dns-load-balancing.md",
-          "questionsPath": "questions/dns-load-balancing.json",
-          "sha256": "8995a2b07331cd1725130596cb2b8c066d79f1ce663b9266c0c637717e7fd85b"
+          "path": "phases/04-networking/tcp-ip-udp.md",
+          "questionsPath": "questions/tcp-ip-udp.json",
+          "sha256": "05ce8d1cfb693d9af4e35f993346a691f97aa4d4a3eabebad7e2e59fd17b0688"
         }
       ]
     },
@@ -346,40 +346,40 @@
       "targetMonth": 5,
       "topics": [
         {
-          "slug": "relational-vs-nosql",
-          "title": "Relational vs NoSQL",
-          "summary": "ACID, BASE, Use cases",
+          "slug": "cap-theorem",
+          "title": "CAP Theorem",
+          "summary": "Consistency, Availability, Partition Tolerance",
           "position": 1,
-          "path": "phases/05-databases/relational-vs-nosql.md",
-          "questionsPath": "questions/relational-vs-nosql.json",
-          "sha256": "3bc6c6dd2704c8006abc7aa6f7c8c13ce8383469c112b077f9b6b330af994415"
-        },
-        {
-          "slug": "sql-queries-and-joins",
-          "title": "SQL Queries & Joins",
-          "summary": "Inner, Outer, Group By",
-          "position": 2,
-          "path": "phases/05-databases/sql-queries-and-joins.md",
-          "questionsPath": "questions/sql-queries-and-joins.json",
-          "sha256": "3f204fceebdca7c40df4ebddc87859304e4a8b59f2dfdcb6a9debe79b22cfc7f"
+          "path": "phases/05-databases/cap-theorem.md",
+          "questionsPath": "questions/cap-theorem.json",
+          "sha256": "dd2275f227b38bd624bc17107c1ebe06f8a15a87b72a0fd3edb1d0c6995c21b3"
         },
         {
           "slug": "indexing-and-transactions",
           "title": "Indexing & Transactions",
           "summary": "B-Trees, Isolation levels",
-          "position": 3,
+          "position": 2,
           "path": "phases/05-databases/indexing-and-transactions.md",
           "questionsPath": "questions/indexing-and-transactions.json",
-          "sha256": "ce5e2269e4bd502861a829b2a6b41577899b9014cf7ab9a51273f4b9c3bd0ef4"
+          "sha256": "90e9ab2d686738e7067dd194983e4b4130425fa23fb7d256fdf180e9b5b07ed3"
         },
         {
-          "slug": "cap-theorem",
-          "title": "CAP Theorem",
-          "summary": "Consistency, Availability, Partition Tolerance",
+          "slug": "relational-vs-nosql",
+          "title": "Relational vs NoSQL",
+          "summary": "ACID, BASE, Use cases",
+          "position": 3,
+          "path": "phases/05-databases/relational-vs-nosql.md",
+          "questionsPath": "questions/relational-vs-nosql.json",
+          "sha256": "65afe1057d9e4ee06a6b78c45267384d0bc6782d9605eb0574c040d85323e747"
+        },
+        {
+          "slug": "sql-queries-and-joins",
+          "title": "SQL Queries & Joins",
+          "summary": "Inner, Outer, Group By",
           "position": 4,
-          "path": "phases/05-databases/cap-theorem.md",
-          "questionsPath": "questions/cap-theorem.json",
-          "sha256": "5b60b1776ed6c3969f55ea0584b718e51f5c822c6383bd1e1d5f18a66f1f674f"
+          "path": "phases/05-databases/sql-queries-and-joins.md",
+          "questionsPath": "questions/sql-queries-and-joins.json",
+          "sha256": "c6b57e57512e6a6299a1a011546fff81dd8797f2fb7f02b948397b4269bed4a5"
         }
       ]
     },
@@ -390,40 +390,40 @@
       "targetMonth": 6,
       "topics": [
         {
-          "slug": "consistency-models",
-          "title": "Consistency Models",
-          "summary": "Strong, Eventual, Causal",
-          "position": 1,
-          "path": "phases/06-distributed-systems/consistency-models.md",
-          "questionsPath": "questions/consistency-models.json",
-          "sha256": "3a49704f4771a02e5173192f33871f910509d7e51445de9bf7d7c7dfaf0dca71"
-        },
-        {
-          "slug": "replication-and-partitioning",
-          "title": "Replication & Partitioning",
-          "summary": "Leader-follower, Sharding",
-          "position": 2,
-          "path": "phases/06-distributed-systems/replication-and-partitioning.md",
-          "questionsPath": "questions/replication-and-partitioning.json",
-          "sha256": "716a2d5882bc893098081b0159845f0c070267851b18913c5383babd4e7bd9ab"
-        },
-        {
           "slug": "consensus-algorithms",
           "title": "Consensus Algorithms",
           "summary": "Paxos, Raft",
-          "position": 3,
+          "position": 1,
           "path": "phases/06-distributed-systems/consensus-algorithms.md",
           "questionsPath": "questions/consensus-algorithms.json",
-          "sha256": "4e06680472e207f11524c3b382f5519904dcba16f8711817252268c1368cfa93"
+          "sha256": "a87178a52afe3c111272e1f79091a3c1e7d8e1926a61535c2275d8dcac2a84e4"
+        },
+        {
+          "slug": "consistency-models",
+          "title": "Consistency Models",
+          "summary": "Strong, Eventual, Causal",
+          "position": 2,
+          "path": "phases/06-distributed-systems/consistency-models.md",
+          "questionsPath": "questions/consistency-models.json",
+          "sha256": "a24e8b0e13455aa4df30d15f102d7e82fc42489305e787e1f163ece2948f6b6a"
         },
         {
           "slug": "message-queues",
           "title": "Message Queues",
           "summary": "Kafka, RabbitMQ, Pub/Sub",
-          "position": 4,
+          "position": 3,
           "path": "phases/06-distributed-systems/message-queues.md",
           "questionsPath": "questions/message-queues.json",
-          "sha256": "9da343a17892b0567250eb21ad1f2b239e92c36434ad308e7d2491b2ae8c80ed"
+          "sha256": "aa867fab3719bd37d3a2ba3ad98a6a99d5b5026fe17c451f5f7f9a0b212e8f62"
+        },
+        {
+          "slug": "replication-and-partitioning",
+          "title": "Replication & Partitioning",
+          "summary": "Leader-follower, Sharding",
+          "position": 4,
+          "path": "phases/06-distributed-systems/replication-and-partitioning.md",
+          "questionsPath": "questions/replication-and-partitioning.json",
+          "sha256": "d53ffc8dd92342349ef4276a5ee30f6d692474d85381e340ce88a5689892f94d"
         }
       ]
     },
@@ -434,49 +434,49 @@
       "targetMonth": 7,
       "topics": [
         {
-          "slug": "monolith-vs-microservices",
-          "title": "Monolith vs Microservices",
-          "summary": "Trade-offs, Architecture",
-          "position": 1,
-          "path": "phases/07-system-design/monolith-vs-microservices.md",
-          "questionsPath": "questions/monolith-vs-microservices.json",
-          "sha256": "23f9921471422debeb84387f4f0a81229ec8ad67ab3ea3698730ae7e7e9e320f"
-        },
-        {
           "slug": "api-design",
           "title": "API Design",
           "summary": "RESTful principles, GraphQL",
-          "position": 2,
+          "position": 1,
           "path": "phases/07-system-design/api-design.md",
           "questionsPath": "questions/api-design.json",
-          "sha256": "03e56e96f5ffaa54b7149079de94ccc412550df2634871ba9297525682de2a59"
+          "sha256": "c6e99a85fc9e05a2433dae31e0cc1c6237ab1bddcad5d4065d5eb0160fb377f3"
         },
         {
           "slug": "caching-strategies",
           "title": "Caching Strategies",
           "summary": "Redis, Memcached, Eviction policies",
-          "position": 3,
+          "position": 2,
           "path": "phases/07-system-design/caching-strategies.md",
           "questionsPath": "questions/caching-strategies.json",
-          "sha256": "3d510bf030529979415ecc6e2264e6f8588ffd08b3695cfe31a5f740464f43ea"
-        },
-        {
-          "slug": "scalability-and-performance",
-          "title": "Scalability & Performance",
-          "summary": "Vertical/Horizontal scaling, Bottlenecks",
-          "position": 4,
-          "path": "phases/07-system-design/scalability-and-performance.md",
-          "questionsPath": "questions/scalability-and-performance.json",
-          "sha256": "4dd69dadba97bcc7ed11642c84e9d9551fdafce02c9c96d241c0d9c2149fea9b"
+          "sha256": "8daa46574b6a2e187a02c323bd73308ecaf3189293c100780c6049f7bc07ee90"
         },
         {
           "slug": "database-sharding",
           "title": "Database Sharding",
           "summary": "Consistent Hashing, Routing",
-          "position": 5,
+          "position": 3,
           "path": "phases/07-system-design/database-sharding.md",
           "questionsPath": "questions/database-sharding.json",
-          "sha256": "e7051c0e81f3515325933c7de1efe3758a2a7a84bed8711ff1bd4c43a47e5c93"
+          "sha256": "aab8201b657125743f8b10eee4cfb36d690329139e40ace758d689cbebf04cf6"
+        },
+        {
+          "slug": "monolith-vs-microservices",
+          "title": "Monolith vs Microservices",
+          "summary": "Trade-offs, Architecture",
+          "position": 4,
+          "path": "phases/07-system-design/monolith-vs-microservices.md",
+          "questionsPath": "questions/monolith-vs-microservices.json",
+          "sha256": "74a47687e877c0754734448cbbed0ebd1c0a485b855e7851100ba58cc7067160"
+        },
+        {
+          "slug": "scalability-and-performance",
+          "title": "Scalability & Performance",
+          "summary": "Vertical/Horizontal scaling, Bottlenecks",
+          "position": 5,
+          "path": "phases/07-system-design/scalability-and-performance.md",
+          "questionsPath": "questions/scalability-and-performance.json",
+          "sha256": "7f19b8b8f4b724fe4ad09ec0c66d786f076b154ff16c1333f843b0846995119d"
         }
       ]
     },
@@ -487,49 +487,49 @@
       "targetMonth": 8,
       "topics": [
         {
-          "slug": "event-loop-and-async-io",
-          "title": "Event Loop & Async I/O",
-          "summary": "Phases, libuv, Callbacks",
-          "position": 1,
-          "path": "phases/08-node-js/event-loop-and-async-io.md",
-          "questionsPath": "questions/event-loop-and-async-io.json",
-          "sha256": "e3776d770a0d8847ba622c816e8db31a0385e45b0b8d984d1ac951e5825d3311"
-        },
-        {
-          "slug": "streams-and-buffers",
-          "title": "Streams & Buffers",
-          "summary": "Readable, Writable, Transform",
-          "position": 2,
-          "path": "phases/08-node-js/streams-and-buffers.md",
-          "questionsPath": "questions/streams-and-buffers.json",
-          "sha256": "c5af520484e263e438433d6dc60be8e0bcf58d5c1bb009288c23b86e64950aba"
-        },
-        {
-          "slug": "v8-engine-and-garbage-collection",
-          "title": "V8 Engine & Garbage Collection",
-          "summary": "Memory management, Profiling",
-          "position": 3,
-          "path": "phases/08-node-js/v8-engine-and-garbage-collection.md",
-          "questionsPath": "questions/v8-engine-and-garbage-collection.json",
-          "sha256": "1a18214f0e651c58deaea7073a339a3ada25fb45a272fe586aa6750fee83a110"
-        },
-        {
           "slug": "cluster-module-and-worker-threads",
           "title": "Cluster Module & Worker Threads",
           "summary": "Multiprocessing, Shared memory",
-          "position": 4,
+          "position": 1,
           "path": "phases/08-node-js/cluster-module-and-worker-threads.md",
           "questionsPath": "questions/cluster-module-and-worker-threads.json",
-          "sha256": "9aced62b7d399e1c2eeec13689acf7714fa31c984955c187e694fbdc3ea20889"
+          "sha256": "9c7103adb42d1a7374f301640dc1f9c1c0cd1ad424b43e08963472cf24e66c7c"
+        },
+        {
+          "slug": "event-loop-and-async-io",
+          "title": "Event Loop & Async I/O",
+          "summary": "Phases, libuv, Callbacks",
+          "position": 2,
+          "path": "phases/08-node-js/event-loop-and-async-io.md",
+          "questionsPath": "questions/event-loop-and-async-io.json",
+          "sha256": "36325222c6b4f58a8adfab59d4ad4d46279cef0bfbc435c12cd6078586ae7acd"
         },
         {
           "slug": "security-best-practices",
           "title": "Security best practices",
           "summary": "OWASP, Helmet, Rate limiting",
-          "position": 5,
+          "position": 3,
           "path": "phases/08-node-js/security-best-practices.md",
           "questionsPath": "questions/security-best-practices.json",
-          "sha256": "98b010ee19856b9ea1492000b2757a91aee9ffe44147e1b20fe41f30626e6756"
+          "sha256": "b463ecd3907a02b98b99c6464579976094796c1f7e709ea5cfa3bbc21d735e2a"
+        },
+        {
+          "slug": "streams-and-buffers",
+          "title": "Streams & Buffers",
+          "summary": "Readable, Writable, Transform",
+          "position": 4,
+          "path": "phases/08-node-js/streams-and-buffers.md",
+          "questionsPath": "questions/streams-and-buffers.json",
+          "sha256": "a2dfd55a68870977cd74c10689b0f579db38d2206cb5a166744841de2f034358"
+        },
+        {
+          "slug": "v8-engine-and-garbage-collection",
+          "title": "V8 Engine & Garbage Collection",
+          "summary": "Memory management, Profiling",
+          "position": 5,
+          "path": "phases/08-node-js/v8-engine-and-garbage-collection.md",
+          "questionsPath": "questions/v8-engine-and-garbage-collection.json",
+          "sha256": "2c4ff2ab2df803428760b483bdfd609780e23bc56fb88d3d604482aaabd8c79f"
         }
       ]
     },
@@ -546,7 +546,7 @@
           "position": 1,
           "path": "phases/09-backend-engineering/authentication-authorization.md",
           "questionsPath": "questions/authentication-authorization.json",
-          "sha256": "4deb50112fc2fab938e6d9b5a2a354e556f94cb0faa5101adbfb5042cb52ae23"
+          "sha256": "0daf101bd04d03c7ccb9fab7371388727ea90d7d68ed5bfe83d941a3ba3b6b31"
         },
         {
           "slug": "cicd-pipelines",
@@ -555,7 +555,7 @@
           "position": 2,
           "path": "phases/09-backend-engineering/cicd-pipelines.md",
           "questionsPath": "questions/cicd-pipelines.json",
-          "sha256": "4b892281173b8d66d6383219f48090e73aa73f98777ef107274d4a84091f15c4"
+          "sha256": "b5dd35543ca47e31be9375c4ecb9ab1ac609ebf76d75afdb332b5c3f7d57af65"
         },
         {
           "slug": "docker-containerization",
@@ -564,7 +564,7 @@
           "position": 3,
           "path": "phases/09-backend-engineering/docker-containerization.md",
           "questionsPath": "questions/docker-containerization.json",
-          "sha256": "7ba2908966d6f00eb41090009b76d9f624b8e55f260c0bc51fcee44e99c9493f"
+          "sha256": "e61473fe061585db414917da99193b2d20a7a8b3814cd07551b5cb8e1f37572c"
         },
         {
           "slug": "kubernetes-basics",
@@ -573,7 +573,7 @@
           "position": 4,
           "path": "phases/09-backend-engineering/kubernetes-basics.md",
           "questionsPath": "questions/kubernetes-basics.json",
-          "sha256": "0f9b6cbf9bef0db7d05821789377de5ba9ff9bb73d65b0e4e78860cfcdcede12"
+          "sha256": "d4121ccec827e84aa703fb87ac3ba829c65a24f52f8b73e2f2b48781aaf1ac9a"
         }
       ]
     },
@@ -590,7 +590,7 @@
           "position": 1,
           "path": "phases/10-interview-skills/mock-interviews-behavioral.md",
           "questionsPath": "questions/mock-interviews-behavioral.json",
-          "sha256": "faacbef8161c1c495cb805a29f197da7a0acaf6fc3748ba3f825d15385adc493"
+          "sha256": "8a20475bde617e8bbdfa366ad41aa8d31a9ac971033fa7e0f068cac57bf02acd"
         },
         {
           "slug": "mock-interviews-technical",
@@ -599,7 +599,7 @@
           "position": 2,
           "path": "phases/10-interview-skills/mock-interviews-technical.md",
           "questionsPath": "questions/mock-interviews-technical.json",
-          "sha256": "738711aea7421c6e167e30e973220ff6385327dbc7aa6ccb3488cc73b5d53a8c"
+          "sha256": "0b7ea323fa405f7e10cbaa639dc858bcec49078992cd2d1253d6739b95d3d0f8"
         },
         {
           "slug": "resume-review",
@@ -608,7 +608,7 @@
           "position": 3,
           "path": "phases/10-interview-skills/resume-review.md",
           "questionsPath": "questions/resume-review.json",
-          "sha256": "167bf34eeb1797d5c6222dc5746b2ea45aa29eb98c96d864cf30d90478683fb4"
+          "sha256": "c2a2fc37b7eecd153dfac7aebec44e26770ae8720cec12307119546916fce790"
         },
         {
           "slug": "whiteboarding-practice",
@@ -617,7 +617,7 @@
           "position": 4,
           "path": "phases/10-interview-skills/whiteboarding-practice.md",
           "questionsPath": "questions/whiteboarding-practice.json",
-          "sha256": "81ef1402f254c4474fc8fad7307ea6fe1857d934bb056eae15f4e853cf4a643c"
+          "sha256": "c6c250c2a98c87246ed22d7ec741d916c698843024802717ad92da03d3323b54"
         }
       ]
     }

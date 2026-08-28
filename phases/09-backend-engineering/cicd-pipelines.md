@@ -4,6 +4,9 @@ slug: cicd-pipelines
 summary: GitHub Actions, Jenkins
 tags: [devops, nodejs]
 links:
+  - title: "Video: GitHub Actions Tutorial for Beginners – CI/CD Pipeline from Scratch"
+    url: "https://www.youtube.com/watch?v=0PbxpIao_EU"
+    kind: video
   - title: GitHub Docs — About continuous integration
     url: "https://docs.github.com/en/actions/about-github-actions/about-continuous-integration-with-github-actions"
     kind: resource
@@ -11,25 +14,41 @@ links:
     url: "https://en.wikipedia.org/wiki/CI/CD"
     kind: resource
 ---
+## Before you start
+
+Helpful, not required: `docker-containerization` and `kubernetes-basics` — a pipeline often ends by building an image and deploying it, though the CI/CD concepts here stand on their own.
+
 ## In one sentence
 
 **CI/CD** is an automated pipeline that tests your code every time you change it (Continuous Integration) and then ships it to users automatically or with one click (Continuous Delivery/Deployment).
 
 ## Why it matters
 
-Without it, someone manually runs tests and copies files to a server, which is slow and easy to get wrong under pressure. A pipeline catches broken code before it reaches users and makes releasing software a routine, low-stress event instead of a scary one.
+Without it, someone manually runs tests and copies files to a server — slow, and easy to get wrong under deadline pressure. A pipeline catches broken code before it reaches users and turns releasing software into a routine, low-stress, repeatable event instead of a nerve-wracking one where a tired human is the last line of defense.
 
-## The idea
+## The intuition
 
-**Continuous Integration (CI)** means every time someone pushes code, a server automatically builds the project and runs the test suite. If a test fails, the team finds out in minutes, not days later when it's tangled up with other changes.
+Think of a pipeline as an assembly line with quality inspectors stationed at fixed points. A faulty part gets pulled off the line the moment an inspector spots it — it never reaches the next station, let alone the finished car. **Continuous Integration** is the first inspector: every time someone pushes code, a server automatically builds the project and runs the test suite, catching problems in minutes instead of days later when they're tangled up with other people's changes.
 
-**Continuous Delivery** takes this further: after CI passes, the code is automatically packaged and made ready to release, but a human still clicks a button to actually deploy it. **Continuous Deployment** removes even that click — every change that passes tests goes straight to production.
+## How it actually works
 
-A pipeline is usually made of **stages** that run in order: install dependencies, lint, run tests, build, then deploy. If any stage fails, the pipeline stops there so broken code never reaches the next stage. Popular tools include GitHub Actions, Jenkins, and GitLab CI — they all follow this same stage-based idea, just with different configuration syntax.
+**Continuous Delivery** takes CI further: once tests pass, the code is automatically packaged and made ready to release, but a human still clicks a button to actually deploy it. **Continuous Deployment** removes even that click — every change that passes every stage goes straight to production with no manual gate at all. The three terms describe how far automation extends past the initial test run, not three different tools.
 
-Think of it like an assembly line with quality inspectors at each station: a faulty part gets pulled off immediately instead of ending up in the finished car.
+A pipeline is built from **stages** that run in a fixed order: install dependencies, lint, run tests, build, then deploy. If any stage fails, the pipeline stops immediately — later stages never run, so broken code never reaches the next station. This "fail fast, stop the line" behavior is the entire point; a pipeline that keeps going after a test failure isn't protecting anything.
 
-## In practice
+```mermaid
+flowchart LR
+  A["Commit pushed"] --> B["Install deps"]
+  B --> C["Run tests"]
+  C -->|pass| D["Build artifact/image"]
+  D -->|pass| E["Deploy"]
+  C -->|fail| F["Stop — notify team"]
+  D -->|fail| F
+```
+
+Note the failure path: a failure at *any* stage routes straight to "stop and notify," never forward to deploy. Popular tools — GitHub Actions, Jenkins, GitLab CI — all implement this same stage-based shape; only the configuration syntax differs between them.
+
+## Worked example
 
 ```yaml
 # .github/workflows/ci.yml — a minimal GitHub Actions pipeline
@@ -46,26 +65,73 @@ jobs:
       - run: npm test            # pipeline stops here if tests fail
 ```
 
-Each `step` runs in order; `npm ci` fails fast if the lockfile is inconsistent, and `npm test` only runs if the install succeeded.
+Pushing a commit that breaks a test produces output like:
+```text
+✓ Set up job
+✓ Checkout
+✓ Setup Node
+✓ npm ci
+✗ npm test — 1 failing
+Error: Process completed with exit code 1.
+```
+
+Each `step` runs in order; `npm ci` fails fast if the lockfile is inconsistent, and `npm test` failing here means the workflow reports red and nothing downstream (build, deploy) ever executes — GitHub blocks the pull request from merging if you've configured that check as required.
+
+## A second example — when it gets harder
+
+The naive setup above treats "tests passed" as the finish line, but a real pipeline usually needs to *build and deploy an artifact*, and that's where the failure-path discipline actually gets tested — a partial deploy is worse than no deploy:
+
+```yaml
+# Extending the pipeline to build and push a Docker image, but only
+# after tests pass on the main branch — not on every branch.
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  deploy:
+    needs: test                       # only runs if `test` succeeded
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t my-app:${{ github.sha }} .
+      - run: docker push my-app:${{ github.sha }}
+```
+
+`needs: test` is the mechanism enforcing "stop the line": the `deploy` job literally cannot start until `test` reports success, and the `if` condition adds a second gate so feature branches build and test but never deploy. This is the pattern behind every real pipeline: gates that are structural (the job graph), not just a comment saying "remember to only deploy from main."
 
 ## Quick reference
 
 | Term | Meaning |
 |---|---|
 | Continuous Integration | Auto-build and test on every push |
-| Continuous Delivery | Auto-package a release; human approves deploy |
-| Continuous Deployment | Every passing change auto-deploys to production |
+| Continuous Delivery | Auto-package a release; a human approves the deploy |
+| Continuous Deployment | Every passing change auto-deploys to production, no gate |
 | Pipeline stage | One step (build, test, deploy) that can pass or fail |
-| Runner/agent | The machine that actually executes the pipeline |
-
-## What interviewers ask
-
-- **What's the difference between continuous delivery and continuous deployment?** — Delivery stops at "ready to release" and waits for a human; deployment ships automatically with no manual gate.
-- **What happens if a stage in the pipeline fails?** — The pipeline halts at that stage, later stages don't run, and the team is notified so the broken change doesn't reach production.
-- **Why run tests in CI instead of just trusting developers to run them locally?** — Local runs get skipped under deadline pressure and environments differ; CI guarantees the same checks run the same way, every time.
+| Runner/agent | The machine that actually executes the pipeline's steps |
 
 ## Common mistakes
 
-- Treating a green pipeline as proof the app fully works — it only proves what the tests actually cover, so weak test coverage gives false confidence.
-- Making the pipeline so slow that developers start skipping or ignoring it; fast feedback is the whole point.
-- Deploying straight to production with no rollback plan, so a bad deploy has no quick way back.
+- Treating a green pipeline as proof the app fully works — it only proves what the tests actually cover, so weak coverage gives false confidence.
+- Making the pipeline so slow that developers start skipping or ignoring it — fast feedback is the entire value proposition of CI.
+- Deploying straight to production with no rollback plan, so a bad deploy has no quick way back once it's live.
+
+## What interviewers ask
+
+- **What's the difference between continuous delivery and continuous deployment?** — Delivery stops at "ready to release" and waits for a human; deployment ships automatically with no manual gate. They're checking you know this is a spectrum of automation, not two unrelated tools.
+- **What happens if a stage in the pipeline fails?** — The pipeline halts at that stage, later stages never run, and the team is notified — this is the mechanism that keeps broken code from reaching production.
+- **Why run tests in CI instead of trusting developers to run them locally?** — Local runs get skipped under deadline pressure and environments differ machine to machine; CI guarantees the same checks run the same way, every time, for every change.
+
+## Practice
+
+1. Write a two-job GitHub Actions workflow where a `deploy` job only runs if a `test` job succeeds — use `needs:` to enforce it structurally, not just a comment.
+2. Deliberately break a test locally, push it, and read the failed workflow's log to identify exactly which step failed and why nothing after it ran.
+3. Explain out loud the difference between Continuous Delivery and Continuous Deployment using a concrete example from a team you've worked with or read about.
+
+## Where to go next
+
+Phase 9 is complete — from here, `mock-interviews-technical` in Phase 10 shifts from building systems to practicing how you talk through them under interview conditions.

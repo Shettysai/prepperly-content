@@ -4,6 +4,9 @@ slug: docker-containerization
 summary: Images, Volumes, Networking
 tags: [containers, devops]
 links:
+  - title: "Video: Docker Explained for Absolute Beginners [2026]"
+    url: "https://www.youtube.com/watch?v=ZZ10b63xnQc"
+    kind: video
   - title: Docker Docs — Getting started overview
     url: "https://docs.docker.com/get-started/"
     kind: resource
@@ -14,23 +17,44 @@ links:
     url: "https://en.wikipedia.org/wiki/OS-level_virtualization"
     kind: resource
 ---
+## Before you start
+
+No prior topic in this course is required. Helpful context: `authentication-authorization`, since the app you'll containerize likely has auth logic already in it.
+
 ## In one sentence
 
 **Docker** packages your app together with everything it needs to run — code, dependencies, and settings — into a single portable **container**, so it behaves the same on your laptop as it does on a server.
 
 ## Why it matters
 
-"It works on my machine" is a real, frequent problem: different operating systems, missing dependencies, or a different Node version can all break an app that ran fine for you. Containers remove that excuse by shipping the entire environment along with the code, so what you tested is exactly what runs in production.
+"It works on my machine" is a real, frequent failure: a different OS, a missing system library, or a slightly different Node version can all break an app that ran fine for you. Containers remove that excuse entirely, because they ship the whole environment along with the code — what you tested locally is byte-for-byte what runs in production.
 
-## The idea
+## The intuition
 
-A container is like a shipping container for software: no matter what's inside, it has a standard shape that any ship, truck, or crane can handle. Docker defines that shape for applications — a lightweight, isolated unit that bundles your code with its runtime, libraries, and configuration.
+A container is like a shipping container for cargo: no matter what's inside — furniture, electronics, food — it has a standard shape that any ship, crane, or truck can handle without caring about the contents. Docker does the same for software: it defines a standard, isolated unit that bundles your app with its runtime, libraries, and configuration, so any machine running Docker can run it identically.
 
-An **image** is the blueprint — a read-only snapshot of everything your app needs. A **container** is a running instance of that image, similar to how a class and an object relate in programming: one image can spin up many identical containers.
+## How it actually works
 
-You build an image using a **Dockerfile**, a text file listing the steps to assemble it: start from a base image, copy in your code, install dependencies, and specify the command that starts the app. Docker also has **volumes**, which let a container persist data outside its own filesystem (so data survives even if the container is deleted), and a **network** layer that lets containers talk to each other by name, like a service called `api` reaching a service called `db`.
+An **image** is the blueprint — a read-only snapshot of everything your app needs, built in layers (base OS, then dependencies, then your code). A **container** is a running instance of that image, similar to how a class relates to an object in programming: one image can spin up any number of identical, independent containers.
 
-## In practice
+You build an image with a **Dockerfile** — a text file listing the steps to assemble it: start from a base image, copy in your code, install dependencies, specify the command that starts the app. Each instruction in a Dockerfile creates a new layer, and Docker caches layers that haven't changed, which is why the order of instructions matters for build speed.
+
+Two mechanisms matter once you're running more than a toy example. A **volume** lets a container persist data outside its own filesystem, so that data survives even if the container itself is deleted and recreated — essential for anything stateful, like a database's files. A Docker **network** lets containers reach each other by name rather than by IP address, so a container called `api` can just connect to a hostname called `db` and Docker resolves it.
+
+```mermaid
+flowchart TB
+  subgraph Image["Image (read-only layers)"]
+    L1["base: node:20-alpine"] --> L2["+ dependencies"] --> L3["+ your app code"]
+  end
+  L3 --> C1["Container A (running)"]
+  L3 --> C2["Container B (running)"]
+  L3 --> C3["Container C (stopped)"]
+  C1 -.shares base layers with.- C2
+```
+
+All three containers start from the exact same image layers; only their writable top layer and running state differ. That sharing is why spinning up a fourth identical container is nearly instant — Docker isn't copying the whole image again, just adding a thin new layer on top.
+
+## Worked example
 
 ```dockerfile
 # Dockerfile — packages a small Node.js app
@@ -48,26 +72,64 @@ docker build -t my-app .          # build the image from the Dockerfile
 docker run -p 3000:3000 my-app    # run a container, mapping host port 3000
 ```
 
-The `Dockerfile` defines what goes into the image once; `docker run` can then start as many identical containers from it as you need.
+Output of `docker run` (abridged):
+```text
+Server listening on port 3000
+```
+
+The `Dockerfile` defines what goes into the image once; `docker run` can then start as many identical containers from it as you need, each in its own isolated filesystem and process space, all sharing the same underlying image layers.
+
+## A second example — when it gets harder
+
+The naive Dockerfile above rebuilds the *entire* `npm ci` layer every time you change a single line of app code, because `COPY . .` comes before it invalidates the cache for everything after. Reordering fixes this:
+
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+
+# Copy ONLY the manifest first — this layer only invalidates
+# when package.json/package-lock.json actually change.
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# Now copy the rest of the code — changing app.js won't
+# force npm ci to re-run, since that layer is already cached.
+COPY . .
+
+EXPOSE 3000
+CMD ["node", "server.js"]
+```
+
+This is the difference between a 40-second rebuild and a 2-second rebuild on every code change, and it's exactly why Dockerfile instruction *order* is a real skill, not a stylistic detail: Docker caches each layer and only re-runs a layer (and everything after it) if its inputs changed.
 
 ## Quick reference
 
 | Term | What it is |
 |---|---|
-| Image | Read-only blueprint for a container |
+| Image | Read-only, layered blueprint for a container |
 | Container | A running (or stopped) instance of an image |
-| Dockerfile | Recipe used to build an image |
+| Dockerfile | Recipe used to build an image, one instruction per layer |
 | Volume | Persistent storage outside the container's own filesystem |
 | Docker network | Lets containers reach each other by service name |
-
-## What interviewers ask
-
-- **What's the difference between an image and a container?** — An image is the static blueprint; a container is a running instance of it, the way a class relates to an object.
-- **How is a container different from a virtual machine?** — A container shares the host machine's OS kernel and only isolates the application layer, making it much lighter and faster to start than a full VM, which virtualizes an entire OS.
-- **Why use volumes instead of storing data inside the container?** — Containers are meant to be disposable; anything written inside them is lost when the container is removed, so persistent data (like a database's files) needs a volume.
 
 ## Common mistakes
 
 - Storing important data inside the container's own filesystem, then losing it when the container restarts or is replaced — use a volume instead.
-- Building huge images by copying unnecessary files or using a heavy base image; a smaller base (like `alpine`) and a `.dockerignore` file keep images fast to build and deploy.
-- Assuming a container is as isolated as a full VM — containers share the host kernel, so kernel-level vulnerabilities can still matter for security.
+- Building huge, slow images by copying unnecessary files or ordering the Dockerfile so cache-friendly layers (like dependency installs) sit *after* frequently-changing code.
+- Assuming a container is as isolated as a full VM — containers share the host machine's kernel, so kernel-level vulnerabilities can still matter for security, unlike a VM which virtualizes hardware entirely.
+
+## What interviewers ask
+
+- **What's the difference between an image and a container?** — An image is the static, read-only blueprint; a container is a running instance of it, the way a class relates to an object — you can start many containers from one image.
+- **How is a container different from a virtual machine?** — A container shares the host's OS kernel and only isolates the application layer, making it far lighter and faster to start than a VM, which virtualizes an entire operating system including its own kernel.
+- **Why does Dockerfile instruction order matter?** — Docker caches each layer; placing rarely-changing steps (like installing dependencies) before frequently-changing steps (like copying source code) means most rebuilds reuse cached layers instead of redoing everything.
+
+## Practice
+
+1. Write a Dockerfile for a simple app in a language of your choice, then deliberately put `COPY . .` before the dependency install step, time a rebuild after a one-line code change, then fix the ordering and time it again.
+2. Run two containers from the same image and confirm they don't see each other's filesystem changes, then create a Docker network and confirm they can reach each other by container name.
+3. Explain out loud why deleting a container that wrote data to its own filesystem (no volume) loses that data, but deleting one using a volume does not.
+
+## Where to go next
+
+Next is `kubernetes-basics` — once you can run one container reliably, the next problem is running many containers, across many machines, without doing it by hand.
