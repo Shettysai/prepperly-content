@@ -63,6 +63,35 @@ not give the solution.]
 [Which topic slug follows naturally, and why.]
 ```
 
+## Diagrams — every topic gets at least one
+
+Include a **Mermaid diagram** where it genuinely explains something a
+paragraph cannot: a flow, a structure, a sequence, a state machine. The app
+renders ```mermaid fences as real diagrams.
+
+````
+```mermaid
+flowchart LR
+  K["key: 'apple'"] --> H{hash fn}
+  H --> I["index 3"]
+  I --> B["bucket[3]"]
+```
+````
+
+Guidance:
+- **Put it in "How it actually works" or "The intuition"** — a diagram earns
+  its place when it makes the mechanism visible, not as decoration.
+- Pick the right type: `flowchart` for processes, `sequenceDiagram` for
+  request/response and protocols, `graph` for data structures, `stateDiagram`
+  for lifecycles, `erDiagram` for schemas.
+- **Keep it small.** Five to ten nodes. A diagram that needs scrolling on a
+  phone teaches nothing.
+- **Label edges** where the relationship is not obvious from the shape.
+- Quote any label containing special characters (`"O(n²)"`, `"key: value"`) or
+  Mermaid fails to parse and the block falls back to raw code.
+- Do NOT force a diagram where prose is clearer — for a purely conceptual
+  topic, one honest table beats a contrived flowchart.
+
 ## Rules
 
 - **Every topic gets runnable Node.js.** For non-code topics (System Design,
