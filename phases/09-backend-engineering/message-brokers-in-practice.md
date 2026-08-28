@@ -131,22 +131,18 @@ Notice messages complete out of order: `m3` finishes before `m2`. That's normal 
 The idempotency check above uses a `Set`, which works for one process. In production you have twenty consumers on different machines, and it breaks immediately.
 
 ```js
-// BROKEN across multiple consumers:
-if (processed.has(msg.id)) return;    // in-memory, per-process
+// BROKEN across consumers: the Set is in-memory and per-process.
+if (processed.has(msg.id)) return;
 processed.add(msg.id);
+// Two consumers get the same redelivered message. Neither has it locally. Both charge.
 
-// Two consumers get the same redelivered message at the same time.
-// Neither has it in its local Set. Both charge the card.
-```
-
-Real idempotency needs **shared, atomic** state — and the atomicity matters as much as the sharing. Even with a shared database, a check-then-write has a race:
-
-```js
-// STILL BROKEN — a gap between reading and writing:
+// STILL BROKEN with a shared DB — a gap between reading and writing:
 const seen = await db.get(msg.id);
 if (seen) return;
-await handleAndRecord(msg);     // another consumer can slip in during this gap
+await handleAndRecord(msg);     // another consumer slips in during this gap
 ```
+
+Real idempotency needs **shared, atomic** state — the atomicity matters as much as the sharing.
 
 The robust patterns collapse both steps into one atomic operation. A **unique constraint** on `message_id` lets the database reject the duplicate — attempt the insert, treat a violation as "already handled". A **conditional write** does the same in one round trip. Best of all, make the operation **naturally idempotent**: `SET status = 'paid'` gives the same result applied five times; `balance = balance - 10` does not.
 

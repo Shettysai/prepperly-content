@@ -145,19 +145,7 @@ app.use('/admin', adminRoutes);
 
 In the broken version `/admin` works perfectly — for everyone, logged in or not. There's no crash, no error, no failing test unless you specifically wrote one for the unauthenticated case. The endpoint just quietly has no authentication. `requireAuth` never runs because `adminRoutes` already sent the response and ended the chain.
 
-A second version of the same trap, harder to spot:
-
-```js
-// BROKEN — error handler registered before the routes it should catch
-app.use(errorHandler);            // nothing after this has run yet
-app.use('/api', apiRoutes);       // its errors have nowhere to go
-
-// CORRECT — error handling goes last
-app.use('/api', apiRoutes);
-app.use(errorHandler);
-```
-
-Error middleware only catches errors from middleware registered **before** it, because `next(err)` walks *forward* through the stack. Put it first and it catches nothing; requests hang or fall through to the framework's default handler, which leaks stack traces.
+The same trap hits error handlers: `app.use(errorHandler)` written *before* `app.use('/api', apiRoutes)` catches nothing, because `next(err)` walks *forward* through the stack. Put it first and requests hang or fall through to the framework's default handler, which leaks stack traces.
 
 The habit that prevents both: read your `app.use` calls top to bottom as the actual order of events, because that is literally what they are. Order is: logging → body parsing → CORS → auth → routes → 404 → error handler.
 
