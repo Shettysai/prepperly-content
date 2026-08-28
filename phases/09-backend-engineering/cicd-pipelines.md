@@ -104,6 +104,12 @@ jobs:
 
 `needs: test` is the mechanism enforcing "stop the line": the `deploy` job literally cannot start until `test` reports success, and the `if` condition adds a second gate so feature branches build and test but never deploy. This is the pattern behind every real pipeline: gates that are structural (the job graph), not just a comment saying "remember to only deploy from main."
 
+## Why pipelines get slow, and how teams keep them fast
+
+A pipeline that takes 20 minutes to tell you a one-line change broke a test gets skipped under deadline pressure — which defeats the entire point of having it. Two techniques keep pipelines fast as a codebase grows. **Caching** avoids repeating expensive, rarely-changing work: `npm ci` reinstalling the same dependency tree on every single run is wasted time if the lockfile hasn't changed, so most CI tools let you cache the dependency folder keyed on a hash of the lockfile. **Parallelizing** runs independent stages at the same time instead of one after another — if linting and unit tests don't depend on each other's output, running them as two parallel jobs instead of two sequential steps can cut wall-clock time roughly in half, even though the total CPU work is unchanged.
+
+Neither technique changes *what* the pipeline checks, only how quickly it reports back — which matters because a slow pipeline erodes the fast-feedback habit that makes CI valuable in the first place.
+
 ## Quick reference
 
 | Term | Meaning |
@@ -113,6 +119,7 @@ jobs:
 | Continuous Deployment | Every passing change auto-deploys to production, no gate |
 | Pipeline stage | One step (build, test, deploy) that can pass or fail |
 | Runner/agent | The machine that actually executes the pipeline's steps |
+| Caching | Skips redoing unchanged, expensive work (like dependency installs) |
 
 ## Common mistakes
 

@@ -102,6 +102,10 @@ CMD ["node", "server.js"]
 
 This is the difference between a 40-second rebuild and a 2-second rebuild on every code change, and it's exactly why Dockerfile instruction *order* is a real skill, not a stylistic detail: Docker caches each layer and only re-runs a layer (and everything after it) if its inputs changed.
 
+## Why image size matters in practice
+
+A bloated image doesn't just waste disk — it slows down every deploy, since the image has to be pushed to a registry and then pulled down to every machine that runs it. Three habits keep images small. Start from a minimal base like `node:20-alpine` instead of a full Linux distribution image, since Alpine is a fraction of the size and still has everything a typical Node app needs. Use a `.dockerignore` file (the Docker equivalent of `.gitignore`) so build artifacts like `node_modules` or `.git` from your host machine never get copied into the image by accident. For compiled languages, use a **multi-stage build** — one stage compiles the code with all the heavy build tools installed, and a second, much smaller final stage copies over only the compiled output, discarding the compiler and build dependencies entirely from the shipped image.
+
 ## Quick reference
 
 | Term | What it is |
@@ -111,6 +115,7 @@ This is the difference between a 40-second rebuild and a 2-second rebuild on eve
 | Dockerfile | Recipe used to build an image, one instruction per layer |
 | Volume | Persistent storage outside the container's own filesystem |
 | Docker network | Lets containers reach each other by service name |
+| Multi-stage build | Compiles in one stage, ships only the output in a smaller final stage |
 
 ## Common mistakes
 
