@@ -18,5 +18,10 @@
     "prompt": "What's the performance trade-off of favoring immutability in a large application?",
     "answer_markdown": "Creating a new copy of data on every change (instead of mutating in place) costs extra memory and CPU time, which can matter for very large data structures updated frequently. Libraries like Immutable.js or techniques like structural sharing (where unchanged parts of a data structure are reused rather than copied) exist specifically to reduce this cost. The trade-off is usually worth it for the predictability gained, but it's a genuine cost, not a free lunch, which is why interviewers ask this to see if you understand the trade-offs rather than treating immutability as an absolute rule.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "You create three functions inside a `for (var i = 0; ...)` loop, each returning `i`. Why do they all return the same final value instead of the value at the time each was created?",
+    "answer_markdown": "`var` does not create a new binding of `i` for each loop iteration — there is only ever one shared `i` variable for the entire loop, and every closure created inside the loop captures a live reference to that same variable, not a snapshot of its value at that moment. By the time any of the functions actually runs, the loop has already finished and `i` holds its final value, so all the closures see that same final value. Switching the loop to `let i` fixes this, because `let` creates a fresh, independent binding of `i` for each iteration, so each closure captures its own separate variable instead of sharing one.",
+    "difficulty": "hard"
   }
 ]

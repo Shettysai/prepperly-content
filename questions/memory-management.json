@@ -18,5 +18,10 @@
     "prompt": "Why can't you just increase stack size to avoid all recursion-related crashes?",
     "answer_markdown": "Increasing stack size raises the ceiling but doesn't remove it — unbounded or badly designed recursion will still eventually overflow, and larger stacks use more memory per thread, which adds up if you run many concurrent processes or threads. The better fix is usually to convert deep recursion into an iterative approach or ensure recursion depth is bounded by the problem size, such as recursing on a balanced tree rather than a long list.",
     "difficulty": "medium"
+  },
+  {
+    "prompt": "A closure captures a huge array that it never actually uses. Why does this leak memory, and how would you fix it?",
+    "answer_markdown": "A closure keeps its entire enclosing scope reachable, not just the specific variables it references in its own body, so if a large object was declared in the same scope as a function that outlives it, the garbage collector can't free that object as long as the closure exists — it has no way to prove the closure won't use it later. The fix is to avoid declaring unrelated large data in the same scope as a long-lived closure, or to explicitly set the reference to `null` once it's no longer needed, or to restructure the code so the large data lives in a narrower scope the closure never captures. This is a subtle bug because nothing in the closure's own code looks wrong; the leak is purely about what else shares its scope.",
+    "difficulty": "hard"
   }
 ]

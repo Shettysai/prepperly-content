@@ -18,5 +18,10 @@
     "prompt": "How does understanding CPU cache behavior change how you'd design a data structure for a performance-critical system?",
     "answer_markdown": "You'd favor structures with contiguous memory layout, like arrays, over pointer-heavy structures like linked lists, when access patterns are sequential, since contiguous data is far more cache-friendly. You might also group data that's accessed together into the same structure (data locality) rather than scattering related fields across separate objects. This is why some high-performance systems use 'struct of arrays' layouts instead of 'array of structs' — it maximizes cache line utilization for the specific access pattern used.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "If two algorithms have identical Big O time complexity, does that mean they'll perform the same in production?",
+    "answer_markdown": "Not necessarily. Big O describes how the number of operations scales with input size, but it ignores constant factors and, crucially, hardware behavior like cache hits versus misses. Two O(n) algorithms can differ by several times in real wall-clock time if one accesses memory sequentially (cache-friendly) and the other jumps around unpredictably (cache-hostile). This is why production systems still benchmark actual code rather than relying purely on complexity analysis — Big O tells you how something scales, not how fast it runs on real hardware today.",
+    "difficulty": "medium"
   }
 ]

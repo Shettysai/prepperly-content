@@ -18,5 +18,10 @@
     "prompt": "How does JavaScript implement classes and inheritance under the hood?",
     "answer_markdown": "JavaScript's `class` syntax is largely sugar over its original prototype-based system: every object has an internal link to another object (its prototype), and property lookups walk up this prototype chain if they're not found directly on the object. `extends` sets up this chain between a subclass's prototype and its parent's, which is why methods defined on a parent class are accessible on child instances. Knowing this matters because it explains behavior like why changing a prototype method affects every existing instance.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "You model a `Penguin` class that inherits from `Bird`, and `Bird` has a `fly()` method. What's wrong with this design, and how would you fix it?",
+    "answer_markdown": "The problem is that `Penguin extends Bird` forces every bird, including flightless ones, to inherit `fly()`, even though a real penguin can't fly — the code compiles and runs but is semantically incorrect, since calling `penguin.fly()` would wrongly claim it works. This is a sign the inheritance hierarchy is modeling a relationship that doesn't fully hold for every subtype. The fix is composition: define flight as a separate capability (like a `canFly` object with a `fly()` method) that only gets attached to birds that actually fly, rather than assuming every subclass of a shared parent has every behavior the parent happens to define.",
+    "difficulty": "medium"
   }
 ]

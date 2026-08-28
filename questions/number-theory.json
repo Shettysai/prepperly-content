@@ -18,5 +18,10 @@
     "prompt": "Two numbers have a GCD of 1. What does that tell you about them, and what's this property called?",
     "answer_markdown": "A GCD of 1 means the two numbers share no common factors other than 1 — they are called coprime (or relatively prime). This shows up in cryptography (RSA relies on selecting coprime numbers) and in simplifying fractions, since a fraction is already in lowest terms exactly when its numerator and denominator are coprime. It's a good check for whether someone understands GCD conceptually, not just how to compute it.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "How does the Euclidean algorithm compute the GCD of two numbers, and why is it faster than checking every possible divisor?",
+    "answer_markdown": "The Euclidean algorithm repeatedly replaces the pair `(a, b)` with `(b, a % b)` until `b` becomes 0, at which point `a` holds the greatest common divisor. It works because any number that divides both `a` and `b` evenly must also divide their remainder, so the GCD never changes as you repeat this substitution — you're just shrinking the numbers toward the answer instead of testing candidates. Because each step roughly reduces the numbers by a large factor rather than by a fixed amount, the algorithm runs in logarithmic time relative to the smaller number, dramatically faster than checking every number up to the smaller value as a possible common divisor.",
+    "difficulty": "medium"
   }
 ]

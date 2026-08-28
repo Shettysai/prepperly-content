@@ -18,5 +18,10 @@
     "prompt": "What's the difference between ASCII, Unicode, and UTF-8, and why does it matter for a backend developer?",
     "answer_markdown": "ASCII is an old, limited encoding covering only 128 characters, mostly English letters and basic symbols. Unicode is a standard assigning a unique number to virtually every character in every language, but doesn't specify how those numbers are stored as bytes. UTF-8 is the most common encoding that actually stores Unicode code points as bytes, using variable length (1 to 4 bytes) so it stays backward-compatible with ASCII. This matters practically because mismatched encodings between a database, an API, and a frontend are a classic source of garbled text bugs (mojibake), especially with non-English text or emoji.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Why is `str.split('')` risky for reversing a string that might contain emoji, and what should you use instead?",
+    "answer_markdown": "JavaScript strings are UTF-16 encoded, and many emoji are represented by two 16-bit code units rather than one; `.split('')` splits on individual code units, so it can cut a single emoji character in half, producing two broken, unpaired units that no longer render as anything meaningful once reversed or rearranged. `Array.from(str)` or the spread operator `[...str]` instead split by full Unicode code point, correctly treating a two-unit emoji as one character, so operations like reversal keep every character intact. The general lesson is that `.length` and `.split('')` operate on code units, which is a different, lower-level unit than what a human would call a 'character.'",
+    "difficulty": "medium"
   }
 ]

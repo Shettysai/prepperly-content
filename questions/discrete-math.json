@@ -18,5 +18,10 @@
     "prompt": "What's the difference between a truth table and just testing your code with a few sample inputs?",
     "answer_markdown": "A truth table systematically lists every possible combination of true/false inputs to a boolean expression, guaranteeing you've checked all cases, not just the ones you happened to think of. Testing with a few sample inputs can easily miss an edge case, especially once a condition has three or more boolean variables combined with mixed AND/OR/NOT logic. Building a small truth table by hand is a fast way to verify a tricky conditional actually behaves the way you intend before it ships.",
     "difficulty": "medium"
+  },
+  {
+    "prompt": "What's the difference between the union and the intersection of two sets, and when would you use each in real code?",
+    "answer_markdown": "The union combines every distinct element from both sets into one, useful for merging two collections of unique items, like all tags used across two different articles. The intersection keeps only elements present in both sets, useful for finding overlap, like users who appear in two different marketing lists. Both operations are naturally O(n) or O(n + m) when implemented with a `Set`, since checking membership is O(1) on average, compared to the O(n × m) cost of comparing every pair with nested array loops.",
+    "difficulty": "easy"
   }
 ]

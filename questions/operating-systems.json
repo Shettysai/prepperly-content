@@ -18,5 +18,10 @@
     "prompt": "What is a deadlock?",
     "answer_markdown": "A deadlock happens when two or more threads or processes are each waiting for a resource the other is holding, so neither can proceed — like two people each waiting for the other to go first in a narrow doorway. It's a classic risk in multithreaded programs that use locks, and it's avoided by careful lock ordering, using timeouts, or avoiding the need for multiple simultaneous locks in the first place.",
     "difficulty": "easy"
+  },
+  {
+    "prompt": "A script schedules a `setTimeout(fn, 0)` and a `Promise.resolve().then(fn2)` back to back. Which runs first, and why?",
+    "answer_markdown": "`fn2`, the Promise callback, runs first, even though the timeout was scheduled with a 0ms delay. The JavaScript event loop maintains separate queues with different priority: microtasks, which include resolved Promise callbacks, are fully drained before the loop moves on to the next macrotask, which includes timer callbacks. So after the current synchronous code finishes, all pending microtasks run first, and only then does the engine pick up the next macrotask. This ordering detail is a common source of subtle bugs when mixing Promises and timers, and it's a frequent interview question specifically because 'single-threaded' sounds like it should imply one simple queue, when in reality there are multiple queues with strict priority between them.",
+    "difficulty": "hard"
   }
 ]

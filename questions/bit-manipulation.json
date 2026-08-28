@@ -18,5 +18,10 @@
     "prompt": "Why might you use a bitmask instead of an array of booleans to represent a set of flags?",
     "answer_markdown": "A bitmask packs many true/false flags into a single integer, which uses far less memory and lets you check, set, or combine multiple flags in one CPU operation instead of looping over an array. It's commonly used for permission systems, feature flags, or algorithm state (like tracking visited nodes in a small graph). The trade-off is readability — an array of named booleans is easier for other developers to understand at a glance.",
     "difficulty": "medium"
+  },
+  {
+    "prompt": "What's the difference between `&&` and `&` in JavaScript, and why does mixing them up cause silent bugs?",
+    "answer_markdown": "`&&` is a logical operator that works on truthy/falsy values and short-circuits, returning one of its two operands as-is without touching individual bits; `&` is a bitwise operator that converts both operands to 32-bit integers and compares them bit by bit. Using `&` where you meant `&&` (or the reverse) usually doesn't throw an error — it just silently produces a different, often numeric, result instead of the boolean you expected, which is what makes the bug hard to spot in review. A common example is writing `if (a & b)` intending a boolean AND check, which actually evaluates a bitwise AND and can behave unexpectedly for values where that bitwise result is falsy in an unintended way.",
+    "difficulty": "medium"
   }
 ]

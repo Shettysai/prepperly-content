@@ -18,5 +18,10 @@
     "prompt": "How would you find the time complexity of a recursive function like a naive Fibonacci implementation?",
     "answer_markdown": "Draw the recursion tree: naive recursive Fibonacci calls itself twice per call without caching results, so the number of calls roughly doubles at each level down to depth n, giving O(2^n) — exponential time. Adding memoization to cache already-computed results collapses this to O(n), because each unique subproblem is solved only once. This is a common follow-up to test whether you understand dynamic programming.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Why does Big O drop constants and lower-order terms, like writing O(3n + 5) as just O(n)?",
+    "answer_markdown": "Big O is meant to describe how an algorithm's cost grows as the input size becomes very large, not its exact cost on any one input. As n grows toward infinity, a constant multiplier like 3 or a fixed offset like 5 becomes negligible compared to the growth driven by n itself, so they don't change which algorithm 'wins' at scale. Keeping them would make Big O expressions needlessly precise about details that don't affect the comparison it's meant to support, and would make two algorithms with genuinely the same growth shape look artificially different.",
+    "difficulty": "easy"
   }
 ]
