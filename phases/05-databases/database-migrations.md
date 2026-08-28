@@ -72,10 +72,8 @@ Index creation has the same shape — `CREATE INDEX` locks the table against wri
 | Operation | Lock impact |
 |---|---|
 | Add nullable column | Cheap — metadata only |
-| Add column with a constant default | Cheap on modern PostgreSQL |
 | Add `NOT NULL` to existing column | Expensive — full table validation |
 | Add index (plain) | Blocks writes for the whole build |
-| Add index `CONCURRENTLY` | Safe online, slower |
 | Rename or drop column | Instant lock, but breaks running code |
 | Change column type | Usually a full table rewrite |
 
@@ -147,7 +145,6 @@ Failing quickly and retrying later beats blocking every connection. Adding a col
 | Batch every backfill | Avoids long locks and replica lag |
 | `CREATE INDEX CONCURRENTLY` | Doesn't block writes |
 | Set `lock_timeout` | Fail fast instead of queueing |
-| Delay destructive steps | Dropping is irreversible |
 
 ## Common mistakes
 
@@ -161,7 +158,7 @@ Failing quickly and retrying later beats blocking every connection. Adding a col
 
 1. Write the four-deploy plan to split `full_name` into `first_name` and `last_name`, stating what old and new code do at each stage.
 2. Write a 5-million-row backfill as a batched, resumable loop. Explain what happens if it's killed at batch 900 and why restarting is safe.
-3. Explain why `ADD COLUMN x int NOT NULL` behaves differently from `ADD COLUMN x int` on a large busy table, and give a safe sequence reaching the same end state.
+3. Explain why `ADD COLUMN x int NOT NULL` differs from `ADD COLUMN x int` on a large busy table, and give a safe sequence reaching the same end state.
 
 ## Where to go next
 

@@ -161,7 +161,6 @@ The deeper lesson: IaC doesn't remove risk, it makes risk **reviewable**. A `pla
 | Plan | A preview diff of what apply would change |
 | State file | The tool's record of what it created; contains secrets |
 | Drift | Reality no longer matches config, usually from manual edits |
-| Lock | Prevents two applies running at once |
 
 ## Common mistakes
 
