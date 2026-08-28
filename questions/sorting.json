@@ -13,5 +13,15 @@
     "prompt": "Given a nearly-sorted array of a million elements with only a few items out of place, which of Bubble, Selection, or Insertion Sort would you pick, and why?",
     "answer_markdown": "Insertion Sort. It can finish close to O(n) on nearly-sorted input because each element only shifts a few positions before landing in place, so the inner while loop exits almost immediately most of the time. Selection Sort ignores existing order entirely and always does the full O(n²) scan, and Bubble Sort needs the early-exit optimization to get any benefit at all — and even then does more comparisons than Insertion Sort in practice.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "What does it mean for a sort to be 'stable', and why does Selection Sort fail to be stable while Insertion Sort succeeds?",
+    "answer_markdown": "A stable sort preserves the original relative order of elements that compare as equal. Selection Sort can break this because it swaps the found minimum directly into position, which can jump an equal element past another equal element that appeared earlier in the array. Insertion Sort never does this because it only ever shifts strictly larger elements to make room, so two equal elements are never swapped past each other — the later one simply stops sliding the moment it reaches an equal value.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Bubble Sort with the early-exit optimization is O(n) best case. Construct an array of 5 elements where it still takes the full O(n²) worst case, and explain why.",
+    "answer_markdown": "A reverse-sorted array like [5, 4, 3, 2, 1] forces the worst case, because every adjacent pair in every pass is out of order, so every comparison also triggers a swap — the swap counter never hits zero until the array is fully sorted, meaning the early-exit check never fires early. Each of the n-1 passes needs to bubble one element all the way to its final position, giving the full O(n²) comparisons and swaps with no early stop possible.",
+    "difficulty": "medium"
   }
 ]

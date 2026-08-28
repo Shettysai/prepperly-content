@@ -13,5 +13,15 @@
     "prompt": "You need to serialize and later reconstruct a binary tree exactly. Which traversal(s) would you use, and why does pre-order alone work but in-order alone does not?",
     "answer_markdown": "Pre-order (node, then left, then right) records the root first, which tells you immediately where to split the remaining sequence into left and right subtrees as you rebuild recursively — combined with a marker for null children, pre-order alone is enough to reconstruct the exact tree. In-order alone doesn't work because many different trees can produce the same in-order sequence (it just reflects left-to-right order of values, e.g. it's what gives you sorted order on a BST), so you lose the structural information about which node was the root.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "When converting a recursive DFS to an iterative version using an explicit stack, why must you push the right child before the left child?",
+    "answer_markdown": "A stack is last-in-first-out, so whatever is pushed last comes off first. Recursive preorder DFS visits left before right by the natural order of the function calls, so to match that with an explicit stack, the left child needs to be on top so it pops next — which means it must be pushed after the right child. Pushing them in the wrong order silently reverses the traversal to visit right subtrees before left ones.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the time and space complexity of both BFS and DFS on a tree with n nodes, and when does DFS's space usage become a real concern?",
+    "answer_markdown": "Both are O(n) time, since every node is visited exactly once. Space is also O(n) in the worst case for both, but the shape of that worst case differs: BFS's queue can hold an entire tree level at once, which is large for a wide, shallow tree; DFS's call stack (or explicit stack) holds one root-to-current path, which is large for a narrow, deep tree. DFS's space usage becomes a real concern specifically on very deep, unbalanced trees, where recursion can risk a stack overflow.",
+    "difficulty": "medium"
   }
 ]

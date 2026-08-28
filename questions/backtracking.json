@@ -13,5 +13,15 @@
     "prompt": "For the N-Queens solution shown, why is checking cols[r] === col not enough on its own to detect conflicts, and what does the diagonal check Math.abs(c - col) === Math.abs(r - row) actually verify?",
     "answer_markdown": "Checking only cols[r] === col catches queens in the same column, but queens also attack diagonally, so two queens with different rows and different columns can still conflict if they lie on the same diagonal line. The diagonal check works because on any diagonal, the difference between row numbers always equals the difference between column numbers (moving one step diagonally changes both row and column by exactly one) — so if those two differences match, the queens share a diagonal regardless of direction.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the most common bug when implementing backtracking, and why does it happen?",
+    "answer_markdown": "Forgetting the 'un-choose' step — failing to undo a choice (like popping an element off a shared array, or removing an entry from a shared set) after the recursive call returns. It happens because the recursion looks like it should 'just work' the way ordinary recursion does, but backtracking specifically relies on a shared, mutable state object being reset between sibling branches; skip the undo and state from one branch silently leaks into the next, corrupting later results.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How is backtracking different from plain brute force, given that both can, in principle, examine every possible combination?",
+    "answer_markdown": "Brute force typically builds each full candidate solution first and only checks its validity at the end, examining every combination regardless of how early it becomes clear that a partial combination can't work. Backtracking checks validity incrementally, as each choice is made, and immediately abandons (prunes) a branch the moment it violates a constraint — so it never wastes time completing a doomed combination. This pruning is what makes backtracking dramatically faster than brute force in practice, even though both have the same theoretical worst case.",
+    "difficulty": "medium"
   }
 ]

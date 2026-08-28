@@ -13,5 +13,15 @@
     "prompt": "You're building a pathfinding feature for a game map where you know the (x, y) coordinates of every location. Would you use Dijkstra's or A*, and what heuristic would you pick?",
     "answer_markdown": "A*, because knowing coordinates lets you estimate remaining distance to the goal, and A* uses that to explore only promising paths instead of expanding uniformly in every direction like Dijkstra's does. A good heuristic here is straight-line (Euclidean) distance from the current node to the goal, since it never overestimates the true remaining path cost — an 'admissible' heuristic — which is required for A* to guarantee it still finds the optimal path.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Why does Dijkstra's algorithm give wrong answers on a graph with a negative edge weight?",
+    "answer_markdown": "Dijkstra's permanently finalizes a node's shortest distance the moment it's visited, based on the assumption that no path through an unvisited (necessarily more expensive so far) node could ever produce a cheaper route. A negative edge weight breaks that assumption, because a path that looks more expensive right now can become cheaper later by crossing a negative edge — but by the time that's discovered, the node it would improve may already be marked finalized and is never reconsidered. Graphs with negative edges need Bellman-Ford instead, which does allow revisiting.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the time complexity of a naive Dijkstra's implementation that scans for the minimum unvisited distance with a simple loop, and how does using a priority queue improve it?",
+    "answer_markdown": "A naive linear scan to find the smallest unvisited distance costs O(V) per iteration, done once per node, giving O(V²) total. A priority queue (min-heap) can extract the minimum in O(log V), and each edge relaxation potentially requires a decrease-key or re-insertion also costing O(log V), bringing the total to O((V + E) log V) — a significant improvement on sparse graphs where E is much smaller than V².",
+    "difficulty": "medium"
   }
 ]

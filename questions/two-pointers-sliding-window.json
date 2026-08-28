@@ -13,5 +13,15 @@
     "prompt": "How would you adapt Sliding Window to find the longest substring with at most two distinct characters, and what makes the 'shrink' step trickier than in the no-repeats version?",
     "answer_markdown": "Expand the window by moving right and track character counts in a map. Whenever the map has more than two distinct keys, shrink from the left, decrementing the count of the character leaving and removing it from the map entirely once its count hits zero, repeating until only two distinct characters remain. It's trickier than the no-repeats version because shrinking isn't a single jump to 'just past the duplicate' — you may need to remove multiple characters one at a time from the left, and you must correctly detect when a character's count drops to zero to actually reduce the distinct-character count, not just its frequency.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the difference between a fixed-size and a variable-size sliding window, and give an example problem for each.",
+    "answer_markdown": "A fixed-size window always covers exactly k elements and slides forward one position at a time, useful for problems like 'maximum sum of any k consecutive elements.' A variable-size window grows and shrinks its boundaries dynamically based on whether some condition currently holds, useful for problems like 'longest substring without repeating characters,' where the window expands while valid and shrinks from the left the moment it becomes invalid.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "A brute-force solution to 'maximum sum of any k consecutive elements' recomputes the sum for every window from scratch, giving O(n*k). Explain precisely how the sliding window technique eliminates the redundant work.",
+    "answer_markdown": "Each time the window moves one position to the right, only one element leaves the window (on the left) and one element enters (on the right) — everything else in the window stays exactly the same. Instead of re-summing all k elements, the sliding window technique just subtracts the outgoing element's value and adds the incoming element's value to the previous window's sum, turning each slide into a single O(1) update instead of an O(k) recomputation, which brings the total from O(n*k) down to O(n).",
+    "difficulty": "medium"
   }
 ]

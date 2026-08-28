@@ -13,5 +13,15 @@
     "prompt": "Explain why a greedy value-per-weight approach fails on the 0/1 Knapsack problem but succeeds on the Fractional Knapsack version.",
     "answer_markdown": "In 0/1 Knapsack you must take an item whole or not at all, so greedily grabbing the item with the best value-per-weight ratio can use up capacity that would have been better spent on a combination of other items — there's no way to 'partially back out' of a bad greedy choice, so it can lock in a suboptimal total. In Fractional Knapsack you're allowed to take any fraction of an item, so taking the best-ratio item first (and only as much of it as fits) never wastes capacity — you can always top off the remaining space with a fraction of the next-best item, which is why the greedy strategy provably reaches the optimal total value there.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "For the coin denominations [1, 3, 4] and a target amount of 6, show that the greedy 'always take the biggest coin that fits' strategy fails, and state the optimal answer.",
+    "answer_markdown": "Greedy takes a 4 first (the biggest coin ≤ 6), leaving 2, which can only be made from two 1-coins — three coins total (4, 1, 1). But the optimal answer uses two 3-coins (3 + 3 = 6), only two coins total. Greedy fails here because taking the 4 closes off the better path through two 3s, and greedy never reconsiders a coin once it's taken — this is the standard counterexample showing greedy doesn't generalize to arbitrary coin systems.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you verify whether a new problem actually has the greedy-choice property before committing to a greedy solution?",
+    "answer_markdown": "Try to either prove that the locally best choice at each step can never block reaching a globally optimal solution, typically via an exchange argument (showing any optimal solution can be transformed to include the greedy choice without making it worse), or actively search for a counterexample with a small hand-crafted input. If you can quickly find an input where the greedy choice leads to a worse total than some alternative, the property doesn't hold and you likely need dynamic programming instead.",
+    "difficulty": "hard"
   }
 ]

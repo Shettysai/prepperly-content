@@ -13,5 +13,15 @@
     "prompt": "How would you convert the memoized Fibonacci solution into a tabulated (bottom-up) version, and why might you prefer tabulation for very large n?",
     "answer_markdown": "Build an array (or just two variables) starting at dp[0]=0 and dp[1]=1, then loop from 2 to n setting dp[i] = dp[i-1] + dp[i-2], returning dp[n] at the end — no recursion at all. Tabulation is preferable for very large n because pure recursion, even memoized, still builds up a call stack of depth n and can hit a stack overflow, while the iterative loop uses a fixed, small amount of stack space regardless of how large n gets.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "What two properties must a problem have for dynamic programming to apply, and which one distinguishes DP from plain divide-and-conquer?",
+    "answer_markdown": "A problem needs overlapping sub-problems (the same smaller calculation is needed more than once) and optimal substructure (the best overall answer can be built from the best answers to sub-problems). Overlapping sub-problems is the property that distinguishes DP from divide-and-conquer algorithms like Merge Sort, whose sub-problems are independent and never repeat — which is exactly why memoizing a Merge Sort call would add caching overhead for no benefit.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Draw out (in words) the call tree for the naive recursive fib(4), and count how many times fib(1) gets computed.",
+    "answer_markdown": "fib(4) calls fib(3) and fib(2). fib(3) calls fib(2) and fib(1). The first fib(2) (child of fib(3)) calls fib(1) and fib(0). The second fib(2) (direct child of fib(4)) also calls fib(1) and fib(0) again. Counting the leaf-level fib(1) calls: one from fib(3)'s direct call, one from fib(3)'s fib(2) child, and one from fib(4)'s own fib(2) child — fib(1) is recomputed 3 separate times in this small tree alone, and the duplication only gets worse as n grows, which is exactly the waste memoization eliminates.",
+    "difficulty": "easy"
   }
 ]

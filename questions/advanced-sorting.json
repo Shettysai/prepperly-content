@@ -13,5 +13,15 @@
     "prompt": "You need to sort 10 million log entries stored on disk, too large to fit in memory at once. Which would you reach for, Merge Sort or Quick Sort, and why?",
     "answer_markdown": "Merge Sort, because it accesses data sequentially — you can sort chunks that fit in memory, write them to disk, then merge sorted chunks together reading them in streaming fashion (this is the basis of real external sorting). Quick Sort relies on random-access swaps across the whole array during partitioning, which is expensive when data lives on disk rather than in RAM. This is also why database engines and big external sorts are built on merge-based strategies.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Is Merge Sort stable? Is standard in-place Quick Sort? Why does this difference exist?",
+    "answer_markdown": "Merge Sort is stable, because its merge step always takes from the left sub-array first when values are equal, preserving original relative order. Standard in-place Quick Sort is not stable, because partitioning swaps elements around the pivot based purely on value comparisons, with no rule protecting the relative order of equal elements during those swaps. The difference comes down to Merge Sort's combine step being a controlled, order-preserving comparison, versus Quick Sort's partition step being a positional swap.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you defend a Quick Sort implementation against its O(n²) worst case on adversarial or already-sorted input?",
+    "answer_markdown": "Avoid a fixed pivot choice like 'always the last element,' since that's exactly what produces the worst-case unbalanced partition on sorted or reverse-sorted input. Instead, pick the pivot randomly, or use a 'median of three' strategy (comparing the first, middle, and last elements and picking the median as the pivot) — both make it statistically very unlikely that any single input, even a deliberately crafted one, can consistently force the worst-case 1-vs-(n-1) split.",
+    "difficulty": "medium"
   }
 ]

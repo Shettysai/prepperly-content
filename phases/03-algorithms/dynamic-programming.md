@@ -4,66 +4,123 @@ slug: dynamic-programming
 summary: Memoization, Tabulation
 tags: [dynamic-programming, recursion, algorithms, complexity]
 links:
+  - title: "Video: A Beginner's Guide to Dynamic Programming"
+    url: "https://www.youtube.com/watch?v=oNoILrFOx2k"
+    kind: video
   - title: Wikipedia — Dynamic programming
     url: "https://en.wikipedia.org/wiki/Dynamic_programming"
     kind: resource
   - title: Wikipedia — Memoization
     url: "https://en.wikipedia.org/wiki/Memoization"
     kind: resource
+  - title: HackerRank — Algorithms practice
+    url: "https://www.hackerrank.com/domains/algorithms"
+    kind: practice
 ---
+## Before you start
+
+You need solid recursion — a function calling itself on a smaller input — and `big-o-notation` to appreciate why the fix here matters so much.
+
 ## In one sentence
 
-**Dynamic Programming** (DP) is a technique for problems where you'd otherwise solve the exact same smaller sub-problem over and over again — DP just remembers the answer the first time so you never redo that work.
+**Dynamic programming (DP)** is a technique for solving problems that can be broken into smaller overlapping subproblems, by solving each distinct subproblem only once and reusing the answer instead of recomputing it.
 
 ## Why it matters
 
-Many problems can be solved with plain recursion, but the naive version can be exponentially slow because it recalculates identical sub-problems thousands of times. DP is the difference between a Fibonacci-style function taking a fraction of a second versus taking longer than the age of the universe on a moderately large input — and it shows up constantly in interviews because it tests whether you can spot repeated work.
+Some recursive problems look innocent but explode in runtime because the same smaller calculation gets redone thousands or millions of times. DP is the fix: it turns algorithms that would take longer than the age of the universe on modest inputs into ones that finish instantly, just by remembering work you've already done. It's also one of the two hardest topics for beginners in this entire course (alongside Backtracking), precisely because the fix is invisible in the code's structure — two functions that look almost identical can differ by a billion times in speed.
 
-## The idea
+## The intuition
 
-Take computing the nth **Fibonacci number**, where each number is the sum of the two before it (0, 1, 1, 2, 3, 5, 8...). The naive recursive solution says `fib(n) = fib(n-1) + fib(n-2)`. That looks fine, but to compute `fib(5)`, it computes `fib(3)` twice, `fib(2)` three times, and so on — the same calls repeat, doubling roughly every step, giving O(2ⁿ) time.
+Imagine you're asked "what's the 10th Fibonacci number?" (each number is the sum of the two before it: 0, 1, 1, 2, 3, 5, 8...). If you answer it by recursively asking "what's the 9th?" and "what's the 8th?", and each of those asks two more questions, you'll notice something wasteful: "what's the 7th Fibonacci number?" gets asked *multiple times*, by different branches of the same calculation, and each time you answer it from scratch. Dynamic programming is simply: **write the answer on a sticky note the first time you work it out, and check your sticky notes before recalculating anything.**
 
-DP fixes this with one idea: **store the answer to each sub-problem the first time you compute it, and look it up instead of recomputing it.** There are two ways to do this. **Memoization** is top-down: keep the recursive structure, check a cache before computing, and save the result after. **Tabulation** is bottom-up: build a table starting from the smallest sub-problems and work upward, so by the time you need `fib(n-1)` and `fib(n-2)`, they're already in the table.
+## How it actually works
 
-The pattern to recognize DP: a problem can be broken into smaller versions of itself (**overlapping sub-problems**), and the smaller versions repeat.
-
-## In practice
+Take the naive recursive Fibonacci function — no sticky notes yet:
 
 ```js
-// Naive: recomputes the same values over and over — O(2^n)
 function fibNaive(n) {
   if (n <= 1) return n;
   return fibNaive(n - 1) + fibNaive(n - 2);
 }
-
-// DP with memoization: each value computed exactly once — O(n)
-function fibMemo(n, cache = {}) {
-  if (n <= 1) return n;
-  if (cache[n] !== undefined) return cache[n]; // already solved — reuse it
-  cache[n] = fibMemo(n - 1, cache) + fibMemo(n - 2, cache);
-  return cache[n];
-}
-
-console.log(fibMemo(40)); // 102334155 — instant, vs. fibNaive(40) which takes seconds
 ```
 
-The `cache` object is the whole trick: the second call for any `n` returns immediately instead of re-triggering two more recursive calls.
+Here's what happens when it computes `fib(5)`:
+
+```mermaid
+flowchart TD
+  F5["fib(5)"] --> F4["fib(4)"]
+  F5 --> F3a["fib(3)"]
+  F4 --> F3b["fib(3) — SAME as F3a"]
+  F4 --> F2a["fib(2)"]
+  F3a --> F2b["fib(2) — SAME work again"]
+  F3a --> F1["fib(1)"]
+```
+
+`fib(3)` gets computed twice, `fib(2)` gets computed multiple times, and this duplication compounds at every level — the number of calls roughly doubles per level of depth, giving O(2ⁿ) total calls. There are only `n` genuinely distinct subproblems (`fib(0)` through `fib(n)`), but the naive version solves the same ones over and over.
+
+DP fixes this in one of two equivalent ways. **Memoization** (top-down) keeps the recursion but adds a cache: before computing `fib(k)`, check if it's already in the cache; if so, return the cached value instead of recursing. **Tabulation** (bottom-up) flips the direction entirely — instead of recursing from `n` down to the base case, it starts at the base case and iteratively builds up to `n`, storing each answer in an array as it goes. Both store exactly the same `n` answers; they differ only in whether you compute them "on demand" via recursion or "in order" via a loop.
+
+## Worked example
+
+```js
+function fibMemo(n, memo = {}) {
+  if (n in memo) return memo[n];       // sticky note already exists — reuse it
+  if (n <= 1) return n;
+  memo[n] = fibMemo(n - 1, memo) + fibMemo(n - 2, memo); // write the sticky note
+  return memo[n];
+}
+
+console.log(fibMemo(10)); // 55
+console.log(fibMemo(50)); // 12586269025 — naive fib(50) would take years to finish
+```
+
+`fibMemo(10)` still starts by asking for `fib(9)` and `fib(8)`, but the moment `fib(7)` is computed once and stored in `memo`, every later branch that would have recomputed `fib(7)` just reads it back out in O(1). This collapses the call count from exponential (O(2ⁿ)) down to O(n) — for `fib(10)`, that's the difference between roughly 177 recursive calls (naive) and just 10 unique calculations, and for `fib(50)` it's the difference between an answer that returns instantly versus one that would never finish on a naive implementation.
+
+## A second example — when it gets harder
+
+Tabulation solves the exact same problem bottom-up, and seeing both side by side is where the "top-down vs bottom-up" distinction really clicks:
+
+```js
+function fibTab(n) {
+  if (n <= 1) return n;
+  const dp = [0, 1]; // dp[i] will hold the i-th Fibonacci number
+  for (let i = 2; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2]; // build each answer from the two just before it
+  }
+  return dp[n];
+}
+
+console.log(fibTab(10)); // 55 — same answer, no recursion at all
+```
+
+There's no recursion, no call stack, and no risk of a stack overflow on large `n` — `fibTab` just fills an array left to right, each cell depending only on the two cells before it. This version also makes an optimization visible that memoization hides: since `dp[i]` only ever needs `dp[i-1]` and `dp[i-2]`, you don't need the whole array — two variables are enough, dropping space from O(n) to O(1). That kind of space optimization is much harder to spot in the recursive memoized version, which is a good reason to reach for tabulation once you're comfortable with the idea.
 
 ## Quick reference
 
-| Approach | Direction | Extra space | Typical use |
-|---|---|---|---|
-| Naive recursion | Top-down | O(n) call stack | Only for tiny inputs |
-| Memoization | Top-down + cache | O(n) cache + O(n) stack | Easiest to write from a recursive solution |
-| Tabulation | Bottom-up, iterative | O(n) table (often reducible to O(1)) | Avoids recursion depth limits, usually faster in practice |
-
-## What interviewers ask
-
-- **How do you recognize a DP problem?** — Look for two signs: it breaks into smaller versions of itself (optimal substructure), and those smaller versions repeat if solved naively (overlapping sub-problems). If recursion means the same inputs show up again and again, DP applies.
-- **What's the difference between memoization and tabulation?** — Memoization is top-down: keep the recursive solution, add a cache check. Tabulation is bottom-up: fill a table from the base cases upward, avoiding recursion and its stack overflow risk.
-- **Can you reduce the space used in the Fibonacci DP solution?** — Yes — each step only needs the previous two values, so two variables in a loop suffice, bringing space from O(n) to O(1).
+| Approach | Direction | Uses recursion? | Space (Fibonacci) | Risk |
+|---|---|---|---|---|
+| Naive recursion | Top-down | Yes | O(n) call stack | O(2ⁿ) time — unusable past small `n` |
+| Memoization | Top-down | Yes | O(n) cache + O(n) call stack | Stack overflow on very large `n` |
+| Tabulation | Bottom-up | No | O(n), or O(1) with rolling variables | None of the above |
 
 ## Common mistakes
 
-- Writing the DP table before identifying the recursive relationship — find the naive recursive solution first, then add caching; the cache doesn't help if you don't know what to cache.
-- Forgetting base cases in the cache — `fib(0)` and `fib(1)` must be handled directly, or the recursion never terminates correctly.
+- Reaching for DP before confirming the problem actually has **overlapping subproblems** — if every subproblem is genuinely distinct (like in plain Merge Sort), memoizing adds overhead for nothing.
+- Forgetting the base case in a memoized function, causing infinite recursion instead of a clean stop.
+- Assuming memoization and tabulation always have the same space complexity — tabulation frequently allows a rolling-variable optimization that top-down memoization does not.
+
+## What interviewers ask
+
+- **What makes a problem a good fit for dynamic programming?** — It needs both *overlapping subproblems* (the same smaller calculation is needed multiple times) and *optimal substructure* (the best overall answer can be built from the best answers to subproblems).
+- **Memoization or tabulation — which do you reach for first?** — Memoization is usually easier to write correctly first, since it mirrors the natural recursive definition; tabulation is preferred once the recurrence is well understood, since it avoids recursion overhead and often enables space optimization.
+- **Walk me through why naive Fibonacci is O(2ⁿ) but memoized Fibonacci is O(n).** — Draw the call tree: naive recursion redoes identical subproblems at every branch, roughly doubling calls per depth level; memoization guarantees each of the `n` distinct subproblems is computed exactly once, with every repeat becoming an O(1) lookup.
+
+## Practice
+
+1. Write a memoized function for computing `n choose k` (binomial coefficient) using the recurrence `C(n,k) = C(n-1,k-1) + C(n-1,k)`, and count how many unique subproblems it actually solves for `n=10`.
+2. Convert your memoized solution from exercise 1 into a bottom-up tabulated version using a 2D array.
+3. The classic "coin change" problem — given coins `[1, 3, 4]`, find the minimum number of coins to make 6 — has overlapping subproblems. Identify what the subproblem is (hint: "minimum coins to make amount X") before writing any code.
+
+## Where to go next
+
+`greedy-algorithms` looks deceptively similar — both build a solution incrementally — but greedy never reconsiders a choice once made, while DP explores all the ways subproblems combine. Seeing where greedy fails (and DP is needed instead) is the sharpest way to understand both.
