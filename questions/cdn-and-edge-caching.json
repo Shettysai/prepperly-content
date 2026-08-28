@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "How does a CDN actually make a website faster?",
+    "answer_markdown": "It keeps copies of your content on servers physically close to users, so a request travels a short distance instead of crossing continents. That matters because round-trip time is bounded by the speed of light through fibre and cannot be optimised away in code. The CDN also terminates TLS near the user, so the handshake round trips are short, and it answers repeat requests from its own cache without involving your origin at all, which simultaneously cuts latency and removes load from your servers.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is a cache key, and what goes wrong if you choose it badly?",
+    "answer_markdown": "The cache key is what an edge server uses to decide whether two requests are asking for the same thing, normally the host plus path and sometimes selected query parameters or headers. If the key is too narrow, requests that should get different content collide, so one user's language or currency variant gets served to everyone. If it is too wide, identical content is stored many times over: including the full query string means a tracking parameter like utm_source creates a separate entry per campaign, so every shared link is a cache miss. The goal is the smallest key that still preserves correctness.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is caching a response containing Set-Cookie in a shared cache dangerous?",
+    "answer_markdown": "A shared cache stores one copy and serves it to many different users. If a response carrying a session cookie or personalised content is stored there, the next unrelated visitor receives another user's session or private data. This is a data leak rather than a performance bug, and it is a genuine class of production incident. The protection is to mark personalised responses private or no-store, and to ask before caching anything whether the response is truly identical for every possible requester.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "You need to fix a typo appearing on 50,000 cached pages within a minute. Compare your options.",
+    "answer_markdown": "Purging by URL is precise but requires 50,000 API calls and is slow to propagate across every edge location. Purging by surrogate key is the practical answer: if the responses were tagged with a shared key when cached, one purge call invalidates all of them at once. Relying on short TTLs would work eventually but cannot meet a one-minute deadline unless the TTL was already under a minute, which would have sacrificed hit rate continuously to prepare for a rare event. This is why production systems tag responses at cache time rather than planning to enumerate URLs later.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "When does a CDN not help?",
+    "answer_markdown": "It does not help for personalised or authenticated responses, since those differ per user and cannot be shared safely. It does not help write traffic, because POST and PUT requests must reach the origin. It also does little for long-tail content requested so rarely that entries expire before a second reader arrives, meaning almost every request is a miss that pays an extra hop. Recognising these cases matters because teams often add a CDN expecting broad improvement and see nothing, since their traffic is mostly uncacheable.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What problem does origin shielding solve?",
+    "answer_markdown": "Without a shield, a cache miss at many edge locations means each one independently fetches the same object from your origin, so a popular uncached item can trigger hundreds of simultaneous origin requests. An origin shield adds a designated mid-tier cache that all edges fetch through, so those requests collapse into a single origin fetch which is then fanned back out. This protects the origin during traffic spikes and immediately after a mass purge, which is exactly when it is most vulnerable.",
+    "difficulty": "medium"
+  }
+]

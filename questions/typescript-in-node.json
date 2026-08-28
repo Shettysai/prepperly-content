@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What does it mean that TypeScript uses structural typing, and how does it differ from nominal typing?",
+    "answer_markdown": "Structural typing means type compatibility is decided by an object's shape — which members it has and their types — not by its declared name or inheritance chain. So a class that never writes `implements Point` is still accepted wherever a `Point` is expected, as long as it has the required `x` and `y` properties of the right types. Nominal typing, used by languages like Java and C#, requires an explicit declared relationship: a type only matches if it was declared to. TypeScript chose structural typing because it fits how JavaScript is actually written, where anonymous object literals and duck-typed values are passed around constantly and rarely correspond to a declared class. The practical upshot is that if it has the right shape, it fits.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Explain the difference between `unknown` and `any`, and when you should reach for each.",
+    "answer_markdown": "Both can hold a value of any type, but they behave in opposite ways afterwards. With `any`, the compiler stops checking entirely — you can call any method or read any property on it and no error is reported, so a typo sails through to a runtime crash. With `unknown`, you can hold the value but cannot do anything with it until you narrow it, using `typeof` checks, a type guard, or a validator; the compiler forces you to prove what it is first. Use `unknown` for anything arriving from outside your program: HTTP bodies, `JSON.parse` results, environment variables, message payloads. Reserve `any` for genuine escape hatches during a JavaScript migration, because reaching for it to silence an error forfeits the entire benefit of using TypeScript.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Do TypeScript types exist at runtime? What does the answer imply for handling data from an external API?",
+    "answer_markdown": "No — types are erased during compilation, and the JavaScript that actually runs has no knowledge of them. Node even runs `.ts` files directly by simply stripping the annotations out. The implication is significant: writing `const user = await res.json() as User` gives you no protection whatsoever, because `as` is an unchecked assertion where you tell the compiler to trust you and it complies without verifying anything. If the API returns `{\"id\": \"42\"}` with a string where you promised a number, TypeScript is satisfied and your code misbehaves downstream. Every value crossing a boundary — network, database, queue, env var — must be validated at runtime with real checks, whether hand-written type guards or a library like Zod. Types check your code; they cannot check the network.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "When does a generic type parameter actually earn its complexity, and when is it pointless?",
+    "answer_markdown": "A generic earns its place when it preserves a genuine relationship between types that would otherwise be lost — most commonly between input and output. `function first<T>(items: T[]): T | undefined` is worthwhile because it guarantees that passing a `string[]` yields `string | undefined`, information that `any[]` would discard entirely. It is equally useful for linking two parameters, as in `pick<T, K extends keyof T>`, where the constraint stops you passing a key the object does not have. A generic is pointless when its type parameter appears only once in the signature, since nothing is being related to anything — in that case you almost certainly wanted `unknown`, and the generic is just harder to read for no safety gain.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why is using `as` to fix a compiler error usually a bad idea?",
+    "answer_markdown": "Because `as` is a type assertion, not a conversion or a check. It performs no runtime work at all — it simply overrides the compiler's analysis with your claim, and the compiler stops arguing. The error you silenced was information: it was telling you the value might not be the shape you expected, and asserting it away hides the problem rather than solving it, so the failure resurfaces at runtime somewhere less obvious. The main legitimate uses are narrow: telling the compiler about something it genuinely cannot infer, such as a DOM element type. When tempted to write `as`, the better move is usually narrowing with a `typeof` check or a proper type guard, which gives you the same result with actual verification behind it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Someone argues that TypeScript makes unit tests unnecessary. Why is that wrong?",
+    "answer_markdown": "Types and tests catch different categories of bug and neither substitutes for the other. Types verify shapes and contracts: that you passed a number where a number was required, that you did not misspell a property, that you handled the possibility of `null`. What they cannot verify is behaviour — a function with a perfect signature can still calculate the wrong total, apply tax twice, or sort in the wrong direction, and TypeScript will compile it happily. Tests check that the logic produces the right answers for real inputs, including edge cases. There is also a third gap neither covers on its own: data arriving from outside the program, which needs runtime validation because types are erased before execution. The strongest setup uses all three — types for contracts, tests for behaviour, validation at the boundaries.",
+    "difficulty": "easy"
+  }
+]

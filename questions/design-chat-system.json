@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why are WebSockets the right transport for chat, and what do they cost you architecturally?",
+    "answer_markdown": "Chat requires the server to send data to a client that has not asked for it, which plain HTTP request/response cannot do. A WebSocket upgrades an HTTP connection into a persistent bidirectional channel, so either side can send at any time with no repeated handshakes and no empty polling responses burning battery and server capacity. The cost is that the connection is stateful: one specific server holds that socket, so the system needs a service discovery layer mapping each user to the server holding their connection, and losing a server disconnects every user on it. That statefulness is what makes chat harder than any stateless request/response design.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why size chat servers by connection count rather than by CPU or message throughput?",
+    "answer_markdown": "With 50M daily active users and roughly 20% connected simultaneously, you hold about 10 million open sockets. Each connection carries socket buffers and session state — call it 10KB — so the fleet needs on the order of 100GB just to hold connections idle, before processing a single message. At a realistic ceiling of 100,000 concurrent sockets per box, that's about 100 servers required purely to terminate connections. Message throughput at ~23,000 QPS average would need far fewer machines, so connection capacity is the binding constraint. This is why chat servers are kept thin — connection handling only, with business logic pushed to separate stateless services that can scale independently.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Can you guarantee exactly-once message delivery? What do you do instead?",
+    "answer_markdown": "No — exactly-once delivery is not achievable end-to-end over an unreliable network. A message can be lost before reaching the client, or the client can receive it and have its acknowledgement lost, and the sender cannot distinguish these cases; retrying risks a duplicate while not retrying risks loss. The practical answer is to deliver at least once and make duplicates harmless: the client generates a unique message ID, and the receiver deduplicates against IDs it has already processed. The client must generate the ID, because a server-generated ID would differ on each retry and the duplicate would be undetectable. Claiming exactly-once in an interview is a red flag; naming the trade-off is the strong answer.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why are random UUIDs a poor choice for message IDs?",
+    "answer_markdown": "UUIDs guarantee uniqueness but carry no ordering information, so sorting messages by ID produces a random order rather than a chronological one. A chat client needs to display a conversation in order, and if it must sort by a separate timestamp field it inherits all the problems of untrustworthy clocks. A Snowflake-style ID — a timestamp component followed by a machine ID and sequence counter — is both unique and monotonically sortable, so ordering by ID is ordering by time. This also makes pagination and 'give me everything after message X' queries efficient, since the ID itself defines a range.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do you keep message ordering consistent for both participants in a conversation?",
+    "answer_markdown": "Do not rely on server receive time: two messages sent milliseconds apart can hit different servers whose clocks are skewed, flipping their order so a reply appears above the message it answers. Global ordering across the whole system would fix it but requires a single sequencer, which is a system-wide bottleneck that cannot scale. The practical answer scopes ordering to where it is actually perceived — within a single conversation — by having the shard that owns that conversation assign a monotonically increasing sequence number to each message. Clients sort by that sequence. This converts an unsolvable distributed-clock problem into a simple per-shard counter, and nobody can perceive ordering across unrelated conversations anyway.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What happens when a message is sent to a user who is offline?",
+    "answer_markdown": "There is no WebSocket to push to, so the message is persisted into a per-user inbox queue keyed by recipient, and a push notification is dispatched through APNs or FCM to wake the device. When the user reconnects, the client sends the ID of the last message it acknowledged, and the server replays everything after that point rather than resending the whole history. This resume-from-checkpoint protocol is what keeps reconnection cheap. Note that storage becomes the dominant cost if history is kept indefinitely — roughly 146 TB per year at 2 billion messages a day — which is why some services delete messages once they are confirmed delivered.",
+    "difficulty": "medium"
+  }
+]

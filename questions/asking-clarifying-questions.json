@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What single test tells you whether a clarifying question is worth asking?",
+    "answer_markdown": "Ask yourself whether your plan would change if the answer were the opposite. If yes, ask it; if no, skip it. 'Can the input be empty?' passes because one answer requires a guard clause and the other does not, so something concrete changes. 'Which language should I use?' fails because you would write the same algorithm in different syntax and nothing about your approach changes. This test replaces any list of questions you might memorise, because it works across coding, design, and behavioural rounds equally, and it directly matches what the interviewer is measuring: whether you can identify which details actually drive a solution.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Both asking no clarifying questions and asking six of them are failures. Why do they both come from the same underlying gap?",
+    "answer_markdown": "Both indicate the candidate cannot tell which details matter. Asking none means charging ahead on unexamined assumptions, which risks solving the wrong problem for twenty minutes before the mistake surfaces. Asking six inconsequential ones burns five minutes proving you cannot distinguish load-bearing information from noise, which is arguably a worse signal because it looks like stalling. The target is two or three questions whose answers visibly redirect your approach, and then saying out loud what each answer changed so the interviewer sees the connection.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What are the four categories that good clarifying questions fall into, across every interview type?",
+    "answer_markdown": "Scale, scope, edges, and success criteria. Scale asks how big the problem is, which drives architecture and data structure choices. Scope asks what is in and out, and is the most senior-sounding category because deliberately cutting scope is what experienced engineers do. Edges asks about the awkward inputs such as empty, huge, duplicate, negative, or missing values. Success criteria asks what good actually means here, since speed, cost, and correctness conflict, and knowing which one wins tells you what to optimise for. The same four categories appear in coding, design, and debugging questions wearing different vocabulary.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "The interviewer responds to your clarifying question with 'you tell me, what do you think?'. What should you do?",
+    "answer_markdown": "Make the decision yourself, out loud, in four parts: state the assumption, give a reason for it, label it explicitly as an assumption, and say what would change if it turned out wrong. This is a deliberate test of whether you can commit under uncertainty rather than an unhelpful interviewer. Asking the question again after being told to decide converts a reasonable clarification into evidence that you cannot proceed without permission. The general rule is that after one unanswered question you stop asking and start assuming aloud, because a clearly stated assumption is worth more than a question asked twice.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why is 'should I worry about security?' a weak question, and how would you fix it?",
+    "answer_markdown": "It sounds thorough but is empty, because 'yes' produces no specific action and does not change anything you would do next. It also asks the interviewer to decide something you are capable of deciding. The fixed version names a specific mechanism and its consequence, such as asking whether messages need end-to-end encryption, since that determines whether the server can search message history at all. The general pattern is that weak questions ask about a broad topic while strong ones ask about one decision with a visible downstream effect, which is the same flip test applied at the level of phrasing.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What makes 'I'll assume ten million daily users, does that sound right?' a more senior move than 'how many users are there?'",
+    "answer_markdown": "Proposing a figure gives the interviewer something to correct rather than something to invent, which resolves the question in a single short exchange. It also demonstrates that you know what a plausible scale looks like for this type of product, which an open question cannot show. If the guess is wrong the correction is free and you have still displayed the instinct. The same pattern applies to scope and read-write ratios, and stating what you would conclude from the number, such as which component it forces into the design, makes the reasoning behind the question visible too.",
+    "difficulty": "medium"
+  }
+]

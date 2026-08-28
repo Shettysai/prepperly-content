@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Explain the cache-aside pattern and why it is the usual default.",
+    "answer_markdown": "The application checks the cache first; on a hit it returns immediately, and on a miss it reads the database, writes the result into the cache with a TTL, and returns it. It is the default for two reasons. Only data that is actually requested gets cached, so memory is spent on genuinely hot keys rather than everything written. And if the cache becomes unavailable, the application still works correctly, just slower, because every request simply falls through to the database. Its weaknesses are that every miss costs a database read and the first request after any write always misses.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "On update, should you delete the cache key or overwrite it?",
+    "answer_markdown": "Delete it. Overwriting invites a race: if two updates happen close together, a slower one can write its older value into the cache after the faster one wrote the newer value, leaving the cache permanently wrong until the TTL expires. Deleting has no such failure mode, because the next read simply repopulates from the database and gets whatever the current truth is. The small cost is one guaranteed cache miss after each write, which is almost always worth paying for the correctness guarantee.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is a cache stampede, and how do you prevent it?",
+    "answer_markdown": "A stampede happens when a heavily requested key expires and every concurrent request misses simultaneously, so thousands of identical expensive queries hit the database at once and can collapse it. It is particularly nasty because the database was comfortable moments earlier, and because it is worse than having no cache at all, since without one the database would have been sized for the real load. Two fixes work: a lock, where the first request to miss acquires a short-lived key and refreshes the cache while others wait briefly or serve stale data, or early recomputation, where the entry is refreshed shortly before expiry so it is never actually absent.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What are cache penetration and cache avalanche?",
+    "answer_markdown": "Penetration is repeated requests for a key that exists neither in the cache nor in the database, so every request misses and reaches the database, and the cache provides no protection at all. An attacker can exploit this deliberately by requesting random non-existent IDs. The fix is caching the negative result with a short TTL. Avalanche is many keys expiring at the same moment, typically because they were written together with identical TTLs, causing a broad wave of misses. The fix is TTL jitter, adding a random spread so expiry times desynchronise.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Which eviction policy suits a pure cache, and why is noeviction dangerous there?",
+    "answer_markdown": "For a pure cache use allkeys-lru, which discards the least recently used keys when memory fills, or allkeys-lfu, which discards the least frequently used and better resists a burst of one-off keys flushing genuinely hot data. The noeviction policy instead rejects new writes once memory is full, so instead of quietly discarding cold data the cache starts returning errors and stops accepting anything new. That converts a routine capacity condition into an application-visible outage. noeviction is only appropriate when Redis holds data you genuinely cannot afford to lose, meaning it is not really being used as a cache.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you decide a TTL, and what happens if your system cannot survive a cold cache?",
+    "answer_markdown": "Choose the TTL from how stale the data is allowed to be, because the TTL is your maximum staleness guarantee rather than merely a performance setting; then add jitter so keys do not expire in lockstep. If the database can only cope while the hit rate stays high, the cache has stopped being an optimisation and become a load-bearing dependency, meaning a Redis restart takes production down because every request misses at once. The honest test is whether the database survives a cold cache. If not, you need either a database sized for real traffic, or a warming strategy and staged restarts.",
+    "difficulty": "medium"
+  }
+]

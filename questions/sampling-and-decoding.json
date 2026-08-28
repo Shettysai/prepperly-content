@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Explain temperature to a non-technical stakeholder in two sentences.",
+    "answer_markdown": "Temperature is a creativity dial on the model's word choice. Turn it down and the model always picks its safest, most likely next word, so answers are consistent and predictable but can feel repetitive; turn it up and it takes more chances, so answers are more varied and original but more likely to wander off-track or state something wrong. The underlying mechanism is that the model produces a ranked list of candidate next words with confidence scores, and temperature controls whether the top candidate dominates or the lower-ranked ones get a real chance of being chosen.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Your JSON extraction endpoint returns malformed output about 5% of the time. The prompt has been rewritten three times without fixing it. What do you check first and why?",
+    "answer_markdown": "Check the temperature — extraction and classification should run at 0. Any temperature above zero means the model samples from a probability distribution rather than always taking the top token, so on roughly one call in twenty it selects a lower-ranked token that breaks the JSON structure, and no amount of prompt rewriting eliminates that because the problem is in the sampling step rather than the instructions. Set temperature to 0, enable the provider's JSON or structured-output mode so generation is constrained to valid syntax, and keep a validation-and-retry path for the residual failures. The general lesson worth stating in an interview is that intermittent format failures at a stable low rate point at sampling, while consistent format failures point at the prompt.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Top-k and top-p both truncate the candidate list. Why is top-p usually the better default?",
+    "answer_markdown": "Top-k keeps a fixed number of candidates regardless of context, but the model's certainty varies enormously between tokens. When it is 98% sure of the next word, a top-k of 40 still admits 39 alternatives it considered nearly impossible, allowing a wrong choice precisely when the model already knew the right answer. When it is genuinely torn between many plausible continuations, that same k may cut off good options. Top-p, or nucleus sampling, instead adds candidates in descending probability order until their cumulative probability reaches p, so the pool shrinks to one or two tokens when the model is confident and expands when it is uncertain. The candidate set adapts to the model's own confidence rather than to a number you guessed, which is why it degrades more gracefully across the wide range of situations a single production setting has to cover.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Does temperature 0 make an LLM deterministic? What are the consequences of assuming it does?",
+    "answer_markdown": "No. Temperature 0 makes decoding greedy — always selecting the highest-probability token — which removes the intentional randomness but does not guarantee identical output across calls. Floating-point operations on GPUs are not perfectly reproducible, providers batch requests together in ways that affect numerical results, and requests may be routed to different hardware or model versions. When two candidate tokens have nearly equal probability, these tiny differences can flip which one wins, and that single divergence changes everything generated afterwards. The practical consequences of assuming determinism are real: exact-match test assertions that fail intermittently in CI, response caches keyed on output hashes that never hit, and reconciliation logic that treats a legitimate variation as data corruption. Use temperature 0 to reduce variance, but design tests and caches to tolerate variation.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A product manager asks you to make the assistant 'more creative and interesting' by raising temperature to 1.8. What is your response?",
+    "answer_markdown": "Push back on both the diagnosis and the number. At 1.8 the probability distribution is flattened so aggressively that tokens the model considered very unlikely start getting selected regularly, which produces off-topic words, broken sentences, and factual errors rather than creativity — the outputs read as erratic, not interesting. Beyond about 1.3 the quality cost rises much faster than the variety gained. More importantly, sampling only controls how the model chooses among candidates it already considered; it cannot add knowledge, ideas, or better structure, so if the output is boring the cause is usually a vague prompt with no specifics, examples, or constraints. The right sequence is to fix the prompt first, then raise temperature modestly to around 0.9 to 1.1 if you still want more variation, and measure quality on real examples at each step.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Give concrete sampling settings for three different features and justify each: a support-ticket classifier, a customer-facing chat assistant, and a marketing-copy variation generator.",
+    "answer_markdown": "The classifier runs at temperature 0 with no top-p adjustment: the same ticket must always produce the same label, since inconsistent classification of identical inputs breaks downstream routing and makes the system impossible to test or audit. The chat assistant runs at roughly temperature 0.7 with top-p 0.9, the common default, because responses should feel natural and varied rather than robotic, while top-p trims the improbable tail that would produce off-topic tokens — and if it is grounded in retrieved documents, drop it toward 0.3 so it stays close to the source. The copy generator runs at around temperature 1.0 with top-p 0.95 and generates several candidates per request, because the entire goal is diversity across outputs and a human selects the best one, which means occasional weak candidates are acceptable in a way they are not for the other two. The general principle to state is that temperature should track how much the task tolerates variation, and any output a program parses rather than a human reads belongs at or near zero.",
+    "difficulty": "hard"
+  }
+]

@@ -14,7 +14,7 @@
           "position": 1,
           "path": "phases/01-cs-fundamentals/big-o-notation.md",
           "questionsPath": "questions/big-o-notation.json",
-          "sha256": "9a447500795c7325fa09bda82ee6dba588cc8484ffcb2ab7b517c8e1fc88d069"
+          "sha256": "201da7da1744be3c3e51083814979ae2c183cf5c221bb5eec3589c94cf7400cc"
         },
         {
           "slug": "bit-manipulation",
@@ -302,28 +302,64 @@
       "targetMonth": 4,
       "topics": [
         {
+          "slug": "api-gateways-and-proxies",
+          "title": "API Gateways, Reverse Proxies & Load Balancers",
+          "summary": "L4 vs L7, Routing",
+          "position": 1,
+          "path": "phases/04-networking/api-gateways-and-proxies.md",
+          "questionsPath": "questions/api-gateways-and-proxies.json",
+          "sha256": "ac2c574aa06c79306dec1e8c3637e7734e616553298ca41183a8213785bd506c"
+        },
+        {
+          "slug": "cdn-and-edge-caching",
+          "title": "CDNs & Edge Caching",
+          "summary": "Cache keys, Invalidation",
+          "position": 2,
+          "path": "phases/04-networking/cdn-and-edge-caching.md",
+          "questionsPath": "questions/cdn-and-edge-caching.json",
+          "sha256": "ba57b6380be575e5f9685219d4988adbb3c2db31eb7b8297257c0b33a1b9732e"
+        },
+        {
           "slug": "dns-load-balancing",
           "title": "DNS, Load Balancing",
           "summary": "Resolution, L4/L7 Load Balancers",
-          "position": 1,
+          "position": 3,
           "path": "phases/04-networking/dns-load-balancing.md",
           "questionsPath": "questions/dns-load-balancing.json",
-          "sha256": "c1b0103f48ef49571173332d2ee07abf904ccdea25211ffd42f03dd057a8105b"
+          "sha256": "be00d329412b2558750d11e74c4976892c24d75f8a3876eb937df2c172cb5ca0"
+        },
+        {
+          "slug": "grpc-and-protobuf",
+          "title": "gRPC & Protocol Buffers",
+          "summary": "Binary RPC, Streaming",
+          "position": 4,
+          "path": "phases/04-networking/grpc-and-protobuf.md",
+          "questionsPath": "questions/grpc-and-protobuf.json",
+          "sha256": "bca15d3886a2bdb2cd5635c7d46a6ff4060821d19a3d8923cd03fff885a0c5ec"
         },
         {
           "slug": "http-https-websockets",
           "title": "HTTP/HTTPS, WebSockets",
           "summary": "Methods, Status codes",
-          "position": 2,
+          "position": 5,
           "path": "phases/04-networking/http-https-websockets.md",
           "questionsPath": "questions/http-https-websockets.json",
           "sha256": "0d9ce2cbf357726b6cfde9d619508306d70c478ab6a0a115629b3cef0627e285"
         },
         {
+          "slug": "network-performance",
+          "title": "Latency, Bandwidth & Network Performance",
+          "summary": "RTT, TTFB, HTTP/3",
+          "position": 6,
+          "path": "phases/04-networking/network-performance.md",
+          "questionsPath": "questions/network-performance.json",
+          "sha256": "77aeee13ff4933fd570400f508f7879164f4307e74039918109ca7608cd71d0c"
+        },
+        {
           "slug": "osi-model",
           "title": "OSI Model",
           "summary": "7 Layers, Protocols",
-          "position": 3,
+          "position": 7,
           "path": "phases/04-networking/osi-model.md",
           "questionsPath": "questions/osi-model.json",
           "sha256": "f61ae3e418cd3cbb5a0501c1fef998093ff1881c25ad135623ec9eaf764a4e3b"
@@ -332,10 +368,28 @@
           "slug": "tcp-ip-udp",
           "title": "TCP/IP, UDP",
           "summary": "Handshakes, Connections",
-          "position": 4,
+          "position": 8,
           "path": "phases/04-networking/tcp-ip-udp.md",
           "questionsPath": "questions/tcp-ip-udp.json",
           "sha256": "05ce8d1cfb693d9af4e35f993346a691f97aa4d4a3eabebad7e2e59fd17b0688"
+        },
+        {
+          "slug": "tls-and-certificates",
+          "title": "TLS, Certificates & HTTPS",
+          "summary": "Handshakes, Trust chains",
+          "position": 9,
+          "path": "phases/04-networking/tls-and-certificates.md",
+          "questionsPath": "questions/tls-and-certificates.json",
+          "sha256": "c8a93390ef3e2faaad53ff50cf9495d1fb0e77f9774c188cea66f66b3d74dac9"
+        },
+        {
+          "slug": "websockets-vs-polling",
+          "title": "Real-Time: WebSockets vs SSE vs Polling",
+          "summary": "Choosing, Scaling",
+          "position": 10,
+          "path": "phases/04-networking/websockets-vs-polling.md",
+          "questionsPath": "questions/websockets-vs-polling.json",
+          "sha256": "bffa122f8dcfbbe2feb31d64e891595bbc5f43352e4d6a898c2f6415613b558c"
         }
       ]
     },
@@ -355,19 +409,64 @@
           "sha256": "dd2275f227b38bd624bc17107c1ebe06f8a15a87b72a0fd3edb1d0c6995c21b3"
         },
         {
+          "slug": "connection-pooling",
+          "title": "Connection Pooling & Database Concurrency",
+          "summary": "Pool sizing, Exhaustion",
+          "position": 2,
+          "path": "phases/05-databases/connection-pooling.md",
+          "questionsPath": "questions/connection-pooling.json",
+          "sha256": "317da90c4b9e90c2deb0875cc9864569b90402e9c8ee65aa8d43140e142e075c"
+        },
+        {
+          "slug": "database-migrations",
+          "title": "Zero-Downtime Migrations",
+          "summary": "Expand-contract, Backfills",
+          "position": 3,
+          "path": "phases/05-databases/database-migrations.md",
+          "questionsPath": "questions/database-migrations.json",
+          "sha256": "8ddb1302f094f19b199782f7954f612f6488974f4a28a0eb1f7f44dde9fdce83"
+        },
+        {
           "slug": "indexing-and-transactions",
           "title": "Indexing & Transactions",
           "summary": "B-Trees, Isolation levels",
-          "position": 2,
+          "position": 4,
           "path": "phases/05-databases/indexing-and-transactions.md",
           "questionsPath": "questions/indexing-and-transactions.json",
           "sha256": "90e9ab2d686738e7067dd194983e4b4130425fa23fb7d256fdf180e9b5b07ed3"
         },
         {
+          "slug": "normalization-and-schema-design",
+          "title": "Normalisation & Schema Design",
+          "summary": "1NF-3NF, Denormalising",
+          "position": 5,
+          "path": "phases/05-databases/normalization-and-schema-design.md",
+          "questionsPath": "questions/normalization-and-schema-design.json",
+          "sha256": "ac528d535bf03bffb07963f8346790cd135792b2d0b33827f78b11df41a8d8af"
+        },
+        {
+          "slug": "query-optimization",
+          "title": "Reading Query Plans & Optimising",
+          "summary": "EXPLAIN, N+1",
+          "position": 6,
+          "path": "phases/05-databases/query-optimization.md",
+          "questionsPath": "questions/query-optimization.json",
+          "sha256": "aba088f06a518f9db669c22f7aa0bb7f7b99701eea9a2f7b893114430b43db85"
+        },
+        {
+          "slug": "redis-and-caching-patterns",
+          "title": "Redis & Caching Patterns",
+          "summary": "Cache-aside, Stampedes",
+          "position": 7,
+          "path": "phases/05-databases/redis-and-caching-patterns.md",
+          "questionsPath": "questions/redis-and-caching-patterns.json",
+          "sha256": "5955613d9ba9c860877fa752ddbc9a5607e16dfb99d3a4f2e826ff56bfb1b6c2"
+        },
+        {
           "slug": "relational-vs-nosql",
           "title": "Relational vs NoSQL",
           "summary": "ACID, BASE, Use cases",
-          "position": 3,
+          "position": 8,
           "path": "phases/05-databases/relational-vs-nosql.md",
           "questionsPath": "questions/relational-vs-nosql.json",
           "sha256": "f3d0cb5c6812e283eb48237c603bc4ce1e1a19c7f14e25b6546c031ac7d7c092"
@@ -376,10 +475,19 @@
           "slug": "sql-queries-and-joins",
           "title": "SQL Queries & Joins",
           "summary": "Inner, Outer, Group By",
-          "position": 4,
+          "position": 9,
           "path": "phases/05-databases/sql-queries-and-joins.md",
           "questionsPath": "questions/sql-queries-and-joins.json",
           "sha256": "c6b57e57512e6a6299a1a011546fff81dd8797f2fb7f02b948397b4269bed4a5"
+        },
+        {
+          "slug": "time-series-and-analytics-databases",
+          "title": "Time-Series & Analytical Databases",
+          "summary": "OLTP vs OLAP, Columnar",
+          "position": 10,
+          "path": "phases/05-databases/time-series-and-analytics-databases.md",
+          "questionsPath": "questions/time-series-and-analytics-databases.json",
+          "sha256": "e4d44e7268d52714ec5a1e2da7d50f9a628f2110348669a7097b89ba1d4ab4ba"
         }
       ]
     },
@@ -408,10 +516,46 @@
           "sha256": "a24e8b0e13455aa4df30d15f102d7e82fc42489305e787e1f163ece2948f6b6a"
         },
         {
+          "slug": "distributed-tracing-and-observability",
+          "title": "Observability in Distributed Systems",
+          "summary": "Traces, spans, metrics vs logs, correlation IDs",
+          "position": 3,
+          "path": "phases/06-distributed-systems/distributed-tracing-and-observability.md",
+          "questionsPath": "questions/distributed-tracing-and-observability.json",
+          "sha256": "2928289d381a59d04f677700887c449168a4f1f67e1adb487ecc7f4b6688f483"
+        },
+        {
+          "slug": "distributed-transactions",
+          "title": "Distributed Transactions & Sagas",
+          "summary": "2PC, sagas, compensating actions, the outbox pattern",
+          "position": 4,
+          "path": "phases/06-distributed-systems/distributed-transactions.md",
+          "questionsPath": "questions/distributed-transactions.json",
+          "sha256": "8657708331a9003ce081ab72ca9b7b0980478f6bd29492e533f2a9bdc4d1db3b"
+        },
+        {
+          "slug": "idempotency-and-retries",
+          "title": "Idempotency, Retries & Exactly-Once",
+          "summary": "Idempotency keys, backoff with jitter, retry storms",
+          "position": 5,
+          "path": "phases/06-distributed-systems/idempotency-and-retries.md",
+          "questionsPath": "questions/idempotency-and-retries.json",
+          "sha256": "514601c346dcf1b862ea8cb7bf34fe3c92f65d860bb828ad53b716e97127bb72"
+        },
+        {
+          "slug": "leader-election-and-coordination",
+          "title": "Leader Election & Coordination",
+          "summary": "Leases, split brain, fencing tokens, etcd patterns",
+          "position": 6,
+          "path": "phases/06-distributed-systems/leader-election-and-coordination.md",
+          "questionsPath": "questions/leader-election-and-coordination.json",
+          "sha256": "b2fd4c0c0475ec24ee0f2be176bf649837a9c2d432ae7fe9db1f3794ea459058"
+        },
+        {
           "slug": "message-queues",
           "title": "Message Queues",
           "summary": "Kafka, RabbitMQ, Pub/Sub",
-          "position": 3,
+          "position": 7,
           "path": "phases/06-distributed-systems/message-queues.md",
           "questionsPath": "questions/message-queues.json",
           "sha256": "aa867fab3719bd37d3a2ba3ad98a6a99d5b5026fe17c451f5f7f9a0b212e8f62"
@@ -420,10 +564,19 @@
           "slug": "replication-and-partitioning",
           "title": "Replication & Partitioning",
           "summary": "Leader-follower, Sharding",
-          "position": 4,
+          "position": 8,
           "path": "phases/06-distributed-systems/replication-and-partitioning.md",
           "questionsPath": "questions/replication-and-partitioning.json",
           "sha256": "d53ffc8dd92342349ef4276a5ee30f6d692474d85381e340ce88a5689892f94d"
+        },
+        {
+          "slug": "service-discovery-and-mesh",
+          "title": "Service Discovery & Service Mesh",
+          "summary": "Client vs server-side discovery, sidecars, mesh trade-offs",
+          "position": 9,
+          "path": "phases/06-distributed-systems/service-discovery-and-mesh.md",
+          "questionsPath": "questions/service-discovery-and-mesh.json",
+          "sha256": "720dc7730653646971c813154603aab2e522a72461cbeb200eb82bd22c446f1d"
         }
       ]
     },
@@ -452,28 +605,73 @@
           "sha256": "8daa46574b6a2e187a02c323bd73308ecaf3189293c100780c6049f7bc07ee90"
         },
         {
+          "slug": "cap-and-tradeoffs-in-practice",
+          "title": "Trade-offs in Practice",
+          "summary": "Beyond textbook CAP — PACELC, latency vs consistency",
+          "position": 3,
+          "path": "phases/07-system-design/cap-and-tradeoffs-in-practice.md",
+          "questionsPath": "questions/cap-and-tradeoffs-in-practice.json",
+          "sha256": "55dcba0f8b6bd6dcef28e0fc7433c1e21e18dca28666d73328db9fe5d179545b"
+        },
+        {
+          "slug": "capacity-planning",
+          "title": "Capacity Planning & Back-of-Envelope Estimation",
+          "summary": "Latency numbers, QPS, storage and bandwidth maths",
+          "position": 4,
+          "path": "phases/07-system-design/capacity-planning.md",
+          "questionsPath": "questions/capacity-planning.json",
+          "sha256": "66621b220e455c15f4964ec54c528ad8a18632065810d72cfef39c8daaf394df"
+        },
+        {
           "slug": "database-sharding",
           "title": "Database Sharding",
           "summary": "Consistent Hashing, Routing",
-          "position": 3,
+          "position": 5,
           "path": "phases/07-system-design/database-sharding.md",
           "questionsPath": "questions/database-sharding.json",
           "sha256": "aab8201b657125743f8b10eee4cfb36d690329139e40ace758d689cbebf04cf6"
         },
         {
+          "slug": "designing-for-failure",
+          "title": "Designing for Failure",
+          "summary": "Circuit breakers, bulkheads, timeouts, graceful degradation",
+          "position": 6,
+          "path": "phases/07-system-design/designing-for-failure.md",
+          "questionsPath": "questions/designing-for-failure.json",
+          "sha256": "795ba4dbfb0091a0e4520549b3c28ef5ba12e5aa5adaa292d9f5761539be2a36"
+        },
+        {
+          "slug": "load-balancing-strategies",
+          "title": "Load Balancing Strategies",
+          "summary": "Round robin, least connections, consistent hashing, health checks",
+          "position": 7,
+          "path": "phases/07-system-design/load-balancing-strategies.md",
+          "questionsPath": "questions/load-balancing-strategies.json",
+          "sha256": "986e60a32a8a0408cd221573c07144db1f02318e300b55cd09e562c6ef3dc466"
+        },
+        {
           "slug": "monolith-vs-microservices",
           "title": "Monolith vs Microservices",
           "summary": "Trade-offs, Architecture",
-          "position": 4,
+          "position": 8,
           "path": "phases/07-system-design/monolith-vs-microservices.md",
           "questionsPath": "questions/monolith-vs-microservices.json",
           "sha256": "74a47687e877c0754734448cbbed0ebd1c0a485b855e7851100ba58cc7067160"
         },
         {
+          "slug": "rate-limiting-and-throttling",
+          "title": "Rate Limiting & Throttling",
+          "summary": "Token bucket, sliding window, distributed counters",
+          "position": 9,
+          "path": "phases/07-system-design/rate-limiting-and-throttling.md",
+          "questionsPath": "questions/rate-limiting-and-throttling.json",
+          "sha256": "bc15a6849d251437cca14763a3d5835321a777304bfcc65a8a12f07874d69201"
+        },
+        {
           "slug": "scalability-and-performance",
           "title": "Scalability & Performance",
           "summary": "Vertical/Horizontal scaling, Bottlenecks",
-          "position": 5,
+          "position": 10,
           "path": "phases/07-system-design/scalability-and-performance.md",
           "questionsPath": "questions/scalability-and-performance.json",
           "sha256": "7f19b8b8f4b724fe4ad09ec0c66d786f076b154ff16c1333f843b0846995119d"
@@ -496,19 +694,46 @@
           "sha256": "9c7103adb42d1a7374f301640dc1f9c1c0cd1ad424b43e08963472cf24e66c7c"
         },
         {
+          "slug": "error-handling-patterns",
+          "title": "Error Handling in Node",
+          "summary": "Operational vs programmer errors, crashing well",
+          "position": 2,
+          "path": "phases/08-node-js/error-handling-patterns.md",
+          "questionsPath": "questions/error-handling-patterns.json",
+          "sha256": "dc1c7bd802ba6b8a086f851eeea7f8a745e8a3033c03523d91d4bced725a1992"
+        },
+        {
           "slug": "event-loop-and-async-io",
           "title": "Event Loop & Async I/O",
           "summary": "Phases, libuv, Callbacks",
-          "position": 2,
+          "position": 3,
           "path": "phases/08-node-js/event-loop-and-async-io.md",
           "questionsPath": "questions/event-loop-and-async-io.json",
           "sha256": "2a27d46fd6a744bf6947141467bbbae125531b696393105d527085fe4344a221"
         },
         {
+          "slug": "express-and-middleware",
+          "title": "HTTP Servers & Middleware",
+          "summary": "The middleware chain, ordering, error handlers",
+          "position": 4,
+          "path": "phases/08-node-js/express-and-middleware.md",
+          "questionsPath": "questions/express-and-middleware.json",
+          "sha256": "926e2db34320541c4c46d1f93c2327f483e983d2e304ca93a1fe526789831f19"
+        },
+        {
+          "slug": "performance-profiling",
+          "title": "Profiling & Debugging Performance",
+          "summary": "Flame graphs, event loop lag, heap snapshots",
+          "position": 5,
+          "path": "phases/08-node-js/performance-profiling.md",
+          "questionsPath": "questions/performance-profiling.json",
+          "sha256": "3786c009970dfe18119b4982c5216112d544a762e7f3499fa5ffe05ab4229801"
+        },
+        {
           "slug": "security-best-practices",
           "title": "Security best practices",
           "summary": "OWASP, Helmet, Rate limiting",
-          "position": 3,
+          "position": 6,
           "path": "phases/08-node-js/security-best-practices.md",
           "questionsPath": "questions/security-best-practices.json",
           "sha256": "b463ecd3907a02b98b99c6464579976094796c1f7e709ea5cfa3bbc21d735e2a"
@@ -517,16 +742,34 @@
           "slug": "streams-and-buffers",
           "title": "Streams & Buffers",
           "summary": "Readable, Writable, Transform",
-          "position": 4,
+          "position": 7,
           "path": "phases/08-node-js/streams-and-buffers.md",
           "questionsPath": "questions/streams-and-buffers.json",
           "sha256": "a2dfd55a68870977cd74c10689b0f579db38d2206cb5a166744841de2f034358"
         },
         {
+          "slug": "testing-node-applications",
+          "title": "Testing Node Applications",
+          "summary": "node:test, mocking boundaries, async tests",
+          "position": 8,
+          "path": "phases/08-node-js/testing-node-applications.md",
+          "questionsPath": "questions/testing-node-applications.json",
+          "sha256": "832d19ecd256c2d2c401a71ac2d3cd4c9b367763f55a1abc801a6d38b5374cbb"
+        },
+        {
+          "slug": "typescript-in-node",
+          "title": "TypeScript in Node",
+          "summary": "Structural typing, generics, unknown vs any",
+          "position": 9,
+          "path": "phases/08-node-js/typescript-in-node.md",
+          "questionsPath": "questions/typescript-in-node.json",
+          "sha256": "fd27b5e68c973f616147201dc2f9287873ff712e663a4d88f91682a656e18b0e"
+        },
+        {
           "slug": "v8-engine-and-garbage-collection",
           "title": "V8 Engine & Garbage Collection",
           "summary": "Memory management, Profiling",
-          "position": 5,
+          "position": 10,
           "path": "phases/08-node-js/v8-engine-and-garbage-collection.md",
           "questionsPath": "questions/v8-engine-and-garbage-collection.json",
           "sha256": "2c4ff2ab2df803428760b483bdfd609780e23bc56fb88d3d604482aaabd8c79f"
@@ -540,10 +783,19 @@
       "targetMonth": 9,
       "topics": [
         {
+          "slug": "api-versioning",
+          "title": "API Versioning & Backwards Compatibility",
+          "summary": "URL vs header versioning, deprecation, breaking changes",
+          "position": 1,
+          "path": "phases/09-backend-engineering/api-versioning.md",
+          "questionsPath": "questions/api-versioning.json",
+          "sha256": "16ad3509592525ea722fe351f6023c772ffb5de6a745aa1e49e824a0cb70c08a"
+        },
+        {
           "slug": "authentication-authorization",
           "title": "Authentication & Authorization",
           "summary": "OAuth 2.0, JWT, Sessions",
-          "position": 1,
+          "position": 2,
           "path": "phases/09-backend-engineering/authentication-authorization.md",
           "questionsPath": "questions/authentication-authorization.json",
           "sha256": "0daf101bd04d03c7ccb9fab7371388727ea90d7d68ed5bfe83d941a3ba3b6b31"
@@ -552,7 +804,7 @@
           "slug": "cicd-pipelines",
           "title": "CI/CD Pipelines",
           "summary": "GitHub Actions, Jenkins",
-          "position": 2,
+          "position": 3,
           "path": "phases/09-backend-engineering/cicd-pipelines.md",
           "questionsPath": "questions/cicd-pipelines.json",
           "sha256": "9155b579d297d7110ea341d8fea265bc0b5c88b001fbe61bcbdade980c0146f6"
@@ -561,19 +813,64 @@
           "slug": "docker-containerization",
           "title": "Docker & Containerization",
           "summary": "Images, Volumes, Networking",
-          "position": 3,
+          "position": 4,
           "path": "phases/09-backend-engineering/docker-containerization.md",
           "questionsPath": "questions/docker-containerization.json",
           "sha256": "290fd6a74409347c688df9a35d199551c05fe9eaf80f19fb74cb5fbddb73fe6f"
         },
         {
+          "slug": "infrastructure-as-code",
+          "title": "Infrastructure as Code",
+          "summary": "Declarative vs imperative, drift, state files",
+          "position": 5,
+          "path": "phases/09-backend-engineering/infrastructure-as-code.md",
+          "questionsPath": "questions/infrastructure-as-code.json",
+          "sha256": "f1f2c3300ce195498a9787f44cad4f5a24ceaef75fccc773a17f52c338d9d019"
+        },
+        {
           "slug": "kubernetes-basics",
           "title": "Kubernetes basics",
           "summary": "Pods, Deployments, Services",
-          "position": 4,
+          "position": 6,
           "path": "phases/09-backend-engineering/kubernetes-basics.md",
           "questionsPath": "questions/kubernetes-basics.json",
           "sha256": "d4121ccec827e84aa703fb87ac3ba829c65a24f52f8b73e2f2b48781aaf1ac9a"
+        },
+        {
+          "slug": "logging-and-monitoring",
+          "title": "Logging & Monitoring",
+          "summary": "Structured logs, useful levels, alert fatigue",
+          "position": 7,
+          "path": "phases/09-backend-engineering/logging-and-monitoring.md",
+          "questionsPath": "questions/logging-and-monitoring.json",
+          "sha256": "96f2b3a68c3205fa94442796f559ab7004edd91f2d0ea577a9fa33abb1514fd5"
+        },
+        {
+          "slug": "message-brokers-in-practice",
+          "title": "Message Brokers in Practice",
+          "summary": "Kafka, RabbitMQ, SQS, DLQs, at-least-once",
+          "position": 8,
+          "path": "phases/09-backend-engineering/message-brokers-in-practice.md",
+          "questionsPath": "questions/message-brokers-in-practice.json",
+          "sha256": "7078590fc72a18f68601624358966e629915b34ddebe9ba9cf8c49cf6af29c00"
+        },
+        {
+          "slug": "secrets-management",
+          "title": "Secrets Management",
+          "summary": "Env vars vs vaults, rotation, encryption at rest",
+          "position": 9,
+          "path": "phases/09-backend-engineering/secrets-management.md",
+          "questionsPath": "questions/secrets-management.json",
+          "sha256": "e0e152f1bfb35caa5cfd04a2eb992a23996725e256e6708d40b9d6e41b5b4da7"
+        },
+        {
+          "slug": "web-security-fundamentals",
+          "title": "Web Security Fundamentals",
+          "summary": "XSS, CSRF, SQL injection, SSRF, IDOR",
+          "position": 10,
+          "path": "phases/09-backend-engineering/web-security-fundamentals.md",
+          "questionsPath": "questions/web-security-fundamentals.json",
+          "sha256": "62754350350196e24b6ec50c91c22c450279983aa80585e4b930a9067520f12e"
         }
       ]
     },
@@ -608,7 +905,7 @@
           "position": 3,
           "path": "phases/10-interview-skills/resume-review.md",
           "questionsPath": "questions/resume-review.json",
-          "sha256": "c2a2fc37b7eecd153dfac7aebec44e26770ae8720cec12307119546916fce790"
+          "sha256": "90cab1af45b9b187ac7b33a43b9c41a6697bc1c611724f81496e6ed1477bcb34"
         },
         {
           "slug": "whiteboarding-practice",
@@ -618,6 +915,442 @@
           "path": "phases/10-interview-skills/whiteboarding-practice.md",
           "questionsPath": "questions/whiteboarding-practice.json",
           "sha256": "c6c250c2a98c87246ed22d7ec741d916c698843024802717ad92da03d3323b54"
+        }
+      ]
+    },
+    {
+      "slug": "system-design-case-studies",
+      "name": "Chapter 11: System Design Case Studies",
+      "position": 11,
+      "targetMonth": 5,
+      "topics": [
+        {
+          "slug": "design-chat-system",
+          "title": "Design a Chat System (WhatsApp/Slack)",
+          "summary": "WebSockets, message ordering, offline delivery",
+          "position": 1,
+          "path": "phases/11-system-design-case-studies/design-chat-system.md",
+          "questionsPath": "questions/design-chat-system.json",
+          "sha256": "7789fd1b2fb7203ee20ff2703e85c4a75554721ae50b65dbf0e29dfc47c2d09f"
+        },
+        {
+          "slug": "design-news-feed",
+          "title": "Design a News Feed (Twitter/Facebook)",
+          "summary": "Fan-out on write vs read, the celebrity problem",
+          "position": 2,
+          "path": "phases/11-system-design-case-studies/design-news-feed.md",
+          "questionsPath": "questions/design-news-feed.json",
+          "sha256": "ddca4fa07997efb4df84d4fb352578fd13b9cce639f2cd0e26b5e11674a427d8"
+        },
+        {
+          "slug": "design-notification-system",
+          "title": "Design a Notification System",
+          "summary": "Multi-channel fan-out, retries, deduplication",
+          "position": 3,
+          "path": "phases/11-system-design-case-studies/design-notification-system.md",
+          "questionsPath": "questions/design-notification-system.json",
+          "sha256": "05fa53a1ac6d33934dc502614eaf043350552179bca64a17192d3c429cef77ec"
+        },
+        {
+          "slug": "design-rate-limiter",
+          "title": "Design a Distributed Rate Limiter",
+          "summary": "Token bucket, sliding window, distributed counters",
+          "position": 4,
+          "path": "phases/11-system-design-case-studies/design-rate-limiter.md",
+          "questionsPath": "questions/design-rate-limiter.json",
+          "sha256": "ead513b32b521a3653ea7fd0b4f83a7027c3fb3d85a7dbeaa76bca9bc9f1a360"
+        },
+        {
+          "slug": "design-ride-sharing",
+          "title": "Design Ride Sharing (Uber/Lyft)",
+          "summary": "Geospatial indexing, matching, location update volume",
+          "position": 5,
+          "path": "phases/11-system-design-case-studies/design-ride-sharing.md",
+          "questionsPath": "questions/design-ride-sharing.json",
+          "sha256": "f2ee41671dceb2749b4343cf6ff7c4a9f63341690177291438d9684797f1b060"
+        },
+        {
+          "slug": "design-search-autocomplete",
+          "title": "Design Search Autocomplete (Typeahead)",
+          "summary": "Tries, precomputed top-k, per-keystroke latency",
+          "position": 6,
+          "path": "phases/11-system-design-case-studies/design-search-autocomplete.md",
+          "questionsPath": "questions/design-search-autocomplete.json",
+          "sha256": "c42358c66b940ebacba270fbf4a2a4d4967d40bc995204f89cdde8b9fecf5993"
+        },
+        {
+          "slug": "design-url-shortener",
+          "title": "Design a URL Shortener (TinyURL)",
+          "summary": "Base62 keys, collision handling, read-heavy scaling",
+          "position": 7,
+          "path": "phases/11-system-design-case-studies/design-url-shortener.md",
+          "questionsPath": "questions/design-url-shortener.json",
+          "sha256": "c5ad9703ef348c8c68179360bba6884b8d12da0dce9d10317a33bc9a3f291b11"
+        },
+        {
+          "slug": "design-video-streaming",
+          "title": "Design Video Streaming (YouTube/Netflix)",
+          "summary": "Transcoding pipeline, adaptive bitrate, CDN economics",
+          "position": 8,
+          "path": "phases/11-system-design-case-studies/design-video-streaming.md",
+          "questionsPath": "questions/design-video-streaming.json",
+          "sha256": "b5b71dc31654343d0407e9d874b0befec44d1b0a1d014ab4d3f888917f2c1529"
+        }
+      ]
+    },
+    {
+      "slug": "ai-engineering",
+      "name": "Chapter 12: AI & LLM Engineering",
+      "position": 12,
+      "targetMonth": 5,
+      "topics": [
+        {
+          "slug": "agent-orchestration",
+          "title": "Agent Orchestration",
+          "summary": "Loops, Memory, Termination, Cost",
+          "position": 1,
+          "path": "phases/12-ai-engineering/agent-orchestration.md",
+          "questionsPath": "questions/agent-orchestration.json",
+          "sha256": "2e3a39fa739c4de84d4eb2a18038aff5955b05f498f070ee33961817a1cff5da"
+        },
+        {
+          "slug": "llm-cost-and-latency",
+          "title": "Cost & Latency Engineering",
+          "summary": "Caching, Streaming, Routing",
+          "position": 2,
+          "path": "phases/12-ai-engineering/llm-cost-and-latency.md",
+          "questionsPath": "questions/llm-cost-and-latency.json",
+          "sha256": "e96d41a58fd3bf63715df1d3235b4c7934ed053af36121969bf2f06f54948e21"
+        },
+        {
+          "slug": "llm-evaluation-and-testing",
+          "title": "Evaluating LLM Systems",
+          "summary": "Golden Sets, LLM-as-Judge, Regressions",
+          "position": 3,
+          "path": "phases/12-ai-engineering/llm-evaluation-and-testing.md",
+          "questionsPath": "questions/llm-evaluation-and-testing.json",
+          "sha256": "05fad0e7725774420f64ddeadf58f146308c508656aed29ba5765bedc68298a1"
+        },
+        {
+          "slug": "llm-fundamentals",
+          "title": "How LLMs Actually Work",
+          "summary": "Tokens, Embeddings, Attention, Context",
+          "position": 4,
+          "path": "phases/12-ai-engineering/llm-fundamentals.md",
+          "questionsPath": "questions/llm-fundamentals.json",
+          "sha256": "c6fa15efa1e8163c44548977a8cf534da883dd78ab2313545d1ba89faa9dce0d"
+        },
+        {
+          "slug": "llm-safety-and-guardrails",
+          "title": "Safety & Guardrails in Production",
+          "summary": "Injection, PII, Validation, Limits",
+          "position": 5,
+          "path": "phases/12-ai-engineering/llm-safety-and-guardrails.md",
+          "questionsPath": "questions/llm-safety-and-guardrails.json",
+          "sha256": "71cd7d6e011d71d355ab5aa18165a8ee783bad71e88caaf6e8584b1db68b5400"
+        },
+        {
+          "slug": "prompt-engineering",
+          "title": "Prompt Engineering That Works",
+          "summary": "Roles, Few-shot, Structured Output",
+          "position": 6,
+          "path": "phases/12-ai-engineering/prompt-engineering.md",
+          "questionsPath": "questions/prompt-engineering.json",
+          "sha256": "1da181f56421dc9311493c1011902ed1d1be0cb8f8c3fbd6c543e932b2d56058"
+        },
+        {
+          "slug": "rag-retrieval-augmented-generation",
+          "title": "RAG: Retrieval-Augmented Generation",
+          "summary": "Chunking, Embedding, Reranking",
+          "position": 7,
+          "path": "phases/12-ai-engineering/rag-retrieval-augmented-generation.md",
+          "questionsPath": "questions/rag-retrieval-augmented-generation.json",
+          "sha256": "958c77ac18c7ae795c54c2bd0d2d38e5a486574c090eca57934e8f73a65aa5e0"
+        },
+        {
+          "slug": "sampling-and-decoding",
+          "title": "Sampling: Temperature, Top-p, Top-k",
+          "summary": "Temperature, Top-k, Nucleus",
+          "position": 8,
+          "path": "phases/12-ai-engineering/sampling-and-decoding.md",
+          "questionsPath": "questions/sampling-and-decoding.json",
+          "sha256": "332b0ddbe21e72d16ce5982f6267ef015dff2d986799deb54b522575f02d14e1"
+        },
+        {
+          "slug": "tool-calling-and-function-calling",
+          "title": "Tool Calling & Function Calling",
+          "summary": "Schemas, Agentic Loop, Errors",
+          "position": 9,
+          "path": "phases/12-ai-engineering/tool-calling-and-function-calling.md",
+          "questionsPath": "questions/tool-calling-and-function-calling.json",
+          "sha256": "6aa84abe32f363b3c9ac0bda439e7b8dbde247539d0792467a2204f5c8fa0c6d"
+        },
+        {
+          "slug": "vector-databases",
+          "title": "Vector Databases & Similarity Search",
+          "summary": "Cosine, ANN, HNSW Trade-offs",
+          "position": 10,
+          "path": "phases/12-ai-engineering/vector-databases.md",
+          "questionsPath": "questions/vector-databases.json",
+          "sha256": "15372c7d052cceb10abf3213257ce6336df82b2869594fe6392211515ef30489"
+        }
+      ]
+    },
+    {
+      "slug": "behavioral-and-hr",
+      "name": "Chapter 13: Behavioural & HR Interviews",
+      "position": 13,
+      "targetMonth": 6,
+      "topics": [
+        {
+          "slug": "conflict-and-disagreement",
+          "title": "Conflict & Disagreement Stories",
+          "summary": "Disagreeing up, blocked peers, being overruled",
+          "position": 1,
+          "path": "phases/13-behavioral-and-hr/conflict-and-disagreement.md",
+          "questionsPath": "questions/conflict-and-disagreement.json",
+          "sha256": "03da79825fa915165abb6c2abe69ec48476377e5475fba1a90acbe0e90f952cb"
+        },
+        {
+          "slug": "failure-and-learning",
+          "title": "Talking About Failure",
+          "summary": "Owning it without self-destruction",
+          "position": 2,
+          "path": "phases/13-behavioral-and-hr/failure-and-learning.md",
+          "questionsPath": "questions/failure-and-learning.json",
+          "sha256": "0c4c3c4e9b3de69b180b8161cda2c505bdf067151be9c37e049a8dcf09ca30a1"
+        },
+        {
+          "slug": "hr-screening-round",
+          "title": "The HR Screening Round",
+          "summary": "Notice period, gaps, why you left, silent filters",
+          "position": 3,
+          "path": "phases/13-behavioral-and-hr/hr-screening-round.md",
+          "questionsPath": "questions/hr-screening-round.json",
+          "sha256": "537b696438644c079a211f810025eab39320a6db7392777744838ed3737ac955"
+        },
+        {
+          "slug": "questions-to-ask-interviewers",
+          "title": "Questions That Make You Look Senior",
+          "summary": "What to ask an engineer, a manager, a skip-level",
+          "position": 4,
+          "path": "phases/13-behavioral-and-hr/questions-to-ask-interviewers.md",
+          "questionsPath": "questions/questions-to-ask-interviewers.json",
+          "sha256": "8ab9abf04f4f8458af5b041815710cdba00a53a78ceb81791289e5144d22a176"
+        },
+        {
+          "slug": "salary-negotiation",
+          "title": "Salary Negotiation",
+          "summary": "Anchoring, the counter, and what else is negotiable",
+          "position": 5,
+          "path": "phases/13-behavioral-and-hr/salary-negotiation.md",
+          "questionsPath": "questions/salary-negotiation.json",
+          "sha256": "2d5984c396f3d416fc4d4c02e7d0c399f8cdf737bcf77e752c4dfcd91911a3d2"
+        },
+        {
+          "slug": "star-method-mastery",
+          "title": "The STAR Method, Properly",
+          "summary": "Story banks, measurable Results, airtime budgeting",
+          "position": 6,
+          "path": "phases/13-behavioral-and-hr/star-method-mastery.md",
+          "questionsPath": "questions/star-method-mastery.json",
+          "sha256": "6e2eccc0d85fcc020fb53313ccbf625458b48fca99617398fad3cf85904c2c56"
+        },
+        {
+          "slug": "strengths-and-weaknesses",
+          "title": "Strengths & Weaknesses",
+          "summary": "A real weakness with a real remediation",
+          "position": 7,
+          "path": "phases/13-behavioral-and-hr/strengths-and-weaknesses.md",
+          "questionsPath": "questions/strengths-and-weaknesses.json",
+          "sha256": "6012969173d5680e60ab76544166e0eba0827e27fd1758aba490c3aa43a40d34"
+        },
+        {
+          "slug": "tell-me-about-yourself",
+          "title": "Tell Me About Yourself",
+          "summary": "The 90-second present-past-future answer",
+          "position": 8,
+          "path": "phases/13-behavioral-and-hr/tell-me-about-yourself.md",
+          "questionsPath": "questions/tell-me-about-yourself.json",
+          "sha256": "ca40b68a6f171e4983582cafb5d0c17cc3e12a69b0fbf4d92a7f2f9bfab564e7"
+        },
+        {
+          "slug": "why-this-company",
+          "title": "Why This Company / Why This Role",
+          "summary": "Research that shows, their problems and your experience",
+          "position": 9,
+          "path": "phases/13-behavioral-and-hr/why-this-company.md",
+          "questionsPath": "questions/why-this-company.json",
+          "sha256": "8a4505a01d2bc40aaabd08e7b6e490d2f722661456d983a907007b0976ac3d78"
+        }
+      ]
+    },
+    {
+      "slug": "situational-and-leadership",
+      "name": "Chapter 14: Situational & Leadership",
+      "position": 14,
+      "targetMonth": 6,
+      "topics": [
+        {
+          "slug": "code-review-conflicts",
+          "title": "Code Review Standoffs",
+          "summary": "Blocking, budging, and the security issue nobody wants to own",
+          "position": 1,
+          "path": "phases/14-situational-and-leadership/code-review-conflicts.md",
+          "questionsPath": "questions/code-review-conflicts.json",
+          "sha256": "eb9988386a0b267e4e3803589a52eeeaaa3d8c954aeb00cf976af831aadc8449"
+        },
+        {
+          "slug": "disagreeing-with-leadership",
+          "title": "When Leadership Is Wrong",
+          "summary": "Disagree and commit, escalation paths, and being overruled",
+          "position": 2,
+          "path": "phases/14-situational-and-leadership/disagreeing-with-leadership.md",
+          "questionsPath": "questions/disagreeing-with-leadership.json",
+          "sha256": "d9172107fae56e06f299f33f03f08430efbcd697bfd9d21fd69cb1adcd46f810"
+        },
+        {
+          "slug": "leading-without-authority",
+          "title": "Leading Without Authority",
+          "summary": "Driving a cross-team change when nobody reports to you",
+          "position": 3,
+          "path": "phases/14-situational-and-leadership/leading-without-authority.md",
+          "questionsPath": "questions/leading-without-authority.json",
+          "sha256": "84f167b3097957a769c208870e5f9160461ee06c073031478642bfb286262150"
+        },
+        {
+          "slug": "mentoring-and-onboarding",
+          "title": "Mentoring & Onboarding",
+          "summary": "What good mentorship looks like when you are an IC, not a manager",
+          "position": 4,
+          "path": "phases/14-situational-and-leadership/mentoring-and-onboarding.md",
+          "questionsPath": "questions/mentoring-and-onboarding.json",
+          "sha256": "5adbb0b9901c8cdc74081a457830f39cbb10f339cd5edca0f10a164c52a960ad"
+        },
+        {
+          "slug": "production-incident-response",
+          "title": "The 3am Outage",
+          "summary": "Triage, comms, and blameless postmortems when production is on fire",
+          "position": 5,
+          "path": "phases/14-situational-and-leadership/production-incident-response.md",
+          "questionsPath": "questions/production-incident-response.json",
+          "sha256": "962302c5d53602e49708cffbd120b24f1bcad773008134f1e30c0e9e85dbb86d"
+        },
+        {
+          "slug": "scope-creep-and-estimation",
+          "title": "Scope Creep & Bad Estimates",
+          "summary": "Renegotiating a 3x overrun without losing credibility",
+          "position": 6,
+          "path": "phases/14-situational-and-leadership/scope-creep-and-estimation.md",
+          "questionsPath": "questions/scope-creep-and-estimation.json",
+          "sha256": "632d3309b98edd8ab9e85b419b25b6a10ece9ce999fcda3869dd0b7e6ba847bf"
+        },
+        {
+          "slug": "shipping-under-pressure",
+          "title": "Ship It or Hold It",
+          "summary": "Deciding what is safe to ship when the deadline is tomorrow",
+          "position": 7,
+          "path": "phases/14-situational-and-leadership/shipping-under-pressure.md",
+          "questionsPath": "questions/shipping-under-pressure.json",
+          "sha256": "9fdf82f8f187ac1823964fda9fdd26e03b70fa6cd7998976ace5cdfa3b8a101a"
+        },
+        {
+          "slug": "technical-debt-decisions",
+          "title": "Arguing for Technical Debt",
+          "summary": "Making the business case in their language, and knowing when not to pay",
+          "position": 8,
+          "path": "phases/14-situational-and-leadership/technical-debt-decisions.md",
+          "questionsPath": "questions/technical-debt-decisions.json",
+          "sha256": "5651c16abebb9898fadf9ce41f89eff7021f321554feffbf4d2d86f5cd8dfe8e"
+        },
+        {
+          "slug": "underperforming-teammate",
+          "title": "The Teammate Who Isn't Delivering",
+          "summary": "Handling a struggling peer when you are not their manager",
+          "position": 9,
+          "path": "phases/14-situational-and-leadership/underperforming-teammate.md",
+          "questionsPath": "questions/underperforming-teammate.json",
+          "sha256": "df7949540d004133332f8b4ccec65fe5698cd26fcba3d1ab4406d59773e5cfe3"
+        }
+      ]
+    },
+    {
+      "slug": "how-to-answer",
+      "name": "Chapter 15: How to Answer Any Question",
+      "position": 15,
+      "targetMonth": 1,
+      "topics": [
+        {
+          "slug": "asking-clarifying-questions",
+          "title": "Clarifying Questions That Score Points",
+          "summary": "Which questions look senior, which look lost",
+          "position": 1,
+          "path": "phases/15-how-to-answer/asking-clarifying-questions.md",
+          "questionsPath": "questions/asking-clarifying-questions.json",
+          "sha256": "f331bfe0084f2d86fbb816a36b864326af497f7b7b5cfd19b2a8dfaca969b135"
+        },
+        {
+          "slug": "how-to-approach-any-question",
+          "title": "The Universal First 60 Seconds",
+          "summary": "What to say the moment any question lands",
+          "position": 2,
+          "path": "phases/15-how-to-answer/how-to-approach-any-question.md",
+          "questionsPath": "questions/how-to-approach-any-question.json",
+          "sha256": "0dad47f13d2283c4ad1ce266f737f6a0c894d653a50e8c25512c15af2f7db71f"
+        },
+        {
+          "slug": "how-to-approach-behavioral",
+          "title": "A Behavioural Answer Template",
+          "summary": "STAR as a fill-in-the-blank you can actually use",
+          "position": 3,
+          "path": "phases/15-how-to-answer/how-to-approach-behavioral.md",
+          "questionsPath": "questions/how-to-approach-behavioral.json",
+          "sha256": "2cc602def5bea75d5ad5d94aed8601cae15678775943bd11d32f90e1c8edd121"
+        },
+        {
+          "slug": "how-to-approach-coding-problems",
+          "title": "A Coding Interview Template",
+          "summary": "Restate, examples, brute force, optimise, code, test",
+          "position": 4,
+          "path": "phases/15-how-to-answer/how-to-approach-coding-problems.md",
+          "questionsPath": "questions/how-to-approach-coding-problems.json",
+          "sha256": "4c1f5b83597852cc2008286b6409a616d27729898cf06a4d2fd48cfc1d325989"
+        },
+        {
+          "slug": "how-to-approach-system-design",
+          "title": "A System Design Template You Can Follow",
+          "summary": "The exact 6-step script for a 45-minute design round",
+          "position": 5,
+          "path": "phases/15-how-to-answer/how-to-approach-system-design.md",
+          "questionsPath": "questions/how-to-approach-system-design.json",
+          "sha256": "e3dcb375199b35279c830d7ba4449dc6a35ef705c088749aaf3830770487041b"
+        },
+        {
+          "slug": "how-to-introduce-yourself",
+          "title": "Introducing Yourself, From Your Resume",
+          "summary": "Build a 90-second intro from your own CV",
+          "position": 6,
+          "path": "phases/15-how-to-answer/how-to-introduce-yourself.md",
+          "questionsPath": "questions/how-to-introduce-yourself.json",
+          "sha256": "7d0e9ec15e65889ba4b1c46829c17e53c173606e18d8e00237a2aede70f14cc1"
+        },
+        {
+          "slug": "thinking-out-loud",
+          "title": "Thinking Out Loud Without Rambling",
+          "summary": "Phrases that buy time, narrate silence, and recover",
+          "position": 7,
+          "path": "phases/15-how-to-answer/thinking-out-loud.md",
+          "questionsPath": "questions/thinking-out-loud.json",
+          "sha256": "8570ee5273cb3e3cd25f29bf3d6b496c9216fe80dfcb85a0e3bdb956858892f9"
+        },
+        {
+          "slug": "when-you-dont-know",
+          "title": "When You Genuinely Don't Know",
+          "summary": "The honest recovery that scores, vs the bluff that fails",
+          "position": 8,
+          "path": "phases/15-how-to-answer/when-you-dont-know.md",
+          "questionsPath": "questions/when-you-dont-know.json",
+          "sha256": "6b8e39db4432af74597f1a8ab914975cb1817d2aec54da3794f231cd8d3342cb"
         }
       ]
     }

@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Explain fan-out on write versus fan-out on read in one paragraph each.",
+    "answer_markdown": "Fan-out on write (push) does the work at post time: when someone posts, background workers append that post's ID to the precomputed feed of every follower. Reads become a single cache lookup, which is ideal because feeds are read far more than they are written, but a post costs O(followers) writes. Fan-out on read (pull) does no work at post time; when a user opens their feed, the system queries everyone they follow and merges the results by timestamp. Writes are O(1) and the feed is always fresh, but reads are slow and get slower the more accounts a user follows. The trade-off is simply where you pay the cost, and feeds are read-heavy, so push is the default.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is the celebrity problem, and why does it break pure fan-out on write?",
+    "answer_markdown": "Fan-out on write implicitly assumes follower counts are roughly uniform, but they follow a power law — most users have hundreds of followers while a few have tens of millions. When an account with 100 million followers posts, that single write becomes 100 million writes, which at 10,000 writes per second is about 167 minutes of work on one worker. Worse, that flood sits in the same queue as everyone else's fan-out, so ordinary users' posts get delayed behind it, and the celebrity's own post lands late. The problem is not that the total work is impossible but that it arrives as an unpredictable spike, so you would have to provision constantly for a rare burst.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Describe the hybrid fan-out approach and how the read path works.",
+    "answer_markdown": "Split authors by follower count. Accounts below a threshold (roughly 10,000 followers) are fanned out on write, so their posts are already sitting in each follower's precomputed feed cache. Accounts above the threshold are not fanned out at all; their posts are pulled live at read time. A user's feed is then a merge of two already-sorted sources: their pushed feed cache, plus a small live query for recent posts from the handful of celebrities they follow. Because any one user follows very few high-follower accounts, that live pull stays cheap, and you get fast reads without write explosions. The threshold is a tuning knob rather than a fixed constant, which is worth saying explicitly.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why do feeds store post IDs rather than the post content itself?",
+    "answer_markdown": "Storing content in every follower's feed duplicates the same text across hundreds or millions of feeds, multiplying storage by the average follower count — with 300M users and 500-post feeds, IDs alone come to about 1.2 TB, and full content would be orders of magnitude larger. Duplication also makes mutations nearly impossible: editing or deleting a post would require rewriting every copy. Storing only IDs keeps each feed tiny, leaves one canonical copy of the post, and lets the client hydrate content in a single batch fetch from a separate cache. Deletion then becomes a read-path filter rather than a mass rewrite.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "A post is deleted after it has been fanned out to 10 million feeds. How do you handle it?",
+    "answer_markdown": "You do not go back and rewrite ten million cached feeds — that is the same write explosion you designed the system to avoid. Because feeds hold only post IDs, you handle deletion on the read path: the ID stays in the feed, but when the client hydrates content the post store returns nothing (or a tombstone) and the entry is skipped. This makes deletion O(1) instead of O(followers). The cost is that feeds temporarily contain dead IDs, which slightly reduces the effective feed length until the entries age out of the capped list, and that is an acceptable trade.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How would you avoid wasting fan-out work on users who never open the app?",
+    "answer_markdown": "Track a last-active timestamp per user and skip fan-out to anyone inactive beyond some window, such as 30 days. Most services have far more registered accounts than daily active ones, so a large share of fan-out writes build feeds nobody will ever read. When a dormant user returns, rebuild their feed lazily on first load using the pull path, then resume pushing to them. This cuts fan-out volume substantially at the cost of a slower first load for returning users, which is exactly the right place to spend latency since it happens rarely and the user is already waiting for a cold app start.",
+    "difficulty": "medium"
+  }
+]

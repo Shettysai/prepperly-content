@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Tell me about a time you failed.",
+    "answer_markdown": "Lead with the failure in the first sentence, then work outward: 'I corrupted about 12,000 user records in production with a migration I ran myself.' Name the decision that caused it in the first person and without hedging — 'I skipped the dry-run our runbook asks for because I'd run four similar migrations that month' — then size the impact honestly in both directions, including what was not damaged. Spend roughly half your airtime on what changed, with evidence it stuck: a CI check you wrote, twenty clean migrations since, a staging sampler that has caught other people's bugs. The register to aim for is a post-incident review: factual, unemotional, heavy on action items and light on how bad you felt.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is over-owning, and why is it scored as badly as blaming other people?",
+    "answer_markdown": "Over-owning is taking more blame than the facts support — 'it was entirely my fault, probably the worst thing I've done professionally, I still feel awful about it.' It fails because it demonstrates you cannot size severity, which is genuinely alarming in someone who will be on call: an engineer who treats a ninety-minute recoverable incident as a catastrophe will escalate disproportionately at 3am, and one who cannot calibrate downward probably cannot calibrate upward either. It also crowds out the mechanism — the answer fills with apology and never reaches what changed. The target is the narrow band between under-owning and over-owning: exactly your share, stated flatly, with the emotional content brief and proportionate.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why do interviewers listen for passive voice in a failure story?",
+    "answer_markdown": "Because the grammar shifts exactly where the responsibility is, and it is the loudest tell in the whole answer. Candidates narrate context actively and then slip into passive at the critical moment: 'the migration went out without review' rather than 'I deployed it without asking for review.' The shift is usually unconscious, which is what makes it informative — it marks the sentence the candidate is uncomfortable owning. The fix is mechanical: write the story out, underline every passive verb around the failure itself, and rewrite each in the first person. The content rarely changes much, but the answer reads completely differently.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your failure was caused partly by a bad staging environment. How do you mention that without it sounding like an excuse?",
+    "answer_markdown": "Mention it as something you then fixed, not as a reason it was not your fault. The excuse version is 'staging didn't have production-like data, so the edge case wasn't visible' — true, and it ends there. The strong version keeps your decision as the proximate cause and treats the environment as a root cause you owned: 'the decision that caused it was mine, I skipped the dry-run. The deeper problem was that staging didn't resemble production, so I built a sampler that pulls an anonymised 5% slice weekly, and it's caught two other people's bugs since.' Same fact, opposite effect — one deflects and the other demonstrates that you fix systems rather than just apologising for them.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your failure was a soft one — you kept a doomed project alive for two quarters — so there is no CI check to point to. How do you prove the change stuck?",
+    "answer_markdown": "Prove it by showing you have used the new habit somewhere it cost you something. 'Every proposal I write now has a we-stop-if line with a date and a number in the first paragraph, and I've killed one of my own projects at that checkpoint since — six weeks in, on the number I'd written down' is strong precisely because applying the mechanism was expensive for the person describing it. That is the closest a behavioural change gets to a CI check. It also helps to leave one consequence unresolved rather than tying the story off neatly: acknowledging that an engineer spent six months on something deleted, without either dismissing it or dramatising it, reads as maturity.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Is it acceptable to use a failure from five or six years ago?",
+    "answer_markdown": "It is a weak choice, because it implies either that nothing has gone wrong since — which no interviewer believes — or that you have not taken on work hard enough to fail at. Prefer something from the last two or three years, since recency also makes the mechanism more credible: a change you made last year has visible evidence, while a lesson from 2019 has had time to become a story rather than a practice. The other selection rule is that the failure must have had a real consequence. A failure nobody noticed does not answer the question, and you will simply be asked again — this time improvising, without preparation.",
+    "difficulty": "easy"
+  }
+]

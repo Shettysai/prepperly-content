@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the difference between OLTP and OLAP?",
+    "answer_markdown": "OLTP, online transaction processing, is what your application database does: many small concurrent reads and writes of individual rows, stored row-oriented with B-tree indexes and full ACID transactions, optimised for point lookups and updates. OLAP, online analytical processing, is what an analytics database does: a few users running heavy queries that scan enormous numbers of rows to produce aggregates, stored column-oriented with heavy compression and vectorised execution. They are optimised for opposite questions, namely everything about one row versus one thing about all rows, which is why one system rarely does both well.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is columnar storage so much faster for analytical queries?",
+    "answer_markdown": "Two effects compound. First, a query reads only the columns it needs: averaging one field across a table with fifty columns reads a fiftieth of the data rather than pulling whole rows and discarding most of each. Second, storing similar values adjacently compresses far better than mixed row data, often by an order of magnitude or more, so even that one column occupies much less disk. Since these queries are bound by how many bytes must be read from disk rather than by CPU, reducing bytes read translates almost directly into speed.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why not use a columnar database for everything?",
+    "answer_markdown": "Everything that makes columnar storage fast for aggregates makes it slow for transactions. Fetching one complete row means reassembling values from many separate column locations instead of reading one contiguous record. Updating a single value requires decompressing a block, modifying it, and recompressing, which is why many columnar systems handle single-row updates poorly or not at all. Transaction support is often limited or absent too. A columnar store is therefore a complement to an OLTP database rather than a replacement for it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "When does PostgreSQL stop being enough, and what should you try first?",
+    "answer_markdown": "It stops being enough when analytical queries scan a large fraction of a large table, when those queries compete with customer-facing transactional traffic, or when time-series ingest volume overwhelms index maintenance on every insert. The mistake is jumping straight to a new database. Try partitioning the table by time first, so queries touch only relevant chunks, and add rollup or summary tables maintained on write so dashboards read pre-aggregated values instead of scanning raw rows. That solves a large share of cases without taking on a second system to operate, replicate into, and keep consistent.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is cardinality in a time-series database, and why does it cause outages?",
+    "answer_markdown": "Metrics are stored as a metric name plus tags, and every unique combination of tag values becomes its own separate series that must be indexed and tracked. Tagging by region with ten values and service with fifty yields five hundred series, which is fine. Adding a tag like user_id or request_id with a million distinct values multiplies that into hundreds of millions of series, and the memory needed for the index explodes until the database falls over. The outage is driven by the number of distinct series rather than data volume, so the rule is that tags must be low-cardinality dimensions you group by, never unique identifiers.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why does adding an index not fix a slow dashboard aggregate?",
+    "answer_markdown": "Indexes help selective queries, meaning ones that return a small fraction of the table, by letting the database skip most rows. A dashboard query like average response time per hour over ninety days is not selective: it genuinely needs to read every row in that range to compute the aggregate, so there is nothing for an index to skip. This is the moment where the right answer stops being query optimisation and becomes a recognition that the workload shape is wrong for the database, calling for partitioning, pre-aggregated rollups, or a columnar store.",
+    "difficulty": "medium"
+  }
+]

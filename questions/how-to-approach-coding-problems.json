@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why should you state the brute-force solution out loud even when you already suspect a faster approach exists?",
+    "answer_markdown": "Saying it does three separate jobs. It proves you can recognise a bad complexity when you see one, which is itself a skill being scored. It gives you a working fallback you can code if the clever idea never arrives, so you are never left with nothing. And it gives the interviewer a baseline to hint against, since 'can you avoid that second loop?' is a hint they can only offer once you have named the second loop. Candidates often hide the brute force because it feels like admitting weakness, but the opposite is true: not knowing your solution is quadratic is the weakness, naming it is not.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "In the two-sum solution using a hash map, why must you store the current number after checking for its partner rather than before?",
+    "answer_markdown": "Storing first would let a number match itself. With input [3, 5] and target 6, storing the 3 before checking would find 3 already in the map when looking for the partner of 3, and wrongly return a pair made of one element used twice. Checking first guarantees the map only contains numbers from earlier positions, so any match is genuinely two distinct indices. This is a good example of a bug that is invisible when reading the code but obvious the moment you trace a concrete example by hand, which is exactly what the testing step is for.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the difference between useful narration and useless narration while writing code in an interview?",
+    "answer_markdown": "Useful narration explains why a line exists; useless narration describes what you are typing. Saying 'now I'm adding a for loop' tells the interviewer nothing they cannot see on the screen. Saying 'I'll loop once through the array, and for each number check whether its partner is already in the map' explains the strategy and lets them verify your reasoning. The distinction matters because interviewers are scoring your decisions, not your typing speed, and only the first kind of sentence contains a decision. A practical filter is to ask whether the sentence would still make sense if the screen were switched off.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Walk through what a candidate should do after finishing their code but before saying they are done.",
+    "answer_markdown": "Trace the original example by hand out loud, stepping through the actual variable values rather than asserting the code is correct. Then deliberately test three edge cases: empty input, a single element, and duplicates, since these are where real bugs concentrate. Finally state the time and space complexity, which is a free point that candidates routinely forget to claim. Declaring 'done' without this is a common failure because interviewers are specifically waiting to see whether you verify your own work, and finding your own bug scores considerably better than having the interviewer find it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Two candidates produce identical final code, but one is hired and one is not. What most plausibly differed?",
+    "answer_markdown": "The evidence they produced along the way. The candidate who restated the problem, asked whether an index could be reused, named the brute force and its complexity, explained the space-for-time trade before coding, and traced edge cases at the end gave the interviewer something to score at every minute. The candidate who typed in silence for fifteen minutes produced one data point: the final code. Interviews are graded on the observable process because that process is what predicts on-the-job collaboration, and identical code with no visible reasoning could equally have come from memorising the problem. This is why the same person can pass or fail with the same knowledge depending only on whether they narrated.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "An interviewer asks 'can you do better?' after your first working solution. What should you look for first?",
+    "answer_markdown": "Look for repeated work, since that is the source of most avoidable complexity. If your solution scans the same data multiple times, or recomputes something it already calculated, storing those results in a hash map or set usually collapses a quadratic solution to linear. State the specific waste out loud before proposing the fix, for example 'the slow part is re-scanning the array for each element', because naming the waste is what makes the optimisation look reasoned rather than recalled. Also name what you trade, typically extra memory for speed, since interviewers score the awareness of the trade-off as much as the improvement itself.",
+    "difficulty": "medium"
+  }
+]

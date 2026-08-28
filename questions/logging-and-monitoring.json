@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is structured logging and why is it better than logging readable sentences?",
+    "answer_markdown": "Structured logging emits each log entry as a machine-parseable object, typically one JSON object per line, with named fields instead of values interpolated into prose. The line `Order 991 failed for user 42` is easy for a human to read but requires fragile regular expressions to analyse, whereas `{\"msg\":\"order failed\",\"orderId\":991,\"userId\":42}` can be searched, filtered, grouped, and counted directly by a log platform. That difference matters enormously during an incident, when you want to answer questions like \"how many distinct users hit this error in the last ten minutes\" in seconds rather than by writing a parser. It also makes fields consistent across services, so a query for a user ID works everywhere rather than depending on how each developer phrased their message.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What are the four golden signals, and why are they the recommended starting point?",
+    "answer_markdown": "They come from Google's SRE book and are latency, traffic, errors, and saturation. Latency is how long requests take, measured as percentiles rather than averages so slow outliers are visible. Traffic is the demand on the system, such as requests per second. Errors is the rate of failing requests, including requests that return a success code but the wrong content. Saturation is how full the most constrained resource is — queue depth, connection pool usage, or event loop lag in Node. They are recommended as a starting set because between them they capture almost every way a user-facing service can be unhealthy, they apply to nearly any service regardless of what it does, and they are symptoms rather than internal causes, which makes them the right basis for alerting.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the difference between something that should page an on-call engineer and something that belongs on a dashboard?",
+    "answer_markdown": "Page on symptoms that mean users are being harmed right now or imminently and certainly will be; dashboard everything else. A checkout error rate above five percent sustained for several minutes is a page, because customers are actively failing to buy. CPU at ninety percent is not, because a service can run hot and serve every request perfectly well — it is a cause, and if it ever actually hurts users the symptom-level alert will fire anyway. The practical test for any alert is: if this fires and I do nothing, will a user be harmed? If not, it is information, not an emergency. Adding a duration threshold matters too, so that momentary blips that self-resolve never wake anyone.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is alert fatigue, and why is a noisy alerting system worse than no alerting at all?",
+    "answer_markdown": "Alert fatigue is what happens when responders receive so many alerts that are not actionable that they learn, correctly, that most alerts are nothing — so they start acknowledging without investigating, or muting channels entirely. It is worse than having no alerting because of false assurance: the organisation believes it will be told when something breaks, and staffs and plans accordingly, while in practice the one genuine page is indistinguishable from the ninety that were noise. It also inflicts real human cost, since being woken repeatedly for non-problems drives people off on-call rotations. The fixes are alerting on symptoms rather than causes so one incident produces roughly one page, requiring conditions to persist before firing, and periodically deleting alerts that have never once led to action.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How would you trace a single user's request across five microservices?",
+    "answer_markdown": "Generate a unique correlation ID at the system's edge — the first service or gateway the request touches — and attach it to every log line that service writes, typically by binding it into a child logger so no individual call site can forget. Then propagate it in a header on every downstream call, with each service reading the incoming ID and continuing to use it rather than creating a new one. Because every service logs with the same identifier, a single query in your log platform returns the request's full journey in order, across all five services. Distributed tracing systems formalise this further with a trace ID plus per-hop span IDs, which additionally captures how long each service took and how calls nested. Without any of this, logs from concurrent requests are interleaved and effectively unreadable.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why should log levels be defined by who acts on them rather than by how interesting the message is?",
+    "answer_markdown": "Because the only real purpose of a level is to route attention. If `error` means \"something failed that a human needs to look at eventually\", then a non-zero error count is meaningful and can drive an alert. If developers instead use `error` for anything that feels notable — a user typing a bad password, an expected validation failure — then errors fire constantly, nobody reacts, and the level stops carrying information exactly when you need it during an outage. The same logic sets the others: `warn` for something that recovered but is worth watching if frequent, `info` for significant business events worth keeping, and `debug` for diagnostic detail that stays off in production and can be switched on via an environment variable during an incident. A level nobody acts on is a lie that costs you storage.",
+    "difficulty": "medium"
+  }
+]

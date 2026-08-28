@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why use a trie instead of a hash table or a SQL LIKE query?",
+    "answer_markdown": "The entire access pattern is prefix search, and only a trie serves it natively. A hash table can retrieve an exact key in constant time but has no way to enumerate everything sharing a prefix, because hashing deliberately destroys the ordering and structure that prefixes depend on. A SQL `LIKE 'prefix%'` query can use an index but still scans and ranks a potentially huge match set at request time, which is far too slow for a per-keystroke budget. A trie walks one node per character, so finding the prefix costs time proportional to the length of what the user typed — typically under fifteen steps — completely independent of whether the system stores a million or a billion queries.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why precompute a top-k list at every trie node rather than gathering results at query time?",
+    "answer_markdown": "Reaching the node for a short prefix like 'sy' still leaves a subtree potentially containing millions of queries, and traversing it to collect candidates and then sorting them by frequency would take far longer than the roughly 100ms budget allows. Precomputing means each node already stores its best k suggestions in ranked order, so the read operation is a walk down the prefix followed by returning a list — no traversal, no sorting, no ranking at request time. This shifts all the expensive computation into an offline batch pipeline where latency is irrelevant, which is the central trade of the whole design.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is it acceptable for autocomplete suggestions to be hours out of date?",
+    "answer_markdown": "The popularity ranking of common queries changes very slowly — the most searched terms today are almost identical to yesterday's, so a trie rebuilt overnight serves nearly optimal suggestions all day. Accepting staleness buys an enormous simplification: the read path becomes strictly read-only, which means read servers hold an immutable in-memory snapshot and can be replicated trivially with no write coordination, no locking, and no consistency protocol. The exception is genuinely trending queries, such as a breaking news term nobody searched yesterday, which is why a small frequently-refreshed trending structure is merged into results at read time rather than forcing the whole pipeline to be real-time.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is sharding the trie by first character a bad idea, and what should you do instead?",
+    "answer_markdown": "Letter frequency at the start of queries is extremely uneven, so a first-character shard scheme produces wildly imbalanced partitions — the shard owning 's' or 'a' holds a large fraction of all queries and absorbs correspondingly more traffic, while the 'z' or 'x' shard sits nearly idle. That means one shard becomes a hotspot and limits the whole system while you pay for capacity that is barely used elsewhere. The fix is to shard by prefix ranges balanced against observed traffic, so one shard might own everything from 'sa' to 'sm' while another covers 't' through 'z' entirely. Each shard then handles comparable load regardless of how much of the alphabet it spans.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How would you handle typos without blowing the latency budget?",
+    "answer_markdown": "Treat fuzzy matching as a fallback rather than the default path. Running edit-distance matching on every keystroke means doing expensive approximate work for the overwhelming majority of cases where the user typed correctly, which wastes the entire budget on the common case. Instead, do the exact prefix walk first; only if it returns no node or an empty list do you fall back to fuzzy matching within a small edit distance of one or two. This keeps the fast path fast and spends extra time only when there is nothing to show anyway. A related refinement is falling back to the longest matching ancestor prefix, so a user who types 'systemz' still sees suggestions for 'system' rather than an empty dropdown.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What should the client do to reduce load, and why does it matter so much here?",
+    "answer_markdown": "Every keystroke is potentially a query, so a fifteen-character search generates fifteen requests — at 100M daily users searching five times each, that is roughly 87,000 queries per second, fifteen times the underlying search rate. Debouncing input by a short delay means a fast typist generates a request only when they briefly pause, collapsing several keystrokes into one call and cutting volume substantially. Caching responses in the browser handles another common pattern: when a user deletes a character, the result for that shorter prefix was already fetched moments ago and can be re-rendered instantly with no network round trip at all. Both are cheap client-side changes that remove a large fraction of server traffic.",
+    "difficulty": "medium"
+  }
+]

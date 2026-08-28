@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the difference between an operational error and a programmer error, and why does the distinction change how you respond?",
+    "answer_markdown": "An operational error is an expected failure of the environment: a network timeout, a missing file, malformed user input, a database that went away. These are not bugs, so you handle them — retry, return a 4xx, fall back — and keep serving. A programmer error is a bug in your own code, like calling a method on `undefined` or forgetting an `await`. You cannot meaningfully recover from a bug, because by definition you did not anticipate the state the process is now in, so any recovery code is guesswork. The right response is to log the stack and exit non-zero so a supervisor restarts the process clean. Interviewers ask this to see whether you believe \"never crash\" is the goal; a process that stays up in a corrupted state is far more dangerous than one that restarts.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why does this `try/catch` fail to catch the error?\n\n```js\ntry {\n  doAsyncThing();  // returns a Promise that rejects\n} catch (err) {\n  console.log('never runs');\n}\n```",
+    "answer_markdown": "Because there is no `await`. A `try/catch` only catches errors that occur while its block is still on the call stack. Without `await`, `doAsyncThing()` starts the work, returns a pending Promise immediately, and the `try` block exits — so when that Promise rejects milliseconds later, the `catch` is long gone and the rejection has nowhere to go. It becomes an unhandled rejection, which since Node 15 terminates the process by default. The fix is `await doAsyncThing()`, or attaching `.catch()` explicitly. This same trap eats `array.forEach(async ...)` and any un-awaited \"fire and forget\" call, which is why the `no-floating-promises` lint rule is worth enabling.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Should you use `process.on('uncaughtException')` to keep your server running after an unexpected crash? Explain your reasoning.",
+    "answer_markdown": "No — not to keep running. By the time `uncaughtException` fires, the stack that threw has already unwound, so you have no idea what work was half-finished: a transaction may be open, a connection pool corrupted, a lock never released. Continuing means serving requests from a process whose state you cannot reason about, which produces silent data corruption instead of a visible crash. The correct use is as a last-resort logging hook: record the error with its stack, flush your logs, and call `process.exit(1)`. A supervisor like systemd, PM2, or Kubernetes then restarts you in a known-good state. The graceful version stops accepting new connections, lets in-flight requests finish with a short timeout, then exits.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you preserve the original error when wrapping it in a more meaningful one, and why does it matter?",
+    "answer_markdown": "Pass the original as the `cause` option to the `Error` constructor: `throw new AppError('could not load profile', { cause: err })`. This is standard in modern Node and sets `error.cause` to the underlying error, keeping the whole chain intact. It matters because the common alternative — `throw new Error('could not load profile: ' + err.message)` — flattens a structured error into a string and throws away the original stack trace. When you are debugging at 3am, the wrapped message tells you which layer failed but the `cause` tells you the actual line and the original error code, like `ECONNREFUSED`. Node's default error printing walks the cause chain for you.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is `throw 'something went wrong'` worse than `throw new Error('something went wrong')`?",
+    "answer_markdown": "Throwing a string means there is no stack trace. An `Error` instance captures the call stack at construction time, so you can see exactly where the failure originated; a bare string gives you only the message and leaves you guessing. It also breaks every downstream assumption: code that does `err.message`, `err.stack`, `err.code`, or `err instanceof AppError` will silently get `undefined` or `false`, so error-classification logic quietly stops working. The same applies to throwing plain objects. Always throw an `Error` or a subclass of it, so custom errors get proper instances and stack traces for free.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Node 15 changed unhandled promise rejections from a warning to terminating the process. Why was that considered an improvement rather than a regression?",
+    "answer_markdown": "Under the old behaviour, a rejected Promise with no handler printed a deprecation warning and let the process continue. That meant a genuine bug — a failed write, a forgotten `await` on a critical operation — could scroll past in the logs while the server kept accepting traffic in an inconsistent state, which is exactly the silent-corruption scenario that is hardest to debug later. Terminating makes the failure loud and immediate, matching how an uncaught synchronous exception has always behaved; there is no good reason for a rejected Promise to be treated more leniently than a thrown error. It also pushes developers toward explicitly handling rejections at the point they can actually be handled. If you genuinely need the old behaviour during a migration, the `--unhandled-rejections` CLI flag lets you choose the mode, but the default is the safer one.",
+    "difficulty": "hard"
+  }
+]

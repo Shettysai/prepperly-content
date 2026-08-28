@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Compare Kafka, RabbitMQ, and SQS. When would you choose each?",
+    "answer_markdown": "Kafka is a distributed, append-only log: messages are retained after being read, and each consumer group tracks its own position, so many independent teams can consume the same stream and a new consumer can join later and replay history from the beginning. Choose it for event streams, analytics pipelines, and anywhere replay matters. RabbitMQ is a traditional broker built around queues and exchanges, where a message is removed once acknowledged, and its strength is rich routing — fanout, topic, and direct exchanges let you express complex delivery rules. Choose it for task queues and sophisticated routing needs. SQS is a fully managed AWS queue with no operational burden at all, at the cost of simpler semantics and ordering only in FIFO queues. Choose it when you want straightforward decoupling on AWS and do not want to run infrastructure. The real differentiator to name is retention and replay versus consume-and-remove.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Does a message broker guarantee that messages are processed in order?",
+    "answer_markdown": "Only within a partition, not across a topic as a whole. A topic is divided into partitions so that work can be processed in parallel, and each partition is assigned to exactly one consumer within a group — ordering is preserved inside each partition but there is no ordering relationship between them. You control what stays ordered by choosing a partition key: keying by `orderId` sends every message about a given order to the same partition, so those messages stay in sequence relative to each other while different orders process concurrently. Achieving strict global ordering across an entire topic requires a single partition, which means a single consumer and no parallelism at all — that is the trade-off, and it is why the right question is usually \"what actually needs to be ordered\" rather than \"how do I order everything\".",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What does at-least-once delivery mean, and what does it require of your consumer code?",
+    "answer_markdown": "At-least-once means the broker guarantees a message will not be lost, but it may be delivered more than once. This happens because the consumer acknowledges the message only after processing it, so if it crashes after doing the work but before sending the acknowledgement, the broker sees no ack and redelivers. The alternative, acknowledging first, gives at-most-once and loses messages on a crash. Since losing a customer's order is usually worse than processing one twice, most systems choose at-least-once, and that choice pushes a requirement onto your code: consumers must be idempotent, meaning that handling the same message twice produces the same result as handling it once. This is the practical answer to the desire for exactly-once semantics — rather than trying to prevent duplicates, you make them harmless.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You track processed message IDs in an in-memory `Set` for idempotency. Why does this fail in production, and what should you use instead?",
+    "answer_markdown": "It fails as soon as you run more than one consumer, which is the normal case, because the `Set` is local to a single process. When a redelivered message is picked up by a different consumer than the one that originally handled it, that consumer's `Set` is empty for that ID, so it processes the message again and the customer is charged twice. It also loses everything on restart. Moving to a shared database is necessary but not sufficient, because reading the record and then writing it leaves a race window in which two consumers both read \"not seen\" before either writes. The robust approaches collapse the check and the write into one atomic operation: a unique constraint on the message ID so the database itself rejects the duplicate insert, or a conditional write. Better still is designing operations to be naturally idempotent, such as setting a status to `paid` rather than decrementing a balance, so repetition is harmless without any bookkeeping.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is a dead letter queue, and what goes wrong both without one and with an unmonitored one?",
+    "answer_markdown": "A dead letter queue is where the broker moves a message after it has failed processing a configured number of times — in SQS this threshold is the `maxReceiveCount` in the redrive policy. Without one, a message that can never succeed, often called a poison message, is retried forever: it consumes CPU, fills your logs with the same error, and in an ordered queue can block every message behind it indefinitely. So a DLQ is essential for isolating unprocessable messages and letting the rest of the queue drain. The failure mode on the other side is a DLQ nobody looks at, which quietly becomes a data-loss bucket — every message in it represents a customer action that never completed, like an order not fulfilled or a refund not issued. That is why DLQ depth should be an alert rather than a dashboard, and why the queue needs a documented process for inspecting, fixing, and redriving messages back.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is adding more consumers than you have partitions useless, and what metric tells you an async system is unhealthy?",
+    "answer_markdown": "Because each partition is assigned to at most one consumer within a consumer group, in order to preserve per-partition ordering and avoid two consumers processing the same message. With five partitions and six consumers, the sixth is assigned nothing and sits idle, so partition count is the hard ceiling on parallelism within a group. This makes partition count a capacity decision made in advance, since increasing it later can be disruptive to key-based ordering. The metric that matters most for health is consumer lag: how far behind the newest message your consumers are. Lag is dangerous because a queue draining slightly slower than it fills looks completely fine for hours — throughput is high, no errors are logged — and then becomes an unrecoverable backlog. Alerting on growing lag, alongside DLQ depth, catches the problem while adding consumers can still fix it.",
+    "difficulty": "hard"
+  }
+]

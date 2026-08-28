@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "Why do back-of-envelope estimates matter in a system design interview?",
+    "answer_markdown": "Without numbers, every architectural claim is a guess. Saying 'we'll shard the database' means nothing until you know whether the data is 50 GB, which fits comfortably on one machine, or 50 TB, which genuinely requires a sharding strategy — and the two lead to completely different designs. The estimate anchors the rest of your reasoning to reality and lets you justify each decision rather than asserting it. It also catches errors early: if your arithmetic implies you need 4,000 servers for a modest product, something in the design is wrong, and discovering that in five minutes is far better than discovering it after a sprint of implementation.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do you convert 10 million daily active users into a QPS figure you can design against?",
+    "answer_markdown": "Multiply daily active users by the number of actions each performs per day, then divide by the seconds in a day — rounded to 100,000 rather than 86,400, because the precision changes nothing and the round number is far easier to work with mentally. Ten million users doing 10 actions each is 100 million actions per day, which is roughly 1,000 QPS on average. Crucially you then multiply by 2 to 3 to get peak QPS, because traffic is never evenly spread across the day — people sleep — so the realistic peak here is around 3,000 QPS. That peak figure, not the average, is what you size infrastructure against.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Which latency numbers should an engineer know by heart, and what do they imply?",
+    "answer_markdown": "The essential ones are roughly: L1 cache reference 1 nanosecond, main memory reference 100 nanoseconds, SSD random read 100 microseconds, round trip within a datacentre 500 microseconds, spinning disk seek 10 milliseconds, and a round trip from California to the Netherlands about 150 milliseconds. The individual digits matter less than the shape: memory is roughly a million times faster than a cross-continent round trip, and about a thousand times faster than an SSD read. That single relationship is the entire justification for caching, for CDNs placing content near users, and for regional replicas — every one of those is an attempt to move data from an expensive tier of that hierarchy to a cheaper one.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What does a read-to-write ratio of 250:1 tell you about how to design a system?",
+    "answer_markdown": "It tells you where essentially all of your engineering effort belongs. With 250 reads for every write, the write path is almost trivially easy — a single primary database absorbing 20 writes per second is nowhere near stressed and needs no special treatment. The read path is the entire problem, so the design should centre on caching aggressively, adding read replicas, and denormalising data so reads require fewer joins. It also means write-side complexity like sharding is probably premature, and that a cache hit ratio improvement of a few percent has far more impact on system load than any write optimisation could.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is sizing for average traffic dangerous, and when can't autoscaling save you?",
+    "answer_markdown": "Averages hide exactly the moments that break systems. A video service with 100,000 average concurrent viewers at 5 Mbps needs 500 Gbps, which is an ordinary CDN problem — but a live sporting final might draw 10 million concurrent viewers who all join within the same two minutes, requiring 50 Tbps, a hundred times the average. Autoscaling cannot help here because provisioning new capacity takes minutes at best, and the ramp happens faster than that; by the time capacity arrives the event has already failed for everyone. The rule is that you size for the peak you cannot scale into, provisioning it in advance, and reserve autoscaling for the gradual variations it can actually keep up with.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is fan-out, and why can it make a capacity estimate wrong by orders of magnitude?",
+    "answer_markdown": "Fan-out is the multiplication between one user action and the machine work it causes. A tweet from an ordinary account is one write, but a tweet from an account with 100 million followers is also one user action — and if the design pushes it into every follower's timeline, it becomes 100 million writes. An estimate that counts user actions rather than resulting operations can therefore be wrong by eight orders of magnitude for exactly the users who matter most. This asymmetry is why large social systems use a hybrid approach: push writes into timelines for ordinary users, where fan-out is small and precomputing is cheap, but pull at read time for celebrity accounts, where the push cost would be catastrophic. The general discipline is always to ask what one user action actually costs in machine work.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why should you state your assumptions out loud when estimating, and what else inflates storage estimates?",
+    "answer_markdown": "Stating assumptions — '10 million DAU, 50 views each, 300 KB per image' — turns your estimate into something an interviewer can engage with. If they think the image size is wrong, they correct that input while your method and arithmetic still stand, whereas an unstated assumption makes the whole answer look arbitrary and leaves them nothing to correct but the conclusion. On storage specifically, the raw calculation is almost always an underestimate: a replication factor of three triples it immediately, and backups and indexes add more on top, so real provisioned storage is commonly three to five times the naive figure. Hot keys are the related trap on the traffic side — if 1% of objects receive 90% of requests, the average load per server says nothing useful about the server actually holding them.",
+    "difficulty": "medium"
+  }
+]

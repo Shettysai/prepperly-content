@@ -1,0 +1,27 @@
+[
+  {
+    "prompt": "What is the rough target cadence for speaking during a technical interview, and what should each sentence contain?",
+    "answer_markdown": "Roughly one sentence every 15 to 20 seconds, with each one doing one of four jobs: announcing what you are about to do, explaining why you chose something, flagging a problem you noticed, or openly buying thinking time. If a sentence does none of those four, it is filler and should be cut. The cadence matters because both failure modes are real: long silence produces no evidence for the interviewer to score, while continuous unstructured talking sounds like panic and carries no information. A useful discipline is to make every sentence end with a reason, since 'I'll use a hash map' is a fragment while 'I'll use a hash map because I need constant-time lookups' is a complete thought.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does announcing a pause before going silent change how the silence is perceived?",
+    "answer_markdown": "Silence by itself is ambiguous, and from the interviewer's side it looks identical whether you are reasoning productively or completely stuck. Saying 'let me think for a few seconds' or 'let me work through a small example first' labels the silence as deliberate, which makes the following 10 to 20 seconds entirely acceptable. It also removes the secondary panic where you become anxious about the silence itself, which makes the original blank worse. This is one of the cheapest techniques available because it costs one short sentence and converts a scoring risk into normal working behaviour.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "A candidate names six possible approaches in thirty seconds without evaluating any of them. Why does this score badly despite being far from silent?",
+    "answer_markdown": "Naming an idea is not the same as having a thought about it. Six abandoned half-sentences give the interviewer nothing to follow and nothing to discuss, because no single idea was held long enough to evaluate. It also sounds like panic, which affects how the rest of the interview is heard. The fix is not to talk less but to finish each idea with a reason before moving on: naming two options, ruling one out with a stated cause, and committing to the other produces four sentences that show real reasoning. Ending such a run with 'what do you think?' compounds the problem by handing the question back, which reads as giving up rather than collaborating.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You realise mid-interview that your approach will not work. What should you say, and why is silently rewriting worse?",
+    "answer_markdown": "Say it plainly: 'this approach doesn't work because of X, let me go back to Y.' Announcing the wrong turn costs nothing and reframes the rewrite as deliberate debugging, which is a skill interviewers actively want to see. Silently deleting code while looking worried looks like flailing, and the interviewer cannot tell whether you understand what went wrong or are guessing. Abandoning an approach is completely normal and happens to strong candidates regularly, so the abandonment itself is not what is scored. What is scored is whether you can diagnose the reason, which only becomes visible if you say it out loud.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "The interviewer asks 'what are you thinking?' partway through. What does this signal and how should you respond?",
+    "answer_markdown": "It signals that you have been silent too long and the interviewer has run out of information to work with. Respond with your current state in three parts: what you have working, what is still missing, and what you are trying next. Then deliberately raise your speaking cadence for the rest of the interview, because the question is a warning rather than idle curiosity. This three-part summary is worth practising separately since a version of it comes up in almost every interview, often phrased as 'talk me through what you have so far', and doing it fluently under pressure is harder than it sounds.",
+    "difficulty": "medium"
+  }
+]

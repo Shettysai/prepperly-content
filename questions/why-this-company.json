@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why do you want to work here?",
+    "answer_markdown": "Answer in three parts: a specific problem of theirs, your evidence you have solved its shape before, and why this is the step you want next. Name your source out loud, because that is what proves the research happened: 'your engineering blog post in March about moving scheduling off the monolith described almost exactly the problem I spent last year on — you mentioned dual-writing during the cutover, and the part that hurt us was not deciding upfront which side was authoritative during the overlap window.' The middle part is the one that cannot be faked, and it is what turns flattery into an argument. Interviewers are scoring both research depth and whether you would actually accept an offer, and a technically engaged answer moves both.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Where should you actually look when researching a company, and what is the highest-value hour you can spend?",
+    "answer_markdown": "In descending order of signal: the engineering blog, bullets four through eight of the job description (the first three are boilerplate, the later ones describe the real work), recent product changes or launches, engineers' and founders' public writing, and public repositories for infrastructure roles. The single highest-value item is using the product for twenty minutes, because it generates genuine observations and real questions that no amount of reading produces. The homepage and About page are worth almost nothing, since every candidate reads them, so anything you say from them signals no effort. One focused hour the week before the interview is enough to move this answer from generic to specific.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You are applying to a company whose domain genuinely does not excite you — claims processing, say. How do you answer honestly?",
+    "answer_markdown": "Decline the fake enthusiasm explicitly and give a different real reason, because there is always one. 'I didn't come to this from a passion for claims processing. What got my attention was the scale — two million claim events a day on a system that started in 2011, and I find legacy-at-scale more interesting than greenfield, because the constraints are what make the problems non-trivial. I've done a strangler-fig migration once at a tenth of that volume.' This scores better than performed mission fit, partly because interviewers hear enough of the latter to discount it, and partly because a claimed passion collapses on the first domain follow-up. Scale, technical problem shape, engineering culture evidenced by real artifacts, and team quality are all legitimate reasons.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do you test whether your answer is actually specific enough?",
+    "answer_markdown": "Delete every sentence that would still be true of their nearest competitor and look at what survives. Growth, strong engineering culture, smart people, impact, and interesting problems all fail this test instantly, which is why they are the most common things candidates say and the least useful. Whatever remains — a blog post you can date, a product behaviour you noticed, a specific bullet from the posting, a technical question you want answered — is the real answer, and you rebuild from there. A related test for the Future section of your 'tell me about yourself': write it for two different postings, and if you could swap them unnoticed, neither is doing its job.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You are more senior than the role you are applying for and they ask why. How do you answer?",
+    "answer_markdown": "Address the seniority question directly rather than talking around it, because dodging it makes them assume you will leave in six months and that assumption alone can sink the offer. Give the real trade you are making: 'the scope is wider even if the title isn't — I'd rather own a platform at your size than one service at mine.' Other honest versions include a deliberate domain change, a move from management back to hands-on work, or optimising for a specific technical problem over a title. What matters is that the reason is durable: an interviewer needs to believe the thing that made you accept a step down will still be true in a year, so a reason tied to the work is stronger than one tied to circumstances.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "You are laid off and applying to forty companies. How do you handle research at that volume?",
+    "answer_markdown": "Do not research forty companies — research the ones that reach an interview, in the hour before. Deep research is only worth its cost once someone has agreed to spend time with you, and spreading it thinly across every application produces forty shallow answers instead of six good ones. Do not apologise for the volume either; framing it as deliberate is both true and stronger: 'I'm looking actively, so I've been selective about which conversations to spend time on, and this one I wanted because...' followed by your one specific thing. Interviewers know the market, and a candidate who is honest about searching broadly while clearly having prepared for this particular conversation reads as organised rather than desperate.",
+    "difficulty": "medium"
+  }
+]

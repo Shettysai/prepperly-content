@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Explain the token bucket algorithm and why bursts are a feature rather than a bug.",
+    "answer_markdown": "A bucket holds up to a fixed capacity of tokens, refilled at a steady rate; each request consumes one token, and requests are rejected when the bucket is empty. The refill rate enforces the long-run average, while the capacity determines how large a burst is tolerated. Bursts are desirable because real clients are naturally bursty — a single page load may fire twenty requests at once, which is legitimate behaviour, not abuse. A limiter that smoothed every request to a strict even spacing would reject normal usage while providing no extra protection, since what actually matters is the sustained rate. Token bucket allows the burst but prevents it from continuing indefinitely, because the bucket drains faster than it refills.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is the fixed-window boundary problem, and how bad is it?",
+    "answer_markdown": "A fixed-window limiter keys a counter by the current time window — say the current minute — and resets when the window rolls over. A client can send a full window's allowance in the last moments of one window and another full allowance in the first moments of the next, so a '100 per minute' limit permits 200 requests within a couple of seconds spanning the boundary. The effective short-term limit is double the configured one, which matters because bursts are precisely what a limiter is meant to control. Fixes include the sliding window log (exact, but memory grows with request volume) and the sliding window counter, which weights the previous window's count by its remaining overlap and needs only two integers.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why can't rate limit counters live in each application server's memory?",
+    "answer_markdown": "Each server would only count the requests it personally handled. Behind a load balancer distributing traffic across N servers, a client's requests are spread among them, so no single server ever observes the full request count and the client effectively receives N times the intended limit. With three servers, a 100-requests-per-minute limit becomes 300. Any correct distributed limiter needs shared state, typically Redis, so that every server increments and checks the same counter. This is the same class of bug as storing sessions in local memory — it is invisible with one server and appears immediately when you add a second.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Two servers process requests for the same client at the same instant. How do you stop both from allowing a request that exceeds the limit?",
+    "answer_markdown": "The check and the update must be one atomic operation rather than a read followed by a write. If both servers read a counter at 99, both conclude there is room, and both write 100, the client gets two requests through when only one was permitted. Redis `INCR` is atomic natively and returns the post-increment value, so a server can increment first and reject if the result exceeds the limit. For more complex logic — token bucket refill, which requires reading a timestamp, computing accrued tokens, and conditionally decrementing — you use a Lua script, which Redis executes atomically as a single unit. This is the same race condition that appears when claiming a driver in a ride-sharing match.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Your rate limiter depends on Redis. What happens when Redis is unavailable?",
+    "answer_markdown": "You must decide the behaviour deliberately in advance, because both options carry real risk. Failing open means allowing all traffic through when the limiter cannot make a decision, which preserves service availability but leaves backends unprotected during the outage. Failing closed means rejecting everything, which protects the backends but converts a limiter failure into a complete service outage. Most systems fail open, on the reasoning that a rate limiter is a protective measure and should never itself be the cause of downtime. A stronger answer adds a degraded fallback: each server enforces a conservative local limit from memory while Redis is unreachable, so there is still some protection without a hard dependency.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "The limiter now adds a Redis round trip to every request and has become a bottleneck. What do you change?",
+    "answer_markdown": "Move to a two-tier design. Each application server is allocated a slice of the global allowance and keeps a local bucket in memory, so the overwhelming majority of decisions are made without any network call. Servers reconcile with Redis periodically — say once a second — rather than on every request, exchanging their consumption and receiving an updated slice. The trade-off is exactness: between syncs the servers cannot see each other's consumption, so the global limit can be slightly overshot, bounded by how much each server can spend in one sync interval. This is why 'is a small overshoot acceptable?' is worth asking during requirements clarification, since the answer determines whether this optimisation is available at all.",
+    "difficulty": "medium"
+  }
+]

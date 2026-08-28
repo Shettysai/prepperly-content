@@ -1,0 +1,27 @@
+[
+  {
+    "prompt": "What do the four letters of STAR stand for, and roughly how much of your answer should each one take?",
+    "answer_markdown": "Situation, Task, Action, Result. Situation takes about 20 percent, Task about 10, Action about 60, and Result about 10. The proportions are the whole technique rather than an afterthought, because the most common failure is a long scene-setting preamble followed by a compressed 'and then it worked out'. Action deserves the majority because it is the only part that describes what you personally did, which is what the interviewer is hiring. For a two-minute answer that means roughly 25 seconds of situation, 12 of task, 70 of action, and 12 of result.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is saying 'we' instead of 'I' considered the most costly habit in a behavioural answer?",
+    "answer_markdown": "The interviewer is deciding whether to hire one person, and 'we' makes it impossible to tell what that person contributed. A story full of 'we investigated, we fixed it' could describe someone who led the work or someone who watched it happen, and the interviewer has to assume the less impressive reading. It also quietly transfers credit away from you to a team that is not in the room. The fix is to use 'we' only for context, such as describing the team or the shared goal, and 'I' for every action you took. A reliable signal that you have overdone it is the follow-up question 'what was your specific contribution?', which interviewers ask precisely when they could not tell.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A candidate answers 'tell me about a failure' with a story about working too hard on a project. Why does this fail?",
+    "answer_markdown": "It is a disguised strength, and interviewers recognise the pattern immediately. The question is testing self-awareness and whether you can own a genuine mistake, so an answer that avoids admitting one demonstrates the opposite of what is being measured. It also wastes a story slot without producing any evidence about how you respond to going wrong. A strong answer picks a real failure you were responsible for, spends the Action section on what you did once you realised, and ends with a specific lesson rather than a generic one. Real failures are safe to tell because the interviewer is scoring the recovery and the reflection, not the mistake.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How many prepared stories do you actually need for a behavioural round, and how should you organise them?",
+    "answer_markdown": "Three well-prepared stories usually cover most of what you will be asked, if each one is tagged with several question types it can answer. A single outage story can serve questions about pressure, debugging, ownership, and sometimes conflict, depending on which part you emphasise. The goal is not to memorise answers but to memorise material you can re-cut on the spot, choosing which aspect to foreground based on the question asked. Preparing twenty stories is counterproductive because you spend the first ten seconds of every answer choosing between them under pressure. Practise the selection step too: have someone ask a random question and pick your story out loud within ten seconds.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What makes a Result section strong, and why is 'and then it was fine' a wasted ending?",
+    "answer_markdown": "A strong Result gives an outcome with something measurable attached, such as a percentage, a timeframe, or a visible change in how the team worked afterwards. 'The failure rate went from five percent to under one within two hours' is verifiable-sounding and concrete, while 'it was fine after that' gives the interviewer nothing to evaluate. The Result is also where the lesson goes, and a real lesson is specific and slightly uncomfortable, unlike a generic one such as 'I learned the importance of teamwork'. Since Result is only about ten percent of the answer, there is no room for vagueness in it: every sentence must carry either the outcome or the reflection.",
+    "difficulty": "medium"
+  }
+]

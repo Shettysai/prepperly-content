@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "It's 3am. You're on call. Payments have been failing for 8 minutes and about 4% of checkouts are affected. The only recent change is a deploy from 5 hours ago that included a database migration, and the engineer who wrote it is asleep. Walk me through what you do.",
+    "answer_markdown": "Declare the incident first — 4% of checkouts failing and climbing is a SEV1 because it blocks revenue, even though the user percentage sounds small. Then separate mitigation from diagnosis: your goal for the next ten minutes is to stop users hurting, not to understand the bug. The critical judgement here is that this is not a simple rollback — the deploy included a migration, so rolling back the code may leave the schema in a state the old code mishandles, potentially turning a 4% failure into silent data corruption. Spend the four minutes to read the migration and determine whether it is forward-compatible (a nullable column the old code never reads is safe to leave in place). In parallel, look for a mitigation that touches nothing at all: a feature flag, routing the payment service to the previous version, or shedding the affected traffic. Post a comms update immediately and commit to a next-update time, and wake the engineer who wrote the migration — during a SEV1 that is correct, not rude, because they can answer the safety question in 30 seconds instead of your 30 minutes.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "When should you NOT roll back a deploy during an incident?",
+    "answer_markdown": "Rollback is the default mitigation but it is a change like any other, and there are three cases where it is the wrong move. First, when the deploy included an irreversible data migration — a backfill or schema change may mean the old code misreads data written by the new code, which is worse than the original symptom. Second, when the previous version has a known bug that is worse than the current one, which happens more often than people expect during a rapid sequence of deploys. Third, when rolling back takes longer than a forward fix you have already tested and understood. The general principle is that 'always roll back' is a useful reflex right up until the deploy touched persistent state, which is exactly when incidents become expensive — so the senior habit is to ask 'is this reversible?' rather than assuming backwards is automatically safe.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does incident response separate the Incident Commander from the person actually debugging?",
+    "answer_markdown": "Because they require incompatible mental modes. Debugging demands deep focus on a narrow technical problem, and the moment someone opens a stack trace they stop tracking elapsed time, severity changes, stakeholder communication, and whether it is time to escalate. The Incident Commander's job is coordination — deciding, delegating, and owning the incident — and deliberately not debugging, which is counterintuitive because the commander is often the most technically capable person present. In a small team at 3am one person may wear two hats, but the pairing to avoid is commander plus hands-on-keyboard, since that reliably produces an incident where nobody notices 90 minutes have passed and no stakeholder has been updated.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your VP says in the postmortem: 'the root cause is that Priya deployed a migration on a Friday night without testing the rollback path.' How do you respond?",
+    "answer_markdown": "That is a person, not a root cause, and the useful test to apply out loud is: would this have happened to anyone else on the team? Almost certainly yes — Priya followed the documented deploy process exactly, and the process permitted a migration to ship with no rollback plan. Reframe without contradicting the facts: the staging database had a few hundred rows so the backfill took milliseconds there and 40 seconds in production, and the checklist never asked for a rollback plan. This is more persuasive than a general appeal to blamelessness because it points directly at fixes — a required rollback plan in the deploy checklist, and staging data volumes that are not a toy. The practical argument for blamelessness is not that blame is unkind but that it is useless: you cannot fix a person, and if people fear the postmortem they will withhold the details you need to fix the system.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do you decide an incident's severity when you're not sure whether it's a SEV1 or a SEV2?",
+    "answer_markdown": "Round up, and review it later in the postmortem. PagerDuty's guidance is explicit about this: an incident is not the moment to debate or litigate severity levels, because the discussion costs more than the over-response does. Severity should be keyed to user pain — typically a percentage of users or accounts affected — but the dimension people get wrong is that revenue-blocking or auth-blocking impact outranks raw user counts. An outage affecting 3% of users is a SEV1 if those users cannot pay, while a cosmetic bug affecting 30% may be a SEV3. Downgrading later is cheap and carries no cost; discovering at hour four that you under-classified means you lost four hours of the response you should have had.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You're 40 minutes into a SEV1, you've tried two mitigations, and you're still stuck. What do you do?",
+    "answer_markdown": "Escalate — and ideally you decided the threshold before you started rather than in the moment. Senior engineers time-box explicitly ('if I have not mitigated by 03:45, I page the database team') because the point at which you most need to make the escalation decision is the point at which you are least able to judge it: you are tired, you have made two changes under pressure, and you are invested in the theory you have been chasing. Escalation is not an admission of failure; the failure mode interviewers actually worry about is the engineer who stays up all night solving it alone while users are down. A good escalation message is short and says what you have already ruled out, so the person joining does not repeat your last 40 minutes. This is also the moment to consider a handover entirely, since your judgement measurably degrades after an hour of high-pressure debugging.",
+    "difficulty": "medium"
+  }
+]

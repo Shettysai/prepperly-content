@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Walk through what happens between pressing enter on an HTTPS URL and the page starting to load.",
+    "answer_markdown": "DNS resolves the hostname to an IP address, then TCP's three-way handshake opens a connection. The TLS handshake follows: the client sends a ClientHello listing supported versions and cipher suites, the server replies with a ServerHello and its certificate chain, and the client verifies that chain up to a root certificate authority it already trusts. Both sides then derive a shared symmetric key, and only after that does the encrypted HTTP request actually go out. Each of those steps costs at least one round trip, which is why a first connection to a distant server feels slow regardless of how fast the server is.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What does the padlock icon in a browser actually guarantee, and what does it not?",
+    "answer_markdown": "It guarantees two things: the connection is encrypted so nobody on the network path can read or silently modify the traffic, and the server presented a valid certificate for the exact domain in the address bar. It guarantees nothing about whether the site is honest, safe, or reputable. A scam site can obtain a perfectly valid certificate for its own domain and show a padlock, which is why 'has HTTPS' is not a safety signal about the operator, only about the connection.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain the certificate chain. Why doesn't a server just use a certificate signed directly by a root CA?",
+    "answer_markdown": "A server presents a leaf certificate signed by an intermediate certificate, which is in turn signed by a root certificate held in the client's trust store. The client walks this chain upward, verifying each signature, until it reaches a root it already trusts. Roots are kept offline and used sparingly because a compromised root would invalidate trust everywhere and cannot easily be replaced across billions of devices. Intermediates act as a revocable buffer: if one is compromised it can be revoked and reissued without touching the root.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A site loads fine in your browser, but your Node.js service fails against the same URL with UNABLE_TO_VERIFY_LEAF_SIGNATURE. What is going on, and what is the wrong fix?",
+    "answer_markdown": "The server is almost certainly sending an incomplete chain: it presents its leaf certificate but omits the intermediate. Browsers hide this because they cache intermediates from previous sites and can fetch missing ones, so they bridge the gap themselves. Node.js only has the root store, cannot get from leaf to root, and correctly refuses the connection. The wrong fix is setting rejectUnauthorized to false, which disables verification entirely and leaves you encrypting to whoever answers, including an attacker. The right fix is configuring the server to send the full chain of leaf plus intermediates.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is forward secrecy, and why does it matter if traffic is already encrypted?",
+    "answer_markdown": "Forward secrecy comes from ephemeral key exchange: both sides contribute random material to derive a session key that is never transmitted and is discarded when the connection ends. It matters because without it, an attacker who records your encrypted traffic today and later steals the server's private key could decrypt everything retroactively. With forward secrecy, that stolen key is useless against past sessions, since the keys that actually protected them no longer exist anywhere.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why does an expiring certificate cause a sudden total outage rather than a gradual degradation?",
+    "answer_markdown": "Certificate validity is checked independently by every client on every new connection, not by the server. The moment the expiry timestamp passes, every client performing a handshake rejects it simultaneously, so the failure is instant and complete rather than affecting a growing subset of users. There is also no server-side warning at the moment of failure, since the server is behaving normally and the clients are the ones refusing, which is why certificate expiry monitoring and automated renewal are treated as critical infrastructure.",
+    "difficulty": "medium"
+  }
+]

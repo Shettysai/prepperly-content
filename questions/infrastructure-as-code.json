@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the difference between declarative and imperative infrastructure, and why did declarative approaches win?",
+    "answer_markdown": "An imperative approach describes the steps: create the server, install the package, open the port. A declarative approach describes the desired end state — three servers of this size with this firewall rule — and the tool works out which actions are needed to get there, creating what is missing, changing what is wrong, and leaving alone what already matches. Declarative won mainly because of idempotence: you can run it repeatedly and the result is identical, so you never need to know the current state before running it safely. An imperative shell script run twice may create duplicate resources or fail partway, leaving the environment in a state that is neither the old one nor the new one. Declarative tools also get a meaningful preview, since comparing desired state to current state naturally produces a diff.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is a state file, what does it contain, and why must it be handled carefully?",
+    "answer_markdown": "The state file is the tool's record of the real resources it created and how they map to the entries in your configuration. It is what lets the tool distinguish \"this resource does not exist yet, create it\" from \"this exists and needs modifying\", and without it every run would either fail or duplicate everything. It must be handled carefully for two reasons. First, it commonly contains secrets in plaintext — database passwords and connection strings end up recorded as resource attributes — so it belongs in encrypted remote storage and never in git. Second, it is the single source of truth for what the tool believes it owns, so it needs locking to stop two people applying at once and corrupting it, and it should never be hand-edited, since a mistake can orphan real resources that keep running and billing while the tool no longer knows about them.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is infrastructure drift, and why is it dangerous even when nothing appears broken?",
+    "answer_markdown": "Drift is when the real infrastructure no longer matches what the configuration declares, almost always because somebody made a manual change in the cloud console — often a legitimate emergency fix during an incident that was never brought back into the config. It is dangerous precisely because nothing looks wrong: the system is running fine, possibly better, since the manual change was usually made to fix something. The problem surfaces later when an unrelated change is applied, and the tool faithfully corrects every difference it finds, silently reverting that emergency fix and potentially causing a repeat of the original outage at the worst moment. The defence is to detect drift deliberately with a refresh-only plan on a schedule, and when you find it, investigate why the change was made before deciding whether to codify it or revert it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You are reviewing a plan and see a resource marked `-/+ must be replaced`. Why should this stop you?",
+    "answer_markdown": "Because it means the tool cannot make the requested change in place and will therefore destroy the existing resource and create a new one. For a stateless resource this may be harmless, but for anything holding data — a database instance, a persistent volume — it means the existing data is destroyed along with it. This happens because some attributes simply cannot be modified after creation by the cloud provider, so changing them forces replacement; the plan usually annotates the specific attribute with a note like \"forces replacement\". The tool is being entirely transparent about it, which makes this a human failure mode: someone skims to the summary line counting changes, sees a small number, and approves. Guardrails help, such as marking stateful resources with a lifecycle rule that blocks destruction outright, so an approval mistake cannot delete a production database.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why should a plan be posted in a pull request rather than just reviewing the configuration diff?",
+    "answer_markdown": "Because the configuration diff and the actual effect on infrastructure are not the same thing. A one-line change to a variable can cascade through modules and result in dozens of resources being modified or replaced, and a reviewer reading only the config change has no way to see that. The plan is the real diff of your production environment: it names every resource affected and exactly how, including replacements the author may not have anticipated. Posting it makes infrastructure changes reviewable in the same way code is, and it is arguably the highest-stakes review a team performs, since a mistake here takes down environments rather than failing a test. It also catches drift, because the plan reflects the real world and may include changes nobody in the pull request intended.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is sharing a single state file across development, staging, and production a bad idea?",
+    "answer_markdown": "It removes any isolation between environments, which means the blast radius of every mistake becomes everything you own. An engineer intending to tear down a development environment can destroy production resources in the same run, and a corrupted or accidentally deleted state file takes out the record for all environments at once. It also creates operational friction, because state locking is global — a long-running production apply blocks anyone from working on development. Separate state per environment gives each one an independent lifecycle, lets you apply confidently to development without any possibility of touching production, and allows different access controls so that fewer people hold the credentials that can modify production at all. The same reasoning often extends further, splitting state by component so a change to one service cannot disturb another.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Tell me about yourself.",
+    "answer_markdown": "Use present, then past, then future — never chronological from school. Present: your current role, its scope, and one number ('I own the scheduling service, about 40,000 bookings a day'). Past: two or three moves, each explaining how you got a skill the job needs, skipping anything that does not serve the role. Future: name their role and connect it to what you just said ('your posting mentions consolidating three booking integrations — that's the problem I solved at Lumen, one layer up'). Then stop, at around ninety seconds. The Future section is the one most people drop, and it is what converts a monologue into an argument — it also hands the interviewer their next question, which you have already prepared for.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is the chronological version — degree, first job, second job, current job — a weaker answer even when every fact is accurate?",
+    "answer_markdown": "The interviewer's attention peaks in the first fifteen seconds, and a chronological answer spends them on a degree from years ago instead of on your current scope. It also implies you cannot prioritise: you are presenting all your history at equal weight rather than selecting what matters for this role. There is a third cost — chronological answers tend to keep going, because there is no natural stopping point until you reach the present, which is how a ninety-second answer becomes three minutes. Present-past-future fixes all three by leading with the most relevant fact and giving the answer a built-in ending.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Should you list your technologies — Docker, Kubernetes, Go — in this answer?",
+    "answer_markdown": "No. Your CV already lists them and the interviewer has it in front of them, so saying them aloud adds no information while consuming a meaningful share of ninety seconds. Worse, a tool list reads as keyword recital and makes you sound like a CV rather than a person. If a technology genuinely matters, embed it in a story where it did something: 'I picked up Go on a two-week deadline for the payments rewrite' proves both the skill and how you acquired it. The general rule is that this answer should contain things that are not on your CV — scope, conditions, a number, and why this role — because everything already on the CV is wasted airtime.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You have a nine-month employment gap. Where in the answer does it go, and how much time does it get?",
+    "answer_markdown": "Put it where it happened chronologically inside the Past section, state it in one clause, and move on — roughly four to eight seconds. 'I spent 2024 caring for a family member; I came back through a six-month contract at X, which is where the Go work is from' handles it completely. The instinct is to bury it mid-answer and hope it slips past, which fails because interviewers scanning your CV will spot the dates and now have a question you visibly avoided. The length of your explanation, not the gap itself, is what makes it sound like a problem: a plain one-line mention closes the topic, while ninety seconds of hedging makes the interviewer assume there is more to it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How much should this answer change between companies, and what specifically changes?",
+    "answer_markdown": "The Present section barely changes — your current role is your current role. The Past section changes moderately: you emphasise different moves depending on which skills the role needs, so an infrastructure role gets the on-call and reliability path while a product role gets the shipping-and-iteration path from the same career. The Future section should change completely every time, because it must name a specific problem from their posting or research. A useful test: write Future sections for two real postings, and if you could swap them without anyone noticing, neither is specific enough to be doing its job.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "The interviewer asks 'walk me through your resume' instead. Is that the same question?",
+    "answer_markdown": "No, and answering it with your ninety-second trailer will feel evasive. 'Walk me through your resume' is an explicit request for the chronological version, so give it — but keep it to about three minutes, spend most of it on your last two roles, and treat earlier ones as one sentence each. The skill being tested shifts from self-editing to whether your history holds together: transitions should have reasons ('I moved to Lumen specifically for the scale'), and dates should match what is on the page. Anything you gloss over will be the thing they return to, so give short, plain accounts of short tenures and gaps rather than skipping them.",
+    "difficulty": "hard"
+  }
+]

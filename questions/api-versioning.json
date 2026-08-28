@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What makes a change to an API 'breaking'? Give examples of changes that are and are not breaking.",
+    "answer_markdown": "A change is breaking if a client written against the old contract stops working when it sends its old request and reads the response the old way. Removing a field, renaming one, changing a field's type from string to number, making an optional request parameter required, tightening validation on existing input, and changing a success status code are all breaking. Adding a new optional response field, adding an optional request parameter, and adding an entirely new endpoint are not, because old clients simply ignore what they do not recognise. The subtle case people get wrong is renaming: splitting `name` into `firstName` and `lastName` feels like an improvement but silently gives every existing client `undefined` where it expected a value.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Compare URL versioning and header versioning. Which would you choose and why?",
+    "answer_markdown": "URL versioning puts the version in the path, like `/v2/users`. It is explicit and immediately visible, so you can test it in a browser, see it in access logs, and route on it at a load balancer or CDN — which also makes caching straightforward. The theoretical objection is that the URL is meant to identify a resource, and the resource has not changed, only its representation. Header versioning keeps one clean URL and selects the version via a header such as `API-Version: 2` or an `Accept` media type, which allows different resources to evolve at different rates. Its practical downside is that the version is invisible in logs, harder to test by hand, and easy for clients to omit, so you must define a default. Most public APIs choose URL versioning for operational obviousness; the answer interviewers want is the trade-off, not a single correct pick.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you safely retire an old API version?",
+    "answer_markdown": "The governing rule is that you never remove a version you can still see traffic on. The process starts with announcing the deprecation and a concrete sunset date, then emitting machine-readable signals in the responses themselves: the `Deprecation` header from RFC 9745 and the `Sunset` header from RFC 8594, so client applications can log warnings without anyone reading a changelog. Meanwhile you instrument request logs by version and by API key so you know exactly who is still calling, and you contact those consumers directly. Only once traffic has genuinely dropped to zero, or to a set of callers who have explicitly accepted the break, do you remove the code. Skipping the measurement step is how teams take down a partner's nightly integration without ever knowing it existed.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you avoid duplicating your entire business logic across three supported API versions?",
+    "answer_markdown": "Keep one canonical internal model and treat each version as a thin presentation layer over it. All business logic, validation, and persistence work against the single current shape; each supported version gets a small pure function that translates that model into the response format it promised, applied at the boundary on the way out, with the mirror-image translation on the way in. This means a bug fix or new feature is written once and every version inherits it, and adding a new version means adding one small function rather than forking a service. The approach holds as long as old versions can be derived from the current model. When v1 promised data the current model no longer holds, the translation genuinely cannot be written — and that is a strong signal it is time to retire v1 rather than emulate it indefinitely.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Is it possible to run a large API with no versioning at all? What would that require?",
+    "answer_markdown": "Yes, and several large public APIs do it by committing to strict additivity: never remove a field, never rename one, never change a type, never make an optional parameter required. New capabilities arrive only as new optional fields or new endpoints, so no client can ever detect a change it did not opt into. The benefit is substantial — one code path, one set of tests, no parallel versions to secure and patch — since every live version is real ongoing cost. The price is design discipline and some accumulated ugliness, because early naming mistakes are permanent and deprecated fields linger in responses forever. It works best when you can invest heavily in getting the initial contract right, and it becomes untenable if a security or correctness issue forces a genuinely incompatible change.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A client calls your API without specifying any version. What should happen, and why is this decision important?",
+    "answer_markdown": "It must be a deliberate, documented choice rather than accidental behaviour. The two defensible options are defaulting to the oldest supported version, which maximises stability because unversioned clients never break, or rejecting the request with a clear error demanding an explicit version. Defaulting to the *latest* is the dangerous option, because it means every unversioned client silently switches behaviour the day you ship a new version — exactly the breakage versioning was meant to prevent. Whatever you choose, respond with a header stating which version actually served the request, so clients and your own logs can see what happened. The reason this matters more than it looks is that unversioned calls are common in practice: quick scripts, curl commands, and integrations written by people who skimmed the docs.",
+    "difficulty": "medium"
+  }
+]

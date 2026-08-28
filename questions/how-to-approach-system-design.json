@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What are the six steps of a system design interview and roughly how should 45 minutes be divided between them?",
+    "answer_markdown": "Clarify requirements for 5 minutes, estimate scale for 5, sketch the high-level design for 10, deep dive on one component for 15, discuss bottlenecks for 5, and wrap up for 5. The time budget is the actual skill being practised, not the steps themselves, because most candidates spend thirty minutes drawing boxes and never reach a deep dive. The deep dive is where the largest share of the score lives, since it is the only step that shows depth rather than breadth. Writing the budget on your paper before you start is what keeps you honest against the clock.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is naming technologies like Kafka or Cassandra early in a design interview considered a beginner signal?",
+    "answer_markdown": "Because a technology is an answer to a problem you have not yet demonstrated you have. Naming Kafka in minute two shows you have memorised what appears in system design write-ups, not that you can reason about why a queue is needed here. The correct order is requirements, then scale estimates, then the problem those numbers reveal, and only then a component that solves it. When you arrive at a technology through that chain you can defend it under questioning, which is what the interviewer is actually probing. Interviewers commonly follow a premature technology mention with 'why that one?', and candidates who name-dropped cannot answer.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You calculate that a system needs 10,000 reads per second and 100 writes per second. What should you actually say next, and why does the calculation alone score nothing?",
+    "answer_markdown": "You must state what the numbers changed: 100 writes per second is small enough that a single database handles it comfortably, while 10,000 reads per second means the read path needs a cache. Without that conclusion, the arithmetic is decoration and the interviewer learns nothing about your judgement. The point of the estimation step is never precision, since everyone rounds aggressively anyway. It is to derive a constraint that shapes the design, so that when you draw a cache into your diagram you can say exactly which number forced it there. A useful habit is to end every estimate with the phrase 'so this means', which makes skipping the conclusion impossible.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You are asked to design a system in a domain you have never worked in, like game matchmaking. How do you avoid stalling?",
+    "answer_markdown": "Say plainly that you have not built one before and that you will reason from first principles with the interviewer correcting you, then run the normal six-step script anyway. Use the clarify step to guess the requirements out loud and let the interviewer confirm or fix them, since their corrections hand you the domain knowledge you lack. Asking which of two things is worse, for example a long wait versus an unfair match, often extracts the single constraint that determines the entire design. The script does not require prior knowledge, it manufactures the knowledge by asking, which is why abandoning the script rather than the unfamiliar domain is what actually loses these interviews.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why should you point out the weaknesses in your own design rather than waiting for the interviewer to find them?",
+    "answer_markdown": "Because a flaw you identify yourself reads as judgement, while the same flaw found by the interviewer reads as an oversight. Naming where your design breaks demonstrates that you understand its limits, which is a stronger signal than a design that appears flawless because you have not examined it. It also lets you control the framing by pairing each weakness with a proposed fix and an honest trade-off. Every design has bottlenecks, so the interviewer will find them regardless, and getting there first is free credit. This is why the dedicated bottlenecks step exists in the template rather than being left to the question-and-answer at the end.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "In the clarify step, why is 'I'll assume roughly ten million daily users, is that right?' better than 'how many users are there?'",
+    "answer_markdown": "Proposing a number gives the interviewer something concrete to correct, which resolves in one short exchange instead of an open-ended discussion. It also demonstrates that you know what a plausible scale looks like for this kind of product, which an open question does not reveal. If your guess is wrong, the correction costs you nothing and you have still shown the instinct. The habit generalises to scope and read/write ratios too, and it is one of the clearest differences between how junior and senior candidates open a design round.",
+    "difficulty": "hard"
+  }
+]

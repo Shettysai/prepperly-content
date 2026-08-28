@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "How do you rename a database column with zero downtime?",
+    "answer_markdown": "Use expand-contract across four separate deploys. First add the new column as nullable, which old code ignores entirely. Second, deploy code that writes to both columns while still reading from the old one. Third, backfill existing rows in batches and then switch reads to the new column. Fourth, once nothing references the old column, drop it. The reason a single ALTER TABLE RENAME fails is that a rolling deploy runs old and new code simultaneously for minutes, so the schema must support both versions at every instant.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why can a migration that completes in milliseconds still take down production?",
+    "answer_markdown": "Because of the lock queue rather than the migration's own duration. An ALTER TABLE requesting an exclusive lock must wait for existing queries on that table to finish, and critically, every query arriving after the lock request also queues behind it, including simple reads that would otherwise be unaffected. So one long-running analytics query plus one migration is enough to freeze all access to the table, and since every pooled connection stalls, the whole application stops. Setting a short lock_timeout makes the migration fail fast and retry later instead of blocking everything.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do you backfill ten million rows safely?",
+    "answer_markdown": "In small batches with short transactions and a brief pause between them, rather than one large UPDATE. A single statement over ten million rows locks every row it touches for the whole transaction, blocks concurrent writes, and generates enough replication traffic to push replicas minutes behind. Batching a thousand rows at a time keeps each lock brief and lets replicas keep up. The batch must also be idempotent, typically by selecting only rows where the new column is still null, so a job that dies partway can simply be restarted without double-applying or skipping anything.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is dropping a column the riskiest step in a migration?",
+    "answer_markdown": "It is instant, irreversible, and breaks any code still referencing it. During a rolling deploy, old instances may still be issuing queries that select that column, so they begin failing the moment it disappears. Recovery requires restoring from a backup, and any rows written since that backup are lost. This is why contract must be a separate deploy well after expand, ideally days later, with query logs confirming nothing reads the column any more. The asymmetry that adding is reversible while dropping is not is exactly why expand-contract defers destructive steps to last.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Which schema changes are cheap and which are expensive?",
+    "answer_markdown": "Adding a nullable column is cheap because it is a metadata-only change, and on modern PostgreSQL adding a column with a constant default is also cheap. Expensive operations include adding NOT NULL to an existing column, which must validate every row, changing a column's type, which usually rewrites the whole table, and creating an index normally, which blocks writes for the entire build. Using CREATE INDEX CONCURRENTLY avoids blocking writes at the cost of being slower and needing cleanup if it fails. Knowing which category an operation falls into is what lets you predict whether a migration is safe on a busy table.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What does it mean for a migration to be backward-compatible, and why does it matter?",
+    "answer_markdown": "It means the schema after the migration still works correctly with the version of the application code currently running, not just the new version. This matters because deploys are never instantaneous: rolling updates, canary releases, and rollbacks all mean old and new code run against the same database simultaneously, sometimes for a long time. If the schema only suits the new code, every request served by an old instance fails during that window. It also preserves your ability to roll back, since reverting the code must not leave it facing a schema it cannot use.",
+    "difficulty": "easy"
+  }
+]

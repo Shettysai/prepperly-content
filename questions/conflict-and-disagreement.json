@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Tell me about a time you disagreed with your manager.",
+    "answer_markdown": "Pick the story where you were overruled, not the one where you won — the winning story tests nothing. Structure it as: both positions stated fairly, you raised it privately and early, you brought evidence rather than opinion, the decision went against you, and then you did concrete work to make that decision succeed. That last part carries roughly half the score: 'so I committed — I wrote the transaction wrapper we'd need, documented the two queries as known sharp edges, and set an alert for the inconsistency I was worried about' proves you can disagree and commit, which is what the question exists to test. Companies with explicit leadership frameworks score backbone and trust as a pair, so demonstrating only the pushback half is a partial answer.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is a story where you turned out to be right often a weaker answer than one where you were wrong?",
+    "answer_markdown": "Being right tests only your technical judgement, which the rest of the loop already covers. Behavioural rounds are looking for whether your ego is smaller than your interest in the correct outcome, and the story where you changed your mind on new evidence demonstrates that directly. There is also a delivery risk: candidates telling a vindication story almost always let some satisfaction into it, and 'I was proven right' makes the interviewer wonder whether you would be safe to overrule on their team. If your best story does end with you being right, deliberately include what you got wrong along the way — the factor you under-weighted, the assumption you made about the other person — since that is the part that actually scores.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A peer has been sitting on your code review for eight days and you are blocked. Walk me through what you do.",
+    "answer_markdown": "Ask to talk directly before escalating or pinging the thread again, because the most common cause is not what you assume. In practice a long block frequently turns out to be an unwritten objection or a meeting someone thought was scheduled and was not — a forty-minute conversation resolves what a week of comment threads did not. Come to that conversation ready to lose: if their objection is that your endpoint duplicates something their service already does, the right outcome is deleting a third of your PR and calling their service instead, and presenting that as the good result is exactly what senior looks like. The durable fix is process, not persuasion: open a short design conversation with the other team before writing the PR rather than requesting review after it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What are the specific phrases in a conflict story that quietly lose you points?",
+    "answer_markdown": "'He just didn't understand' signals contempt and tells the interviewer you may still be litigating this. 'I escalated to my manager' as your first move signals no conflict hygiene, because interviewers listen specifically for whether you attempted a direct conversation first. 'I was proven right' signals vindication-seeking rather than problem-solving. 'We agreed to disagree' means nothing was resolved and you are hoping that sounds like resolution. And 'I don't really have conflicts at work' is the worst, since it reads either as avoidance or as never having had responsibility for anything contested. The common thread is that all five make the interviewer suspicious of the narrator, and they only ever hear your side.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "The interviewer asks about a conflict you never resolved. How do you answer without it becoming a complaint?",
+    "answer_markdown": "Answer it directly — everyone has one, and refusing the question is worse than the story. Name what you tried, in order, and then be specific about what you did to keep the work moving despite it: reducing your dependency on that person, escalating with their position stated fairly, or accepting a slower path. Then say what you would try differently now, which is what turns the story from a grievance into evidence of reflection. The one thing you must not do is place all of it on the other person; even in cases where they were mostly at fault, an account with no self-examination in it reads as the same one-sidedness the interviewer is screening for.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why does raising a disagreement privately before a group meeting matter so much to interviewers?",
+    "answer_markdown": "Because it predicts what you will do on their team, and a public ambush is expensive in ways that outlast the disagreement. Someone challenged in front of their peers defends their position rather than evaluating yours, which means you are less likely to get the outcome you wanted and more likely to damage a working relationship you still need. A private conversation first also lets you discover you are wrong cheaply, before you have publicly committed to a position. In the story, this is a small detail with an outsized effect: 'I asked for thirty minutes with him before the design review rather than raising it in the review itself' is one sentence, and it tells the interviewer you have done this before.",
+    "difficulty": "easy"
+  }
+]

@@ -4,9 +4,6 @@ slug: big-o-notation
 summary: Time and Space Complexity analysis
 tags: [complexity, fundamentals, algorithms]
 links:
-  - title: "Video: Big O Notation - Full Course"
-    url: "https://www.youtube.com/watch?v=Mo4vesaut8g"
-    kind: video
   - title: "Video: Big O Notation Explained for Beginners"
     url: "https://www.youtube.com/watch?v=2Cyy9Oxerbg"
     kind: video

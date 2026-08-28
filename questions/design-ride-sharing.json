@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why can't a standard database index answer 'find drivers near me' efficiently?",
+    "answer_markdown": "B-tree indexes are one-dimensional — they sort on a single ordered key — but proximity is inherently two-dimensional. A query like `WHERE lat BETWEEN ? AND ? AND lng BETWEEN ? AND ?` can use an index on one column to narrow candidates, but it then has to filter every one of those rows on the second column, so a query in a dense city can scan an enormous intermediate set. The fix is to collapse two dimensions into one sortable key using a space-filling scheme like a geohash, so that spatial proximity becomes prefix similarity and the database can serve the query with an ordinary prefix range scan.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How does a geohash work, and why do nearby points share a prefix?",
+    "answer_markdown": "A geohash encodes a coordinate by recursively halving the world, alternating between longitude and latitude: each comparison against the midpoint of the current range emits one bit, and every five bits become one base32 character. Because each additional character subdivides the previous box further, two points inside the same small box necessarily agree on every character that describes the enclosing boxes. That is why two locations about 150 metres apart in San Francisco both encode to `9q8yyk`, while San Francisco and New York share no leading character at all. Proximity search therefore reduces to matching on a string prefix, which any ordinary index handles well.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why search neighbouring cells rather than just the rider's own cell?",
+    "answer_markdown": "Grid boundaries are arbitrary relative to where people actually stand. A rider positioned just inside the edge of a cell may have the nearest driver only a few metres away but on the other side of that boundary, in a different cell with a completely different geohash prefix. Searching only the rider's own cell would silently miss that driver and match a far worse one, or return nothing at all in a sparse area. Gathering candidates from the rider's cell plus the eight surrounding cells makes the search area genuinely centred on the rider rather than on the grid.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Where should driver location data be stored, and why not in a durable database?",
+    "answer_markdown": "In memory, with a short TTL — Redis is the natural fit. With a million active drivers reporting every four seconds, the system takes about 250,000 location writes per second, roughly 1,000 times the ride-request rate; pushing that into a durable database would be enormously expensive. It would also be pointless, because a driver's position from thirty seconds ago has no value — the only durable record that matters is the trip itself. The entire live index is only around 50 MB, so it fits in memory easily. A TTL also handles failure gracefully: a driver whose app crashes simply ages out of the index with no explicit offline event required.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Two riders request a ride simultaneously and both see the same nearby driver. How do you prevent double-booking?",
+    "answer_markdown": "The claim must be a single atomic check-and-set, not a read followed by a write. If the service reads the driver's status as 'available' and then separately writes 'assigned', two concurrent requests can both read 'available' before either writes, and both riders get assigned the same driver. In Redis this is `SET key value NX`, which only succeeds if the key does not already exist; in SQL it is `UPDATE drivers SET status='assigned' WHERE id=? AND status='available'`, where the affected row count tells you whether you won the race. You also need a timeout so a driver who neither accepts nor declines automatically releases the claim, otherwise one unresponsive phone can strand riders indefinitely.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What happens to your geo index when a concert ends and thousands of people request rides from one location?",
+    "answer_markdown": "You get a cell hotspot. A fixed-precision grid puts thousands of drivers and riders into a handful of cells, so each proximity query returns a huge candidate list that must be ranked, and whichever shard owns those cells absorbs disproportionate load while neighbouring shards sit idle. The fix is to make precision adapt to density — fine-grained cells in dense downtown areas and coarse cells in rural ones — or to use a quadtree, which subdivides a region only when the number of objects in it exceeds a threshold. A quadtree naturally produces small cells exactly where density is high and large cells where it is not, which is why it is preferred when density varies sharply.",
+    "difficulty": "hard"
+  }
+]

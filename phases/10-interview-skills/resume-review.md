@@ -7,9 +7,12 @@ links:
   - title: "Video: How to Write a Great Software Engineer Resume"
     url: "https://www.youtube.com/watch?v=ciIkiWwZnlc"
     kind: video
-  - title: "Video: Software Engineering Resume Tips From a Big Tech Hiring Manager"
-    url: "https://www.youtube.com/watch?v=AmPWN6McX7k"
-    kind: video
+  - title: Tech Interview Handbook — Resume preparation
+    url: "https://www.techinterviewhandbook.org/resume/"
+    kind: resource
+  - title: Wikipedia — Résumé
+    url: "https://en.wikipedia.org/wiki/R%C3%A9sum%C3%A9"
+    kind: resource
 ---
 ## Before you start
 

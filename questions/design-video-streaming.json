@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why is video cut into chunks instead of served as one continuous file?",
+    "answer_markdown": "Chunking enables four things at once. It lets the player switch quality mid-playback, because each chunk is an independent fetch and the next one can come from a different bitrate tier. It makes seeking cheap, since the player requests only the chunk containing the target timestamp rather than downloading everything before it. It allows transcoding to run in parallel, because segments are independent jobs — a one-hour video in 10-second segments is 360 jobs that finish in minutes rather than hours. And because chunks are just files fetched over ordinary HTTP, any CDN can cache them with no special streaming protocol, which is what makes the whole design economically viable.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why must bitrate selection happen on the client rather than the server?",
+    "answer_markdown": "Only the client can measure what actually matters: its real throughput to the edge server and its current buffer level. The server sees a request for a file and has no visibility into the viewer's last-mile conditions, which are exactly where congestion occurs. More importantly, server-side selection would require tracking per-viewer state, which destroys statelessness — and statelessness is precisely what allows a CDN to serve millions of concurrent viewers from cached files. Keeping the decision on the client means the server just serves static chunks, which is the property the entire architecture depends on.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A player has 6 Mbps of measured throughput. Why might it choose 1080p in one case and 720p in another?",
+    "answer_markdown": "Because throughput alone is not the input — buffer level is. A sensible algorithm applies a safety margin to measured throughput rather than spending all of it, and that margin tightens when the buffer is thin. With 30 seconds buffered, a 0.9 margin gives a 5.4 Mbps budget, which affords the 5 Mbps 1080p tier. With only 10 seconds buffered, a 0.7 margin gives 4.2 Mbps, which drops it to 720p. The buffer is a cushion that absorbs mistakes: with plenty of it you can afford to be optimistic, and with little of it a single wrong guess causes a visible stall, so the algorithm becomes conservative.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why can't the origin servers serve video directly to viewers?",
+    "answer_markdown": "The bandwidth is far beyond what any origin cluster can deliver. With 100M daily users watching an hour each at roughly 3 Mbps, average concurrent viewership is about 4.2 million, which is 12.5 Tbps of sustained egress and around 25 Tbps at peak. Beyond the raw capacity problem, origin egress is typically several times more expensive per gigabyte than CDN egress — at these volumes that is roughly $10.8M per day versus $2.7M. There is also a latency argument: serving a viewer in Sydney from a US origin adds hundreds of milliseconds to every chunk fetch. The CDN solves capacity, cost, and latency simultaneously, which is why it is not optional here.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Edge cache space is limited. What do you cache, and why is caching whole videos the wrong instinct?",
+    "answer_markdown": "Cache by popularity, and cache asymmetrically within each video. Video popularity is extremely skewed — a small fraction of titles generate most views — so the long tail should never occupy edge space. Within a popular video, the early chunks are far more valuable than the later ones, because every viewer watches the opening while most abandon partway through. That means caching chunk one of a thousand popular videos delivers a much higher hit rate than caching all thousand chunks of a single video. Treating a video as an indivisible caching unit wastes edge capacity on segments that comparatively few viewers ever reach.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How would you speed up the time between upload and the video being watchable?",
+    "answer_markdown": "Split the file into segments and transcode them in parallel across many workers, since segments are independent — this alone converts hours of sequential encoding into minutes. Then publish progressively: generate and release the lowest quality tier first so the video becomes watchable immediately, while higher tiers continue encoding in the background. For platforms with a long tail of user-generated content, go further and transcode lazily — produce only a low tier on upload and generate higher resolutions on first demand, since most uploads are never watched at all and transcoding them fully is wasted compute and storage.",
+    "difficulty": "medium"
+  }
+]

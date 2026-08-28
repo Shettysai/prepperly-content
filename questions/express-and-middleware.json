@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is middleware, and what are the three things a middleware function can do?",
+    "answer_markdown": "Middleware is a function that sits in a chain between the incoming request and your route handler, receiving `req`, `res`, and `next`. It can inspect and modify the request and response objects, which is how things like body parsing and attaching a user object to `req` work. It then does exactly one of three things: call `next()` to pass control to the next middleware, send a response to end the request there, or call `next(err)` to skip ahead to error handling. There is a fourth, accidental option — doing none of these — which leaves the request hanging until the client times out. The mental model that matters is that middleware runs in registration order, like stations at airport security.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does Express know that a function is an error-handling middleware rather than a normal one?",
+    "answer_markdown": "By counting its parameters. Error handlers declare four — `(err, req, res, next)` — while normal middleware declares three, and Express inspects `fn.length` to tell them apart. This is purely mechanical, which has an important consequence: if you write an error handler that only declares three parameters because you do not need `next`, Express classifies it as ordinary middleware and errors will never be routed to it. The reverse also holds — during normal request flow, four-argument functions are skipped entirely, and they only run once an error is in flight. Knowing it is an arity check rather than magic explains a whole class of confusing bugs.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why must error-handling middleware be registered after all your routes?",
+    "answer_markdown": "Because `next(err)` walks *forward* through the middleware stack looking for the next four-argument function. Anything registered before the error is raised has already been passed, so an error handler placed at the top of the file is behind the point of failure and will never be reached. Registering it last means every route and middleware above it can forward errors down to it. If you get this wrong the symptom is subtle: errors fall through to Express's built-in default handler, which in development leaks a full stack trace to the client, and requests may simply hang. The same forward-walking rule is why a 404 catch-all also goes near the end, just before the error handler.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A developer registers `app.use('/admin', adminRoutes)` before `app.use(requireAuth)`. What happens, and why is this bug so dangerous?",
+    "answer_markdown": "The admin routes are completely unauthenticated. Middleware runs in registration order, so a request to `/admin` reaches `adminRoutes` first, which sends a response and ends the chain — `requireAuth` is never reached. What makes this dangerous is that nothing fails: there is no crash, no error log, and no failing test unless someone specifically wrote one asserting that an unauthenticated request gets a 401. The endpoint works perfectly for legitimate users while also working perfectly for attackers. The defence is to read your `app.use` calls top to bottom as a literal sequence of events, keep the order logging → parsing → CORS → auth → routes → 404 → errors, and write a test that asserts protected routes reject requests with no credentials.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What happens if a middleware function neither calls `next()` nor sends a response?",
+    "answer_markdown": "The request hangs. Node keeps the connection open waiting for a response that never comes, and the client eventually times out. Nothing throws and nothing is logged, so this is one of the harder bugs to trace from symptoms alone — you see a timeout on the client and a perfectly quiet server. It usually comes from an early `return` inside a conditional branch where the author meant to continue the chain but forgot the `next()` call. A related mistake is doing both: calling `next()` and also sending a response, which lets a later middleware try to write to an already-finished response and produces an \"headers already sent\" error.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do errors thrown inside an `async` route handler reach your error middleware, and how did this change in Express 5?",
+    "answer_markdown": "An `async` function does not throw synchronously — it returns a Promise that rejects — so the framework's surrounding `try/catch` cannot see the failure. In Express 4 this meant a rejected async handler simply hung the request, which is why older codebases are full of `.catch(next)` at the end of every async route, or wrapper helpers like `asyncHandler` that attach it automatically. Express 5 fixes this: route handlers and middleware that return a Promise call `next(value)` automatically when they reject, so `async` handlers forward errors with no extra work. The underlying lesson generalises beyond Express — any callback-based framework needs an explicit bridge between Promise rejections and its error channel.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "What does a load balancer do, and why is it required for horizontal scaling?",
+    "answer_markdown": "It sits in front of a group of identical servers and decides which one handles each incoming request, so work is spread rather than piling onto one machine while others idle. Horizontal scaling — adding more servers — is only meaningful if something actually distributes traffic across them; ten servers with no balancer is just ten separate addresses that clients would have to choose between themselves. The balancer also hides failure: when a server stops passing health checks it is removed from rotation, so users never see the requests that would otherwise have failed against a dead machine.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "When would you choose least connections over round robin?",
+    "answer_markdown": "Round robin sends each request to the next server in order, which distributes evenly only when every request costs roughly the same amount of work. Real traffic is rarely like that — one request might be a 2ms cache read and another a 3-second report generation — and round robin will keep feeding new work to a server already busy with something expensive, because it has no idea what any server is currently doing. Least connections picks whichever server has the fewest requests in flight, so it adapts automatically to varying request cost and naturally routes around a server that is bogged down. It costs slightly more to track live connection counts, which is the only reason round robin still gets used.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is `hash(key) % serverCount` a bad way to route cache traffic, and how does consistent hashing fix it?",
+    "answer_markdown": "With modulo hashing, changing the server count changes the result for almost every key — going from 10 servers to 11 remaps roughly 90% of keys. Every one of those keys is now routed to a server that has never cached it, so the entire cache is effectively invalidated at once and the full uncached load hits the database precisely during a scaling event. Consistent hashing places servers at points on a hash ring, and each key belongs to the first server found walking clockwise from its own hashed position. Removing a server only affects the keys in that server's arc, which move to the next server clockwise while everything else stays exactly where it was — so a change to one of n servers reshuffles roughly 1/n of the keys instead of all of them.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What are virtual nodes in consistent hashing and why are they necessary?",
+    "answer_markdown": "A virtual node is one of several positions a single physical server occupies on the hash ring, typically around 150 of them per server rather than one. They are necessary because with a single position each, servers land at random points on the ring and the arcs between them are wildly uneven — one server might own a third of the ring while another owns a sliver, producing badly skewed load through no fault of the key distribution. Spreading each server across many positions averages those arcs out, so every server ends up owning close to its fair share. Virtual nodes also make removal graceful: a departing server's many small arcs get absorbed by several different servers rather than dumping its entire load onto one neighbour.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What's the difference between a Layer 4 and a Layer 7 load balancer?",
+    "answer_markdown": "A Layer 4 balancer routes based on IP address and port, forwarding TCP packets without inspecting their contents. It is fast, cheap in CPU, and works with any protocol, but it cannot make decisions based on anything inside the request. A Layer 7 balancer parses the HTTP request itself, so it can route by URL path or header, terminate TLS, rewrite requests, and retry a failed request against a different backend since it understands request boundaries. That capability costs meaningfully more CPU per request. The practical rule is L4 when you need raw throughput and protocol independence, L7 when you need content-based routing, TLS termination, or request-level retries.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why are sticky sessions considered a design smell, and what should you do instead?",
+    "answer_markdown": "Sticky sessions pin a user to one specific server because that server holds their session in memory. This creates three problems: load distribution degrades because a server that collects long-lived heavy sessions stays hot and the balancer cannot rebalance without logging people out; deploys become disruptive because restarting a server drops every session pinned to it; and autoscaling loses much of its value because new servers only receive brand-new sessions and take a long time to carry a fair share. The fix is not a smarter stickiness algorithm but removing the need for it — move session state into Redis or a signed cookie so any server can serve any request. Consistent hashing looks similar but is legitimate, because routing to the 'wrong' server there is only a cache miss, which is slower but still correct, rather than a correctness failure.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A fleet uses least connections. One server's disk is failing so it returns 500 errors in 5ms while healthy servers take 200ms. What happens?",
+    "answer_markdown": "The broken server drains its connection queue roughly forty times faster than the healthy ones, because failing instantly is much quicker than doing real work. Least connections sees it as consistently the least busy server and routes a hugely disproportionate share of traffic to it — the balancer actively concentrates traffic onto the one machine that cannot serve it. This failure mode is sometimes called a black hole, and it is a general hazard of any load-aware algorithm that treats speed as a proxy for health. The fix is to make health checks verify real serving ability rather than mere responsiveness, and to have the balancer track error rates per backend and eject any server whose error rate crosses a threshold, regardless of how fast it is responding.",
+    "difficulty": "hard"
+  }
+]

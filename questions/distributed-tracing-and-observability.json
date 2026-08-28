@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the difference between monitoring and observability?",
+    "answer_markdown": "Monitoring tracks failure modes you predicted in advance — you decided which dashboards and alerts to build, so you can only see the problems you already thought of. Observability means your system emits enough data (logs, metrics, traces) that you can answer questions you never anticipated, without shipping new instrumentation and waiting for the failure to recur. In practice monitoring is a subset of observability: the known-unknowns you chose to watch closely. The distinction matters most in distributed systems, where novel failure modes appear from the interaction of services rather than from any one of them.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain the difference between metrics, logs, and traces, and what each is best at.",
+    "answer_markdown": "Metrics are numeric measurements aggregated over time, like error rate or requests per second — they are cheap and fixed in size regardless of traffic, which makes them right for dashboards and alerting, but they cannot tell you about one specific request. Logs are timestamped records of individual events, giving you full detail about what happened at a single point, but their volume grows directly with traffic and they have no inherent connection to each other across services. Traces follow one request's path across service boundaries, recording how long each hop took, which is what pinpoints where latency or a failure actually lives. You need all three: metrics tell you something is wrong, traces tell you where, and logs tell you exactly what.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does a trace ID let you follow a single request across ten different services?",
+    "answer_markdown": "A trace ID is generated once at the system's edge, usually by the API gateway or first service the request reaches. Every service that handles the request includes that same ID in every outgoing call, typically in a standard HTTP header like W3C `traceparent`, and emits a span recording its own work tagged with that trace ID plus the ID of its parent span. Because every span carries both its own ID and its parent's, a collector can reassemble the complete tree even though the spans arrive separately, out of order, from ten different machines. The critical requirement is that no service drops the ID — one hop that forgets to propagate it splits the trace in two and breaks the chain.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What are the four golden signals from the Google SRE book, and why those four?",
+    "answer_markdown": "They are latency (how long requests take), traffic (how much demand the system is under), errors (the rate of failing requests), and saturation (how full the system's constrained resource is). They are chosen because between them they catch the large majority of user-visible problems in a request-driven service while staying few enough that a human can actually watch them. Latency and errors capture what users directly experience, traffic gives the context needed to interpret both, and saturation is the leading indicator that warns you before the other three degrade. The guidance is that if you can only measure four things about a user-facing system, measure these.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why can't you trace 100% of requests, and what is the difference between head and tail sampling?",
+    "answer_markdown": "Span volume is requests multiplied by service hops, so a service doing 10,000 requests per second across 20 hops produces 200,000 spans per second — terabytes a day, overwhelmingly recording successful requests that tell you nothing. Head sampling decides at the start of the request, usually randomly keeping some small percentage; it is cheap and needs no buffering, but since errors are rare, random sampling discards nearly all of them and keeps the boring successes. Tail sampling buffers the spans until the request completes and then decides based on the outcome — keep everything that errored or exceeded a latency threshold, plus a small random slice of healthy traffic. Tail sampling gives far better data but requires a collector that holds spans in memory until the request finishes, which is real infrastructure you must run and scale.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why must a sampling decision be consistent across all services in a trace, and what goes wrong if it isn't?",
+    "answer_markdown": "If each service independently decides whether to sample, some hops of the same request get recorded and others don't, producing a trace with holes in it. That is actively worse than having no trace at all: an engineer looking at a gap where the payment service should be will reasonably conclude payment was never called, and spend an hour debugging a routing problem that doesn't exist. The fix is to make the sampling decision once, at the trace's origin, and propagate it inside the trace context alongside the trace ID — so every downstream service honours the same decision rather than rolling its own dice. This is exactly why the W3C traceparent header carries sampling flags rather than just an identifier.",
+    "difficulty": "hard"
+  }
+]

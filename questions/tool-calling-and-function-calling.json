@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "When a model 'calls a function', does the model execute your code? Why does the answer matter for security?",
+    "answer_markdown": "No. The model only emits a structured message naming a tool and supplying arguments as generated text; your application code parses that and decides whether to execute anything. This matters because it locates the entire security boundary on your side: authorisation, argument validation, rate limiting, and audit logging all happen in your code, and none of them can be delegated to the model. It also reframes what a malicious tool call is — it is untrusted input arriving in a structured shape, no more inherently trustworthy than a query parameter, so passing model-supplied arguments straight into a shell command, a database query, or a filesystem path is the same class of vulnerability as passing raw user input there.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You defined a get_weather tool but the model keeps replying 'I don't have access to weather data' instead of calling it. How do you debug this?",
+    "answer_markdown": "Start with the tool description, which is the most common cause by a wide margin. The description is not documentation for humans — it is the prompt the model uses to decide whether this tool is relevant, so a terse description like 'Weather API wrapper' gives it almost nothing to match against. Rewrite it to name the situations and trigger words explicitly: 'Get current weather for a city. Use whenever the user asks about weather, temperature, rain, or conditions.' Then verify the mechanics: confirm the tools array is actually being sent with the request and not dropped by a wrapper, check that tool_choice is not set to 'none', and check that the schema is valid since a malformed schema can cause the tool to be silently ignored. If several tools have overlapping descriptions, the model may also be picking a different one, so make descriptions mutually exclusive and state when not to use each.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A tool call throws an exception. What should your loop do, and what is the common wrong answer?",
+    "answer_markdown": "Catch the exception and return the error message back to the model as the tool result, so it can adapt on the next turn — retrying with corrected arguments, trying a different tool, or explaining the limitation to the user. This is self-healing behaviour you get for the price of one extra round trip, and it is especially valuable for argument errors like an invalid enum value, where a specific message such as 'unit must be celsius or fahrenheit' lets the model fix itself immediately. The common wrong answer is letting the exception propagate and fail the whole request, which throws away the model's ability to recover and turns a recoverable mistake into a user-visible error. The one nuance is that you should not surface raw internal errors containing stack traces, connection strings, or internal hostnames — sanitise to a useful message first.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you prevent an agentic tool-calling loop from running forever or costing an unbounded amount?",
+    "answer_markdown": "Use four independent limits, because each covers a failure the others miss. A maximum step count stops the classic runaway loop. A cumulative token or dollar budget catches the case where few steps are individually enormous, since a step cap alone says nothing about the size of each step. A wall-clock timeout protects user-facing latency when a tool is slow rather than the model being confused. And no-progress detection — comparing the tool name and arguments against the previous turn — catches the model calling the same thing repeatedly because the result did not contain what it wanted. When a limit trips, return a status naming which one and the amount spent so far, since 'which limit did it hit and what had it cost' is the first question you will ask when debugging production behaviour.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "When are parallel tool calls appropriate, and when do they break things?",
+    "answer_markdown": "Parallel calls are appropriate when the requested operations are genuinely independent — fetching weather for three cities, or looking up four unrelated product records — where running them concurrently with Promise.all turns three sequential round trips into one and cuts latency substantially. They break when there is a data dependency: if one call needs another's output, such as looking up a customer ID before fetching that customer's orders, the model must take separate turns because it cannot know the second call's arguments until it has seen the first result. Models generally handle this correctly on their own, but your executor should not assume independence — run each call in its own try/catch so one failure does not reject the whole batch and lose the successful results. Side effects deserve extra caution: parallel writes to the same resource can race in ways parallel reads never do.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Your agent has a send_refund tool. Design the safety controls around it.",
+    "answer_markdown": "Treat the model's call as a request, never as an authorisation. Take the customer identity from the authenticated session rather than from model-supplied arguments, since a model-provided customer_id is attacker-controlled input wearing a trusted name and is exactly the vector an injected instruction would use. Validate every argument in code — the amount against the original order total, the order against the current user's ownership — and cap the maximum refund the tool can issue regardless of what is requested. Require an idempotency key derived from the order so a retried loop step cannot refund twice, which matters because the loop retries far more readily than a human would. Then gate anything above a threshold behind human approval: queue the request, return 'pending approval' to the model, and require out-of-band confirmation before execution. Log every call with the full conversation context so any incorrect refund can be traced to the conversation that produced it.",
+    "difficulty": "hard"
+  }
+]
