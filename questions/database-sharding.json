@@ -13,5 +13,15 @@
     "prompt": "How would you design sharding for a multi-tenant SaaS product where some customers are far bigger than others?",
     "answer_markdown": "Sharding directly by tenant ID with hash-based routing risks a hot shard if one large customer's data and traffic dwarf everyone else's sharing that shard. A common fix is directory-based sharding: maintain a lookup table mapping tenant to shard, so you can deliberately place large tenants on their own dedicated shard and pack many small tenants together on shared shards, rebalancing the mapping as usage changes. The follow-up is usually how you keep that directory itself from becoming a bottleneck — typically by caching it aggressively since it changes rarely.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "A sharded system shards by user ID, but an admin needs to search users by email. Why is that query slow, and what are the options?",
+    "answer_markdown": "The shard router only knows how to route by the shard key, user ID, so a query by email gives it no way to know which single shard holds the matching row, forcing a scatter-gather query that hits every shard and merges the results. Options are accepting that cost for a rare admin-only query, maintaining a separate secondary index or lookup table mapping email to shard, or running such cross-cutting queries against a replica or search index built specifically for that access pattern instead of the sharded primary store.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What makes a shard key a good choice versus a bad one?",
+    "answer_markdown": "A good shard key spreads both data and query load evenly across shards and matches how the application actually queries the data most often, so most reads and writes hit exactly one shard. A bad shard key either clusters too much data or traffic onto one shard, such as sharding by signup date when most activity is on recent accounts, or doesn't match query patterns, forcing frequent scatter-gather queries across every shard. Choosing it well upfront matters because changing a shard key after data has grown large is one of the most expensive migrations in a sharded system.",
+    "difficulty": "easy"
   }
 ]

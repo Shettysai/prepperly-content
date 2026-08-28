@@ -13,5 +13,15 @@
     "prompt": "Why is statelessness considered a core REST principle, and what does it cost you?",
     "answer_markdown": "Statelessness means each request carries all the information the server needs (like an auth token) rather than relying on server-side session memory from a previous request. This lets you add more servers behind a load balancer freely, since any server can handle any request — there's no session data tying a client to one specific machine. The cost is that every request repeats some data (like re-sending the token), and you push session-like state (shopping carts, wizards) into a database or client storage instead of server memory.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Why should a client be able to tell whether a request succeeded just from the HTTP status code, without parsing the body?",
+    "answer_markdown": "Status codes exist at the protocol level, so relying on them lets client code branch on `response.status` generically, write shared error-handling logic, and let tools like caches, proxies, and monitoring dashboards understand outcomes without knowing anything about your specific API's body format. An API that always returns 200 and buries success or failure inside the JSON forces every consumer to write custom parsing logic and defeats HTTP-aware tooling that already knows what a 4xx or 5xx means.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "A REST endpoint for a product page returns the full product object including reviews, images, and inventory, but the mobile app only needs the name and price. What are your options?",
+    "answer_markdown": "You can build a separate, leaner endpoint just for mobile, accept the over-fetching as a reasonable trade-off if the payload isn't huge, or support partial responses via a query parameter like `?fields=name,price`. If this kind of mismatch happens across many screens with very different data needs, that's a strong signal to consider GraphQL, where each client asks for exactly the fields it needs from one endpoint instead of maintaining multiple tailored REST endpoints or fields parameters.",
+    "difficulty": "medium"
   }
 ]

@@ -13,5 +13,15 @@
     "prompt": "How would you build a Transform stream that uppercases text passing through it, and why is Transform the right choice here?",
     "answer_markdown": "You'd extend stream.Transform and implement a _transform(chunk, encoding, callback) method that converts the chunk to a string, uppercases it, and calls this.push() with the result before calling callback() to signal it's ready for the next chunk. Transform is the right choice because the data needs to be both consumed (readable side) and produced (writable side) in the same step, chunk by chunk, without ever needing the whole input in memory — which is exactly what lets it be piped between any other readable and writable stream in a chain.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Does .pipe() forward errors between chained streams? What should you use instead if you want reliable error handling?",
+    "answer_markdown": "No — each stream only emits its own 'error' event, so an error in the middle of a `.pipe()` chain doesn't automatically propagate to or clean up the other streams in the chain, and an unhandled error event crashes the process. `stream.pipeline()` (or its Promise-based version from `stream/promises`) is the safer choice for production code, since it wires up error handling and cleanup across every stream in the chain in one call, calling a single callback if any stream in the chain fails.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What are the four types of streams in Node.js, and give one real example of each.",
+    "answer_markdown": "Readable streams are a source you read from, like `fs.createReadStream()` or an incoming HTTP request body. Writable streams are a destination you write to, like `fs.createWriteStream()` or an HTTP response. Duplex streams are both readable and writable at once, like a TCP socket. Transform streams are a duplex stream that modifies data as it passes through, like `zlib.createGzip()` for compression or a CSV row parser.",
+    "difficulty": "easy"
   }
 ]

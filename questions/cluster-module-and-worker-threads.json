@@ -13,5 +13,15 @@
     "prompt": "If cluster workers are separate processes with separate memory, how would you keep something like a rate-limiter's request counts consistent across all of them?",
     "answer_markdown": "Since cluster workers don't share memory, an in-process counter (like a plain object) would give each worker its own independent count, letting a client bypass a rate limit meant to apply globally by hitting different workers. The fix is to move that shared state to an external store all workers can read and write, like Redis, using atomic increment operations so concurrent requests across workers don't race. This is a common real-world gotcha: clustering solves throughput but reintroduces the need for shared state to live outside any single process.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "In a cluster setup with a primary and multiple worker processes, what role does the primary process play?",
+    "answer_markdown": "The primary process doesn't handle requests itself; it forks the worker processes (typically one per CPU core) and acts as the load balancer, distributing incoming connections across the workers round-robin, since all of them share the same listening port. It's also responsible for resilience — listening for a worker's 'exit' event and forking a replacement, so a crashed worker doesn't permanently reduce the app's capacity.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Is it ever useful to run more cluster workers than you have CPU cores?",
+    "answer_markdown": "Generally no for CPU-bound throughput — once every core is running a worker, adding more workers means multiple processes competing for the same cores, which adds context-switching overhead without increasing real parallel capacity and can even reduce throughput. It can occasionally help if workers spend significant time idle waiting on I/O rather than using the CPU, but the more common and reliable fix for I/O-bound work is Node's existing async I/O model, not extra cluster workers beyond the core count.",
+    "difficulty": "medium"
   }
 ]

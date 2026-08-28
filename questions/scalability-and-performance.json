@@ -13,5 +13,15 @@
     "prompt": "How would you design a system to gracefully degrade under load it wasn't sized for, rather than crash entirely?",
     "answer_markdown": "Techniques include rate limiting to reject excess requests cleanly instead of queuing them until the system times out, circuit breakers that stop calling a failing downstream dependency so it can recover, and serving cached or simplified responses (like a stale product price) instead of failing outright. The goal is prioritizing critical paths — like checkout — over non-critical ones — like recommendations — when resources are scarce, since a partial outage is far better than a total one.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Why do you design capacity around peak load instead of average load?",
+    "answer_markdown": "Traffic isn't flat across a day — a system with 100,000 daily active users making 3 requests each averages roughly 3.5 requests per second, but if 20% of that traffic lands in one peak hour, the actual peak rate is closer to 17 requests per second, nearly five times the average. A system sized only for the average would fail during exactly the busiest, most important period, so real capacity planning always uses the peak figure, with some margin, as the design target.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "An app stores rate-limit counters in a plain in-memory object and gets deployed behind a load balancer with three server instances. What breaks, and why?",
+    "answer_markdown": "Each of the three servers keeps its own separate copy of the counters in local memory, so a client making requests that get spread across all three servers effectively gets three times the intended rate limit, since no single server ever sees the client's full request count. This is the same class of bug as storing sessions locally — any state that needs to be consistent across requests has to live in a shared external store, like Redis, once you scale horizontally, because there's no guarantee two requests from the same client land on the same server.",
+    "difficulty": "easy"
   }
 ]

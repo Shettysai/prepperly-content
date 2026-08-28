@@ -13,5 +13,15 @@
     "prompt": "You have a Node API that occasionally freezes for a few seconds under load. How would you investigate whether the event loop is being blocked?",
     "answer_markdown": "You'd look for synchronous CPU-heavy code running on a request path — things like a large synchronous JSON.parse, a tight loop, or a synchronous crypto call — since any of these hog the single JS thread and prevent all other callbacks, including other users' requests, from running until it finishes. Tools like Node's built-in `--prof` flag, clinic.js, or simply logging event loop lag (measuring delay on a repeating `setImmediate`) can confirm and locate the blocking code. The fix is usually to move the heavy work to a worker thread or break it into smaller async chunks so the event loop gets a chance to breathe between them.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "What's the difference between the process.nextTick queue and the Promise microtask queue, and which runs first?",
+    "answer_markdown": "They're two separate queues, and Node always fully drains the process.nextTick queue before touching the Promise microtask queue, even if a Promise callback was scheduled earlier. Both queues are drained completely — including any new callbacks they add to themselves — before the event loop moves on to the next phase, like timers or I/O. This is why a nextTick callback registered after a Promise callback still runs before it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A function recursively schedules thousands of process.nextTick() calls before a setTimeout(fn, 0) that was registered earlier. Which runs first, and why does this matter in practice?",
+    "answer_markdown": "The entire chain of nextTick callbacks runs to completion first, because Node drains the nextTick queue fully — including callbacks it adds to itself along the way — before moving to the timers phase where the setTimeout callback lives. In practice this matters because code that keeps rescheduling itself via nextTick (or via chained Promises) can starve timers and I/O entirely, effectively blocking the rest of the application even though no single synchronous operation looks slow in isolation.",
+    "difficulty": "hard"
   }
 ]

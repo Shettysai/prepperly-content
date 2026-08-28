@@ -13,5 +13,15 @@
     "prompt": "Your Node service's memory usage climbs steadily over days and eventually gets OOM-killed. How would you find the leak?",
     "answer_markdown": "Start by confirming it's a real leak rather than normal GC behavior by graphing process.memoryUsage().heapUsed over time under steady load — a leak shows a persistent upward trend that never drops back down even after GC. Then take two heap snapshots under load, separated by time, using Node's --inspect flag with Chrome DevTools, and compare them to see which object type's count is growing unboundedly. Common culprits to check first are unremoved event listeners, uncapped caches or arrays, and closures capturing large objects longer than intended — the fix is finding and cutting the reference that's keeping those objects reachable.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Two functions are returned from the same closure. One references a large array, the other doesn't reference it at all. Does keeping only the second function alive still keep the array in memory?",
+    "answer_markdown": "Yes, in practice it often does — functions defined in the same lexical scope share that scope's closure, so V8 can keep the entire scope (including the large array) alive as long as any function from that scope is still reachable, even if the specific function you're holding never touches that variable. This is a common source of subtle leaks, because nothing in the retained function's own code looks like it's using the large object, making it hard to spot without a heap snapshot.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "If heapUsed grows during a burst of activity and then drops back down afterward, is that a memory leak?",
+    "answer_markdown": "No — that pattern is normal garbage collection behavior: V8 is lazy about collecting, so memory can climb temporarily as objects are created and hasn't yet been reclaimed, then drop once a collection cycle runs and frees everything that's no longer reachable. A real leak looks different: heapUsed trends upward over time under steady load and never returns to its previous baseline, because the leaked objects remain reachable and therefore ineligible for collection.",
+    "difficulty": "easy"
   }
 ]

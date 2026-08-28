@@ -13,5 +13,15 @@
     "prompt": "How would you defend a Node API against NoSQL injection in a MongoDB-backed app, where the classic SQL-injection defenses don't directly apply?",
     "answer_markdown": "NoSQL injection in MongoDB typically exploits query operators passed as objects — for example, sending `{ \"password\": { \"$ne\": null } }` as the password field in a JSON body can bypass a naive equality check if the app blindly passes req.body into a query. The defense is strict input validation that rejects non-primitive types where a primitive (like a string) is expected, plus using a schema validation library so an object can never sneak into a field meant to hold a plain string. This is the same root cause as SQL injection — trusting the shape of client input — just expressed differently because MongoDB queries are JSON objects instead of strings.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "A login route checks that `username` is a string before querying the database, but still builds the query with string concatenation. Is that safe?",
+    "answer_markdown": "No — checking the type only confirms the value is a string, but a perfectly well-typed string like `admin' --` can still reshape the query's structure when concatenated directly into SQL, turning the rest of the query into a comment and bypassing the password check entirely. The real fix is a parameterized query, where the database driver treats the input strictly as a data value regardless of its contents, never as part of the SQL syntax — type validation and parameterized queries solve different problems and you need both.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does Helmet matter even though each header it sets could be added manually with res.setHeader()?",
+    "answer_markdown": "Technically yes, each header could be set by hand, but Helmet bundles a set of well-researched security headers with safe defaults in one call, removing the risk of forgetting one or misconfiguring its value. It also gets updated over time as new best practices and vulnerabilities emerge, so an app using Helmet benefits from those updates automatically on a dependency bump, rather than requiring someone to track evolving header recommendations manually.",
+    "difficulty": "easy"
   }
 ]

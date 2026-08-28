@@ -13,5 +13,15 @@
     "prompt": "When would caching actually hurt more than help?",
     "answer_markdown": "Caching adds overhead and complexity when data changes on nearly every read, so the cache is invalidated almost immediately and you're paying for cache writes and management without meaningful hit rate. It's also risky for data that must always be perfectly current, like account balances, unless you're deliberate about consistency. The follow-up an interviewer might ask is how you'd measure whether a cache is actually helping — the answer is tracking hit rate; a low hit rate means the cache isn't earning its complexity.",
     "difficulty": "medium"
+  },
+  {
+    "prompt": "Walk through what happens on a cache miss in the cache-aside pattern, step by step.",
+    "answer_markdown": "The application checks the cache first and finds nothing (or an expired entry), so it queries the database directly for the value. Once the database returns the result, the application writes that value into the cache with a TTL before returning it to the caller, so the next request for the same key hits the cache instead. This makes cache-aside self-healing — even starting from a completely empty cache, the system still returns correct results, just slower until the cache warms up.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is a cache key like `profile:42` dangerous compared to `user:42:profile`?",
+    "answer_markdown": "A key like `profile:42` only encodes the ID, not the entity type, so if another part of the system also caches something keyed by ID 42 (like an order or a product), the keys collide and one overwrites the other's cached value. Namespacing the key with the entity type, as in `user:42:profile`, guarantees uniqueness across every kind of data the cache holds, which matters more as an application's cache usage grows to cover many unrelated resources sharing the same store.",
+    "difficulty": "medium"
   }
 ]

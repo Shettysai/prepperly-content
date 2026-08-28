@@ -13,5 +13,15 @@
     "prompt": "How do you handle a transaction that used to be one database commit but now spans two microservices?",
     "answer_markdown": "You can't use a single ACID transaction across two services' databases, so you typically use the saga pattern: each service does its local transaction and publishes an event, and if a later step fails, earlier steps run compensating actions (like refunding a payment) to undo their work. This trades strong consistency for eventual consistency — the system is temporarily inconsistent but converges to a correct state. An interviewer is checking whether you understand that distributed transactions are fundamentally harder than local ones, not just 'the same but over the network'.",
     "difficulty": "hard"
+  },
+  {
+    "prompt": "Two services both need a user's display name. What are the two basic options, and what does each cost?",
+    "answer_markdown": "Option one is calling the owning service on every request that needs the data, which keeps it always correct but adds latency and makes the calling service dependent on the other one being up. Option two is keeping a local, denormalized copy of the name, which is fast and resilient to the other service being down, but can go stale if an update event is missed and needs an explicit sync mechanism. Neither is free — this is the real cost microservices introduce for data a monolith would have handled with a single shared table.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the strangler fig pattern, and why would a team use it instead of a full rewrite?",
+    "answer_markdown": "The strangler fig pattern migrates a monolith to microservices gradually by routing specific features to new services one at a time, while the monolith keeps handling everything not yet migrated, until eventually nothing is left running in the old system. Teams prefer it over a big-bang rewrite because it keeps the system shippable and testable throughout the migration, reduces the blast radius of any single mistake, and lets you validate each extracted service under real traffic before committing further. A full rewrite risks a long period with no working system and a high chance of quietly reintroducing bugs the original code had already fixed.",
+    "difficulty": "medium"
   }
 ]
