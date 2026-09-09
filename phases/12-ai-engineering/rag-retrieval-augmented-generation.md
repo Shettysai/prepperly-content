@@ -10,6 +10,9 @@ links:
   - title: OpenAI — Create embeddings (API reference)
     url: "https://platform.openai.com/docs/api-reference/embeddings/create"
     kind: resource
+  - title: Unstructured — Chunking strategies
+    url: "https://docs.unstructured.io/open-source/core-functionality/chunking"
+    kind: resource
   - title: "Video: Retrieval-Augmented Generation (RAG) Explained"
     url: "https://www.youtube.com/watch?v=RIgsEMm0pyk"
     kind: video
@@ -19,7 +22,7 @@ links:
 ---
 ## Before you start
 
-Read [llm-fundamentals](llm-fundamentals) for embeddings and the context window. [prompt-engineering](prompt-engineering) helps for the generation half.
+Read [llm-fundamentals](llm-fundamentals) for the context window and [embeddings-and-vector-math](embeddings-and-vector-math) for what a vector is and how you compare two of them — this topic uses embeddings constantly and never re-explains them. [prompt-engineering](prompt-engineering) helps for the generation half.
 
 ## In one sentence
 
@@ -37,34 +40,75 @@ Imagine an open-book exam. Closed-book, the student answers from memory and inve
 
 RAG is the open book. But note where the difficulty actually sits: it is not the answering, it is *finding the right page*. Hand the student the wrong chapter and a confident wrong answer follows. Almost every RAG failure in production is a retrieval failure wearing a generation costume.
 
-## How it actually works
-
-Two pipelines. **Indexing** runs offline, **retrieval** runs per query.
-
-**Indexing.** Split documents into **chunks** of a few hundred tokens. Convert each chunk to an embedding vector via an embedding model. Store vectors plus original text in a vector index.
-
-**Retrieval.** Embed the user's question with the *same* model, find the nearest chunk vectors, take the top few, paste them into the prompt with the question, and instruct the model to answer only from the provided context.
+Two pipelines make that happen, and they run at completely different times. **Indexing** is a batch job you run when documents change. **Retrieval** happens on every single question, in front of a waiting user.
 
 ```mermaid
 flowchart LR
-  D["Documents"] --> C["Chunk"]
-  C --> E1["Embed"]
-  E1 --> V[("Vector index")]
-  Q["Question"] --> E2["Embed"]
-  E2 --> S["Similarity search"]
+  subgraph OFF["Offline: indexing"]
+    D["Your documents"] --> C["Chunk"]
+    C --> E1["Embed each chunk"]
+    E1 --> V[("Vector index")]
+  end
+  subgraph ON["Per query"]
+    Q["User question"] --> E2["Embed question"]
+    E2 --> S["Find nearest chunks"]
+    S --> P["Prompt: chunks + question"]
+    P --> A["Grounded answer"]
+  end
   V --> S
-  S --> RR["Rerank top 50 to top 5"]
-  RR --> P["Prompt: context + question"]
-  P --> A["Grounded answer"]
 ```
 
-**Chunking is where quality is won or lost.** Too small and a chunk lacks the context to be meaningful; too large and its embedding blurs several topics into one vague point. Around 200–500 tokens with 10–20% overlap is a reasonable default, but splitting on document structure — headings, paragraphs — beats splitting on a fixed character count, because a chunk that ends mid-sentence loses the meaning it was supposed to carry.
+The key consequence of that split: question and documents must be embedded by the **same model**. Different models learn unrelated coordinate systems, so mixing them yields normal-looking similarity numbers that mean nothing — see [embeddings-and-vector-math](embeddings-and-vector-math).
 
-**Reranking is the highest-value addition to naive RAG.** Embedding search is fast but lossy: it compresses a paragraph into a single point, so it retrieves chunks that are *topically related* rather than *actually relevant*. A **reranker** (a cross-encoder that reads query and chunk together) then rescores. The pattern is retrieve 50 cheaply, rerank to the best 5, send those.
+## How it actually works
+
+**Indexing.** Split documents into **chunks** of a few hundred tokens. Convert each chunk to an embedding vector. Store the vector, the original text, and — this part gets skipped and shouldn't — metadata: source document, section, author, date, tenant.
+
+**Retrieval.** Embed the question, find the nearest chunk vectors, take the top few, paste them into the prompt with the question, and instruct the model to answer only from the provided context.
+
+The per-query path has more steps than that summary suggests, and each one is a place quality leaks away:
+
+```mermaid
+flowchart TD
+  Q["Question: 'refund window for Pro?'"] --> F["Metadata filter: tenant, date"]
+  F --> K["Top-k by cosine, k=50"]
+  K --> G{"top score clears floor?"}
+  G -->|no| N["Return: I do not know"]
+  G -->|yes| RR["Rerank to top 5"]
+  RR --> H["Prepend title + heading to each chunk"]
+  H --> P["Assemble prompt with chunk ids"]
+  P --> M["Model answers, cites ids"]
+```
+
+### Chunking is a design decision, not a parameter
+
+Chunking is where RAG quality is won or lost, and there are four strategies worth knowing by name.
+
+**Fixed-size** splits every N characters or tokens. Trivial to implement, blind to the document, and it will happily cut a sentence, a table row, or a definition in half.
+
+**Recursive** splitting is the sensible default. It tries a priority list of separators — paragraph breaks, then sentence breaks, then words — descending to a cruder boundary only when a chunk is still too big. You get roughly uniform chunks that mostly respect natural boundaries.
+
+**Structure-aware** splitting uses the document's own shape: split on Markdown headings, HTML sections, or code-block boundaries, never inside one. For technical documentation this beats everything else, because the author already decided where an idea ends.
+
+**Semantic** chunking embeds each sentence and cuts where consecutive sentences stop being similar, on the theory that a topic shift is the real boundary. It costs an embedding call per sentence at index time, and earns that mainly on unstructured prose with no headings to lean on.
+
+**Overlap** insures against a bad boundary: repeating the last 10–20% of one chunk at the start of the next means a sentence straddling a split appears whole in at least one chunk. It costs storage and creates near-duplicate hits, so deduplicate before assembling the prompt.
+
+**The trade-off underneath all of it** is a genuine tension, not a tuning preference. A small chunk retrieves *precisely* — its embedding represents one idea, so it matches one kind of question sharply — but may lack the context to be understood, or hold only half the answer. A large chunk *carries* its context, but its embedding averages several topics into a vague point that matches many queries weakly and none strongly. One chunk size cannot give you both; the escape hatch is to retrieve small chunks and expand to their surrounding text before generation.
+
+### Metadata and filtering are first-class
+
+A purely semantic search over a mixed corpus retrieves plausible-but-wrong-document results, and the reason is uncomfortable: embeddings are *good*. Last year's refund policy and this year's are near-identical in meaning, so they sit almost on top of each other in vector space. So do one policy's copies for two tenants. Cosine similarity has no opinion about which is current or which you are allowed to see.
+
+So you filter on metadata — source, date, language, tenant, document type — **before or inside** the vector search, never after. Filtering afterwards whittles your top 50 down to three survivors of the wrong 50; the index never looked at the chunks you were entitled to.
+
+### Reranking
+
+Embedding search is fast but lossy: it compresses a paragraph into one point, so it retrieves chunks that are *topically related* rather than *actually relevant*. A **reranker** — a cross-encoder reading query and chunk together — rescores them. Retrieve 50 cheaply, rerank to the best 5, send those. [rag-in-production](rag-in-production) covers why that two-stage shape is standard.
 
 ## Worked example
 
-Cosine similarity is the whole retrieval mechanism, and it is short enough to write yourself:
+Retrieval and prompt assembly, end to end, with hand-written vectors so it runs offline:
 
 ```js
 function cosineSimilarity(a, b) {
@@ -78,124 +122,201 @@ function cosineSimilarity(a, b) {
 }
 
 // Real embeddings have 1536 dimensions; 3 shows the mechanism.
+// Pretend axes: [money-back-ness, logistics-ness, opening-hours-ness]
 const index = [
-  { text: 'Refunds are issued within 14 days of purchase.', vec: [0.9, 0.1, 0.2] },
-  { text: 'Our office is open Monday to Friday.',           vec: [0.1, 0.9, 0.1] },
-  { text: 'To return an item, contact support for a label.', vec: [0.8, 0.2, 0.3] },
+  { id: 'refund-policy#1',  source: 'policy',  vec: [0.90, 0.10, 0.20],
+    text: 'Refunds are issued within 14 days of purchase.' },
+  { id: 'returns-how-to#3', source: 'helpdesk', vec: [0.80, 0.20, 0.30],
+    text: 'To return an item, contact support for a label.' },
+  { id: 'contact-us#1',     source: 'website', vec: [0.10, 0.90, 0.10],
+    text: 'Our office is open Monday to Friday.' },
 ];
 
-function search(queryVec, k = 2) {
+function retrieve(queryVec, k = 2) {
   return index
-    .map((c) => ({ text: c.text, score: cosineSimilarity(queryVec, c.vec) }))
+    .map((c) => ({ ...c, score: cosineSimilarity(queryVec, c.vec) }))
     .sort((a, b) => b.score - a.score)
     .slice(0, k);
 }
 
-const queryVec = [0.85, 0.15, 0.25]; // "how do I get my money back?"
-for (const hit of search(queryVec)) {
-  console.log(hit.score.toFixed(4), hit.text);
+function assemblePrompt(question, hits) {
+  // Every chunk carries its id so the model can cite and you can audit.
+  const context = hits.map((h) => `[${h.id}] ${h.text}`).join('\n');
+  return [
+    'Answer ONLY from the context below. If it is insufficient, say you do not know.',
+    'Cite the [id] of every chunk you use.',
+    '',
+    'Context:',
+    context,
+    '',
+    `Question: ${question}`,
+  ].join('\n');
 }
+
+const question = 'how do I get my money back?';
+const queryVec = [0.85, 0.15, 0.25]; // the same embedding model, applied to the question
+
+const hits = retrieve(queryVec);
+for (const h of hits) console.log(h.score.toFixed(4), h.id);
+console.log('---');
+console.log(assemblePrompt(question, hits));
 ```
 
 Output:
 
 ```
-0.9960 Refunds are issued within 14 days of purchase.
-0.9955 To return an item, contact support for a label.
+0.9960 refund-policy#1
+0.9955 returns-how-to#3
+---
+Answer ONLY from the context below. If it is insufficient, say you do not know.
+Cite the [id] of every chunk you use.
+
+Context:
+[refund-policy#1] Refunds are issued within 14 days of purchase.
+[returns-how-to#3] To return an item, contact support for a label.
+
+Question: how do I get my money back?
 ```
 
-The query shares no keywords with either chunk — no "refund", no "return" — yet both rank above the office-hours chunk. That is the entire value proposition: matching on meaning rather than words. Real systems get the vectors from an embedding API instead of hand-writing them, but this ranking step is unchanged.
+The question shares no keywords with either chunk — no "refund", no "return" — yet both rank above the office-hours chunk. That is the entire value proposition: matching on meaning rather than words. Note the two design choices in the prompt: chunk ids travel with the text so answers can be traced back, and the instruction is *only* from context, because otherwise the model blends context with what it half-remembers from training.
 
-Here is the chunker, which matters more than most people expect:
+Now the chunker, where fixed-size loses to structure-aware in one visible step:
 
 ```js
-function chunkText(text, chunkSize = 200, overlap = 40) {
-  const words = text.split(/\s+/);
-  const chunks = [];
-  const stride = chunkSize - overlap; // overlap keeps sentences from being cut in half
-  for (let i = 0; i < words.length; i += stride) {
-    const slice = words.slice(i, i + chunkSize);
-    if (slice.length === 0) break;
-    chunks.push(slice.join(' '));
-    if (i + chunkSize >= words.length) break;
-  }
-  return chunks;
+const doc = `## Refund eligibility
+A refund is available when the order is under 30 days old.
+| Tier | Window | Fee |
+| Free | 14 days | 5% |
+| Pro  | 30 days | 0% |
+
+## Contact
+Support answers within one business day.`;
+
+// Strategy 1: fixed size. Fast, structure-blind.
+function fixedChunks(text, size) {
+  const out = [];
+  for (let i = 0; i < text.length; i += size) out.push(text.slice(i, i + size));
+  return out;
 }
 
-const doc = Array.from({ length: 500 }, (_, i) => `word${i}`).join(' ');
-const chunks = chunkText(doc);
-console.log('chunks:', chunks.length);
-console.log('first chunk words:', chunks[0].split(' ').length);
-console.log('overlap check:', chunks[0].split(' ').slice(-3).join(' '), '|', chunks[1].split(' ').slice(0, 3).join(' '));
+// Strategy 2: structure-aware. Split on headings, never inside a block.
+function headingChunks(text) {
+  return text
+    .split(/\n(?=## )/)                       // a boundary only where a heading starts
+    .map((c) => c.trim())
+    .filter(Boolean);
+}
+
+const fixed = fixedChunks(doc, 120);
+console.log('fixed-size chunks:', fixed.length);
+console.log('chunk 1 ends ...' + JSON.stringify(fixed[0].slice(-28)));
+console.log('chunk 2 starts ..' + JSON.stringify(fixed[1].slice(0, 28)));
+
+const structured = headingChunks(doc);
+console.log('\nstructure-aware chunks:', structured.length);
+structured.forEach((c, i) => {
+  const heading = c.split('\n')[0];
+  const rows = (c.match(/^\|/gm) ?? []).length;
+  console.log(`  #${i} ${heading.padEnd(22)} table rows kept: ${rows}`);
+});
 ```
 
 Output:
 
 ```
-chunks: 3
-first chunk words: 200
-overlap check: word197 word198 word199 | word160 word161 word162
+fixed-size chunks: 2
+chunk 1 ends ..."ndow | Fee |\n| Free | 14 day"
+chunk 2 starts .."s | 5% |\n| Pro  | 30 days | "
+
+structure-aware chunks: 2
+  #0 ## Refund eligibility  table rows kept: 3
+  #1 ## Contact             table rows kept: 0
 ```
 
-The second chunk starts 40 words before the first one ended. That redundancy is deliberate: a sentence straddling a boundary appears whole in at least one chunk.
+Look at where the fixed-size boundary fell. Chunk 1 ends mid-row at `14 day`; chunk 2 opens with `s | 5% |`. The Free tier's window and its fee are now in different chunks, and the Pro row has lost its header, so nothing in chunk 2 says those numbers are windows and fees. Ask "what is the fee on the free tier" and neither chunk can answer it, though the document plainly does. The structure-aware split keeps all three rows with their heading — same document, same model, answer now retrievable.
 
 ## A second example — when it gets harder
 
-Naive RAG works in a demo and disappoints in production. Four reasons, all worth knowing by name.
+Naive RAG works in a demo and disappoints in production, and the disappointment has a specific shape. The retriever returns five chunks all *about* the right subject, none of which contains the answer. The model, told to be helpful and handed five plausible passages, does not stop — it answers confidently from the nearest-looking chunk or from its own parametric memory. Nothing errors. Nothing logs a warning. The user gets a wrong answer that reads exactly like a right one.
 
-**Long or multi-part queries.** "Compare the refund policy for digital goods with the one for physical goods and tell me which is stricter" produces one embedding averaging two different topics — landing in a vacant region between both. The fix is **query decomposition**: split into sub-questions, retrieve for each, merge.
+Four failure modes, worth knowing by name because interviewers ask you to distinguish them:
 
-**Keyword-exact queries.** Ask for error code `E4021` and semantic search may return chunks about errors generally while missing the one containing the literal string. Embeddings are poor at rare tokens. The fix is **hybrid search** — combine vector results with keyword (BM25) results:
+**Retrieval miss.** The answer exists in your corpus and did not come back in the top-k. Usually chunking (the answer was split across a boundary) or vocabulary mismatch on rare terms. Diagnose by checking whether the gold chunk appears anywhere in the top 50.
+
+**Distractor chunks.** The right chunk came back ranked fourth, beneath three chunks closer to the question's *wording* that do not answer it. The model attends to the wrong one. This is what rerankers exist to fix.
+
+**Conflicting sources.** Two chunks both answer the question and disagree — last year's policy and this year's. The model has no basis for preferring one, so it picks arbitrarily, merges them into something neither document says, or hedges. Metadata filtering by date is the fix; asking the model to "prefer newer" is not.
+
+**The model ignoring context.** The right chunk is present, ranked first, unambiguous, and the answer still contradicts it — training data won. Most common when the retrieved fact is surprising. Fix on the prompt side: demand citations and verify every one resolves to a chunk you actually supplied.
+
+The conflicting-sources case is worth watching numerically, because the scores are no help at all:
 
 ```js
-// Reciprocal Rank Fusion: merge two ranked lists without needing comparable scores.
-function reciprocalRankFusion(lists, k = 60) {
-  const scores = new Map();
-  for (const list of lists) {
-    list.forEach((doc, rank) => {
-      // Rank matters, absolute score does not — this is why RRF handles
-      // cosine similarity and BM25 scores in the same fusion.
-      scores.set(doc, (scores.get(doc) ?? 0) + 1 / (k + rank + 1));
-    });
-  }
-  return [...scores.entries()].sort((a, b) => b[1] - a[1]).map(([doc, score]) => ({ doc, score }));
-}
+const cos = (a, b) => {
+  let d = 0, na = 0, nb = 0;
+  for (let i = 0; i < a.length; i++) { d += a[i]*b[i]; na += a[i]*a[i]; nb += b[i]*b[i]; }
+  return d / (Math.sqrt(na) * Math.sqrt(nb));
+};
 
-const vectorHits  = ['chunk_A', 'chunk_B', 'chunk_C'];
-const keywordHits = ['chunk_C', 'chunk_A', 'chunk_D'];
+// Same topic, three different documents. Only one is current and ours.
+const corpus = [
+  { id: 'policy-2021',  tenant: 'acme',  year: 2021, vec: [0.90, 0.12] },
+  { id: 'policy-2026',  tenant: 'acme',  year: 2026, vec: [0.88, 0.14] },
+  { id: 'policy-other', tenant: 'globex', year: 2026, vec: [0.91, 0.11] },
+];
 
-for (const r of reciprocalRankFusion([vectorHits, keywordHits])) {
-  console.log(r.doc, r.score.toFixed(5));
-}
+const q = [0.89, 0.13];
+const score = (c) => ({ id: c.id, s: cos(q, c.vec) });
+
+console.log('no filter:');
+corpus.map(score).sort((a,b) => b.s - a.s)
+  .forEach((r) => console.log('  ', r.s.toFixed(6), r.id));
+
+// Filter FIRST, then rank. The predicate is not negotiable; the score is.
+const allowed = corpus.filter((c) => c.tenant === 'acme' && c.year >= 2026);
+console.log('filtered to tenant=acme, year>=2026:');
+allowed.map(score).sort((a,b) => b.s - a.s)
+  .forEach((r) => console.log('  ', r.s.toFixed(6), r.id));
 ```
 
 Output:
 
 ```
-chunk_A 0.03252
-chunk_C 0.03227
-chunk_B 0.01613
-chunk_D 0.01587
+no filter:
+   0.999922 policy-2021
+   0.999919 policy-2026
+   0.999694 policy-other
+filtered to tenant=acme, year>=2026:
+   0.999919 policy-2026
 ```
 
-`chunk_A` wins for ranking well in both lists; `chunk_C` follows closely, promoted by its keyword-first placement. Neither list alone would have produced that order.
+The stale 2021 policy beats the current one by three parts in a million, and another tenant's document scores in the same band. No similarity threshold separates these — the gap is noise. Only the metadata predicate does, which is why "filter, then rank" is a rule rather than an optimisation.
 
-**Retrieved-but-irrelevant chunks.** Top-5 by cosine similarity are the five *most similar*, which is not the same as five *relevant* — if nothing relevant exists you still get five chunks, and the model will dutifully answer from them. Add a **similarity floor** and reranking, and let the system say "I don't know" when nothing clears the bar.
+Two more failures that surprise people:
 
-**Chunks that lost their context.** A chunk reading "This applies only to orders over $50" is useless without knowing what "this" refers to. Prepend the document title and section heading to every chunk before embedding — a cheap fix that measurably improves retrieval.
+**Long or multi-part queries.** "Compare the refund policy for digital goods with the one for physical goods and tell me which is stricter" produces one embedding averaging two topics, landing in a vacant region between both. The fix is **query decomposition** into sub-questions, retrieved separately and merged.
+
+**Chunks that lost their referent.** A chunk reading "This applies only to orders over $50" is useless without knowing what "this" is. Prepend the document title and section heading to every chunk before embedding — cheap, and it measurably improves retrieval.
 
 ## Quick reference
 
-| Failure | Symptom | Fix |
+| Chunking strategy | How it splits | Best for | Cost |
+|---|---|---|---|
+| Fixed-size | Every N tokens | Prototypes only | Trivial |
+| Recursive | Paragraph, then sentence, then word | General text — the default | Trivial |
+| Structure-aware | Headings, sections, code blocks | Technical docs, Markdown, code | Low, needs a parser |
+| Semantic | Where sentence similarity drops | Unstructured prose, no headings | An embedding per sentence |
+
+| Failure mode | Symptom | Fix |
 |---|---|---|
-| Chunks too small | Answers lack context | Increase size; add overlap |
-| Chunks too large | Retrieval imprecise | Split on structure, not character count |
-| Long multi-part query | Nothing relevant returned | Query decomposition |
-| Exact-term query (IDs, codes) | Literal match missed | Hybrid search with BM25 |
-| Topically related, not relevant | Confident wrong answers | Add a reranker |
-| No relevant docs exist | Model answers anyway | Similarity floor plus "say I don't know" |
-| Chunk lacks referent | "This applies to..." with no subject | Prepend title and heading |
-| Model ignores the context | Answers from memory | Instruct it to cite; verify citations |
+| Retrieval miss | Gold chunk absent from top 50 | Re-chunk; add hybrid search |
+| Distractor chunks | Right chunk present but ranked low | Add a reranker |
+| Conflicting sources | Answers merge two policies | Filter by date and source metadata |
+| Model ignores context | Answer contradicts chunk 1 | Demand citations; verify they resolve |
+| Chunk lost its referent | "This applies to..." with no subject | Prepend title and heading |
+| Boundary cut a table | Numbers without their header | Structure-aware splitting |
+| No relevant docs exist | Model answers anyway | Similarity floor plus "say I do not know" |
+| Wrong tenant or year retrieved | Plausible answer from wrong document | Metadata filter before the search |
 
 | Parameter | Typical starting point |
 |---|---|
@@ -204,10 +325,22 @@ chunk_D 0.01587
 | Retrieved before rerank | 20–50 |
 | Sent to the model after rerank | 3–8 |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [pgvector](https://github.com/pgvector/pgvector) | Vector similarity inside Postgres | You already run Postgres and want metadata filters and vectors in one transactional query — realistic to roughly 10M vectors |
+| [Qdrant](https://qdrant.tech/documentation/) | Dedicated vector database with filtered search | Filtering is heavy or the corpus outgrows what you want in your primary database |
+| [Chroma](https://docs.trychroma.com/docs/overview/introduction) | Embedded vector store that runs in-process | You are prototyping and want zero infrastructure; you will migrate before production |
+| [LangChain.js](https://docs.langchain.com/oss/javascript/langchain/overview) | Loaders, splitters and retriever plumbing | You want the chunking and retrieval scaffolding written already — Python LangChain has the larger integration set if you are not tied to Node |
+| [Unstructured](https://docs.unstructured.io/open-source/core-functionality/chunking) | Parsing PDFs, HTML and Office files into clean chunks | Your sources are messy real-world documents rather than Markdown you control |
+
 ## Common mistakes
 
 - Embedding queries with a different model than the documents; the vectors are not comparable and results are noise.
 - Splitting on a fixed character count, cutting sentences and tables in half.
+- Storing only text and vector, with no metadata, so you can never filter by tenant, date, or source afterwards.
+- Applying the metadata filter after retrieval instead of before, so the index scores chunks the user was never allowed to see.
 - Sending the top 20 chunks because "more context is better" — it raises cost, raises latency, and buries the answer among distractors.
 - Never measuring retrieval separately from generation, so you cannot tell which half is broken.
 - Skipping the reranker, which is usually the single largest quality win available.
@@ -218,17 +351,17 @@ chunk_D 0.01587
 
 - **Your RAG system returns irrelevant chunks for long queries — how do you debug it?** — Isolate retrieval from generation first by checking whether the correct chunk appears in the top-k at all; if it does not, the problem is retrieval, and long multi-part queries typically need decomposition into sub-questions because one embedding averages several topics into a meaningless midpoint. If the right chunk *is* retrieved but ranked low, add a reranker; if it is retrieved and ranked well but ignored, the prompt is at fault.
 - **Why not just fine-tune the model on your documents?** — Fine-tuning teaches style and format, not reliable fact recall, and every document change means retraining; RAG updates instantly by re-indexing and lets you cite sources, which fine-tuning cannot do.
-- **How do you choose chunk size?** — Empirically against a labelled query set, starting around 200–500 tokens with overlap and splitting on document structure; the right size depends on whether answers live in single sentences or span sections.
-- **When does semantic search fail and what do you use instead?** — On rare exact tokens like error codes, SKUs, and names, where embeddings generalise away the specificity; hybrid search combining BM25 keyword matching with vector search fixes it, typically fused by reciprocal rank fusion.
-- **How do you stop RAG answering when no relevant document exists?** — Enforce a minimum similarity threshold, return no context when nothing clears it, and instruct the model to say it does not know; without a floor, top-k always returns k chunks no matter how irrelevant.
-- **How do you evaluate a RAG system?** — Measure the two stages separately: retrieval with recall@k on a labelled query-to-chunk set, and generation with groundedness (is every claim supported by the retrieved context) and answer relevance.
+- **How do you choose chunk size and strategy?** — Empirically against a labelled query set, starting around 200–500 tokens with overlap; strategy matters more than size, so split on document structure rather than character count, and remember the underlying tension — small chunks retrieve precisely but lose context, large chunks carry context but dilute the embedding.
+- **Why is metadata filtering not just an optimisation?** — Near-duplicate documents — last year's policy, another tenant's copy — are near-identical in meaning, so their scores differ by noise and no threshold separates them; only a predicate on source, date, or tenant does, running before or inside the search.
+- **Name the ways a RAG pipeline fails and how you tell them apart.** — Retrieval miss (gold chunk absent), distractor chunks (present but outranked), conflicting sources (two chunks disagree), and the model ignoring context; distinguish them by inspecting the retrieved set for one failing query.
+- **How do you evaluate a RAG system?** — Measure the two stages separately: retrieval with recall@k on a labelled query-to-chunk set, and generation with groundedness and answer relevance. [llm-evaluation-and-testing](llm-evaluation-and-testing) covers the methodology.
 
 ## Practice
 
 1. Build an in-memory RAG over ten paragraphs using a real embeddings API. Write ten questions with known correct chunks and measure recall@3.
-2. Re-chunk the same corpus at 100, 300, and 800 tokens and re-measure recall@3. Explain the shape of the curve you get.
-3. Add hybrid search: implement simple keyword scoring, fuse it with your vector results using the RRF function above, and find a query where fusion beats either method alone.
+2. Re-chunk the same corpus three ways — fixed-size, recursive, and structure-aware on headings — and re-measure recall@3 for each. Then find one question where fixed-size wins, and explain why.
+3. Add `{ tenantId, publishedYear }` metadata to every chunk and two near-duplicate documents that differ only in year. Measure how often the stale one is retrieved without a filter, then add the filter before scoring and confirm it drops to zero.
 
 ## Where to go next
 
-[vector-databases](vector-databases) explains what happens when linear scanning stops working and you need an ANN index. [llm-evaluation-and-testing](llm-evaluation-and-testing) covers measuring retrieval quality properly.
+[rag-in-production](rag-in-production) is the direct sequel: hybrid search, reranking, evaluation, and the indexing pipeline that keeps this fresh. [vector-databases](vector-databases) explains what happens when linear scanning stops working and you need an ANN index.
