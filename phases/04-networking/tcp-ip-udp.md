@@ -42,12 +42,12 @@ UDP is like tossing postcards into a mailbox. No handshake, no numbering, no con
 sequenceDiagram
   participant C as Client
   participant S as Server
-  C->>S: "SYN"
-  S->>C: "SYN-ACK"
-  C->>S: "ACK"
+  C->>S: SYN
+  S->>C: SYN-ACK
+  C->>S: ACK
   Note over C,S: connection open — data flows
-  C->>S: "data (seq: 1)"
-  S->>C: "ACK (seq: 1)"
+  C->>S: data (seq: 1)
+  S->>C: ACK (seq: 1)
 ```
 
 Both TCP and UDP ride on top of **IP** (Internet Protocol), which is just the addressing and routing system that moves a packet from your machine toward the right destination, one hop at a time. IP itself makes no delivery promises either — it's TCP that adds reliability on top of it.

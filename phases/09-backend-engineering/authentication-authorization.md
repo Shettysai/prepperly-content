@@ -51,14 +51,14 @@ sequenceDiagram
   participant U as User
   participant App as Your server
   participant DB as Auth store
-  U->>App: "POST /login (username, password)"
+  U->>App: POST /login (username, password)
   App->>DB: verify credentials
-  DB-->>App: "valid"
+  DB-->>App: valid
   App-->>U: issues token (JWT or session cookie)
   U->>App: "GET /posts/42/delete" + token
   App->>App: verify token (authentication)
   App->>App: check role/permission (authorization)
-  App-->>U: "200 OK" or "403 Forbidden"
+  App-->>U: 200 OK" or "403 Forbidden
 ```
 
 The first two exchanges are pure authentication — proving identity once. The last two steps happen on *every subsequent request* and split cleanly: verifying the token answers "is this really user 42", while the role check answers the separate question "can user 42 delete this specific post".

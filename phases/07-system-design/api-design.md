@@ -49,14 +49,14 @@ sequenceDiagram
   participant C as Client
   participant S as Server
 
-  C->>S: "POST /orders { items: [...] }"
-  S-->>C: "201 Created { id: 'ord_123' }"
+  C->>S: POST /orders { items: [...] }
+  S-->>C: 201 Created { id: 'ord_123' }
 
-  C->>S: "GET /orders/ord_123"
-  S-->>C: "200 OK { id: 'ord_123', status: 'pending' }"
+  C->>S: GET /orders/ord_123
+  S-->>C: 200 OK { id: 'ord_123', status: 'pending' }
 
-  C->>S: "POST /orders (out of stock)"
-  S-->>C: "409 Conflict { error: { code: 'OUT_OF_STOCK' } }"
+  C->>S: POST /orders (out of stock)
+  S-->>C: 409 Conflict { error: { code: 'OUT_OF_STOCK' } }
 ```
 
 Notice the client can branch on the status code alone (`201` means it was created, `409` means it conflicted) without parsing the body first. That's the point of using status codes correctly: they carry meaning at the protocol level, so error handling doesn't require inspecting every response body to know if something went wrong.
