@@ -209,7 +209,7 @@ The subtlety is `Math.floor` on `prefixBlocks`. Sharing works at **block granula
 | Use case | Runtime | Why |
 |---|---|---|
 | Production serving, throughput-first | vLLM | PagedAttention, continuous batching, OpenAI-compatible, the common default |
-| Hugging Face-centric stack | TGI | Tight Hub integration, production-hardened; now in maintenance mode as of Sept 2026 — verify before adopting |
+| Hugging Face-centric stack | TGI | **Archived read-only in March 2026 — do not start here.** Historically the Hub-integrated default; Hugging Face now points users at vLLM |
 | Squeezing the last 20% on NVIDIA | TensorRT-LLM | Compiles model-and-GPU-specific engines; fastest, but a build step per model and per GPU |
 | Local development, no GPU needed | Ollama / llama.cpp | GGUF quantised weights, runs on CPU or Apple Silicon, one command to start |
 | Multi-model, multi-framework platform | Triton Inference Server | Serves LLMs alongside vision and classical models under one API |
