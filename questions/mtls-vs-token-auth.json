@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the fundamental difference between authenticating with a client certificate and authenticating with a bearer token?",
+    "answer_markdown": "A certificate authenticates a connection, once, when the TLS handshake is set up; a token authenticates an individual request, every time one is sent. Almost every other difference follows from that. Because the certificate is bound to the connection, it disappears the moment something else terminates TLS in front of your service. Because the token is just an HTTP header, it survives any number of proxies but is also handled by every log, APM agent, and load balancer along the way. Framing it as connection identity versus request identity lets you reason about revocation, proxies, and claims without memorising a list of properties.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Both a JWT and an X.509 certificate are signed documents verified with a public key. So where does the real security difference come from?",
+    "answer_markdown": "The cryptography is genuinely the same — an RS256 JWT and a certificate signature are both RSA over a SHA-256 hash, with the same PKCS#1 padding structure. The difference is the protocol wrapped around the signature. During a TLS handshake the server sends fresh random material and the client must sign it with its private key, so possession of the key is proven on every connection and nothing replayable crosses the network. A token has no challenge: the client just sends the string, so whoever holds the bytes holds the credential. That is what 'bearer' means, and it is why a copied certificate is worthless without the key while a copied token works perfectly for the thief.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does changing a JWT's payload invalidate it, even though the payload is plain readable base64?",
+    "answer_markdown": "The signature does not contain the payload; it contains a signature over a SHA-256 hash of the signing input, which is the literal ASCII string `header.payload`. Changing any single character changes that hash completely because of the avalanche property of the hash function. The verifier recomputes the hash of the bytes it received and compares it against the hash recovered from the signature, and the two no longer match. The attacker cannot produce a signature over the new hash without the issuer's private key, which is exactly what they do not have. Base64 is only encoding, not protection — the payload is readable by design, just not modifiable.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You are designing service-to-service auth and someone proposes using both a client certificate and a Bearer token on the same call. Is that redundant?",
+    "answer_markdown": "No, because they answer different questions. The certificate says which service opened this connection, and it cannot say which end user triggered the call, since it was issued weeks earlier with no knowledge of today's traffic. The token says on whose behalf the call is made, with what scope, expiring in minutes, but it cannot prove the caller is really the order service because anyone holding the bytes could send them. Layered, each covers the other's gap: a stolen token is useless without the client certificate and key, and a certificate alone grants no authorisation. This is a genuine defence-in-depth pattern rather than belt-and-braces duplication.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Which is harder to revoke, a certificate or a token?",
+    "answer_markdown": "Both are awkward, but in different ways. Certificate revocation requires clients to consult a CRL or OCSP responder, and in practice clients routinely skip that check or fail open when the responder is unreachable, so revocation frequently does not actually work. A token cannot be un-issued at all, since verification is purely local — so you either accept a window of validity by keeping the expiry short, or you maintain a denylist that must be consulted on every request, which reintroduces exactly the shared state the stateless token was meant to eliminate. The practical modern answer for both is short lifetimes, which achieves the goal by construction rather than by infrastructure.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Explain the alg:none and RS256-to-HS256 JWT attacks, and why mTLS has no equivalent weakness.",
+    "answer_markdown": "A JWT's `alg` field lives in the header, which is part of the signing input but is read by the verifier *before* verification happens. A naive verifier that decides which algorithm to use by reading `alg` from the token lets the attacker choose. Setting `alg` to `none` with an empty signature makes such a verifier accept anything; downgrading RS256 to HS256 lets the attacker sign with the server's public key used as an HMAC secret, since the public key is not secret. The fix is to pin the expected algorithm server-side and never read it from the token. A certificate has no equivalent hole because its signature algorithm is inside the signed `tbsCertificate` bytes, so tampering with it breaks the signature.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What problem does workload identity solve that a long-lived API key in an environment variable does not?",
+    "answer_markdown": "A long-lived shared secret never expires, so it accumulates copies — in CI configuration, in a secrets manager, in every pod's environment, in a developer's stale local file, and often in a log line where someone printed the environment while debugging. Rotating it requires a coordinated change across every consumer, so it gets postponed indefinitely and the value in production is frequently years old. Worst of all, anyone who ever read it is indistinguishable from the legitimate caller, forever, from anywhere. Workload identity replaces this with a credential that is issued automatically, expires in minutes to an hour, is never handled by a human, and is only obtainable by a process the platform actually scheduled — so the blast radius is one workload for one TTL.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "A brand-new pod starts with no credentials at all. How does it obtain its first one? Why can't you just bake a secret into the image?",
+    "answer_markdown": "You cannot bake one in, because anything in the image is available to anyone who can pull the image — that just moves the shared-secret problem one level down and creates an infinite regress where obtaining a credential requires already having one. The regress is broken by attestation: the pod connects to a local agent over a Unix domain socket and claims nothing about its identity. The agent asks the kernel for the peer credentials of that socket to learn the calling process ID, then resolves that PID through the container runtime into a container, pod, namespace, and service account. Every fact comes from the platform, never from the caller, and those facts are matched against registration entries that say which identity such a workload earns. A lying workload cannot lie because it is never asked.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is the difference between a SPIFFE ID and an SVID?",
+    "answer_markdown": "A SPIFFE ID is just a name, written as a URI like `spiffe://prod.example.com/ns/payments/sa/charge-worker`, where the host is the trust domain and the path identifies the workload within it. It is public and anyone can type it, so on its own it proves nothing. An SVID — SPIFFE Verifiable Identity Document — is the cryptographically verifiable credential that proves the holder legitimately owns that name. It carries exactly one SPIFFE ID and comes in two forms: an X.509-SVID, a real certificate with the ID in the SAN URI field, usable directly for mTLS; or a JWT-SVID, a signed token for hops where you cannot control the TLS layer. Confusing the two is like confusing your name with your passport.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why prefer very short certificate lifetimes over building proper revocation infrastructure?",
+    "answer_markdown": "Revocation depends on every client actually checking a CRL or OCSP responder before trusting a certificate, and in practice clients frequently skip the check, cache stale responses, or fail open when the responder is unreachable — so revocation often does not work when you most need it. A one-hour lifetime achieves the same goal by construction: a stolen credential becomes worthless within the hour with no infrastructure to consult and nothing to fail open. It also converts rotation from a scheduled operation that humans postpone into a continuous background property nobody has to remember. The trade-off is that you now depend on the identity control plane being reachable frequently.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What goes wrong if a registration entry's selectors are too broad — say, matching on namespace alone?",
+    "answer_markdown": "Every workload in that namespace attests successfully and receives the same identity, including things you never intended, like a debug pod someone exec'd into to run a one-off script. You have recreated the shared-secret problem with better cryptography: a credential that many distinct workloads hold in common, so the identity no longer distinguishes one caller from another and authorisation policy written against it becomes meaningless. Selectors should be as specific as the identity is powerful, which usually means service account plus namespace, and sometimes the image digest as well. The point of attestation is that identity tracks what the platform actually scheduled, and loose selectors throw that precision away.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the risk of setting an aggressively short SVID TTL, and how do implementations mitigate it?",
+    "answer_markdown": "A short TTL makes the identity control plane a hard runtime dependency: every workload must reach it on that cycle, forever. If the control plane is unreachable for longer than the renewal window, credentials expire across the whole fleet and perfectly healthy services begin refusing each other — a brief control-plane outage becomes a total outage, the same fail-closed pattern that makes a service registry evicting all instances so dangerous. Implementations blunt this by renewing at roughly half the TTL and caching the trust bundle locally, so a one-hour credential tolerates around thirty minutes of downtime. The underlying tension is unavoidable: shorter TTLs bound the damage from a stolen credential and simultaneously shrink your tolerance for control-plane failure, so picking a number is explicitly choosing between the two.",
+    "difficulty": "hard"
+  }
+]

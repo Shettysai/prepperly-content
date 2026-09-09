@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Your service reads the client certificate CN to identify callers. It works when dialled directly, but returns empty once you put it behind a load balancer. Why?",
+    "answer_markdown": "The load balancer terminated TLS, which means it completed the mutual handshake with the client and then opened its own separate connection inward to your service. Your service's TLS peer is the proxy, not the client, so there is simply nowhere for the client's certificate to be — your process never had a handshake with the client. Nothing is broken or misconfigured at the TLS layer; this is what termination means by construction. The certificate identity can only reach you if the proxy explicitly copies it into the application layer as an HTTP header. Notably `getPeerCertificate()` returning empty is honest behaviour: Node cannot invent a peer that never handshook.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Compare terminating at the edge, re-encryption, and passthrough.",
+    "answer_markdown": "Terminating at the edge means the proxy holds your certificate and key, decrypts, and forwards plain HTTP, so it can route by path, cache, compress, and run a WAF — but the internal hop is plaintext. Re-encryption, also called bridging, decrypts and inspects then opens a brand-new TLS connection to the backend, keeping all Layer 7 features and protecting the internal hop at the cost of double the handshakes and crypto plus certificates in two places. Passthrough operates at Layer 4 and forwards raw TCP bytes without decrypting, so the backend terminates and sees the client certificate natively, giving true end-to-end encryption but only SNI-based routing and none of the Layer 7 capabilities. The trade-off is fundamental: reading the traffic and preserving the client's certificate identity are mutually exclusive.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is X-Forwarded-Client-Cert, and what must be true for it to be safe to trust?",
+    "answer_markdown": "It is a header in which a TLS-terminating proxy copies details of the client certificate it verified — the terminating identity, a hash of the certificate, the subject, and optionally the full PEM — so a backend can learn the client identity that termination destroyed. RFC 9440 standardises the same idea as `Client-Cert` and `Client-Cert-Chain`. It is only trustworthy under two conditions, and both are required: the backend must be unreachable except through that proxy, enforced by network policy or a mesh with STRICT mTLS rather than by being on a private subnet; and the proxy must strip or overwrite any inbound copy of the header rather than appending to it. Envoy sanitises the header by default unless forwarding is explicitly configured, which is the correct default.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is a forgeable client-certificate header worse than having no mTLS at all?",
+    "answer_markdown": "A header is just text, so anything able to reach your backend directly can set it with a single curl flag — no certificate, no private key, no handshake required. Without mTLS you know you have no caller identity and you design your authorisation accordingly. With a forgeable header you have caller identity that you believe and act upon, while it is in fact entirely attacker-controlled, so every authorisation decision downstream rests on a lie you are treating as proof. The deeper point is that identity moved from a channel property proven cryptographically per connection to a data property whose trustworthiness depends only on network reachability — a different kind of guarantee that fails in a completely different way.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A reviewer sees code that extracts the CN from X-Forwarded-Client-Cert with a regex, rejects missing values with 401, and checks the result against an allowlist. Is this secure?",
+    "answer_markdown": "No. Every check is a check on a string the caller supplied, so parsing a forgery carefully still yields a forgery. Requiring the header to be present, well-formed, and on an allowlist tells you the attacker typed a valid-looking value, which is trivial. Validation cannot manufacture authenticity — only a cryptographic signature or a trusted channel can, and neither is present. The code is safe only if something outside it guarantees that the request could not have arrived except through the trusted proxy, which is a network-topology property rather than anything visible in the handler. This is why the review question is 'what makes this backend unreachable directly?' rather than 'is the header validated?'",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do you do mTLS on an API that also needs to sit behind a CDN?",
+    "answer_markdown": "Usually you do not, on the same hostname. A CDN's entire value comes from terminating TLS close to the user, so client-certificate identity necessarily ends at the edge PoP — you cannot have edge caching and native end-to-end client certificates simultaneously. The realistic options are: let the CDN verify the client certificate and forward a header, which means trusting the CDN's verification and locking the origin so it is unreachable except from CDN egress; or route the mTLS API to a separate hostname that bypasses the CDN entirely and accept no caching or edge protection there. The second is the common real-world answer, because splitting by hostname stops trying to have both.",
+    "difficulty": "medium"
+  }
+]

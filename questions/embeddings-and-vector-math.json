@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is an embedding, and why does similar text end up with similar vectors?",
+    "answer_markdown": "An embedding is a fixed-length list of numbers that represents a piece of text as a position in a space of hundreds or thousands of dimensions. Similar text lands nearby because the model was trained to make that true: it repeatedly adjusts its numbers so that words and passages appearing in similar contexts receive similar vectors. There is nothing semantic happening beyond that — it is statistics about co-occurrence, accumulated over billions of examples. This is why embeddings are genuinely useful for finding relevant documents that share no keywords, and also why they place 'excellent' close to 'terrible' (both appear in reviews, in the same grammatical slots) and why they largely ignore negation. Individual dimensions are not interpretable; only the arrangement carries meaning.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Should you use cosine similarity or dot product? Explain the case where the choice stops mattering.",
+    "answer_markdown": "Use cosine similarity when vector magnitudes vary, because it divides out both lengths and compares direction only — which is what you want for text, since a short summary and a long article on the same subject should match. Raw dot product responds to magnitude as well as angle, so a longer vector scores higher just for being long, which lets long documents win regardless of relevance. The choice stops mattering the moment your vectors are normalised to length 1: cosine similarity *is* the dot product of unit vectors, so the two produce identical rankings. At that point you should prefer dot product because it skips two square roots per comparison, and across millions of comparisons per query that saving is significant. This is why nearly every production system normalises once at write time and then uses plain dot product forever.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A colleague says their retrieval system is working well because top results score above 0.8 cosine similarity. What is wrong with that reasoning?",
+    "answer_markdown": "A cosine similarity of 0.8 carries no absolute meaning. Although the metric spans -1 to 1 in theory, real text embeddings cluster into a narrow positive band — often roughly 0.6 to 0.95 — because natural language shares so much structure that even unrelated sentences point in broadly similar directions. So 0.8 might be an excellent match in one model's score distribution and below-average noise in another's. What actually carries signal is the *relative* gap: if the top result scores 0.91 while everything else sits at 0.78, that separation means something. The practical error is copying a threshold like `> 0.75` from a tutorial, which will either admit irrelevant results or reject every correct one depending on your model and data. Measure your own score distribution before setting any cutoff.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You want to upgrade from one embedding model to a better one. What does that actually require, and what happens if you do it incrementally?",
+    "answer_markdown": "It requires re-embedding your entire corpus before any comparison happens. Each model learns its own arrangement of space during its own training run, so dimension 7 in one model has no relationship to dimension 7 in another — even two models with identical dimension counts are unrelated coordinate systems. If you migrate incrementally and leave old and new vectors in one index, nothing crashes: cosine similarity between vectors from two different models computes perfectly and returns a plausible-looking number in the usual 0.6-0.9 band. The results are simply meaningless, and nothing in your logs indicates it. That silent failure mode is what makes this trap expensive — the correct approach is to build a complete new index with the new model and cut over atomically.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is the difference between symmetric and asymmetric search, and why does it change which model you pick?",
+    "answer_markdown": "Symmetric search compares two texts of similar shape and length — document to document, or finding near-duplicates — where both sides look alike. Asymmetric search compares a short query against a much longer passage, as in a five-word question against a 400-word document. These are genuinely different tasks: the two texts differ in length, register, and structure, so a model trained only for symmetric similarity handles the mismatch poorly. This is why many embedding models require you to prefix queries and documents differently, signalling which role each input plays. Skipping that prefix does not error; it silently degrades every search you run, which is one of the more common causes of 'our semantic search just isn't very good'.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What do you get and give up by choosing 384 dimensions over 1536, and what is Matryoshka training?",
+    "answer_markdown": "Fewer dimensions means roughly proportionally less storage and less comparison work: storage is count times dimensions times 4 bytes for float32, so a million vectors at 1536 dimensions is about 6 GB before index overhead, while 384 dimensions is about 1.5 GB. You give up some nuance, and the honest answer is that the accuracy cost is usually small but must be measured on your own data rather than assumed. Matryoshka-trained models change the trade-off: they are trained so the early dimensions carry the core meaning and later ones add finer detail, so you can truncate a 1536-dimension vector to 512 and renormalise, and it still works well. That lets you shrink vectors without running a different model, and enables a two-stage approach where you shortlist with a short prefix and rerank with the full vector.",
+    "difficulty": "medium"
+  }
+]

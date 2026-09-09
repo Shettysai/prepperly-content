@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What does a certificate authority actually do when it issues a certificate?",
+    "answer_markdown": "It validates that the requester genuinely controls the identity being claimed, then it hashes the certificate's TBS (\"to be signed\") byte range — the name, public key, validity window and extensions — and signs that hash with its own private key. The signature is stored inside the certificate alongside the bytes it covers. A signature is therefore a signed digest of one specific byte range, not the certificate encrypted with the CA's key. That distinction matters because verification does not decrypt the certificate; it recovers the digest the CA committed to and compares it against a digest the verifier computes over the same bytes.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Does a certificate authority ever see your private key? Walk through the issuance flow.",
+    "answer_markdown": "No, and this is the point most people miss. You generate the keypair locally, then build a CSR (certificate signing request) containing your public key and the identity you want, self-signed with your private key. That self-signature is proof of possession: it shows you hold the private half matching the public key inside, so the CA is not certifying a key that belongs to someone else. The CA validates your identity, signs the TBS bytes, and returns the certificate. The private key never travels, which is why the CA cannot decrypt your traffic or impersonate your service. If a provider offers to generate the keypair and send you the key, they have just become a party capable of impersonating you.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How can you check that a certificate and a private key file belong together, without deploying them or touching the network?",
+    "answer_markdown": "A certificate contains only the public key; a private key file contains both halves. So derive the public key from each, export both in the same format, and compare the bytes — identical public keys means they are a pair. This is purely local parsing, so it catches a mismatched bundle at config-save time rather than during a handshake at 3am. At runtime a mismatch surfaces as ERR_OSSL_X509_KEY_VALUES_MISMATCH, thrown before a single packet leaves the machine, because the TLS context parses the PEM material up front. Running the check yourself just moves that discovery earlier.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "For internal service-to-service traffic, would you use a private CA or a public one? Justify it.",
+    "answer_markdown": "A private CA. Internally you control both ends of every connection, so you can pre-distribute trust: ship one ca.crt and every service trusts every other service the moment your CA signs its certificate. Adding a fourth service distributes nothing new. You also control naming, validity lifetimes and issuance policy, which public CAs constrain. Public CAs exist for the opposite situation — a stranger's browser, where you cannot pre-distribute anything and need an authority already present in the operating system's trust store. That pre-existing trust is what you are buying, and you pay for it by having to prove domain control.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why do intermediate certificates exist when a root CA could sign leaf certificates directly?",
+    "answer_markdown": "Because a compromised root cannot be fixed. Its certificate sits in billions of trust stores you do not control, some of which will never receive another update, so a leaked root key is unrecoverable. Roots are therefore kept offline — often air-gapped and powered on only for signing ceremonies — and sign almost nothing except intermediates. Intermediates stay online and do the day-to-day leaf signing, which makes them a revocable buffer: if one is compromised, the root revokes it and issues a replacement, and the blast radius is limited to the certificates under that intermediate rather than the whole internet.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is certificate revocation considered a genuinely hard problem, and what is the modern answer?",
+    "answer_markdown": "Each mechanism fixes the previous one's cost and inherits its real weakness. CRLs make the client download a signed list of revoked serials, which grew to megabytes and goes stale between refreshes. OCSP replaces the list with a per-certificate query, but adds a round trip to a third party on the critical path and tells that party every site you visit. OCSP stapling fixes both by having the server pre-fetch a signed response and include it in the handshake. But all of them soft-fail: if the check is unreachable, clients proceed anyway, because failing closed would let a CA outage take down half the web. An attacker who can steal a private key can usually also block the check, so revocation is a hint rather than a boundary. The modern answer is short-lived certificates, where expiry becomes the revocation mechanism and there is no responder to soft-fail.",
+    "difficulty": "hard"
+  }
+]

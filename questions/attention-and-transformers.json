@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why is attention quadratic in sequence length, and what does that explain?",
+    "answer_markdown": "Attention works by scoring every token's query against every other token's key, so a sequence of n tokens produces n squared scores — per head, per layer. Double the input and you quadruple the attention work; going from 1,000 to 128,000 tokens is 128 times the text but over 16,000 times the attention scores. This single fact explains most of what feels arbitrary about LLM products: why context windows are a hard engineering limit rather than a config value, why long prompts cost more than proportionally to their length, and why time-to-first-token grows sharply with prompt size. Causal masking discards roughly half the scores in a decoder-only model, which lowers the constant factor but leaves the quadratic growth intact.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What problem did attention solve that earlier sequence models had?",
+    "answer_markdown": "Earlier sequence models read one token at a time and carried everything seen so far in a single fixed-size running state. That created two problems. Information from far back had been progressively overwritten by everything since, so distant context faded — a model would lose track of a subject introduced 200 tokens earlier. And because step 50 needed step 49's output, computation was inherently sequential and could not be parallelised, which capped how large models could practically be trained. Attention removes the running summary entirely: every position looks at every other position directly, in one step, with no distance penalty, and because all those comparisons are independent they run simultaneously on a GPU. The parallelism was arguably as important as the quality gain in making large models possible.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain query, key and value. Where does the lookup analogy break down?",
+    "answer_markdown": "Each position projects its own vector into three: the query is what this position is looking for, the key is what the position advertises about itself, and the value is what actually gets handed over and mixed in if the position is selected. The token 'it' emits a query meaning roughly 'I need the noun I refer to'; 'trophy' emits a key saying 'I am a concrete object'; relevance is the dot product of query and key. The analogy breaks down at selection: a dictionary lookup matches one query to exactly one key and returns one value, whereas attention scores the query against *every* key, softmaxes those scores into weights summing to 1, and returns a weighted blend of all the values. Nothing is chosen outright and everything contributes something, so it is best described as a soft, learned lookup over the whole sequence.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does a layer use multiple attention heads instead of one?",
+    "answer_markdown": "One set of query/key/value projections can only represent a single notion of relevance, but 'relevant' means several different things at the same time. A layer therefore runs several attention operations in parallel — 32 heads is typical — each with its own learned projections operating over a slice of the dimensions, and concatenates their outputs before projecting back. In practice heads specialise: some track syntactic agreement, some follow pronoun references, some mostly attend to the immediately preceding token. Crucially, nobody assigns those roles; the specialisation emerges from training, and many heads are not cleanly interpretable at all. The point of multi-head attention is representational capacity, not interpretability.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What does causal masking do, and why is it necessary rather than merely a safety measure?",
+    "answer_markdown": "Causal masking sets every score for a future position to negative infinity before the softmax, which turns those weights into exactly zero, so a token can only attend to itself and earlier tokens. It is a training requirement, not a safeguard. The entire objective is next-token prediction, and predicting the next token while being allowed to look at it is not a task — the model would learn to copy rather than to model language. Masking also produces a valuable efficiency property: because each row of the attention matrix becomes an independent and honest next-token prediction problem, a single forward pass over a whole sentence trains every position simultaneously, which is what makes training on trillions of tokens feasible.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Attention is a weighted sum over positions. What problem does that create, and how is it fixed?",
+    "answer_markdown": "A weighted sum is order-blind: shuffle the input tokens and you get the same set of scores, merely rearranged. So attention alone cannot distinguish 'the dog bit the man' from 'the man bit the dog' — the tokens are identical and only their order differs. Position must therefore be injected explicitly. The original transformer added fixed sinusoidal positional vectors to the token embeddings; the common modern approach instead rotates the query and key vectors by an angle proportional to position, so the dot product between two positions naturally encodes their relative distance. Either way this is a separate mechanism bolted onto attention, and it is the reason position handling is often the limiting factor when extending a model to longer contexts than it was trained on.",
+    "difficulty": "hard"
+  }
+]

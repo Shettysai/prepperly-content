@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why does batching help LLM inference so dramatically, when batching gives only modest gains in most other systems?",
+    "answer_markdown": "Because the cost you are amortising is a fixed memory read rather than fixed per-request overhead. During decode, generating one token requires streaming the model's entire weight set out of VRAM — around 28GB for a 14-billion-parameter model in 16-bit — and doing comparatively little arithmetic with it. The memory bus is the bottleneck and the compute units are starved. Adding more sequences to the same pass reuses that one weight read, so sixteen users cost barely more than one. In most other systems batching amortises connection or parsing overhead, which is small; here it amortises the dominant cost, which is why the effect is measured in multiples rather than percentages.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Distinguish prefill from decode, and explain why the distinction matters for performance.",
+    "answer_markdown": "Prefill processes the entire prompt in a single pass. Every prompt token is already known, so they can all be handled in parallel, which keeps the GPU's arithmetic units genuinely busy — prefill is compute-bound and scales with prompt length. Decode then generates the answer one token at a time, and because each token depends on the previous one there is no way to parallelise across them; each pass reads all the weights to produce a single token per sequence, making decode memory-bandwidth-bound. The distinction matters because it explains where every optimisation applies: batching transforms decode and barely moves prefill, prompt length drives TTFT through prefill while batch size drives per-token latency through decode, and a long prompt's compute-bound prefill can stall the decode steps of everyone currently streaming.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the difference between static and continuous batching, and why is continuous batching such a large win?",
+    "answer_markdown": "Static batching forms a batch, runs it through prefill and decode until every member has finished, returns all responses, then starts again. Two problems compound: the batch runs as long as its longest member needs, so a request generating 4 tokens waits for one generating 400 — head-of-line blocking — and as members finish, their batch slots keep being computed while producing nothing. Continuous batching, also called iteration-level scheduling, re-runs the scheduler before every single token step: a sequence that emitted its stop token is removed and its KV blocks freed, and a queued request is admitted into the space immediately. It is a large win because it removes pure waste rather than rebalancing a trade-off, so p50 latency and aggregate throughput both improve at once — unusual for a performance optimisation.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your dashboard shows record aggregate throughput after you raised the batch size, but users complain the assistant now 'types slowly'. Explain precisely what is happening and how you would resolve it.",
+    "answer_markdown": "Both observations are correct, because aggregate throughput and per-stream speed move in opposite directions as batch size grows. A decode step has a fixed cost — reading all the weights — plus a marginal per-sequence cost for attention over each sequence's KV cache. Adding sequences amortises the fixed cost, raising total tokens per second, but it also lengthens each step, so the interval between one user's consecutive tokens grows. Per-stream speed is one over that step time, and it falls monotonically. The resolution is a product decision, not a tuning trick: there is no setting that optimises both. For an interactive assistant, cap the batch so per-stream speed stays above comfortable reading speed, roughly 20 to 30 tokens per second, and accept lower aggregate throughput. If you also need the throughput, add replicas rather than a bigger batch.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What actually limits how many requests an inference server can handle concurrently?",
+    "answer_markdown": "VRAM, by way of the KV cache. Each concurrent sequence needs cache space for every token it has seen, and that space comes out of the GPU memory left over after the weights are loaded. Once the block pool is exhausted, no further sequence can be admitted regardless of how idle the CPU is or how many connections your web server will accept. This is a genuine change from ordinary web services, where the limits are threads, connections, or downstream databases, and it has a practical consequence: you cannot raise concurrency by running more process replicas on the same GPU, because you have only split the same fixed cache budget between them. The levers that do work are lowering the maximum context length, quantising to shrink the weights and free cache space, or adding GPUs.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A benchmark shows static and continuous batching performing almost identically. What is most likely wrong with the benchmark?",
+    "answer_markdown": "The output lengths are probably uniform. Continuous batching's advantage comes almost entirely from eliminating head-of-line blocking and reclaiming finished slots, and both of those effects require variance in generation length. If every request in the batch produces exactly 128 tokens, they all finish on the same step, no slot is ever wasted on a completed sequence, and no short request is held behind a long one — so static batching is genuinely competitive under that workload and the benchmark is measuring a scenario production will not reproduce. A second possibility is that offered load is too low: if fewer requests arrive than the batch can hold, there is no queue for continuous batching to drain and both policies idle equally. A realistic benchmark needs a spread of output lengths, spanning at least an order of magnitude, and enough concurrency to keep the batch full.",
+    "difficulty": "hard"
+  }
+]

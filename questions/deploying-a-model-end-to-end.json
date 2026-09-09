@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Walk through deploying an open-weight model to production, in order.",
+    "answer_markdown": "Check the licence first, since it can invalidate every later step — open weights is not open source, and some licences cap commercial use or forbid training competing models on the outputs — and pin the model revision by commit hash, because repositories are updated in place. Size VRAM for your target concurrency, not for one request, since the memory left after the weights is the KV cache that sets how many users you serve. Put the weights on a mounted volume rather than in the image. Build on the runtime's own CUDA image, confirm the host driver is at least as new as the container toolkit, and request the GPU explicitly. Launch the runtime with explicit maximum context length and memory utilisation. Configure a startup probe generous enough to cover a cold load, with tight liveness after it passes. Then smoke-test the OpenAI-compatible endpoint, discarding the first request, and confirm streaming and metrics work before calling it done.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your pod is in CrashLoopBackOff. The logs stop part-way through model loading with no error message, and the image builds and runs fine on your laptop. What is happening?",
+    "answer_markdown": "Your probe timings are shorter than the model's load time, so the kubelet is killing a perfectly healthy container part-way through loading. A default configuration of `initialDelaySeconds: 30`, `periodSeconds: 10` and `failureThreshold: 3` gives the container only 60 seconds, while loading tens of gigabytes of weights into VRAM and initialising CUDA kernels takes two to five minutes. At 60 seconds the threshold trips, the container is killed, it restarts, gets another 60 seconds, and dies again forever. There is no error in the logs precisely because the process was killed rather than crashing, which is what makes the symptom so misleading — every instinct points at a broken image or corrupt weights, and teams lose hours rebuilding a container that was never wrong. The fix is a startupProbe whose `failureThreshold` multiplied by `periodSeconds` comfortably exceeds your measured cold-start load time; while it is failing, Kubernetes suspends liveness and readiness entirely, and once it passes, tight liveness timings take over.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "For a model server, what is the difference between liveness and readiness, and why does confusing them cause an outage?",
+    "answer_markdown": "Liveness asks whether the process is hung or deadlocked, and the correct response to failure is to restart it. Readiness asks whether the model has finished loading and can serve traffic now, and the correct response to failure is to withhold traffic and wait — never to restart. For an ordinary web service these two questions have effectively the same answer, which is why the distinction is easy to overlook. For a model server they diverge for minutes at a time: during loading the process is alive but not ready. Confusing them causes an outage because restarting a loading model is strictly worse than waiting — the load clock resets and the pod can never finish, so a condition that would have resolved itself in three minutes becomes a permanent crash loop.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is it usually wrong to bake model weights into the container image, and when is it right?",
+    "answer_markdown": "It is usually wrong because of image size and rebuild churn. A 14-billion-parameter model in 16-bit precision is roughly 28GB, so the image exceeds 30GB and every registry push and pull moves all of it, node disk fills quickly when several such images are cached, and any trivial change to your entrypoint script re-pushes the entire thing. Keeping weights on a persistent volume or shared cache directory with the runtime's cache environment variable pointed at it means the image stays small and weights download once per node rather than once per deploy. It is right when cold-start time is the dominant concern: a scale-from-zero deployment that must serve within 90 seconds cannot afford a ten-minute download, and a fat image already pulled onto a warm node beats a cold download. That trade-off is the central question of GPU autoscaling.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is the very first request to a freshly started model server so much slower than the second, and what should you do about it?",
+    "answer_markdown": "Kernels are compiled or autotuned for the specific tensor shapes they first encounter, memory pools settle into their steady-state allocation, and internal caches populate. The result can be several seconds, occasionally tens, for a request that will subsequently take a few hundred milliseconds. This is normal behaviour rather than a performance problem, so the two responses are: always discard the first request before measuring anything, or it pollutes your p99 with compilation time that no real user will ever see again; and if cold-start latency matters to your users, send a synthetic warmup request during startup, before the readiness probe passes, so the first real user arrives at an already-warm server.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "A deployment has worked for weeks with a 90-second startup probe budget. A new node joins the cluster and only that node's pod enters CrashLoopBackOff. Diagnose it.",
+    "answer_markdown": "The new node's weights cache is empty, so the container must download the full 28GB before it can begin loading anything. That download takes several minutes, the 90-second startup budget expires long before loading even starts, and the pod is killed — while every pod on an established node, where the cache is already warm, continues to work perfectly. The budget was sized against the warm path and the cold path is many times longer. The immediate fix is to size the startup budget for the slowest realistic case: empty cache plus full download plus full load, measured deliberately once on a fresh node. The better structural fix is to move the download out of the startup path entirely, into an init container that runs to completion before the main container starts. Then the download has its own timeout, the startup probe governs only model loading, and the two failure modes stop being tangled together.",
+    "difficulty": "hard"
+  }
+]

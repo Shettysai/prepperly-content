@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why are GPUs better than CPUs for running neural networks?",
+    "answer_markdown": "Neural network inference is dominated by matrix multiplication, where the same arithmetic operation runs over thousands of independent data elements. A GPU is built for exactly that shape: thousands of simple cores executing one instruction across different data in lockstep, a model called SIMT. A CPU has only a handful of cores, and most of each core's transistor budget goes to branch prediction, out-of-order execution, and deep caches — machinery that makes unpredictable, branchy code fast but that a uniform bulk-arithmetic workload cannot use. The trade is that a GPU is far worse at anything requiring independent decisions per data item, which is why you still want a CPU orchestrating the work.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Is LLM inference compute-bound or memory-bandwidth-bound? Explain why, and when the answer changes.",
+    "answer_markdown": "For generating tokens one request at a time it is memory-bandwidth-bound. Producing a single token requires reading every weight in the model out of VRAM, and each weight is used in only one multiply-accumulate, so the arithmetic performed per byte read is tiny. The compute units finish their work and then sit idle waiting on memory, which means tokens per second is roughly memory bandwidth divided by the bytes of weights read per token. The answer changes with batching: when many requests are in flight, one pass over the weights serves all of them, so the bytes read per token collapse and the workload moves toward compute-bound. It also changes during prefill, where the whole prompt is processed at once and there is genuinely a lot of arithmetic per byte.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You migrate a workload to a GPU with twice the compute throughput but the same memory bandwidth. What happens to single-stream tokens per second?",
+    "answer_markdown": "Very little changes. You were waiting on memory, not arithmetic, so doubling the arithmetic units just means the GPU finishes its computation sooner and then waits longer for the same weight reads. The bound is memory bandwidth divided by bytes of weights read per token, and neither term moved. You would see the benefit in two places: at high batch sizes, where amortised weight reads have already pushed the workload into the compute-bound regime, and during prefill, which is compute-bound because the entire prompt is processed in parallel. This is why reading the bandwidth spec matters more than reading the FLOPs spec when you are sizing for interactive single-user latency.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "`nvidia-smi` reports 90% memory used and 4% GPU utilisation. What is happening, and is anything wrong?",
+    "answer_markdown": "Almost certainly nothing is wrong — this is the normal resting state of an inference server. Frameworks like vLLM pre-allocate a large fraction of VRAM at startup for the KV cache and never release it, so memory sits high from the moment the process boots regardless of traffic. The low utilisation simply means no requests are being served right now. The operationally important reading is the combination: the card is full and idle, so you cannot schedule another model onto it, and you are also not getting any work out of it. Reading either field alone gives you the opposite conclusion from the truth, which is why they must be interpreted together.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why can't a model just use system RAM when it doesn't fit in VRAM?",
+    "answer_markdown": "It can, and it will be dramatically slower. VRAM sits physically on the card with roughly an order of magnitude more bandwidth than system RAM, and reaching system RAM means crossing the PCIe bus, which is narrower still. Because generating each token requires reading every weight, any weights living in system RAM must cross that narrow bus on every single token. You have taken the operation in the hottest loop of the workload and moved it onto the slowest available path. Offloading is a legitimate technique when the alternative is not running at all, but it should be a deliberate decision rather than a fallback you discover after deploying.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does GPU code avoid branching, and what is a warp?",
+    "answer_markdown": "A warp is a group of 32 threads that the hardware executes in lockstep, all issuing the same instruction at the same time. When threads within a warp take different sides of an `if`, the hardware cannot run both simultaneously; it executes one path with the threads on the other path masked off, then executes the second path. This is called divergence, and it costs throughput roughly proportional to how many distinct paths the warp takes. So a branch that would be nearly free on a CPU with good branch prediction becomes a real serial cost on a GPU, which is why GPU kernels are written to be uniform and data-independent wherever possible.",
+    "difficulty": "hard"
+  }
+]

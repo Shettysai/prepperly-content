@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "An mTLS call is failing. What single question do you ask first, and why does it help so much?",
+    "answer_markdown": "Ask whether you got an HTTP status code back. If you did, the TLS handshake demonstrably completed, so the certificate already worked and any 401 or 403 is an application-layer authorization problem in your own code. If you got no status code at all, only a socket or handshake error, the failure is at the TLS layer and it is a certificate problem. That one question splits the search space cleanly in half before you touch a single file, which matters because both sides hold three files each and any of the six could be at fault.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Your mTLS server is rejecting every client, but your application logs are completely empty. Why?",
+    "answer_markdown": "Rejected connections never reach the request handler, because the rejection happens at the TLS layer before HTTP exists. If your logging lives inside the handler, a server refusing every caller on earth looks exactly like an idle server. In Node.js those rejections surface on a separate server event, tlsClientError, which is where the useful error code appears. This is why production mTLS setups should always log on tlsClientError as well as on secureConnection, otherwise the most important failures are invisible and you end up debugging from the client alone.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A client presents a valid, unexpired, correctly-paired certificate and is still rejected. How is that possible, and why is this case hard to debug?",
+    "answer_markdown": "The certificate was signed by a CA that the server's ca option does not contain. Validity and trust are different properties: nothing about the certificate is malformed, every field is correct, and it would work perfectly against a server configured with the right issuer. It is hard to debug because the client typically sees only ECONNRESET, a bare socket close with no explanation, while the server log carries the real reason such as an unknown-CA alert. This is the strongest argument for always reading both sides' logs before changing configuration, since the side that knows the answer is not the side reporting the error.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why does a mismatched certificate and key produce no network traffic at all, and what useful property does that give you?",
+    "answer_markdown": "Node parses the PEM material when it creates the secure context, which happens before any socket is opened. A certificate whose public key does not match the one derived from the private key file therefore throws synchronously at that point, so the failure never reaches an 'error' event and you need a try/catch to handle it cleanly. Because nothing was sent, a packet capture shows zero bytes and the server has no record of the attempt. The useful consequence is that certificate-and-key pairing can be validated entirely offline at upload or save time: you simply compare the public key inside the certificate to the public key derived from the key file, and identical bytes is exactly what 'they are a pair' means.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A client gets SELF_SIGNED_CERT_IN_CHAIN when calling your internal service, but none of your certificates are self-signed. What is actually wrong?",
+    "answer_markdown": "The message is misleading if read literally. It means the client walked the certificate chain and reached a certificate for which it has no trusted root, so from its point of view the chain terminates in something unvouched-for. In practice this almost always means the client never passed the internal CA via its ca option, so your private root is simply unknown to it. Note the direction of this failure: you are probably debugging client authentication, but this error is about server authentication, and the client is the side refusing. The fix is to supply the issuing CA, not to disable verification.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A request carries both a client certificate and a bearer token, and you get a 401. Which layer do you investigate, and what does the ordering of the two layers imply?",
+    "answer_markdown": "Investigate the token. A 401 is an HTTP status code, which proves the handshake completed, so the certificate is fine and the problem is in the application's authorization logic. The ordering matters more generally: TLS runs first, so a bad certificate masks a bad token completely. With a broken certificate you get a handshake error and the token is never even read, meaning you could have two independent problems and only see evidence of one. Always fix the layer that fails first, or you will spend time chasing a phantom failure at the layer that never got a chance to run.",
+    "difficulty": "medium"
+  }
+]

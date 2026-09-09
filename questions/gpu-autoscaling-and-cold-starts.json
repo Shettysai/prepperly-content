@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why is autoscaling GPU inference fundamentally different from autoscaling a stateless web service?",
+    "answer_markdown": "The scale-up unit takes minutes rather than seconds. A new replica must wait on a node being provisioned by the cloud, a very large CUDA and ML container image being pulled, model weights being downloaded and loaded into VRAM, and then a warmup pass before it can serve. Two to ten minutes is typical. For a web service, reaction is nearly free, so a purely reactive autoscaler works well: capacity arrives before the queue notices. For GPUs, a spike shorter than the cold start is over before your new replicas exist, so you pay for capacity that serves nobody and still dropped requests during the spike. That inverts the engineering priority: autoscaling becomes the slow lever for sustained growth, while warm capacity and a bounded queue are what actually handle bursts.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why can't you autoscale a GPU inference deployment on CPU utilisation, and why is GPU utilisation also a poor choice?",
+    "answer_markdown": "The serving process spends most of its life blocked waiting on the GPU to finish kernels, so a completely saturated server can report modest CPU usage and a default CPU-based HorizontalPodAutoscaler will never fire. That makes it the most common misconfiguration in GPU serving, and it fails silently until a real spike arrives. GPU utilisation looks like the obvious fix but reports only whether kernels were executing during a sampling window, not whether the server has spare capacity. A decode-bound server generating tokens for a few sequences shows high utilisation while having plenty of unused KV-cache room for more concurrent requests, so you add a replica you did not need. It can also read low while requests are waiting, when the bottleneck is memory bandwidth rather than compute. GPU utilisation is a useful diagnostic, but it is not a scaling signal.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is queue depth the honest signal for GPU autoscaling?",
+    "answer_markdown": "Queue depth is honest by definition rather than by interpretation: a request only sits in the queue because the server could not admit it, which is precisely the statement \"demand exceeds capacity\". Every other candidate metric requires you to infer that conclusion from a proxy — CPU tells you where the process is blocked, GPU utilisation tells you whether kernels ran, requests-in-flight ignores how expensive each request is — and each proxy has a regime where the inference is wrong. Queue depth needs no per-model calibration and no assumption about the hardware, so the same threshold reasoning transfers across models and card types. Time spent in the queue is better still, because it ties directly to a latency objective you can promise users. The one caveat is that a small non-zero queue is normal under bursty traffic with continuous batching, so scale on a sustained breach rather than a single sample.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your model takes four minutes to become ready and your traffic spikes for three minutes. What do you actually do?",
+    "answer_markdown": "Accept that autoscaling cannot solve this and change the variables you control. First, set a warm replica floor sized to normal traffic plus at least one spare replica, because the outcome of a spike is determined mostly by how much capacity was already warm when it started rather than by how fast the autoscaler noticed. Second, bound the queue with an explicit rejection policy, so a surge degrades into rising time-to-first-token for admitted requests and clean 429s beyond a depth you have measured, rather than universal timeouts and retry storms. Third, shorten the cold start itself: pre-pull or bake the image into the node image, keep weights on a fast local volume, and hold a small pool of running nodes with no Pods so scale-up is only a Pod start. Fourth, pre-provision for spikes you can predict, such as a scheduled launch or a marketing send. Autoscaling then handles the slow, sustained growth it is actually suited to.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "When is scale-to-zero the right choice for a model server, and when is it indefensible?",
+    "answer_markdown": "Scale-to-zero is right whenever no human is waiting on the first request: nightly batch scoring, evaluation and benchmark pipelines, internal tools used a few times a day, and development or demo environments. In those cases a several-minute first response is an inconvenience, and the saving is total — an idle GPU costs the same per hour as a saturated one, so running zero replicas is the only way to pay nothing. It is indefensible for interactive traffic, because nobody waits four minutes for a chat reply and you cannot usefully warn them it is coming; the first user after any idle period gets the worst experience in the system, and it will look like an outage rather than a cold start. Interactive products instead keep a minimum warm replica count sized to baseline demand and treat that floor as the cost of being usable.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is scaling a GPU deployment down riskier than scaling it up, and what does a safe scale-down look like?",
+    "answer_markdown": "Scaling down is a decision you cannot cheaply reverse: recovering the replica you just removed takes the full multi-minute cold start, so a premature removal during a brief lull leaves you short of capacity for minutes with no fast remedy. This is the opposite of a web service, where the same mistake costs seconds. A safe scale-down therefore uses a long stabilisation window — tens of minutes, not the seconds you would set for stateless Pods — so short troughs do not trigger it. It also drains gracefully, because a replica mid-generation is holding in-flight sequences in its KV cache: it should stop accepting new requests, finish the generations it already admitted, and only then exit. Terminating abruptly discards partially generated responses, turning a routine cost optimisation into user-visible errors, which is a bad trade for the fractional GPU-hour saved.",
+    "difficulty": "hard"
+  }
+]

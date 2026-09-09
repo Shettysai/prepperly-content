@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What does a TLS handshake actually cost, and why doesn't a faster cipher fix it?",
+    "answer_markdown": "It costs round trips — two for TLS 1.2, one for TLS 1.3, on top of TCP's three-way handshake — plus asymmetric public-key operations for the key exchange signature and certificate verification, with a second signature from the client under mTLS. Those public-key operations are orders of magnitude more expensive than the symmetric encryption used afterwards, which is fast and hardware-accelerated. So the cost shape is a large fixed cost per connection and a negligible marginal cost per byte. A faster cipher or smaller payloads address the part that was already nearly free; the only real lever is opening fewer connections, which is why keep-alive and pooling matter far more than cipher choice.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You added mTLS to an upstream by giving the HTTP client a custom agent for the certificate and CA. Latency climbed, throughput fell, nothing errored. What happened?",
+    "answer_markdown": "A newly constructed Node `https.Agent` has `keepAlive` defaulting to false, so a bespoke agent created purely to carry TLS options silently discards connection reuse. Every request then opens a fresh socket and performs a complete mutual TLS handshake — now with two signatures rather than one, since the client authenticates as well. Nothing errors because a handshake is not a failure; it is normal work performed thousands of times more often than necessary. The change is especially hard to trace because it was filed as an authentication change rather than a connection-handling change, so nobody connects the deploy to the symptom. The fix is one line: `keepAlive: true` on that agent.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you prove that connection churn is the problem rather than a slow upstream?",
+    "answer_markdown": "Count handshakes against requests: server-side each `secureConnection` event is exactly one completed handshake, so the ratio is graphable and a value approaching 1.0 is the diagnosis rather than a hint. Client-side, check whether the agent emits socket `reuse` events under sustained load — none means no pooling. Compare established socket count against request rate, since ten steady sockets serving thousands of requests per second is healthy while thousands of sockets is not, and a large `TIME_WAIT` count is the fingerprint of churn. The decisive experiment is to warm the pool with a few requests and then measure: if latency drops sharply the setup cost was the latency, and if it stays flat the upstream genuinely is slow.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Explain session resumption and 0-RTT, and when 0-RTT is unsafe.",
+    "answer_markdown": "Session resumption lets a client present a session ticket issued earlier so a reconnection skips certificate verification and the expensive asymmetric work, cutting a TLS 1.2 handshake from two round trips to one. TLS 1.3's 0-RTT goes further: the client sends its request in the very first packet alongside the ticket, paying no round trip at all. The catch is that early data is replayable by design — an attacker who captures those bytes can send them again, and the server has no handshake state yet to detect the duplicate. So 0-RTT is only safe for idempotent requests; a replayed state-changing request like a charge executes twice. Both are secondary to pooling, which avoids the reconnection entirely.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Someone sets keepAlive: true but performance does not improve. What is the likely mistake?",
+    "answer_markdown": "Most likely a new agent is being constructed inside the request path, so each request gets its own fresh pool containing no sockets to reuse. A pool must outlive the requests that use it to be a pool at all — the agent has to be created once at module scope and shared. A second possibility is that `maxSockets` is set too low relative to concurrency, in which case you have not removed the handshake cost so much as converted it into queueing delay, which is the same failure mode as an undersized database connection pool. In both cases the handshakes-per-request ratio still tells you the truth, which is why it is worth instrumenting before changing configuration.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the general engineering lesson behind the custom-agent trap?",
+    "answer_markdown": "When you replace a default with a custom implementation, you inherit responsibility for every default you did not deliberately copy. The bespoke agent was built for one property — TLS options — and silently dropped an unrelated one, connection reuse. It survives review because reviewers judge the replacement against the reason it was created, so the properties it quietly abandoned are never mentioned and therefore never checked. The same pattern recurs well beyond TLS: a custom pool losing timeouts, a custom logger losing redaction, a custom serialiser losing depth limits. The practical habit is to enumerate what the default provided before swapping it out, and specifically to check whether any custom path still pools.",
+    "difficulty": "hard"
+  }
+]

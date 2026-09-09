@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "You put `model.generate()` inside a web request handler and it works in testing. What goes wrong once you have real traffic?",
+    "answer_markdown": "Four things fail at once. It serves one request at a time, so the second user waits for the first to finish generating every token. It wastes almost all the GPU, because generating a single token reads the entire weight set out of VRAM and does very little arithmetic with it, leaving the compute units starved. It fragments memory, because each request's KV cache is a contiguous slab reserved for the maximum possible sequence length, so most of it goes unused and the gaps left behind are unusable. And it has no queue, so under load your only options are to block indefinitely or return errors, with no backpressure signal. A serving runtime addresses all four and typically gets around 20x the throughput on the same hardware.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain PagedAttention and the specific problem it solves.",
+    "answer_markdown": "PagedAttention stores the KV cache in fixed-size blocks — commonly 16 tokens each — with a per-sequence block table pointing at the physical blocks it owns, instead of one contiguous slab per request. The problem it solves is that contiguous allocation forces you to reserve for the worst case, because you cannot know in advance how many tokens a request will generate, so you must reserve the model's maximum sequence length. If that maximum is 8,192 and requests average 300 tokens, you have reserved roughly 27 times what you need per request, and the KV cache rather than the weights becomes what caps your batch size. Blocks also eliminate external fragmentation, since every block is the same size and any free block fits any request. It is purely a memory-layout change: the attention mathematics and the model's outputs are identical.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does it matter so much that inference servers expose OpenAI-compatible endpoints?",
+    "answer_markdown": "Because it collapses migration cost to a base URL and an API key. The same client library, streaming code, retry logic, and error handling that talk to a hosted provider talk to your own server unchanged, so self-hosting becomes a configuration change rather than a rewrite. That also makes the two directly comparable: you can A/B a hosted model against your own on identical client code and measure the difference honestly. The strategic effect is that the API shape, not any single vendor, became the interface, which is why almost every serving runtime now implements it.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "A colleague sets `--gpu-memory-utilization` to 0.6 instead of the default 0.9, reasoning that leaving more headroom is safer. What have they actually done?",
+    "answer_markdown": "They have cut their concurrency by roughly two thirds, not added a safety margin. That flag controls the fraction of VRAM the runtime may claim, and after the weights are loaded the remainder is the KV cache — which is exactly what determines how many sequences can be in flight at once. Lowering the setting does not protect against anything meaningful, because the runtime pre-allocates its cache pool up front and manages it in blocks rather than growing unboundedly. The visible symptom is a server that queues heavily under modest load while `nvidia-smi` shows plenty of free memory, which is a confusing signal to debug. If out-of-memory errors are the real worry, the correct lever is `--max-model-len`, which bounds per-sequence cache use.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Two requests share an identical 2,000-token system prompt. How does a paged KV cache exploit that, and what breaks the optimisation?",
+    "answer_markdown": "Because the cache is addressed through a per-sequence block table, two sequences whose leading tokens are identical can point their tables at the very same physical blocks rather than each storing a copy, with copy-on-write handling the point where they diverge. That saves both memory and compute: the prefill for the shared prefix is computed once instead of per request, which lowers TTFT as well. The optimisation breaks on block granularity and on prefix identity. Only complete blocks of identical tokens can be shared, so a partial trailing block is not; more importantly, any variation earlier in the prompt — a request ID, a timestamp, a per-user greeting — makes the prefix differ from the first block onward and reduces sharing to nothing. The design rule is the same one that governs consumer-side prompt caching: static content first, variable content last.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "When would you deliberately choose Ollama over vLLM, and when TensorRT-LLM?",
+    "answer_markdown": "Ollama for local development and single-user work: it runs quantised GGUF weights on CPU or Apple Silicon, starts in seconds, and needs no GPU, which makes it ideal for building and testing client code before any hardware exists. It is not built for the concurrency a production serving runtime targets, so it is the wrong choice for serving real traffic. TensorRT-LLM when you have measured that you need the last increment of performance on NVIDIA hardware and can absorb the operational cost, which is real: it compiles an engine specific to the model and the GPU, so every model change or hardware change means another build step in your pipeline. vLLM sits in between and is the common default because it needs no compile step while still providing PagedAttention and continuous batching.",
+    "difficulty": "medium"
+  }
+]

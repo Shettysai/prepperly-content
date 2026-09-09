@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why is requestCert: true combined with rejectUnauthorized: false considered worse than having no client authentication at all?",
+    "answer_markdown": "Because it succeeds. A server with no client authentication is honest and visible: nobody is confused about the security posture of an open endpoint. This configuration asks for a client certificate, verifies it, and then serves the request regardless, including to callers that presented nothing at all. The response is 200 OK with a null client CN, latency is normal, and application logs are indistinguishable from a properly enforcing deployment. Since non-enforcement generates no error, no log and no metric, nobody investigates, and the security control you believe you deployed simply is not running. It typically gets discovered in a penetration test, or never.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What exactly do you give up when you set rejectUnauthorized: false on a client?",
+    "answer_markdown": "You keep confidentiality against a purely passive eavesdropper, because the traffic is still encrypted and someone merely recording packets learns nothing. You give up all authentication, which means you no longer know who you are encrypting to. Anyone able to answer for that hostname, whether through DNS poisoning, a hijacked route or a malicious proxy, can present any certificate they like, including a self-signed one minted seconds ago, and your client will accept it and encrypt your credentials straight to them. So the accurate description is not 'slightly less secure' but 'still private from bystanders, completely defenceless against anyone actually on the path' which is the threat you were least worried about in the first place.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A colleague fixes an untrusted-certificate error by setting rejectUnauthorized: false. What should they do instead, and why are the two options often confused?",
+    "answer_markdown": "They should pass the issuing CA via the ca option instead. That adds one trust anchor while keeping every check running: signature verification, chain walking, expiry, and hostname matching. It is actually more specific than the public trust store, since only certificates from that named CA are accepted, which makes it the correct answer for internal services and private PKI. The two get confused because both are reached for in the same moment, when an error complains about an untrusted certificate, and both make the error go away. But one preserves full verification against a CA you deliberately chose, and the other removes verification entirely so that any certificate passes.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How would you prove that mTLS is genuinely being enforced in a running environment?",
+    "answer_markdown": "Send a request with no client certificate and require it to fail. That negative probe is the only thing that distinguishes real enforcement from the inspect-only trap, because the happy path behaves identically in both configurations: a valid certificate returns 200 either way. The reason this trap reaches production is precisely that everyone tests the positive case, sees 200, and ships. The probe is cheap enough to belong in CI as a build-failing assertion rather than in a runbook someone consults after an incident, since the difference it detects is the difference between an authenticated service and an open one.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why should rejectUnauthorized be written as a literal true rather than computed from configuration?",
+    "answer_markdown": "Because an absent configuration value has historically meant 'off' rather than 'use the default'. Node's TLS module treated rejectUnauthorized: undefined as false, so code like rejectUnauthorized: config.strict silently disabled all certificate validation whenever that config key was missing or misspelled. That was a real reported vulnerability, later fixed, but the general lesson survives the fix: a security control whose value flows through configuration can be switched off by a typo, a missing environment variable or a default that changes between environments. The related hazard is NODE_TLS_REJECT_UNAUTHORIZED=0, which disables verification process-wide for every library in the dependency tree, giving a much larger blast radius than one intentionally relaxed call.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Connections to your server work fine. Why bother setting minVersion explicitly?",
+    "answer_markdown": "Because a successful connection tells you nothing about which TLS version was negotiated. Without a floor, a client that offers only deprecated TLS 1.0 or 1.1 gets a successful handshake at that version, and both sides report success. That is exactly how a downgrade attack works: the attacker pretends to be a client supporting nothing better, and the absence of a floor means the server obliges. Setting minVersion: 'TLSv1.2' converts a silent downgrade into a loud refusal, and pairing it with honorCipherOrder ensures the server's preference order wins rather than letting a hostile client pick the weakest suite in the overlap. Note the general pattern: the insecure state here is reached by omission, not by writing anything wrong.",
+    "difficulty": "hard"
+  }
+]

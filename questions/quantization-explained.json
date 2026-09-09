@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why does a model still work when you store its weights in 4 bits instead of the 16 it was trained in?",
+    "answer_markdown": "Two properties of trained weights make it possible. First, the values cluster tightly near zero in a narrow range, while a 16- or 32-bit float spends most of its representable precision on magnitudes the weights never take — so most of those bits were describing a range the data does not use. Second, the model's output depends on sums of thousands of weight-times-activation products, and small independent rounding errors across those products largely cancel rather than compound. So instead of storing each weight as a float, you store a scale factor for a group of weights plus a small integer index per weight, and multiply them back at inference time. What you preserve is the relative differences that actually move the output.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Does quantization make inference faster, or only smaller? Explain the mechanism.",
+    "answer_markdown": "Usually both, and the speedup comes from memory bandwidth rather than from faster arithmetic. Token generation is memory-bandwidth-bound because producing each token requires reading every weight out of VRAM while doing very little arithmetic per byte read. Halving the bytes per weight therefore roughly halves the time spent on those reads, even in weight-only quantization where the actual matrix multiply is still performed in fp16 after dequantizing. This is why 4-bit models often generate noticeably faster than fp16 ones on the same card. The exception is prefill, which is compute-bound because the whole prompt is processed in parallel, so weight-only quantization barely helps time-to-first-token and dequantization overhead can even make it marginally worse.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the difference between post-training quantization and quantization-aware training, and which should you expect to use?",
+    "answer_markdown": "Post-training quantization takes an already-trained model and converts its weights to lower precision, optionally using a small calibration dataset to choose scales that minimise error. It takes minutes to tens of minutes and is what nearly everyone uses. Quantization-aware training instead inserts simulated rounding operations during training so the model learns weights that survive quantization well, which yields better quality especially at very low bit widths. The catch is that it requires a full training run, so it is realistic only for teams that own the pretraining or are already fine-tuning at scale. As an application engineer you will use PTQ, and you will most likely download a model someone else already quantized.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why are outlier weights the central difficulty in quantization, and how do practitioners deal with them?",
+    "answer_markdown": "Quantization maps a range of float values onto a small set of integers, and that range is set by the minimum and maximum of whatever group you are quantizing. A single unusually large weight forces the range wide, so the buckets become coarse and every ordinary weight — all of them clustered near zero — loses resolution or collapses into the same couple of buckets. One value in thousands can dominate the error for all the others. The main defence is granularity: instead of one scale per tensor, use one scale per group of 64 or 128 weights, which confines an outlier's damage to its own group and lets every other group get a tightly fitted scale. Beyond that, GPTQ minimises reconstruction error layer by layer and AWQ identifies the weights most important to activations and protects them specifically.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Your int4 model scores within half a point of the fp16 model on a standard benchmark. Is that sufficient evidence to ship it?",
+    "answer_markdown": "No, because quantization degradation is not spread evenly across what a model does, and a benchmark average is precisely the measurement that hides it. Quality loss shows up first on multi-step reasoning and arithmetic, on long-context tasks where a small error compounds across many generated tokens, and on rare tokens or less-represented languages. It shows up last on short, common, single-step requests, which are the bulk of most benchmark suites. So an average can move a fraction of a point while the specific capability your product depends on degrades badly. What you need is a task-specific eval set deliberately weighted toward your hard cases, scored on both precisions before and after the change.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "When is quantization the wrong tool to reach for?",
+    "answer_markdown": "Three situations. First, when you are latency-bound rather than memory-bound: if the model already fits with headroom and your complaint is time-to-first-token, quantization targets the wrong constraint, since prefill is compute-bound and weight-only quantization barely affects it. Second, when quality is already marginal — if your task passes at 82 percent against a requirement of 80, you have no margin to spend, and quantization spends quality to buy memory. Third, and most dangerous, when you have no eval capable of detecting the regression: the deployment will look like a success because nothing crashed, and you will learn about the quality loss from users months later. In that last case the correct first step is building the eval, not quantizing.",
+    "difficulty": "medium"
+  }
+]
