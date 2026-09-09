@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is dependency injection, and what does it actually buy you?",
+    "answer_markdown": "Dependency injection means a class declares what it needs in its constructor rather than constructing those things itself, and a container decides what to hand over. The first thing it buys is substitution: because the class never names a concrete implementation, you can pass a fake database in a test without editing the class under test. The second is visibility: the constructor becomes the complete, enforced list of what that class depends on, so you can understand a module's reach by reading one signature instead of chasing imports. Both benefits come from the same move, which is taking the choice of implementation out of the class. Note that you get most of this with plain constructor arguments and no framework at all; the container only earns its place once hand-wiring becomes the tedious part.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain inversion of control in plain terms, and how it relates to dependency injection.",
+    "answer_markdown": "Normally a class controls its own collaborators: it calls `new` on whatever it needs, so the decision lives inside code you cannot reach from outside. Inversion of control moves that decision outward, so something else assembles the object graph and the class simply receives what it is given. Dependency injection is one specific way of achieving that inversion, namely handing dependencies in through the constructor. The reason the distinction matters in an interview is that inversion of control is the principle and DI is the technique, and the principle is what transfers to Spring, .NET, Angular and any other framework built the same way.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do guards, pipes and interceptors in NestJS map onto Express middleware, and how do they differ from each other?",
+    "answer_markdown": "All three are the middleware idea split by responsibility, which is why the mapping is the fastest way to learn them. A guard decides yes or no before the handler runs, so it is auth middleware that returns 403. A pipe transforms or validates a single incoming value, so it is validation middleware scoped to one parameter rather than the whole request. An interceptor wraps the handler and sees both sides, which is the middleware pattern where you do work before and after calling `next()` — timing, logging, response shaping. The order around a handler is guards, then pipes, then the interceptor's before-half, the handler, then the interceptor's after-half. Splitting middleware this way is what lets the framework apply each concern at the right granularity instead of running everything for every request.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the default provider scope in NestJS, and why does it surprise people?",
+    "answer_markdown": "The default is singleton: a provider is constructed once and shared by every request for the life of the process. That default is right for expensive shared things like a database pool or an HTTP client, which you want built at boot rather than per request. It surprises people because any mutable field on a service is therefore shared global state, so assigning something like `this.currentUser` in one request is visible to a concurrent request — a cross-user data leak rather than a performance problem. The fixes are to keep per-request data on the request object or an explicit context, or to mark the provider request-scoped. Request scope is not free: construction moves onto the hot path, and it spreads upward, because anything injecting a request-scoped provider must become request-scoped too.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your NestJS app fails at boot with a circular dependency error — what does that mean and how do you fix it?",
+    "answer_markdown": "It means the container tried to resolve a token that was already on its resolution stack: module A needs B and B needs A, so neither can be constructed first. It surfaces at boot because the container builds the whole graph before serving traffic, and the message is often opaque — frequently `undefined` where a class name should be, because one class was still being defined when the other referenced it. `forwardRef()` on both sides makes it resolve and should be your second thought, not your first, because a cycle almost always signals a modelling problem: usually a third concept both sides need, or one side reaching for behaviour it should have been handed. Extract the shared piece and the cycle disappears along with the design flaw. When a cycle is genuinely unavoidable, the deeper escape hatch is to stop depending at construction time and resolve the provider lazily at call time via the module reference, so nothing needs the other side to exist during construction.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "When is NestJS the wrong choice, and what does it cost you?",
+    "answer_markdown": "It costs decorator and metadata indirection, so real behaviour depends on decorators and compiler settings rather than code you can read top to bottom, and resolution failures tend to describe the container's confusion instead of your mistake. It costs a genuine learning curve — modules, providers, scopes and several cross-cutting hooks before you write a route — and a heavier boot, because the container instantiates the whole graph before the first request. That boot cost is irrelevant on a long-running server and directly harmful for a short-lived serverless function where startup is on the critical path. Plain Express or Fastify is better for a small service, for anything latency-sensitive at startup, and for a team that would rather own thirty lines of explicit wiring. The structure pays off with codebase size and team size; below that you are buying convention you do not need.",
+    "difficulty": "hard"
+  }
+]

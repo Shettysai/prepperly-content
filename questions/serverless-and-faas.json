@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What does \"serverless\" actually mean, and what does it not mean?",
+    "answer_markdown": "It means the platform owns the servers, the scaling and the idle capacity, and you supply a function plus a trigger, paying per invocation instead of per hour a machine is switched on. It does not mean there are no servers — your code still runs on one, you have simply stopped managing it, and someone else patches the operating system on your behalf. The term has also stretched to cover managed containers that scale to zero and databases billed per query, which behave differently from function-as-a-service, so it is worth naming which one you mean. The honest summary is a shift in who is responsible and how you are billed, not a change in physics.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is a cold start, and what makes one much worse?",
+    "answer_markdown": "When a request arrives and no warm execution environment is available, the platform provisions a sandbox, initialises the runtime, and runs all your module-level code — every import at the top of the file — before the handler runs at all. That whole prelude is the cold start, and you are billed for it. It gets much worse with a large dependency tree, because those imports are re-paid on every cold start rather than once: importing an entire SDK to use a single client is the classic version. What genuinely helps is a smaller bundle, importing the specific client rather than the umbrella package, moving rarely-used heavy imports inside the branch that needs them, and provisioned concurrency, which keeps environments pre-initialised in exchange for money.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why must a serverless function be stateless? Explain it as a consequence rather than a style rule.",
+    "answer_markdown": "It follows directly from the execution model. After a response is sent the environment is frozen rather than destroyed, and it is eventually discarded — after idle time, or because the platform recycles environments periodically regardless of traffic. So anything held in memory may simply vanish between two requests, which makes an in-memory counter or session silently lossy rather than merely unfashionable. The same freeze-and-reuse behaviour means state can also survive when you did not want it to, so leftover data from one request is readable by the next request on that instance. Both hazards come from one mechanism, which is why statelessness is a consequence of how the platform works rather than a preference you could argue with.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Module-scope state persisting between invocations is described as both the main optimisation and a serious bug. Explain both sides.",
+    "answer_markdown": "Code at module scope runs once per execution environment, not once per request, and its values survive while the instance stays warm. That is exactly what makes connection reuse work: open a database or HTTP client at module scope and warm invocations reuse it instead of paying to reconnect, which is the single biggest warm-path win available. The same persistence is what lets request data leak, because pushing a user's record into a module-level array leaves it readable by the next invocation on that instance — a different user's request against the same object. You cannot have the performance benefit without owning the hazard, since it is one mechanism seen from two sides. The practical rule is that module scope is for things that are safe to share across all users, and anything user-specific belongs in a handler-local variable.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your function spikes to 500 concurrent invocations and the database falls over — why?",
+    "answer_markdown": "Each concurrent invocation runs in its own execution environment, so if each opens its own database connection then concurrency is effectively connection count, and 500 concurrent invocations means far more connections than a database with a fixed limit of, say, 100 will accept. The errors are connection refusals rather than slow queries, which is why dashboards tend to blame the database while the cause is the scaling you asked for. A connection pool makes this worse rather than better: on a long-running server one process shares one pool across many requests and amortises the cost, but here every instance has its own pool, so a pool of five across 500 instances attempts 2,500 connections. The fix has to live outside the functions — an external pooler or database proxy that many instances share and multiplexes them onto a small number of real connections, or an HTTP data API where the connection concept never reaches your code. It also passes every small-scale test, because at 10 or 100 concurrent invocations nothing is wrong.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How would you reason about whether serverless or a long-running container is cheaper for a given workload?",
+    "answer_markdown": "The two have different cost shapes, so the answer is a crossover point rather than a fixed number. A function is billed per invocation and per unit of memory-time, so idle costs nothing and a spike costs exactly the spike, meaning cost per request stays roughly flat as traffic grows. A container costs the same whether it serves one request or thousands, so its cost per request falls as traffic rises. Somewhere those lines cross. To reason about it, take requests per month and average duration, compute memory-time, and compare against the smallest always-on instance that could carry your peak — then check what your traffic shape does to the result, because spiky or mostly-idle traffic sits far from the crossover while steady high volume usually favours the container. Cost is rarely the only factor anyway: timeouts, cold starts and connection limits often decide it first.",
+    "difficulty": "hard"
+  }
+]

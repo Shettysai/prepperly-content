@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Walk through the multi-tenancy isolation models and say how you would choose between them.",
+    "answer_markdown": "The spectrum runs from shared everything to shared nothing: a single schema with a `tenant_id` column, then a shared database with a schema per tenant, then a database per tenant, then a whole deployment per tenant. Moving up the ladder shrinks the blast radius of any failure, reduces noisy-neighbour exposure, and makes per-tenant backup and restore straightforward — a shared schema forces you to reconstruct one tenant's data with a filtered export rather than restoring a backup. Moving up also multiplies cost per tenant and turns one migration into thousands. The sensible default is to start pooled and move individual tenants up only when a contract, a data-residency law, or their sheer size forces it. Real systems run several models simultaneously, so the design that survives is the one where a tenant can be moved between models without rewriting the application.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A shared-schema tenant leaks another tenant's rows. How do you prevent that structurally?",
+    "answer_markdown": "Not by being careful, because a query like `SELECT * FROM invoices WHERE status = 'open'` is syntactically valid, passes review if the reviewer is thinking about status, and returns every tenant's data. Any control that depends on every developer remembering a clause in every hotfix and every ad-hoc script will eventually fail. Put the predicate somewhere it cannot be omitted. The strongest option is row-level security in the database: a policy attached to the table appends `tenant_id = current_setting('app.tenant_id')` to every query, so forgetting the clause returns zero rows instead of someone else's — the failure mode flips from silent leak to visible bug — and it protects psql sessions and reporting tools too, not just your application code. The weaker but often more practical option is a mandatory query layer that injects the predicate from request context and exposes no unscoped escape hatch. Either way, back it with a test that seeds two tenants, exercises every read path as one of them, and fails if a single foreign row appears.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Where should tenant identity come from, and why does it matter so much?",
+    "answer_markdown": "From something the client cannot forge: a claim inside a verified token, or a subdomain mapped server-side to a tenant record. A `tenantId` in the request body, a query parameter, or a client-controlled header is not tenant identity — it is a request to impersonate, and honouring it turns your isolation into a suggestion. Identity should be established once at the edge, after token verification, and then travel with the request as tenant context that every data access derives its scope from. The related trap is what happens when context is missing: an unset scope must throw, never default to 'all tenants', because a permissive default silently converts an ordinary bug into a breach.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is a shared cache with keys like `invoices:open` both a correctness bug and a security bug?",
+    "answer_markdown": "The key describes the query but not who asked it. Tenant A's request populates the entry, then tenant B's identical query finds a cache hit and receives A's rows. That is a wrong answer and a data leak in one, delivered fast and with no database query to appear in an audit log. It also defeats defences you may have built correctly: row-level security in the database cannot help, because the database was never consulted. The fix is to include tenant identity in every key, derived from tenant context by the cache helper rather than concatenated by each caller — the same key-namespacing habit from `caching-strategies`, except here it is a security control rather than a hygiene preference.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "One tenant's usage is degrading everyone else's experience. What do you actually do about it?",
+    "answer_markdown": "Per-tenant rate limits and quotas are the first line, using the algorithms in `rate-limiting-and-throttling`, but request rate is the easy dimension and rarely the one that causes the incident. The dangerous cases are slower: a single tenant's expensive report holding connections from a shared pool until every other tenant queues behind it, or a bulk import saturating disk throughput. So bound work per tenant rather than just requests per tenant — cap query cost and row counts, give background jobs per-tenant concurrency limits and separate queues so a large tenant's backlog cannot starve small ones, and reserve pool capacity so no single tenant can take the last connection. If a tenant is genuinely large enough that no quota keeps them polite, the right answer is commercial: move them up the isolation ladder to their own database or deployment.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A migration scoped existing data to tenants and recorded success, but legitimate per-tenant duplicates are still being rejected. What went wrong, and what is the general lesson?",
+    "answer_markdown": "The migration added the new `UNIQUE (tenant_id, email)` index and attempted to drop the legacy global `UNIQUE (email)`, but the drop was wrapped in error handling that swallowed the failure — often added deliberately so the migration could be rerun in development. So the old constraint survived while the migration history says the change completed. Nothing looks wrong until two tenants both need a user with the same address, and then the failure appears far from its cause with a confusing duplicate-key error. The general lesson is about error handling rather than indexes: a migration that swallows its own failure is worse than one that fails loudly. A loud failure gets fixed in ten minutes, while a silent one leaves the database in a state your schema definition claims is impossible, so every subsequent diagnosis starts from a false premise. Make the drop explicit, assert afterwards that the old index is gone, and let the migration fail if it is not.",
+    "difficulty": "hard"
+  }
+]

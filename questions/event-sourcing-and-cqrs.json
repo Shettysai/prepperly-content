@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What does event sourcing actually store, and how do you get the current state of something?",
+    "answer_markdown": "It stores the complete, ordered sequence of events that happened — `MoneyDeposited`, `HoldPlaced` — rather than the resulting values. There is no row holding the current balance anywhere. To get current state you replay that entity's events through a reducer function that folds each event into the next state, which is where the business rules actually live. A snapshot caches the fold up to some sequence number so you replay only the tail rather than every event since the account opened, but the snapshot is strictly an optimisation you can delete and rebuild. The reducer must be a pure function of the events alone: if it consults the clock, a random generator, or another service, replaying the same events gives a different answer and every guarantee the pattern offers disappears.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Event sourcing versus CQRS — are they the same thing?",
+    "answer_markdown": "No, and conflating them is the classic error on this topic. Event sourcing is a decision about storage: keep the immutable log of facts as the source of truth and derive state by replaying it. CQRS is a decision about modelling: use one model for commands and a different one for queries, so each can be shaped for its own job. Either works alone — you can do CQRS with a normalised relational write schema and a denormalised read table kept in sync by change-data-capture or the outbox pattern, storing no events at all, and you can event-source a small service that serves reads from the same replayed state with no separate read model. They pair well because the hard part of CQRS is keeping the read model in sync with the write model, and an ordered, replayable log is an excellent answer to that. Being able to separate them cleanly is the strongest signal you understand both.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A user updates their profile, gets redirected, and sees their old data. What happened and how do you fix it?",
+    "answer_markdown": "The write is durably appended to the event log, but the projector has not yet consumed that event and updated the read model, so the query hits a projection that is still one event behind. This is the read-your-own-writes problem from `consistency-models`, except here it is structural rather than accidental — a CQRS read side is always eventually consistent with the write side. Two fixes work. Serve that one request from the write model, accepting a slower and less convenient query for the narrow case where the user must see their own change. Or return the version the write reached, have the client pass it back, and have the read side either wait briefly for the projection to reach that version or tell the client to retry. The mistake is treating the lag as a bug to eliminate rather than a property to design around.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you change the schema of an event type when events from three years ago still exist?",
+    "answer_markdown": "You do not change stored events. Rewriting history destroys exactly the property you adopted event sourcing for, and any auditor or hash chain over the log would detect it — so there is no equivalent of an `ALTER TABLE` here. Instead you version the event type and write an upcaster: a function that converts a v1 event into the v2 shape as it is read, chained so only one hop per version needs writing and the stored bytes are never touched. The practical constraint is that an upcaster can only work with information the old event actually contains. Adding an optional field with a safe default is easy; splitting one field into two is painful; changing the meaning of an existing field is close to impossible, because the data to distinguish old from new meaning was never recorded. That is why the rule is additive-only changes, and why getting the event vocabulary right early matters far more than in a system where you can just run a migration.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A projection has been producing wrong data for two months because of a bug in the projector. How do you fix it?",
+    "answer_markdown": "You fix the projector code and replay the log to rebuild the projection from scratch. That is the whole repair: no data-fixing script, no manual corrections, no reconciliation spreadsheet — because the source of truth was never wrong. The events recorded what happened correctly; only the derived view was miscomputed. This is one of the strongest practical arguments for the pattern, and it is why every projection must be independently rebuildable and why nothing may be stored only in a read model. If some data exists solely in the projection and cannot be derived from the log, you have quietly created a second source of truth and lost the ability to do this.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "When is event sourcing over-engineering?",
+    "answer_markdown": "When nobody will ever ask how the data got to its current state. Standard CRUD applications — a settings page, a content management form — gain a permanent immutability constraint, replay cost, and an event vocabulary you can never migrate, in exchange for an audit trail that a history table or a database trigger would have supplied for a fraction of the effort. It is also the wrong choice when the team has no operational experience with replay and projection rebuilds, since those are exactly the skills you need under pressure, and when a materialised view or read replica already gives you the read shape you wanted. The pattern is genuinely powerful for ledgers, regulated domains and complex collaborative state, and it is heavily over-adopted everywhere else. The honest test is naming a question the log will answer that stored state cannot.",
+    "difficulty": "medium"
+  }
+]
