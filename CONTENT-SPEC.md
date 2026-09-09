@@ -1,7 +1,7 @@
 # Content spec — Prepperly learning material
 
-Every topic file follows this. The goal is that all 60 read as one coherent
-course, not sixty separate articles.
+Every topic file follows this. The goal is that all 191 read as one coherent
+course, not 191 separate articles.
 
 ## The reader
 
@@ -11,8 +11,21 @@ someone who has never studied this, rewrite it.
 
 ## Structure — a learning journey, not a summary
 
-Target **1200–1800 words** of prose. Follow this order; it is a path from
-"never heard of it" to "can discuss it in an interview".
+Target **1200–1800 words** of prose for a foundational topic, and up to
+**2300** for a dense infrastructure or platform topic that has to carry a lot
+of mechanism. Follow this order; it is a path from "never heard of it" to
+"can discuss it in an interview".
+
+Measure prose only: exclude frontmatter, code fences, Mermaid blocks and table
+rows. Two people counting the same file differently is a real source of
+confusion, so state the method when you state a number.
+
+*Known inconsistency, as of the 19-chapter expansion:* chapters 1–15 run to a
+median of about 1100 prose words and chapters 16–19 to about 2050. The newer
+chapters are denser subjects, but the gap is larger than the subject matter
+alone justifies. Do not widen it further; prefer the lower end of the band for
+new work, and if you are revising an older topic, growing it toward 1500 is an
+improvement.
 
 ```markdown
 ## Before you start
@@ -48,6 +61,11 @@ common variation. This is where real understanding forms.]
 | ... | ... |
 [Complexities, trade-offs, or a decision guide. Highest value per pixel when
 revising.]
+
+## Tools & frameworks
+| Tool | What it's for | Reach for it when |
+[The standard options, each name a link to its docs. Tool-relevant topics
+only — see the section below. Omit entirely for algorithms/behavioural.]
 
 ## Common mistakes
 - [What beginners actually get wrong, and what to do instead]
@@ -130,6 +148,53 @@ existing tag over a new one:
 `distributed-systems` `consistency` `caching` `scalability` `system-design`
 `api-design` `nodejs` `javascript` `security` `devops` `containers`
 `interview-skills` `behavioural`
+
+## Tools & frameworks — every tool-relevant topic
+
+Add a `## Tools & frameworks` section between `## Quick reference` and
+`## Common mistakes`. It answers "what would I actually use for this, and
+which one do I pick?" — the question a learner asks straight after
+understanding the concept.
+
+```markdown
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [pgvector](https://github.com/pgvector/pgvector) | Vector similarity inside Postgres | You already run Postgres and have under ~10M vectors |
+| [Qdrant](https://qdrant.tech/documentation/) | Dedicated vector database | You need payload filtering at scale |
+```
+
+Rules:
+
+- **Every tool name is a markdown link to its official docs**, so the reader
+  can navigate straight there and learn. A name with no link is not useful.
+- **Every URL must be verified in the session that writes it** — same rule as
+  `links:` in the frontmatter. A dead docs link is worse than no link, because
+  the reader clicks it *in order to learn*. Some docs hosts legitimately return
+  403 to bots; confirm the page is real another way rather than dropping it.
+- **3–5 tools.** If a subject has one dominant tool, say so plainly instead of
+  padding the table to five.
+- **Cover the real spread of choices** where one exists — an embedded option, a
+  dedicated service, a managed offering — because "which one and why" is the
+  actual interview question.
+- **"Reach for it when" must be a genuine trade-off**, not a restatement of the
+  description. "When you need a vector database" is useless; "when you need
+  payload filtering at scale and can run a separate service" is useful.
+- **Node/TypeScript first** where a language choice exists, since this
+  curriculum's runnable code is Node. Mention the Python equivalent in one
+  clause where Python is the larger ecosystem.
+- **Flag anything deprecated or in maintenance mode** rather than recommending
+  it silently.
+- Prefer a stable docs root over a deep versioned path that will rot.
+
+**Topics that get NO tools section:** CS Fundamentals, Data Structures,
+Algorithms, Interview Skills, Behavioural & HR, Situational & Leadership, and
+How to Answer Any Question. Big-O and backtracking have no tooling, and
+inventing some would be filler. Do not add an empty section to those.
+
+The canonical per-topic tool list lives in `docs/TOOL-MAP.md`. Use it so the
+same tool is named and linked identically everywhere it appears.
 
 ## Questions
 
