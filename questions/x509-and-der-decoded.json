@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the difference between PEM and DER, and what are the three top-level parts of an X.509 certificate?",
+    "answer_markdown": "DER is the binary tag-length-value encoding of the certificate; PEM is that same binary Base64-encoded with `-----BEGIN CERTIFICATE-----` header lines so it survives being pasted into config files and emails. Converting PEM to DER is just dropping the first and last lines, joining the rest, and Base64-decoding. RFC 5280 defines the decoded structure as a SEQUENCE of exactly three children: tbsCertificate, signatureAlgorithm, and signatureValue. The important consequence is that the signature is a *sibling* of the signed data, not a wrapper around it — signatureValue sits next to the tbsCertificate bytes it covers.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "In DER, how does a length field work when a value is longer than 127 bytes?",
+    "answer_markdown": "A single byte can only express 255, so DER has two forms. In short form the length byte is 0x00–0x7f and *is* the length. In long form the high bit is set, and the low 7 bits say how many following bytes hold the real length — so 0x82 0x04 0xD3 means \"two length bytes follow\", and those bytes are 0x04D3 = 1235. The 0x82 is a count, not part of the number. Every real certificate exceeds 127 bytes, so its outer SEQUENCE always uses long form, which is exactly why every PEM certificate's Base64 starts with `MII` — that decodes to the bytes 30 82.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Which bytes exactly does a CA sign, and what goes wrong if you slice them incorrectly?",
+    "answer_markdown": "The CA signs the complete DER encoding of tbsCertificate, *including that element's own tag and length header*. It did not hash \"the fields inside tbsCertificate\"; it DER-encoded the whole TBSCertificate structure, producing something like 30 82 02 42 followed by the fields, and hashed all of it. So your slice must start at the offset of the tag byte, not at the offset where the value begins. If you slice from valueStart instead you are off by the four header bytes, and you get a parser that reports every certificate on earth as invalid — with no error message and no clue, because the only symptom is two hashes that do not match. This is the most common bug in hand-written certificate verification.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why is DER used for certificates rather than a format like JSON or XML?",
+    "answer_markdown": "Because a signature covers exact bytes, so the encoding must be canonical — any given structure must have exactly one valid binary representation. DER is defined as BER with canonicalization added, precisely so that a digital signature computed over an ASN.1 value is unambiguous. JSON offers infinite whitespace and key-ordering variants of the same logical document, so the same certificate could hash two different ways, and a verifier and a signer could legitimately disagree about which bytes were signed. Canonical encoding is not a performance choice here; it is a correctness requirement for anything that carries a signature.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Explain RSA signature verification concretely, including why you cannot just compute s ** e.",
+    "answer_markdown": "Read the signature bytes as one big-endian integer s — for a 2048-bit RSA certificate that is a 617-digit number. Extract the signer's public key (n, e) by walking their certificate's subjectPublicKeyInfo down to the RSAPublicKey SEQUENCE of two INTEGERs. Then compute m = s^e mod n, which is the entirety of RSA verification: signing was s = h^d mod n and needed the private d, while verifying needs only the public e. You cannot evaluate s ** e directly because with e = 65537 the intermediate result would be roughly 617 × 65537 ≈ 40 million digits before any reduction. Modular exponentiation via square-and-multiply reduces mod n at every step, keeping numbers bounded. Finally you unpad the PKCS#1 v1.5 block (00 01 FF…FF 00 followed by a DigestInfo), extract the embedded hash, and compare it to your own SHA-256 of the TBS bytes.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is the first content byte of a BIT STRING, and why does forgetting it break signature verification?",
+    "answer_markdown": "A BIT STRING's first content byte is a count of unused bits in the final byte. For certificate signatures and encoded public keys it is always 0x00, because the data is a whole number of bytes, but it is still present and must be skipped — hence slicing from valueStart + 1. If you forget it, you prepend a zero byte to your signature integer, which for a 256-byte signature makes the value 256 times too large and pushes s above n. Since RSA operates in the integers modulo n, s must be less than n, so the arithmetic produces garbage and verification fails. Checking `s < n` before you compute anything is a cheap way to catch this specific mistake.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "How does an application get mutual TLS without any change to its code?",
+    "answer_markdown": "Traffic is transparently redirected into a sidecar proxy running in the same pod, usually by iptables rules or an eBPF hook installed at pod startup. The application makes a plain HTTP call to a service name; that connection is intercepted and actually terminates in its own sidecar over loopback. The sidecar then opens a mutual TLS connection to the destination sidecar, where both proxies present and verify certificates, and the destination sidecar terminates TLS and forwards plain HTTP over loopback to its own application container. So there are three hops and only the middle one is encrypted — but the two plaintext hops never leave a pod's network namespace, where anything able to read them already has code execution inside your pod.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is the difference between STRICT and PERMISSIVE peer authentication, and why is PERMISSIVE usually the default?",
+    "answer_markdown": "In STRICT mode a workload accepts only mutual TLS and refuses plaintext connections. In PERMISSIVE mode it accepts both, using mTLS when the caller offers it and falling back to plaintext otherwise. PERMISSIVE is the default because you cannot convert a live fleet atomically: the instant you enforce STRICT, every caller without a sidecar — a legacy VM, a service whose injection failed, a monitoring agent, a cross-namespace job — is refused simultaneously, and all of them were working a second earlier. PERMISSIVE lets meshed pods start using mTLS immediately while un-meshed callers keep working, which is what makes an incremental rollout possible.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Walk through migrating a live fleet from plaintext to STRICT mTLS.",
+    "answer_markdown": "First inject sidecars everywhere while everything stays PERMISSIVE; this changes no behaviour, because mTLS simply begins happening between pods that both have proxies while plaintext still works elsewhere. Second, verify from destination-side telemetry that no plaintext connections remain, sustained across a full traffic cycle so that nightly batch jobs and weekly reports are included — this is the step teams skip and the reason rollouts fail. Third, set STRICT on one workload or namespace and observe. Fourth, widen progressively, finishing with a mesh-wide policy. Reversing the first two steps causes an immediate outage, and skipping verification merely schedules one for whenever that weekly plaintext caller next runs.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is PERMISSIVE mode dangerous as a permanent state rather than a migration step?",
+    "answer_markdown": "A plaintext connection in PERMISSIVE mode is accepted and carries no caller identity at all — the peer principal is null. That means any authorisation policy written in terms of caller identity cannot evaluate the request, so depending on how your policy handles a missing principal it is either denied confusingly or allowed silently. Everything looks healthy: handshakes succeed, dashboards are green, and coverage metrics may even look good. But you have a plaintext bypass around the security model you believe you deployed, and it is invisible precisely because nothing errors. PERMISSIVE is a state you pass through, not one you stop in.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What does zero trust networking mean concretely, and how does a mesh implement it?",
+    "answer_markdown": "Perimeter thinking puts a firewall or VPN at the boundary and treats everything inside as trusted, which makes network position itself the credential — so one compromised pod or misconfigured security group lets an attacker move laterally through a flat trusted interior. Zero trust says network location grants no privilege whatsoever: every connection is authenticated on its own merits at every hop, regardless of origin. A mesh implements this literally, because a compromised pod trying to reach the billing service must present a valid workload identity that policy permits, and 'I am inside the cluster' is not an argument. This is why mTLS everywhere is the foundational mechanism rather than an optional extra — without authenticated identity on every hop there is nothing for policy to act on.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A workload's dashboard shows 100% mTLS coverage, but a weekly batch job still reaches it in plaintext. How can both be true?",
+    "answer_markdown": "Because the mesh only secures traffic it sees, and coverage metrics only measure traffic it sees. Traffic can leave a pod without ever entering a sidecar — on a port excluded from interception, to an IP outside the mesh's configured range, or on a protocol the proxy is not set up to handle. Such a flow is unencrypted, unauthenticated, and uncounted; it does not register as a violation because from the mesh's perspective it never happened. The same blind spot appears when an application does its own TLS, which the sidecar can only pass through opaquely as TCP. The fix is to gate any tightening on destination-side telemetry asking what this workload actually accepted, rather than trusting an aggregate coverage number.",
+    "difficulty": "hard"
+  }
+]

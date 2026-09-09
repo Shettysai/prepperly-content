@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "How much VRAM does a 7B parameter model at fp16 need? Give the full answer, not just the weights.",
+    "answer_markdown": "The weights are the easy part: 7e9 parameters times 2 bytes is 14e9 bytes, which is 14 GB decimal or about 13.0 GiB in the binary units `nvidia-smi` reports. But three other consumers share the same VRAM. Activations, the scratch space for one forward pass, add roughly 5 to 15 percent of weight size for inference. CUDA context and framework overhead add a roughly fixed 1 to 2 GB. And the KV cache adds a per-token cost multiplied by context length and batch size — for a 7B model with 32 layers, 32 KV heads and head dimension 128 at fp16, that is about 0.5 MB per token. At 4K context and batch 1 the total lands near 17 to 18 GiB; at batch 16 the KV cache alone is 32 GiB and the total exceeds 47 GiB. So the honest answer is that 14 GB is the floor, and the real number depends on the traffic you expect.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does a 14 GB model OOM on a 24 GB card that worked fine in testing?",
+    "answer_markdown": "The weights fit; the KV cache does not. Testing almost certainly ran one request at a time, so the KV cache was small and the 6 or so GiB of real headroom after weights and overhead was plenty. Under production traffic each concurrent request needs its own KV cache proportional to its context length, and those add up fast: at 0.5 MB per token, eight users at 4K context each need 16 GiB that the card does not have. Nothing about the model changed between the two situations — only concurrency and prompt length, both of which are driven by users rather than by your configuration. This is why sizing must be done at the concurrency you expect, not at batch 1.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Give the KV cache formula and explain what each term does.",
+    "answer_markdown": "KV bytes equals 2 times layers times kv_heads times head_dim times bytes_per_element times sequence_length times batch_size. The 2 accounts for storing both a key and a value vector. Layers, kv_heads and head_dim are fixed properties of the model architecture, and bytes_per_element is the precision you cache in. The last two terms, sequence length and batch size, are the only ones that vary at runtime, which is exactly why long context and high concurrency are the levers that cause surprise OOMs. It is worth collapsing the fixed part into a bytes-per-token figure, because that single number lets you convert any amount of spare VRAM directly into how many tokens of total context you can hold.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A 70B model has 80 layers, 8 KV heads and head dimension 128. A 7B model has 32 layers, 32 KV heads and head dimension 128. Which has the larger KV cache per token, and why is that surprising?",
+    "answer_markdown": "The 7B model does. At fp16 the 7B needs 2 x 32 x 32 x 128 x 2 = 524,288 bytes, or 512 KB per token, while the 70B needs 2 x 80 x 8 x 128 x 2 = 327,680 bytes, or 320 KB per token. It is surprising because the 70B model has ten times the parameters, and the intuition that everything scales with parameter count is strong. The explanation is grouped-query attention: the 70B shares its key and value projections across many query heads, using only 8 KV heads where the 7B uses 32. That single architectural choice cuts KV cache several-fold and is a large part of why serving very large models at long context is feasible at all. If you size KV cache from parameter count you will get this backwards.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Can you serve a 70B model at fp16 on a single 80 GB GPU? Show the arithmetic.",
+    "answer_markdown": "No, and it is not close. The weights alone are 70e9 times 2 bytes, or 140 GB decimal, which is about 130.4 GiB — you are roughly 50 GiB over an 80 GB card before adding activations, the KV cache, or the 1 to 2 GB of CUDA overhead. No configuration tuning changes this, because weight size is fixed once you pick the model and precision. You have two real options. Quantize: int4 takes the weights to about 32.6 GiB and the full deployment to around 38 GiB, which fits one 40 GB card with room for batching, at some quality cost. Or shard the model across two or more GPUs with tensor parallelism, which works but pays cross-GPU communication on every token.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is training memory so much larger than inference memory for the same model?",
+    "answer_markdown": "Inference holds essentially just the weights plus a small amount of working space, around 2 bytes per parameter at fp16. Training holds much more: a gradient for every parameter, two optimizer state tensors per parameter if you use Adam, often a master copy of the weights in higher precision, and activations saved throughout the network so the backward pass can compute gradients. The usual planning figure is 12 to 20 bytes per parameter for training against 2 for fp16 inference — roughly an order of magnitude. That gap is why a model you can serve comfortably on one card needs a multi-GPU cluster to train, and it is the reason parameter-efficient methods like LoRA exist: by training only a small set of added parameters, the gradient and optimizer state terms shrink in proportion.",
+    "difficulty": "easy"
+  }
+]

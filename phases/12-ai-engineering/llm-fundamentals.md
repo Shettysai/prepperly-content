@@ -16,6 +16,9 @@ links:
   - title: Prompt Engineering Guide — Introduction
     url: "https://www.promptingguide.ai/"
     kind: resource
+  - title: Hugging Face — Tokenization algorithms (tokenizer summary)
+    url: "https://huggingface.co/docs/transformers/tokenizer_summary"
+    kind: resource
 ---
 ## Before you start
 
@@ -37,27 +40,43 @@ That is genuinely all it does. "Reasoning" is what emerges when the next-chunk p
 
 ## How it actually works
 
-Four ideas, in order.
-
-**Tokens.** The model does not see characters or words. Text is first cut into **tokens** — common word fragments learned from data. "unhappiness" might become `un` + `happiness`; a common word like " the" is one token. As a rule of thumb for English, one token is about four characters, so 1,000 tokens is roughly 750 words. Every limit and every price you deal with is denominated in tokens, not characters.
-
-**Embeddings.** Each token becomes a list of numbers — an **embedding** — a point in a space with hundreds or thousands of dimensions. The space is arranged so that tokens used in similar contexts land near each other. That geometric closeness is what later lets you do semantic search without any keyword matching.
-
-**Attention.** Stacked layers repeatedly let every token look at every earlier token and pull in what is relevant. In "the trophy did not fit in the suitcase because it was too big", **attention** is the mechanism that lets "it" gather meaning from "trophy" rather than "suitcase". Applied over many layers, each token's vector stops representing a word in isolation and starts representing that word in this specific context.
-
-**The context window.** The **context window** is the maximum number of tokens the model can consider at once — your system prompt, the whole conversation, retrieved documents, and the reply being generated all compete for the same budget. Nothing outside it exists. This is why the model "forgets": your earlier messages were trimmed to fit.
-
 ```mermaid
 flowchart LR
-  T["Text"] --> TOK["Tokens"]
-  TOK --> E["Embeddings"]
-  E --> A["Attention layers"]
-  A --> P["Probability per next token"]
-  P --> S["Sample one"]
+  T["Text"] --> TOK["Tokenizer"]
+  TOK --> ID["Token IDs"]
+  ID --> M["Model weights"]
+  M --> P["Probability per next token"]
+  P --> S["Pick one"]
   S -->|"append, repeat"| TOK
 ```
 
-That loop at the bottom is the whole show. The model is called once per token; a 500-token answer is 500 passes through the network. That is why longer answers cost more and take longer, and why streaming is possible at all.
+**Tokens.** The model never sees characters or words. Text is first cut into **tokens** — word fragments learned from data by **byte-pair encoding (BPE)**, which starts from individual bytes and repeatedly merges whichever adjacent pair appears most often, until the vocabulary reaches a fixed size (typically 50,000 to 200,000 entries). Frequency therefore decides length: " the" earns a token to itself, while "unhappiness" splits into pieces like `un` + `happiness`.
+
+This is why **token count is not word count**. For English prose, one token is about four characters and 1,000 tokens roughly 750 words. But that ratio reflects *what the vocabulary was trained on*, and it degrades the moment you leave that distribution:
+
+- **Non-English text** tokenizes far less efficiently. A vocabulary built mostly from English gives few slots to Hindi or Thai fragments, so those languages fall back to two- and three-byte pieces — two or three times more tokens for the same sentence.
+- **Code** fragments for a different reason: indentation, `}`, `);` and `snake_case` identifiers split into many small tokens, and whitespace alone eats a surprising share of a code prompt.
+- **Numbers and rare strings** — UUIDs, hashes, long digit runs — split near-arbitrarily, sometimes one token per character.
+
+Both limits that matter are denominated in tokens, so this hits twice. **Price** is per token, making inefficient tokenization a direct cost multiplier. **Context** is measured in tokens, so the same document fits or does not depending on language and format. A non-English support bot can cost triple an English one for identical conversations, with no bug anywhere.
+
+**Next-token prediction is the entire training objective.** The model sees a slice of real text with the next token hidden, guesses a probability for every token in its vocabulary, and is corrected in proportion to how wrong it was. Repeat trillions of times. There is no separate lesson on grammar, no fact database, no reasoning module — one objective, applied uniformly.
+
+Why does something so simple produce so much? Because predicting the next token *well* requires whatever the text depended on. Finishing "the capital of France is" needs a stored fact. Finishing a function needs variable scope tracked. Finishing a translation needs meaning represented independently of language. Finishing "therefore the answer is" in a proof needs the argument followed. None of those was targeted; all are prerequisites for accurate prediction, and they appear because the training data is human writing about everything.
+
+The same objective fixes the limits in place. It rewards *plausible* continuations, never *true* ones, so nothing penalises a confident fabrication that reads correctly. Hallucination arrives as a design consequence, not a defect.
+
+**What a model actually is.** Strip away the API and a model is a file: a large array of numbers called **weights** or **parameters**, plus a small config describing the shape they go into. No code you have to trust, no data lookup at runtime.
+
+Size has two independent axes people constantly conflate. **Parameter count** is how many numbers there are — 7B means seven billion. **Precision** is bytes per number: 4 for fp32, 2 for fp16, 1 for int8, half for 4-bit. File size is roughly the product, so a 7B model is about 28 GB at fp32, 14 GB at fp16 and 3.5 GB at 4-bit — the same model, three sizes, quality falling gently as precision drops.
+
+Models also come in **training stages**, and using the wrong one wastes days. A **base** model is trained only to continue text; ask it a question and it may reply with more questions, because that is what plausibly follows. An **instruction-tuned** model has been further trained on instruction-and-response pairs, so it obeys requests. A **chat-tuned** model adds multi-turn structure and expects specific role markers. Every product you have used is at least instruction-tuned.
+
+**Open weights** means the file is downloadable and you can run it yourself. It does not mean open source: training data is almost never published, training code often is not, and the licence may restrict commercial use or redistribution. You get the artefact, not the recipe.
+
+**Inference is a loop.** One forward pass turns your token IDs into one probability distribution over the whole vocabulary — that is all a single call produces. Something picks one token, appends it, and the whole thing runs again. A 500-token answer is 500 passes, which is why longer answers cost more, take longer, and can stream at all.
+
+Three of these ideas now have topics of their own. The vectors the model computes on, and how similarity between them is measured, are in [embeddings-and-vector-math](embeddings-and-vector-math). The mechanism by which each token gathers meaning from the others is [attention-and-transformers](attention-and-transformers). The token budget your prompt, history and answer compete for — really a memory limit — is [kv-cache-and-context-windows](kv-cache-and-context-windows). The picker in step two of the loop is [sampling-and-decoding](sampling-and-decoding).
 
 ## Worked example
 
@@ -89,74 +108,121 @@ Red, blue, and yellow.
 { prompt_tokens: 14, completion_tokens: 8, total_tokens: 22 }
 ```
 
-Two things to notice. Your seven-word question was 14 tokens, not 7 — punctuation, the role scaffolding, and word fragments all count. And `prompt_tokens` is charged on *every* call: in a 20-turn conversation you resend the entire history each time, so prompt tokens grow with every turn while completion tokens stay flat. That quadratic-feeling cost curve surprises people on their first invoice.
+Two things to notice. Your seven-word question was 14 tokens — punctuation, role scaffolding and word fragments all count. And `prompt_tokens` is charged on *every* call: in a 20-turn conversation you resend the whole history each time, so prompt tokens grow every turn while completion tokens stay flat.
 
 ## A second example — when it gets harder
 
-The naive model of "one token, one word" breaks the moment you count something. Ask an LLM how many r's are in "strawberry" and it often gets it wrong — because it never saw the letters. It saw two or three token fragments, and letter-counting is not recoverable from them.
+The naive model of "one token, one word" breaks the moment you count something. Ask an LLM how many r's are in "strawberry" and it often gets it wrong — because it never saw the letters. It saw two or three token fragments, and letter-level facts are not recoverable from them.
 
-You can watch tokenization behave unintuitively without any API call:
+You can watch tokenization efficiency vary by content type without any API call. This builds a tiny BPE-style merge table from a corpus, then applies it — the real algorithm, on a small enough scale to read:
 
 ```js
-// A crude approximation of a real tokenizer: split on word fragments.
-// Real tokenizers are learned from data; this only shows the shape of the problem.
-function roughTokens(text) {
-  return text.match(/\w+|[^\w\s]/g) ?? [];
+// Learn merges the way BPE does: repeatedly fuse the most frequent adjacent pair.
+function learnMerges(corpus, rounds) {
+  let seqs = corpus.map((w) => w.split(''));
+  const merges = [];
+  for (let r = 0; r < rounds; r++) {
+    const counts = new Map();
+    for (const s of seqs)
+      for (let i = 0; i < s.length - 1; i++) {
+        const k = s[i] + ' ' + s[i + 1];
+        counts.set(k, (counts.get(k) ?? 0) + 1);
+      }
+    if (!counts.size) break;
+    const [best] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
+    const [x, y] = best.split(' ');
+    merges.push(x + y);
+    seqs = seqs.map((s) => {
+      const out = [];
+      for (let i = 0; i < s.length; i++) {
+        if (s[i] === x && s[i + 1] === y) { out.push(x + y); i++; } else out.push(s[i]);
+      }
+      return out;
+    });
+  }
+  return merges;
 }
 
-console.log(roughTokens('strawberry').length);        // 1 — the model sees ~2-3 fragments, not 10 letters
-console.log(roughTokens('1234567890').length);        // 1 chunk here, but real tokenizers split digits oddly
-console.log('strawberry'.length);                     // 10 — what a human counts
-
-// Estimate cost before sending, using the ~4-chars-per-token rule of thumb.
-function estimateTokens(text) {
-  return Math.ceil(text.length / 4);
+function tokenize(word, merges) {
+  let s = word.split('');
+  for (const m of merges) {           // apply merges in the order they were learned
+    const out = [];
+    for (let i = 0; i < s.length; i++) {
+      if (s[i] + (s[i + 1] ?? '') === m) { out.push(m); i++; } else out.push(s[i]);
+    }
+    s = out;
+  }
+  return s;
 }
 
-const conversation = Array.from({ length: 20 }, (_, i) => `Turn ${i}: ` + 'x'.repeat(400));
-const perTurn = conversation.map(estimateTokens);
-const cumulative = perTurn.reduce((acc, t, i) => acc + t * (conversation.length - i), 0);
+// A corpus dominated by 'ing' and 'the' — like English training data.
+const corpus = ['thing', 'think', 'thing', 'the', 'the', 'the', 'singing', 'ringing'];
+const merges = learnMerges(corpus, 6);
+console.log('learned merges:', merges);
 
-console.log('tokens if sent once:', perTurn.reduce((a, b) => a + b, 0)); // 2050
-console.log('tokens actually billed over 20 turns:', cumulative);        // 21475
+for (const w of ['thing', 'singing', 'zqxwv', '9f8a2b']) {
+  const t = tokenize(w, merges);
+  console.log(`${w.padEnd(8)} chars ${String(w.length).padStart(2)}  tokens ${t.length}  ${JSON.stringify(t)}`);
+}
 ```
 
-Sending 2,050 tokens of conversation costs you 21,475 prompt tokens across the twenty turns, because turn 1 gets resent twenty times. Ten times the naive estimate. This is the single most common cause of "our LLM bill is inexplicable", and the fix — trimming, summarising, or caching the prefix — only makes sense once you can see the arithmetic.
+Output:
+
+```
+learned merges: [ 'in', 'th', 'ing', 'the', 'thing', 'inging' ]
+thing    chars  5  tokens 1  ["thing"]
+singing  chars  7  tokens 2  ["s","inging"]
+zqxwv    chars  5  tokens 5  ["z","q","x","w","v"]
+9f8a2b   chars  6  tokens 6  ["9","f","8","a","2","b"]
+```
+
+The whole phenomenon in four lines. "thing" appeared often, so it earned a single token — 5 characters for the price of 1. "zqxwv" and "9f8a2b" never appeared, so they cost one token *per character*, five to six times worse. Real tokenizers behave this way at scale, which is why a UUID costs more than a paragraph of English and why a language absent from the training corpus is systematically more expensive to serve.
+
+Notice too that `singing` tokenized as `["s","inging"]` rather than the intuitive `sing` + `ing`. Because `ing` was learned early and then merged with itself into `inging`, the boundaries fall where the *statistics* put them, not where the morphemes are. Token boundaries routinely cut across meaning like this, which is one more reason the model cannot reason about spelling.
 
 ## Quick reference
 
 | Concept | What it is | Why you care |
 |---|---|---|
-| Token | ~4 chars of text; the model's atomic unit | Billing, limits, and truncation all use it |
-| Embedding | Vector of numbers per token | Enables semantic search and RAG |
-| Attention | Each token gathers context from earlier tokens | Why word order and phrasing change output |
-| Context window | Max tokens per request, input + output | Exceeding it truncates or errors |
+| Token | A learned text fragment; the model's atomic unit | Billing, limits and truncation all use it |
+| BPE | Merges frequent adjacent pairs to build the vocabulary | Explains why frequency decides token length |
+| Tokens per word | ~0.75 words/token for English; far worse for code, other languages, IDs | Same text, different cost by language |
+| Parameters | Count of numbers in the weights file | Capability and memory floor |
+| Precision | Bytes per number (fp32/fp16/int8/4-bit) | File size = params × bytes |
+| Base model | Continues text only | Will not follow instructions |
+| Instruction-tuned | Trained on instruction/response pairs | What you almost always want |
+| Open weights | Weights downloadable | Not the same as open source or free to resell |
 | Prompt tokens | Everything you send | Resent every turn — grows with history |
-| Completion tokens | Everything generated | Usually priced higher than prompt tokens |
-| Hallucination | Plausible-shaped but false output | A consequence of the design, not a bug to patch |
+| Completion tokens | Everything generated | Usually priced higher |
+| Hallucination | Plausible-shaped but false output | A consequence of the objective, not a bug |
 
 ## Common mistakes
 
 - Counting characters or words instead of tokens, then being surprised by a context-length error.
-- Assuming the model remembers previous API calls — it does not; the client resends history every time, and anything trimmed is genuinely gone.
-- Expecting reliable arithmetic or character counting; give the model a tool for that instead.
-- Treating a confident tone as evidence of correctness — confidence is a style the model learned, entirely uncorrelated with accuracy.
-- Filling the context window to the brim and leaving no room for the answer; input and output share one budget.
+- Estimating non-English or code prompts with the English four-characters-per-token rule and under-budgeting by two or three times.
+- Assuming the model remembers previous API calls — the client resends history every time, and anything trimmed is genuinely gone.
+- Confusing parameter count with file size, then provisioning 7 GB when fp16 weights need 14 GB.
+- Reaching for a base model and concluding it is broken because it will not answer questions; you wanted the instruction-tuned variant.
+- Reading "open weights" as "open source and unrestricted"; check the licence before shipping.
+- Expecting reliable arithmetic or character counting; give the model a tool instead.
+- Treating a confident tone as evidence of correctness — confidence is a learned style, uncorrelated with accuracy.
 
 ## What interviewers ask
 
-- **Why do LLMs hallucinate?** — They are trained to produce probable continuations, not verified facts, so when no strong pattern supports an answer they still emit the most plausible-looking text; the fix is grounding it in retrieved sources or tools, not asking it to try harder.
-- **What is a context window and what happens when you exceed it?** — It is the token budget shared by input and output; exceed it and the request errors or older messages get silently dropped, which is why long conversations "forget" the beginning.
-- **Why does the same prompt give different answers?** — Generation samples from a probability distribution rather than taking the top token every time, so anything above temperature zero is inherently non-deterministic.
-- **Why can't a model count letters in a word?** — It never sees letters; text is split into multi-character tokens before the model sees anything, so letter-level facts are not present in its input.
-- **Where does the cost in a chat app actually come from?** — Resending conversation history: prompt tokens are billed on every turn, so cost grows with the square of the conversation length unless you trim, summarise, or cache the prefix.
+- **Why do LLMs hallucinate?** — The training objective rewards probable continuations, not verified facts, so when no strong pattern supports an answer the model still emits the most plausible-looking text; the fix is grounding in retrieved sources or tools, not asking it to try harder.
+- **Why isn't a token just a word?** — Tokens come from BPE, which merges the most frequent adjacent pairs until the vocabulary is full, so common words become single tokens while rare ones fragment; frequency decides length, which is also why unfamiliar languages and identifiers cost more.
+- **Your bill tripled after launching in a non-English market. Why?** — Tokenization efficiency depends on the vocabulary's training distribution, so a language poorly represented in it needs two or three times more tokens for the same text, tripling both cost and context consumption with no code change.
+- **How does one objective produce reasoning, translation and coding?** — Predicting the next token accurately requires whatever the text depended on: facts, scope tracking, cross-lingual meaning, argument structure. None was targeted; all are prerequisites for good prediction.
+- **Base, instruction-tuned or chat-tuned?** — A base model only continues text and will not follow a request; instruction tuning adds obedience; chat tuning adds multi-turn structure and role formatting. Almost every application wants at least instruction-tuned.
+- **Why can't a model count letters in a word?** — It never sees letters; text is split into multi-character fragments first, and those boundaries often cut across meaning, so letter-level facts are absent from its input.
+- **Where does the cost in a chat app come from?** — Resending history: prompt tokens are billed every turn, so cost grows far faster than the conversation unless you trim, summarise or cache the prefix.
 
 ## Practice
 
-1. Send the same prompt to a model three times and diff the outputs. Then find the parameter that makes them identical and explain why it does.
-2. Write a function that takes a conversation array and a token budget, and trims oldest-first while always keeping the system message. Decide what to do when a single message exceeds the budget alone.
-3. Build a cost estimator: given a conversation length, average message size, and per-token prices, project the total bill for a 30-turn session. Compare against the naive "sum of all messages" figure.
+1. Take the same paragraph in English and in one non-Latin-script language, count tokens for both with a real tokenizer, and compute the cost multiplier. Then do it for a 200-line source file and a list of UUIDs.
+2. Extend the BPE example to 30 merge rounds over a larger corpus and plot average tokens-per-word as merges increase. Identify where the returns flatten.
+3. Write a function that takes a conversation array and a token budget and trims oldest-first while always keeping the system message. Decide what to do when a single message exceeds the budget alone.
 
 ## Where to go next
 
-You now know the model emits a probability distribution and something picks from it. [sampling-and-decoding](sampling-and-decoding) is that picker — temperature, top-k, and top-p — and it is the cheapest quality lever you have. After that, [prompt-engineering](prompt-engineering) covers what to put in the context window in the first place.
+Take the three new topics in the order they build. [embeddings-and-vector-math](embeddings-and-vector-math) covers the vectors the model computes on and how similarity is measured. [attention-and-transformers](attention-and-transformers) is the mechanism that turns those vectors into contextual meaning, and where the cost comes from. [kv-cache-and-context-windows](kv-cache-and-context-windows) explains why the context window is a memory budget, not a text-length setting. To stay on the API side instead, [sampling-and-decoding](sampling-and-decoding) is the picker at the end of the loop and the cheapest quality lever you have.

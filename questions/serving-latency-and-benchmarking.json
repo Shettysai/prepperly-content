@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Define TTFT and TPOT, and give the identity that relates them to end-to-end latency.",
+    "answer_markdown": "TTFT is time to first token: how long the user waits before anything appears. It covers queue wait plus prefill, the single parallel pass over the whole prompt, so it grows with prompt length on an idle server and with queue depth under load. TPOT is time per output token, also called inter-token latency, the gap between consecutive tokens once generation is underway; it is set by memory bandwidth and batch size. They combine as `end-to-end = TTFT + TPOT x (output_tokens - 1)`. That identity is why you must report the parts rather than the sum: two systems can reach the same total either by waiting a long time then producing tokens quickly, or by starting instantly then crawling, and those two feel completely different to a user.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "A vendor advertises 3,000 tokens per second. Your users report seeing about 15. Who is misreporting?",
+    "answer_markdown": "Neither. The vendor is quoting aggregate throughput — total tokens the server produces per second across all concurrent streams — measured at high concurrency. Your users experience per-stream speed, which is one divided by TPOT and describes a single conversation. These two metrics move in opposite directions as batch size grows, because a larger batch amortises the fixed weight read across more sequences while making each decode step longer. Both figures can be simultaneously true of the same system. The real error is publishing either number without stating the concurrency it was measured at and which of the two it is, since without that label a tokens-per-second figure carries no information.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is average latency an especially bad metric for an LLM endpoint, beyond the usual problem that averages hide outliers?",
+    "answer_markdown": "Because end-to-end latency is roughly proportional to output length, and output length varies enormously per request — twenty tokens for a factual lookup, eight hundred for an explanation. Averaging end-to-end latency across a mixed workload therefore measures your prompt distribution as much as your system. Two consequences follow, and both cause real mistakes. A week in which users happened to ask longer questions appears as a latency regression that no code change caused, sending you off optimising something that was never slow. Worse, a genuine regression can hide: if TPOT doubles on short-output traffic, the fixed TTFT dilutes the ratio, so average latency might rise only 1.8x and sit inside normal week-to-week variation. Reporting TPOT — normalised per token — makes the doubling unambiguous.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "You ramp load and observe TTFT p95 climbing steeply while TPOT stays flat. What does that tell you, and what would you change?",
+    "answer_markdown": "You are past saturation and a queue has formed. Flat TPOT is the informative half: it proves the GPU is decoding at full speed for whichever sequences are currently in the batch, so neither the model nor the hardware has degraded. Rising TTFT means requests are waiting to get into the batch at all. The bottleneck is admission rather than execution, which points at horizontal scaling — add replicas so there are more batches to join. A faster GPU would largely not help, because the existing one is not the thing that is slow. The opposite signature is worth knowing too: TPOT rising while TTFT stays flat means everyone is already in the batch and the batch has grown too large, which is fixed by lowering the batch size rather than raising it.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why should a load test avoid sending the same prompt repeatedly?",
+    "answer_markdown": "Because prefix caching will serve every request after the first from already-computed KV blocks, so the prefill work is skipped entirely and your TTFT looks excellent in a way production will never reproduce. You end up measuring your cache rather than your system, and the measurement is not conservative — it flatters the exact metric users notice first. Real traffic has varied prompts with only partial and unpredictable prefix overlap. A sound test samples a realistic distribution of prompt lengths and content, or at minimum rotates several genuinely different prompts, so that prefill cost is actually incurred. The same reasoning applies to output length: fix every response at the same length and you erase the head-of-line effects that dominate real batching behaviour.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How would you find the capacity of a model endpoint, rather than just measuring its latency?",
+    "answer_markdown": "Capacity is a point on a curve, so you have to sweep rather than sample. Discard warmup requests first, since kernel compilation would otherwise land in your percentiles. Then run at a series of concurrency levels — 1, 2, 4, 8, 16, 32 — with a realistic distribution of prompt and output lengths, and at each level record TTFT and TPOT percentiles separately alongside aggregate throughput. Saturation is the concurrency at which aggregate throughput stops rising as you add load: below it, extra requests are absorbed into the batch; above it, they only queue, which shows as the steeply rising TTFT with flat TPOT signature. That saturation point is your per-replica capacity and the number you scale on, and it is invisible to any single-concurrency measurement.",
+    "difficulty": "medium"
+  }
+]

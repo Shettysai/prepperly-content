@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "Why can't you extend a certificate's expiry date, and what does that force you to do instead?",
+    "answer_markdown": "The validity dates live inside the tbsCertificate byte range that the CA hashed and signed, so changing a date would invalidate the signature and every client would reject the certificate. There is no mechanism to extend one. What you actually do is obtain a *new* certificate with a later window and swap it in, which is why the operation is called rotation rather than renewal at the byte level. Because the swap is a replacement rather than an edit, the only safe way to do it is to have both the old and new certificates valid at the same time, so there is never an instant where a client has nothing valid to accept.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do you rotate a certificate with zero downtime?",
+    "answer_markdown": "Issue the new certificate while the old one is still valid, so the validity windows overlap and either one works during the transition. The standard trigger is a fraction of lifetime rather than a fixed number of days — commonly renewing when about one third remains — because a fraction scales the slack to the lifetime, giving a 90-day certificate 30 days of retry budget and a 24-hour certificate 8 hours. Deploy the new files, then reload the TLS context in place rather than restarting the process, so in-flight requests survive while new handshakes pick up the new certificate; Node.js exposes server.setSecureContext() for this. Only retire the old certificate once nothing is still presenting or trusting it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A team ships support for two credential slots and closes their 'credential rotation' epic. What have they actually built, and what is still missing?",
+    "answer_markdown": "They have built cutover safety, not freshness. Two slots is a property of the verifying side — it accepts either of two currently-valid credentials, so you can add the new one to slot B, migrate callers at whatever pace they manage, and clear slot A when nothing uses it. Rotation is a property of the issuing and deployment pipeline: something watches the clock, obtains a replacement before expiry, and installs it. The two are orthogonal, and you can have either without the other — a system can accept two API keys from 2019 that are never replaced, or renew a single ACME certificate every 60 days into one file with no second slot at all. Closing the epic on slots means nobody built the thing that watches the clock, so in two years nothing will ever have been rotated.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A one-time rotation is not running, and you notice the record has a `rotatedAt` timestamp set. Do you clear it?",
+    "answer_markdown": "No. `rotatedAt` records that an event happened; it is a fact about history, not a control flag. Because the rotation is one-time per credential, a set timestamp is *correctly* preventing a second run. Clearing it does not enable a feature — it falsifies the record, and the one-time operation then runs again on a credential that has already been migrated, which can double-migrate data, invalidate live sessions, or overwrite what the first rotation produced. The discipline is to treat event fields as immutable history and add an explicit switch such as `rotationEnabled` when you genuinely need one. When backfilling such a field for existing records, derive it from evidence that the event occurred rather than from a default.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How would you monitor certificate expiry across a hundred services, and what is the most common way monitoring gets this wrong?",
+    "answer_markdown": "Probe each endpoint on a schedule from outside, opening a TLS connection the way a real client does and reading the certificate off the wire, then alert on days remaining with escalating thresholds — warn at 30 days, page at 7, incident under 3. Alerting on handshake failure is too late, because by then it is already an outage. The most common mistake is running the checker inside the system being monitored: if it lives in the cluster whose ingress certificate expired, the expiry breaks the monitor before or alongside everything else, so nothing alerts. It is also worth comparing the certificate served on the wire against the file on disk, since a mismatch reveals a certificate that renewed but was never reloaded into the running process.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Renewal succeeded and the new certificate is on disk, but clients are still being served the old one. What happened?",
+    "answer_markdown": "The process never reloaded it. Something like cert-manager updated the Secret and the mounted file changed, but the running process is still using the certificate it parsed into memory at boot, so the endpoint serves the old material until it restarts. There can also be a delay before the file itself updates, since a projected volume takes time to refresh. A certificate that renewed on disk but was never reloaded expires exactly as hard as one that was never renewed. The fix is to watch the certificate files and reload the TLS context in place, or force a rolling restart when the underlying Secret changes — and the diagnostic tell is that the on-disk check reports plenty of days remaining while the on-the-wire check reports very few.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why are certificate lifetimes getting shorter, and what does that cost you operationally?",
+    "answer_markdown": "Because revocation cannot be relied on. CRLs are large and stale, OCSP adds latency and leaks browsing history, stapling fixes those but every mechanism soft-fails when unreachable — and an attacker who steals a private key can usually also block the check. A short lifetime makes expiry itself the bound on a leaked key's usefulness, with no responder to query and nothing to soft-fail. The cost is that short lifetimes remove your slack: an hour-long certificate means a renewal pipeline broken for four hours is an outage, where a 90-day certificate would have given you a month of retries. That makes it essential to monitor the renewal pipeline's health, not just the expiry date on the certificate currently deployed.",
+    "difficulty": "hard"
+  }
+]

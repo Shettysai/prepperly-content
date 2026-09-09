@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Distinguish data, tensor, and pipeline parallelism.",
+    "answer_markdown": "Data parallelism gives each GPU a complete copy of the model and routes different requests to each one, so there is no inter-GPU communication during inference and scaling is near-linear — but the whole model must fit on a single card. Tensor parallelism splits each individual layer's weight matrices across GPUs, so a single matrix multiply becomes several partial ones whose results must be combined with an all-reduce; this happens roughly twice per layer for every token, making it extremely communication-heavy but the only option when one layer will not fit on one card. Pipeline parallelism assigns different layers to different GPUs and passes activations at the stage boundaries, so it communicates far less, but with few requests in flight most GPUs sit idle waiting their turn — the pipeline bubble.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why doesn't running on 8 GPUs give you 8 times the throughput?",
+    "answer_markdown": "It depends entirely on which parallelism you use and what interconnect connects the cards. Tensor parallelism synchronises with an all-reduce roughly twice per layer per token, which for an 80-layer model is around 160 barriers to produce one token, and each barrier runs at the speed of the wire between GPUs. On NVLink, which offers hundreds of gigabytes per second directly between cards, that overhead stays a few percent of the token budget and scaling is close to linear. On a PCIe-only host, where effective GPU-to-GPU bandwidth for small frequent collectives is far lower, communication can consume most of each token's time — so adding GPUs adds synchronisation roughly as fast as it adds compute and the two nearly cancel. Pipeline parallelism has the opposite problem: it barely communicates but idles GPUs unless concurrency is high enough to fill the bubble.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A 70B model at fp16 will not fit on one 80 GB card. What are your options and how would you choose?",
+    "answer_markdown": "The weights alone are about 130 GiB, so you have exactly two paths. Quantize to int4, which brings the weights to roughly 33 GiB and lets the whole deployment fit on a single 40 or 80 GB card with room for a real KV cache; the cost is some quality loss that you must verify against a task-specific eval. Or shard with tensor parallelism across two or more GPUs, which preserves fp16 quality but pays cross-GPU communication on every token and multiplies your per-GPU CUDA overhead. The general preference is whichever keeps the deployment on the fewest cards, since a single-GPU configuration has no interconnect risk, no lockstep failure coupling, and lower latency. If quality is critical and you have NVLink, tensor parallelism at the smallest degree that fits is the safer choice.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "When would you choose pipeline parallelism over tensor parallelism?",
+    "answer_markdown": "Primarily when you are crossing a slow link. Pipeline parallelism transfers one activation tensor per stage boundary per token, whereas tensor parallelism performs roughly two collective operations per layer per token, so pipeline parallelism tolerates node-to-node Ethernet or InfiniBand where tensor parallelism would stall. The standard multi-node recipe reflects this: tensor parallelism within each node where NVLink is available, pipeline parallelism across nodes. The second reason is structural — the tensor-parallel degree must divide the model's attention heads and hidden dimensions evenly, so a model with an awkward head count may not shard by 8 at all, and pipeline parallelism is the documented fallback. The caveat is that pipeline parallelism needs enough concurrent requests to fill the bubble, so it is a throughput technique rather than a latency one.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "For serving a model that fits in either configuration, why prefer one 80 GB GPU over two 40 GB GPUs?",
+    "answer_markdown": "The single card wins on three counts. It performs no inter-GPU communication, so it avoids the all-reduce on every layer of every token that tensor parallelism would require. It pays the CUDA context and framework overhead once instead of twice, which means more of the nominal capacity is actually usable for weights and KV cache — two 40 GB cards give you less than 80 GB of working memory. And it has no lockstep failure coupling: in a tensor-parallel group every all-reduce is a barrier, so one card thermally throttling or sitting behind a slower link drags the whole group to its speed. The general rule for inference is to scale up before scaling out, and reach for multiple GPUs only when a single card genuinely cannot hold the model.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You benchmark 4-way pipeline parallelism with a single request at a time and get worse throughput than one GPU. Is the setup broken?",
+    "answer_markdown": "No — that is the expected result, and the benchmark is measuring the wrong thing. With one request in flight, only one pipeline stage is active at any moment while the other three wait, and each stage now handles only a quarter of the layers so no stage finishes faster. You are paying for four GPUs to get roughly a quarter of one GPU's work rate. Micro-batching is what fixes it: with several requests in flight, GPU 0 begins request B's early layers while GPU 3 is still finishing request A's late ones, and the bubble fills in. So pipeline parallelism trades latency for throughput and only breaks even once concurrency is high enough, which means a single-stream benchmark tells you essentially nothing about whether it is configured well.",
+    "difficulty": "hard"
+  }
+]
