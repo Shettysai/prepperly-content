@@ -1,5 +1,5 @@
 {
-  "version": "2026-08-28",
+  "version": "2026-09-09",
   "phases": [
     {
       "slug": "cs-fundamentals",
@@ -344,13 +344,22 @@
           "position": 5,
           "path": "phases/04-networking/http-https-websockets.md",
           "questionsPath": "questions/http-https-websockets.json",
-          "sha256": "0d9ce2cbf357726b6cfde9d619508306d70c478ab6a0a115629b3cef0627e285"
+          "sha256": "5c2634869746372bef5bd6aa650b47d1b61b1edfeb5be0eb2ef6dc7b46a890f6"
+        },
+        {
+          "slug": "mutual-tls-explained",
+          "title": "Mutual TLS (mTLS)",
+          "summary": "Both sides prove identity",
+          "position": 6,
+          "path": "phases/04-networking/mutual-tls-explained.md",
+          "questionsPath": "questions/mutual-tls-explained.json",
+          "sha256": "3f05c7e37b319bd9dec165d5a0d8cc0cb061fd24de51c2c9cb79f72b0204d243"
         },
         {
           "slug": "network-performance",
           "title": "Latency, Bandwidth & Network Performance",
           "summary": "RTT, TTFB, HTTP/3",
-          "position": 6,
+          "position": 7,
           "path": "phases/04-networking/network-performance.md",
           "questionsPath": "questions/network-performance.json",
           "sha256": "77aeee13ff4933fd570400f508f7879164f4307e74039918109ca7608cd71d0c"
@@ -359,7 +368,7 @@
           "slug": "osi-model",
           "title": "OSI Model",
           "summary": "7 Layers, Protocols",
-          "position": 7,
+          "position": 8,
           "path": "phases/04-networking/osi-model.md",
           "questionsPath": "questions/osi-model.json",
           "sha256": "f61ae3e418cd3cbb5a0501c1fef998093ff1881c25ad135623ec9eaf764a4e3b"
@@ -368,16 +377,16 @@
           "slug": "tcp-ip-udp",
           "title": "TCP/IP, UDP",
           "summary": "Handshakes, Connections",
-          "position": 8,
+          "position": 9,
           "path": "phases/04-networking/tcp-ip-udp.md",
           "questionsPath": "questions/tcp-ip-udp.json",
-          "sha256": "05ce8d1cfb693d9af4e35f993346a691f97aa4d4a3eabebad7e2e59fd17b0688"
+          "sha256": "281fa68fde2c341caecb867d5d53047582981ebb163b2fd70a5729399b34e1de"
         },
         {
           "slug": "tls-and-certificates",
           "title": "TLS, Certificates & HTTPS",
           "summary": "Handshakes, Trust chains",
-          "position": 9,
+          "position": 10,
           "path": "phases/04-networking/tls-and-certificates.md",
           "questionsPath": "questions/tls-and-certificates.json",
           "sha256": "790e67e8b526a5dcaf70a47a4b95aec26b159cff7dcabc3671367d932947f553"
@@ -386,7 +395,7 @@
           "slug": "websockets-vs-polling",
           "title": "Real-Time: WebSockets vs SSE vs Polling",
           "summary": "Choosing, Scaling",
-          "position": 10,
+          "position": 11,
           "path": "phases/04-networking/websockets-vs-polling.md",
           "questionsPath": "questions/websockets-vs-polling.json",
           "sha256": "bffa122f8dcfbbe2feb31d64e891595bbc5f43352e4d6a898c2f6415613b558c"
@@ -406,7 +415,7 @@
           "position": 1,
           "path": "phases/05-databases/cap-theorem.md",
           "questionsPath": "questions/cap-theorem.json",
-          "sha256": "dd2275f227b38bd624bc17107c1ebe06f8a15a87b72a0fd3edb1d0c6995c21b3"
+          "sha256": "daab9aadaccbca9d8ab4c59621121bed30df503e4a7df963e16eccaba9314181"
         },
         {
           "slug": "connection-pooling",
@@ -504,7 +513,7 @@
           "position": 1,
           "path": "phases/06-distributed-systems/consensus-algorithms.md",
           "questionsPath": "questions/consensus-algorithms.json",
-          "sha256": "a87178a52afe3c111272e1f79091a3c1e7d8e1926a61535c2275d8dcac2a84e4"
+          "sha256": "2aff43068705ce3ff7fc4b3244201afa2465224ef84fd572faa77a5e277dcb8d"
         },
         {
           "slug": "consistency-models",
@@ -513,7 +522,7 @@
           "position": 2,
           "path": "phases/06-distributed-systems/consistency-models.md",
           "questionsPath": "questions/consistency-models.json",
-          "sha256": "a24e8b0e13455aa4df30d15f102d7e82fc42489305e787e1f163ece2948f6b6a"
+          "sha256": "138b45ef687337126e2e67d34bb9a03cc3de4e68a38895d7c33fc1ce955e2e02"
         },
         {
           "slug": "distributed-tracing-and-observability",
@@ -522,7 +531,7 @@
           "position": 3,
           "path": "phases/06-distributed-systems/distributed-tracing-and-observability.md",
           "questionsPath": "questions/distributed-tracing-and-observability.json",
-          "sha256": "2928289d381a59d04f677700887c449168a4f1f67e1adb487ecc7f4b6688f483"
+          "sha256": "db6305cb2f247e76329177396a09162a469d5a359d0ccc0618250f0553ee829d"
         },
         {
           "slug": "distributed-transactions",
@@ -540,7 +549,7 @@
           "position": 5,
           "path": "phases/06-distributed-systems/idempotency-and-retries.md",
           "questionsPath": "questions/idempotency-and-retries.json",
-          "sha256": "514601c346dcf1b862ea8cb7bf34fe3c92f65d860bb828ad53b716e97127bb72"
+          "sha256": "b6e1e12df7892ffb0949cf9567dc7e4cda3d50525af83a12808f056fa34e81ee"
         },
         {
           "slug": "leader-election-and-coordination",
@@ -593,7 +602,7 @@
           "position": 1,
           "path": "phases/07-system-design/api-design.md",
           "questionsPath": "questions/api-design.json",
-          "sha256": "c6e99a85fc9e05a2433dae31e0cc1c6237ab1bddcad5d4065d5eb0160fb377f3"
+          "sha256": "5684da3923c59a65feea6157da2a5dad6698abb4459dd888850efa9b2b91aa1f"
         },
         {
           "slug": "caching-strategies",
@@ -798,7 +807,7 @@
           "position": 2,
           "path": "phases/09-backend-engineering/authentication-authorization.md",
           "questionsPath": "questions/authentication-authorization.json",
-          "sha256": "0daf101bd04d03c7ccb9fab7371388727ea90d7d68ed5bfe83d941a3ba3b6b31"
+          "sha256": "56af94aa7aff4b92c169a8b561b27635c8d02e13baee804ed9c6ab39f80868bb"
         },
         {
           "slug": "cicd-pipelines",
@@ -807,7 +816,7 @@
           "position": 3,
           "path": "phases/09-backend-engineering/cicd-pipelines.md",
           "questionsPath": "questions/cicd-pipelines.json",
-          "sha256": "9155b579d297d7110ea341d8fea265bc0b5c88b001fbe61bcbdade980c0146f6"
+          "sha256": "1ffea5ca70ad72fef505cf149cfb0f91a3a39c7570939a6190f54d1bafcd4afd"
         },
         {
           "slug": "docker-containerization",
@@ -816,31 +825,40 @@
           "position": 4,
           "path": "phases/09-backend-engineering/docker-containerization.md",
           "questionsPath": "questions/docker-containerization.json",
-          "sha256": "290fd6a74409347c688df9a35d199551c05fe9eaf80f19fb74cb5fbddb73fe6f"
+          "sha256": "5dbca43b83209e08259f486348a864618d1a3931db79d6eec95d8f8aa577498a"
+        },
+        {
+          "slug": "gpu-scheduling-in-kubernetes",
+          "title": "Scheduling GPUs in Kubernetes",
+          "summary": "Device plugins, taints, time-slicing and MIG",
+          "position": 5,
+          "path": "phases/09-backend-engineering/gpu-scheduling-in-kubernetes.md",
+          "questionsPath": "questions/gpu-scheduling-in-kubernetes.json",
+          "sha256": "16ddd5e35ea59c98c89eab81ca186ee8ad0b4dc1d54a78ac2d314b912b02c14b"
         },
         {
           "slug": "infrastructure-as-code",
           "title": "Infrastructure as Code",
           "summary": "Declarative vs imperative, drift, state files",
-          "position": 5,
+          "position": 6,
           "path": "phases/09-backend-engineering/infrastructure-as-code.md",
           "questionsPath": "questions/infrastructure-as-code.json",
-          "sha256": "f1f27bcde3906b6e2bd0e1fbe6e85c34b9d679c55560144cd967bc0cc01f2d03"
+          "sha256": "df60fc40e3f99646920640473a6cf00bfb5f4701be6ec04446f241b497483745"
         },
         {
           "slug": "kubernetes-basics",
           "title": "Kubernetes basics",
           "summary": "Pods, Deployments, Services",
-          "position": 6,
+          "position": 7,
           "path": "phases/09-backend-engineering/kubernetes-basics.md",
           "questionsPath": "questions/kubernetes-basics.json",
-          "sha256": "d4121ccec827e84aa703fb87ac3ba829c65a24f52f8b73e2f2b48781aaf1ac9a"
+          "sha256": "83b275b7bfa677962a739de19d3fa9aa551c084901a4fca47c57cccbf2164694"
         },
         {
           "slug": "logging-and-monitoring",
           "title": "Logging & Monitoring",
           "summary": "Structured logs, useful levels, alert fatigue",
-          "position": 7,
+          "position": 8,
           "path": "phases/09-backend-engineering/logging-and-monitoring.md",
           "questionsPath": "questions/logging-and-monitoring.json",
           "sha256": "96f2b3a68c3205fa94442796f559ab7004edd91f2d0ea577a9fa33abb1514fd5"
@@ -849,7 +867,7 @@
           "slug": "message-brokers-in-practice",
           "title": "Message Brokers in Practice",
           "summary": "Kafka, RabbitMQ, SQS, DLQs, at-least-once",
-          "position": 8,
+          "position": 9,
           "path": "phases/09-backend-engineering/message-brokers-in-practice.md",
           "questionsPath": "questions/message-brokers-in-practice.json",
           "sha256": "f98e989fe5c00c3c363e4dafedb8038382f6693282a822ace49d37430555337f"
@@ -858,7 +876,7 @@
           "slug": "secrets-management",
           "title": "Secrets Management",
           "summary": "Env vars vs vaults, rotation, encryption at rest",
-          "position": 9,
+          "position": 10,
           "path": "phases/09-backend-engineering/secrets-management.md",
           "questionsPath": "questions/secrets-management.json",
           "sha256": "0f83dc61bc7c92b5f8af655afe23c5c72cce3dd0a5d2ce7c4ef45e8f349edbb4"
@@ -867,7 +885,7 @@
           "slug": "web-security-fundamentals",
           "title": "Web Security Fundamentals",
           "summary": "XSS, CSRF, SQL injection, SSRF, IDOR",
-          "position": 10,
+          "position": 11,
           "path": "phases/09-backend-engineering/web-security-fundamentals.md",
           "questionsPath": "questions/web-security-fundamentals.json",
           "sha256": "db8af08ace356a2b140485389dd7dc7bbf2fb12a8e73966f5c599d476c3ae3a5"
@@ -931,7 +949,7 @@
           "position": 1,
           "path": "phases/11-system-design-case-studies/design-chat-system.md",
           "questionsPath": "questions/design-chat-system.json",
-          "sha256": "7789fd1b2fb7203ee20ff2703e85c4a75554721ae50b65dbf0e29dfc47c2d09f"
+          "sha256": "f5fbc4a2565138f18962333fd16f80c4c0c1cfc00e372959c130d42883a12196"
         },
         {
           "slug": "design-news-feed",
@@ -940,7 +958,7 @@
           "position": 2,
           "path": "phases/11-system-design-case-studies/design-news-feed.md",
           "questionsPath": "questions/design-news-feed.json",
-          "sha256": "ddca4fa07997efb4df84d4fb352578fd13b9cce639f2cd0e26b5e11674a427d8"
+          "sha256": "e1ea7f34b541b5577ce3c17b8be2a05e1945b5c54bb245fde4ee8efccc2124de"
         },
         {
           "slug": "design-notification-system",
@@ -949,7 +967,7 @@
           "position": 3,
           "path": "phases/11-system-design-case-studies/design-notification-system.md",
           "questionsPath": "questions/design-notification-system.json",
-          "sha256": "05fa53a1ac6d33934dc502614eaf043350552179bca64a17192d3c429cef77ec"
+          "sha256": "cba8fdc6b42cdde275edcecb014c395927e2b3c47a94dfc4b7d97c34e591cddd"
         },
         {
           "slug": "design-rate-limiter",
@@ -958,7 +976,7 @@
           "position": 4,
           "path": "phases/11-system-design-case-studies/design-rate-limiter.md",
           "questionsPath": "questions/design-rate-limiter.json",
-          "sha256": "ead513b32b521a3653ea7fd0b4f83a7027c3fb3d85a7dbeaa76bca9bc9f1a360"
+          "sha256": "0bdf650ef3fa14d3dd6c1a4fbde8617b78258d3e2dae62f776525b95aa14d3bd"
         },
         {
           "slug": "design-ride-sharing",
@@ -967,7 +985,7 @@
           "position": 5,
           "path": "phases/11-system-design-case-studies/design-ride-sharing.md",
           "questionsPath": "questions/design-ride-sharing.json",
-          "sha256": "f2ee41671dceb2749b4343cf6ff7c4a9f63341690177291438d9684797f1b060"
+          "sha256": "4b71decf8e1b1a1360068d782a0c3217b543d1ea6d1ad74079cf91c9f82c228e"
         },
         {
           "slug": "design-search-autocomplete",
@@ -976,7 +994,7 @@
           "position": 6,
           "path": "phases/11-system-design-case-studies/design-search-autocomplete.md",
           "questionsPath": "questions/design-search-autocomplete.json",
-          "sha256": "c42358c66b940ebacba270fbf4a2a4d4967d40bc995204f89cdde8b9fecf5993"
+          "sha256": "04fba82aa799c695847ec787966b79f139c90749e73ca1e7dc362a0911014301"
         },
         {
           "slug": "design-url-shortener",
@@ -985,7 +1003,7 @@
           "position": 7,
           "path": "phases/11-system-design-case-studies/design-url-shortener.md",
           "questionsPath": "questions/design-url-shortener.json",
-          "sha256": "c5ad9703ef348c8c68179360bba6884b8d12da0dce9d10317a33bc9a3f291b11"
+          "sha256": "981c2bd50163886e92050e3a50e7eb36db75d32052b49baad459a75ab6fc808f"
         },
         {
           "slug": "design-video-streaming",
@@ -994,7 +1012,7 @@
           "position": 8,
           "path": "phases/11-system-design-case-studies/design-video-streaming.md",
           "questionsPath": "questions/design-video-streaming.json",
-          "sha256": "b5b71dc31654343d0407e9d874b0befec44d1b0a1d014ab4d3f888917f2c1529"
+          "sha256": "282ea577e8c23db786b863090644c2b49549109b40fb3b2fee5a3d900c92e8ab"
         }
       ]
     },
@@ -1014,10 +1032,37 @@
           "sha256": "2e3a39fa739c4de84d4eb2a18038aff5955b05f498f070ee33961817a1cff5da"
         },
         {
+          "slug": "attention-and-transformers",
+          "title": "Attention & Transformers",
+          "summary": "Query, Key, Value, Quadratic Cost",
+          "position": 2,
+          "path": "phases/12-ai-engineering/attention-and-transformers.md",
+          "questionsPath": "questions/attention-and-transformers.json",
+          "sha256": "c5dbcc8f60e14aa4eec2e0187768bcdb507f67b7d5be41f611225db6ce913274"
+        },
+        {
+          "slug": "embeddings-and-vector-math",
+          "title": "Embeddings & Vector Math",
+          "summary": "Meaning as Coordinates, Cosine vs Dot",
+          "position": 3,
+          "path": "phases/12-ai-engineering/embeddings-and-vector-math.md",
+          "questionsPath": "questions/embeddings-and-vector-math.json",
+          "sha256": "f75368de2a042ce47b8037207909cd0985a4905fa642112151701bd7c4256a09"
+        },
+        {
+          "slug": "kv-cache-and-context-windows",
+          "title": "KV Cache & Context Windows",
+          "summary": "Prefill, Decode, VRAM Budget",
+          "position": 4,
+          "path": "phases/12-ai-engineering/kv-cache-and-context-windows.md",
+          "questionsPath": "questions/kv-cache-and-context-windows.json",
+          "sha256": "50434728786eb66f6cdbd24e73f36aeda56916f827e313b42d9232c78f2e0f37"
+        },
+        {
           "slug": "llm-cost-and-latency",
           "title": "Cost & Latency Engineering",
           "summary": "Caching, Streaming, Routing",
-          "position": 2,
+          "position": 5,
           "path": "phases/12-ai-engineering/llm-cost-and-latency.md",
           "questionsPath": "questions/llm-cost-and-latency.json",
           "sha256": "e96d41a58fd3bf63715df1d3235b4c7934ed053af36121969bf2f06f54948e21"
@@ -1026,7 +1071,7 @@
           "slug": "llm-evaluation-and-testing",
           "title": "Evaluating LLM Systems",
           "summary": "Golden Sets, LLM-as-Judge, Regressions",
-          "position": 3,
+          "position": 6,
           "path": "phases/12-ai-engineering/llm-evaluation-and-testing.md",
           "questionsPath": "questions/llm-evaluation-and-testing.json",
           "sha256": "05fad0e7725774420f64ddeadf58f146308c508656aed29ba5765bedc68298a1"
@@ -1035,16 +1080,16 @@
           "slug": "llm-fundamentals",
           "title": "How LLMs Actually Work",
           "summary": "Tokens, Embeddings, Attention, Context",
-          "position": 4,
+          "position": 7,
           "path": "phases/12-ai-engineering/llm-fundamentals.md",
           "questionsPath": "questions/llm-fundamentals.json",
-          "sha256": "c6fa15efa1e8163c44548977a8cf534da883dd78ab2313545d1ba89faa9dce0d"
+          "sha256": "a74a68668a67523cdaccebc2647242808bd0336caa8743547ab35b91dc74b743"
         },
         {
           "slug": "llm-safety-and-guardrails",
           "title": "Safety & Guardrails in Production",
           "summary": "Injection, PII, Validation, Limits",
-          "position": 5,
+          "position": 8,
           "path": "phases/12-ai-engineering/llm-safety-and-guardrails.md",
           "questionsPath": "questions/llm-safety-and-guardrails.json",
           "sha256": "71cd7d6e011d71d355ab5aa18165a8ee783bad71e88caaf6e8584b1db68b5400"
@@ -1053,7 +1098,7 @@
           "slug": "prompt-engineering",
           "title": "Prompt Engineering That Works",
           "summary": "Roles, Few-shot, Structured Output",
-          "position": 6,
+          "position": 9,
           "path": "phases/12-ai-engineering/prompt-engineering.md",
           "questionsPath": "questions/prompt-engineering.json",
           "sha256": "1da181f56421dc9311493c1011902ed1d1be0cb8f8c3fbd6c543e932b2d56058"
@@ -1062,7 +1107,7 @@
           "slug": "rag-retrieval-augmented-generation",
           "title": "RAG: Retrieval-Augmented Generation",
           "summary": "Chunking, Embedding, Reranking",
-          "position": 7,
+          "position": 10,
           "path": "phases/12-ai-engineering/rag-retrieval-augmented-generation.md",
           "questionsPath": "questions/rag-retrieval-augmented-generation.json",
           "sha256": "958c77ac18c7ae795c54c2bd0d2d38e5a486574c090eca57934e8f73a65aa5e0"
@@ -1071,7 +1116,7 @@
           "slug": "sampling-and-decoding",
           "title": "Sampling: Temperature, Top-p, Top-k",
           "summary": "Temperature, Top-k, Nucleus",
-          "position": 8,
+          "position": 11,
           "path": "phases/12-ai-engineering/sampling-and-decoding.md",
           "questionsPath": "questions/sampling-and-decoding.json",
           "sha256": "332b0ddbe21e72d16ce5982f6267ef015dff2d986799deb54b522575f02d14e1"
@@ -1080,16 +1125,16 @@
           "slug": "tool-calling-and-function-calling",
           "title": "Tool Calling & Function Calling",
           "summary": "Schemas, Agentic Loop, Errors",
-          "position": 9,
+          "position": 12,
           "path": "phases/12-ai-engineering/tool-calling-and-function-calling.md",
           "questionsPath": "questions/tool-calling-and-function-calling.json",
-          "sha256": "6aa84abe32f363b3c9ac0bda439e7b8dbde247539d0792467a2204f5c8fa0c6d"
+          "sha256": "79cee409681b129a46a14f959a7b3a43d08d1e45b3011be827b99126893f6bf5"
         },
         {
           "slug": "vector-databases",
           "title": "Vector Databases & Similarity Search",
           "summary": "Cosine, ANN, HNSW Trade-offs",
-          "position": 10,
+          "position": 13,
           "path": "phases/12-ai-engineering/vector-databases.md",
           "questionsPath": "questions/vector-databases.json",
           "sha256": "15372c7d052cceb10abf3213257ce6336df82b2869594fe6392211515ef30489"
@@ -1351,6 +1396,416 @@
           "path": "phases/15-how-to-answer/when-you-dont-know.md",
           "questionsPath": "questions/when-you-dont-know.json",
           "sha256": "6b8e39db4432af74597f1a8ab914975cb1817d2aec54da3794f231cd8d3342cb"
+        }
+      ]
+    },
+    {
+      "slug": "security-identity-and-pki",
+      "name": "Chapter 16: Security, Identity & PKI",
+      "position": 16,
+      "targetMonth": 7,
+      "topics": [
+        {
+          "slug": "certificate-lifecycle-and-rotation",
+          "title": "Certificate Lifecycle & Rotation",
+          "summary": "Renew before the cliff, and don't confuse two slots with rotation",
+          "position": 1,
+          "path": "phases/16-security-identity-and-pki/certificate-lifecycle-and-rotation.md",
+          "questionsPath": "questions/certificate-lifecycle-and-rotation.json",
+          "sha256": "bbb6fab8c0e504c33430948a4e8aff2bd4408bf260bef40e84dbf62566d49791"
+        },
+        {
+          "slug": "connection-reuse-and-handshake-cost",
+          "title": "The Cost of a Handshake",
+          "summary": "Per-connection cost, and the custom-agent trap",
+          "position": 2,
+          "path": "phases/16-security-identity-and-pki/connection-reuse-and-handshake-cost.md",
+          "questionsPath": "questions/connection-reuse-and-handshake-cost.json",
+          "sha256": "091a8e6236b8a7ff7ca410ba3a01e223075260f18f3cc4e3785aeac1d74fbd1c"
+        },
+        {
+          "slug": "mtls-failure-modes",
+          "title": "Diagnosing mTLS Failures",
+          "summary": "Handshake vs HTTP errors",
+          "position": 3,
+          "path": "phases/16-security-identity-and-pki/mtls-failure-modes.md",
+          "questionsPath": "questions/mtls-failure-modes.json",
+          "sha256": "8ebee62120dbfd4e5a65205284d55c71647a38ed0dac6980cb4fc6f4933341e9"
+        },
+        {
+          "slug": "mtls-in-service-meshes",
+          "title": "mTLS Inside a Service Mesh",
+          "summary": "Sidecar-terminated TLS, STRICT vs PERMISSIVE",
+          "position": 4,
+          "path": "phases/16-security-identity-and-pki/mtls-in-service-meshes.md",
+          "questionsPath": "questions/mtls-in-service-meshes.json",
+          "sha256": "a6f879ba038aea66a31bf242c08c7a1382f1a4c22dcb7068074f4a5aff58e4ef"
+        },
+        {
+          "slug": "mtls-vs-token-auth",
+          "title": "mTLS vs Tokens: Choosing",
+          "summary": "Connection identity vs request identity",
+          "position": 5,
+          "path": "phases/16-security-identity-and-pki/mtls-vs-token-auth.md",
+          "questionsPath": "questions/mtls-vs-token-auth.json",
+          "sha256": "06dae5a6c54c3e1843dd7906b2a43c324370d0f1a1b9b855f2919669f80d138a"
+        },
+        {
+          "slug": "pki-and-certificate-authorities",
+          "title": "PKI & Certificate Authorities",
+          "summary": "Who signs what, and why the private key never moves",
+          "position": 6,
+          "path": "phases/16-security-identity-and-pki/pki-and-certificate-authorities.md",
+          "questionsPath": "questions/pki-and-certificate-authorities.json",
+          "sha256": "350258171d333b0acf5d6ac10fe78c5db85ba752ed453acdfe1e889960020ee4"
+        },
+        {
+          "slug": "secure-defaults-and-common-footguns",
+          "title": "Secure Defaults & Footguns",
+          "summary": "Configs that fail silently",
+          "position": 7,
+          "path": "phases/16-security-identity-and-pki/secure-defaults-and-common-footguns.md",
+          "questionsPath": "questions/secure-defaults-and-common-footguns.json",
+          "sha256": "e3bbb3214b9a5e7b8a75077ce7297cdd52f76ba8267628a953ca1dfd2b0f9b90"
+        },
+        {
+          "slug": "tls-termination-and-passthrough",
+          "title": "Termination, Re-encryption & Passthrough",
+          "summary": "Where client identity survives a proxy",
+          "position": 8,
+          "path": "phases/16-security-identity-and-pki/tls-termination-and-passthrough.md",
+          "questionsPath": "questions/tls-termination-and-passthrough.json",
+          "sha256": "bac580b92dc01714ec5968aaae9615047f0654c83ce5ed18ef15dedb90802b50"
+        },
+        {
+          "slug": "workload-identity-and-spiffe",
+          "title": "Workload Identity & SPIFFE",
+          "summary": "Identity for services, bootstrapped by attestation",
+          "position": 9,
+          "path": "phases/16-security-identity-and-pki/workload-identity-and-spiffe.md",
+          "questionsPath": "questions/workload-identity-and-spiffe.json",
+          "sha256": "0cf6fe89fbf7287835e3838d19a895eb3a635bb04b0b8980bb1da726b80ab085"
+        },
+        {
+          "slug": "x509-and-der-decoded",
+          "title": "X.509 & DER, Decoded by Hand",
+          "summary": "Parse a real certificate byte by byte, then verify the signature yourself",
+          "position": 10,
+          "path": "phases/16-security-identity-and-pki/x509-and-der-decoded.md",
+          "questionsPath": "questions/x509-and-der-decoded.json",
+          "sha256": "1f718d40858732175cd71de14d4378540fb2372dad86c49363b981223627aabf"
+        }
+      ]
+    },
+    {
+      "slug": "llm-infrastructure-and-gpus",
+      "name": "Chapter 17: LLM Infrastructure & GPU Serving",
+      "position": 17,
+      "targetMonth": 8,
+      "topics": [
+        {
+          "slug": "continuous-batching-and-throughput",
+          "title": "Continuous Batching",
+          "summary": "Prefill, Decode, Iteration-level scheduling",
+          "position": 1,
+          "path": "phases/17-llm-infrastructure-and-gpus/continuous-batching-and-throughput.md",
+          "questionsPath": "questions/continuous-batching-and-throughput.json",
+          "sha256": "152f6fca20eb2a71fd01aec1ac2f8a07e3e808e08d098709c9a41619377cb7e0"
+        },
+        {
+          "slug": "deploying-a-model-end-to-end",
+          "title": "Deploying a Model, End to End",
+          "summary": "Weights, Container, Probes, Smoke test",
+          "position": 2,
+          "path": "phases/17-llm-infrastructure-and-gpus/deploying-a-model-end-to-end.md",
+          "questionsPath": "questions/deploying-a-model-end-to-end.json",
+          "sha256": "353b929ca6ec6e37b246b9ae09af11407b1299185a0bcf475f3fb9d95195a9e9"
+        },
+        {
+          "slug": "fine-tuning-and-lora",
+          "title": "Fine-Tuning & LoRA",
+          "summary": "Adapters, rank, training memory",
+          "position": 3,
+          "path": "phases/17-llm-infrastructure-and-gpus/fine-tuning-and-lora.md",
+          "questionsPath": "questions/fine-tuning-and-lora.json",
+          "sha256": "ef6d93a565db435fb8b9543c193b16f8dcff1ace98e3ffc8a7d94d8594d5dcc9"
+        },
+        {
+          "slug": "gpu-autoscaling-and-cold-starts",
+          "title": "Autoscaling GPUs",
+          "summary": "Queue-depth scaling, cold starts and warm pools",
+          "position": 4,
+          "path": "phases/17-llm-infrastructure-and-gpus/gpu-autoscaling-and-cold-starts.md",
+          "questionsPath": "questions/gpu-autoscaling-and-cold-starts.json",
+          "sha256": "8323301d49011670e358c990ffbce41cd709f813eff82dac8921f1bd5230ba5c"
+        },
+        {
+          "slug": "gpu-fundamentals-for-engineers",
+          "title": "What a GPU Actually Is",
+          "summary": "SIMT cores, VRAM, Bandwidth limits",
+          "position": 5,
+          "path": "phases/17-llm-infrastructure-and-gpus/gpu-fundamentals-for-engineers.md",
+          "questionsPath": "questions/gpu-fundamentals-for-engineers.json",
+          "sha256": "15ef33b30e822565309e0e114c78d5a8db21f657878a3e85d10853e579dd7b82"
+        },
+        {
+          "slug": "gpu-memory-math",
+          "title": "Sizing GPU Memory",
+          "summary": "Weights, KV cache, OOM arithmetic",
+          "position": 6,
+          "path": "phases/17-llm-infrastructure-and-gpus/gpu-memory-math.md",
+          "questionsPath": "questions/gpu-memory-math.json",
+          "sha256": "b2a43dbfcffe38c70e95130a2d1f7336425194e6d9f6fdea10787eeab9d098ed"
+        },
+        {
+          "slug": "inference-servers-vllm-and-tgi",
+          "title": "Inference Servers",
+          "summary": "Serving runtimes, PagedAttention",
+          "position": 7,
+          "path": "phases/17-llm-infrastructure-and-gpus/inference-servers-vllm-and-tgi.md",
+          "questionsPath": "questions/inference-servers-vllm-and-tgi.json",
+          "sha256": "977f2c1c22e065ece390ca78299c941fa4e60d6c94d4afb292e48a4822ee1069"
+        },
+        {
+          "slug": "multi-gpu-and-model-parallelism",
+          "title": "Multi-GPU Serving",
+          "summary": "Data, Tensor, Pipeline parallelism",
+          "position": 8,
+          "path": "phases/17-llm-infrastructure-and-gpus/multi-gpu-and-model-parallelism.md",
+          "questionsPath": "questions/multi-gpu-and-model-parallelism.json",
+          "sha256": "9c4d59140bd1f810d943c568b8a5d2313e0203fe003a8451c95c806d8df08382"
+        },
+        {
+          "slug": "quantization-explained",
+          "title": "Quantization",
+          "summary": "Fewer bits, Formats, Quality cost",
+          "position": 9,
+          "path": "phases/17-llm-infrastructure-and-gpus/quantization-explained.md",
+          "questionsPath": "questions/quantization-explained.json",
+          "sha256": "d42558ee9bff9678ef8af1a071aafaa8788f0cc4400222053edfba08c6ce24b9"
+        },
+        {
+          "slug": "self-hosted-vs-api-economics",
+          "title": "Self-Hosted vs API",
+          "summary": "The utilisation break-even, and the costs people omit",
+          "position": 10,
+          "path": "phases/17-llm-infrastructure-and-gpus/self-hosted-vs-api-economics.md",
+          "questionsPath": "questions/self-hosted-vs-api-economics.json",
+          "sha256": "edab01b940c3b1e79dfbd458621e2b7d9a0c4a5ab282ea3f79fb86396ef52595"
+        },
+        {
+          "slug": "serving-latency-and-benchmarking",
+          "title": "Measuring Inference Latency",
+          "summary": "TTFT, TPOT, Percentiles, Saturation",
+          "position": 11,
+          "path": "phases/17-llm-infrastructure-and-gpus/serving-latency-and-benchmarking.md",
+          "questionsPath": "questions/serving-latency-and-benchmarking.json",
+          "sha256": "6e37a6449396deb5e53b93ee846eab06363c32929e045156d46a65237bb9c3d1"
+        }
+      ]
+    },
+    {
+      "slug": "kubernetes-in-depth",
+      "name": "Chapter 18: Kubernetes in Depth",
+      "position": 18,
+      "targetMonth": 9,
+      "topics": [
+        {
+          "slug": "configmaps-and-configuration",
+          "title": "ConfigMaps, Secrets & Configuration",
+          "summary": "Config outside the image, and the two injection paths that behave differently",
+          "position": 1,
+          "path": "phases/18-kubernetes-in-depth/configmaps-and-configuration.md",
+          "questionsPath": "questions/configmaps-and-configuration.json",
+          "sha256": "b02e775b2c4b7b15e010918e6bbf4f0f7d1efb7e5e3981afe74fab1c55f790d0"
+        },
+        {
+          "slug": "ingress-and-gateway-api",
+          "title": "Ingress & Gateway API",
+          "summary": "L7 routing, TLS termination, controllers, and role-oriented Gateway API",
+          "position": 2,
+          "path": "phases/18-kubernetes-in-depth/ingress-and-gateway-api.md",
+          "questionsPath": "questions/ingress-and-gateway-api.json",
+          "sha256": "5d5dba6dd90f29797160d472efccff33a9dac553a5501434819afb18e30d494b"
+        },
+        {
+          "slug": "kubernetes-architecture",
+          "title": "Kubernetes Architecture",
+          "summary": "Control plane, node components, and the reconciliation loop",
+          "position": 3,
+          "path": "phases/18-kubernetes-in-depth/kubernetes-architecture.md",
+          "questionsPath": "questions/kubernetes-architecture.json",
+          "sha256": "d53ad4b99146deefafbc5e5cb18d5761480268beb8f1c4ccb9d878ad9c7303b1"
+        },
+        {
+          "slug": "kubernetes-autoscaling",
+          "title": "Autoscaling in Kubernetes",
+          "summary": "Three independent axes, the HPA formula, and why requests decide everything",
+          "position": 4,
+          "path": "phases/18-kubernetes-in-depth/kubernetes-autoscaling.md",
+          "questionsPath": "questions/kubernetes-autoscaling.json",
+          "sha256": "b78d3a11a115b92ad5a1c2cc2adbc07e9c3d907890574c7d3065279d191c62b5"
+        },
+        {
+          "slug": "kubernetes-debugging",
+          "title": "Debugging Kubernetes",
+          "summary": "A systematic method — walk down the reconciliation chain",
+          "position": 5,
+          "path": "phases/18-kubernetes-in-depth/kubernetes-debugging.md",
+          "questionsPath": "questions/kubernetes-debugging.json",
+          "sha256": "170b016d687634176debf74fe13f76d242990c22397dba3061ecc7faf2914af3"
+        },
+        {
+          "slug": "kubernetes-networking",
+          "title": "Kubernetes Networking",
+          "summary": "Flat pod network, CNI, Services as NAT rules, DNS and NetworkPolicy",
+          "position": 6,
+          "path": "phases/18-kubernetes-in-depth/kubernetes-networking.md",
+          "questionsPath": "questions/kubernetes-networking.json",
+          "sha256": "6f3dd6d34cb3e59d70c14b02ae5f51921cce591ecf917e9280dc1dcc2626272e"
+        },
+        {
+          "slug": "kubernetes-operators-and-crds",
+          "title": "Operators & CRDs",
+          "summary": "Adding a noun to the API, plus a level-triggered loop that knows how to run it",
+          "position": 7,
+          "path": "phases/18-kubernetes-in-depth/kubernetes-operators-and-crds.md",
+          "questionsPath": "questions/kubernetes-operators-and-crds.json",
+          "sha256": "3e81ca84c9a88742c59bf1d821bc3f9f93877d464f6a3cba5b7c462704166f13"
+        },
+        {
+          "slug": "kubernetes-rbac-and-security",
+          "title": "RBAC & Cluster Security",
+          "summary": "Authentication, authorization, admission — and the escalation path that matters",
+          "position": 8,
+          "path": "phases/18-kubernetes-in-depth/kubernetes-rbac-and-security.md",
+          "questionsPath": "questions/kubernetes-rbac-and-security.json",
+          "sha256": "d84ed5c051d72d8ff1c8845636d5cebfcea1bc4eb2f272b7910629e507542647"
+        },
+        {
+          "slug": "kubernetes-storage",
+          "title": "Kubernetes Storage",
+          "summary": "PV/PVC contract, StorageClasses, access modes and StatefulSet volumes",
+          "position": 9,
+          "path": "phases/18-kubernetes-in-depth/kubernetes-storage.md",
+          "questionsPath": "questions/kubernetes-storage.json",
+          "sha256": "0bfb07dbd843965e7fc90f1e8e8a49f37ae7e57ea374e9223dd55bd212774903"
+        },
+        {
+          "slug": "pod-lifecycle-and-scheduling",
+          "title": "Pod Lifecycle & Scheduling",
+          "summary": "Phases, filtering and scoring, requests vs limits, probes",
+          "position": 10,
+          "path": "phases/18-kubernetes-in-depth/pod-lifecycle-and-scheduling.md",
+          "questionsPath": "questions/pod-lifecycle-and-scheduling.json",
+          "sha256": "1521e719ba1e0d3306ab15ff9172b0202139b0ab961d264f8909b7f089c159aa"
+        },
+        {
+          "slug": "statefulsets-daemonsets-and-jobs",
+          "title": "StatefulSets, DaemonSets & Jobs",
+          "summary": "One controller per workload shape, and the guarantees each buys you",
+          "position": 11,
+          "path": "phases/18-kubernetes-in-depth/statefulsets-daemonsets-and-jobs.md",
+          "questionsPath": "questions/statefulsets-daemonsets-and-jobs.json",
+          "sha256": "2384a2156af937ea7a473ed8b8f1f590079c7fe1bac09cf1818604b3a74a2042"
+        }
+      ]
+    },
+    {
+      "slug": "devops-and-platform-engineering",
+      "name": "Chapter 19: DevOps & Platform Engineering",
+      "position": 19,
+      "targetMonth": 10,
+      "topics": [
+        {
+          "slug": "chaos-and-resilience-testing",
+          "title": "Chaos & Resilience Testing",
+          "summary": "Experiments, not vandalism — hypotheses, blast radius and latency injection",
+          "position": 1,
+          "path": "phases/19-devops-and-platform-engineering/chaos-and-resilience-testing.md",
+          "questionsPath": "questions/chaos-and-resilience-testing.json",
+          "sha256": "3fb202e93560e4113d57bcba795799f6a217e2f0893b31d21118f4b61b737cfe"
+        },
+        {
+          "slug": "cicd-pipeline-design",
+          "title": "Designing a CI/CD Pipeline",
+          "summary": "Fail-fast ordering, build once and promote, OIDC, caching traps",
+          "position": 2,
+          "path": "phases/19-devops-and-platform-engineering/cicd-pipeline-design.md",
+          "questionsPath": "questions/cicd-pipeline-design.json",
+          "sha256": "d9ff2277be0bcb24ad4dbaa2da01b7a31547d4d578b298350ef2493049c30339"
+        },
+        {
+          "slug": "container-images-and-oci",
+          "title": "Container Images & OCI",
+          "summary": "Layers, manifests, digests, multi-stage builds, distroless",
+          "position": 3,
+          "path": "phases/19-devops-and-platform-engineering/container-images-and-oci.md",
+          "questionsPath": "questions/container-images-and-oci.json",
+          "sha256": "3e0663b2c002fd54aee59309cc9563a4aae3014bc20c19d9c7fcf5e73cd29aea"
+        },
+        {
+          "slug": "gitops-and-argocd",
+          "title": "GitOps & ArgoCD",
+          "summary": "Pull-based reconciliation, drift, sync vs health",
+          "position": 4,
+          "path": "phases/19-devops-and-platform-engineering/gitops-and-argocd.md",
+          "questionsPath": "questions/gitops-and-argocd.json",
+          "sha256": "42e241a0eabb605205cbb75ca3b2d3c33b7dbcf85c8519c6849627fcd7b7dfdb"
+        },
+        {
+          "slug": "helm-and-templating",
+          "title": "Helm & Templating",
+          "summary": "Charts, values precedence, rendering, Kustomize compared",
+          "position": 5,
+          "path": "phases/19-devops-and-platform-engineering/helm-and-templating.md",
+          "questionsPath": "questions/helm-and-templating.json",
+          "sha256": "f2db15b824df7e84e3ec98e06f991b6f2a6c78c7ed854d9660c4c7084df36adb"
+        },
+        {
+          "slug": "observability-with-opentelemetry",
+          "title": "Observability with OpenTelemetry",
+          "summary": "The three signals, OTLP, context propagation, collectors and cardinality cost",
+          "position": 6,
+          "path": "phases/19-devops-and-platform-engineering/observability-with-opentelemetry.md",
+          "questionsPath": "questions/observability-with-opentelemetry.json",
+          "sha256": "3f4d1ecc0d6761bdfa4041cfd1caf085630874403ea4a42c9bdf74a30662bb33"
+        },
+        {
+          "slug": "platform-engineering",
+          "title": "Platform Engineering",
+          "summary": "Golden paths, self-service, guardrails and the platform as a product",
+          "position": 7,
+          "path": "phases/19-devops-and-platform-engineering/platform-engineering.md",
+          "questionsPath": "questions/platform-engineering.json",
+          "sha256": "1d81ed475a6882e58c4b8206734a0ab04d3ced6120ab7f3eb229f0c386896f04"
+        },
+        {
+          "slug": "progressive-delivery",
+          "title": "Progressive Delivery",
+          "summary": "Deploy is not release — canary, blue-green, flags and automated analysis",
+          "position": 8,
+          "path": "phases/19-devops-and-platform-engineering/progressive-delivery.md",
+          "questionsPath": "questions/progressive-delivery.json",
+          "sha256": "aede45eeb4b5f4f34bb31b37fc9da652c69f60545442c7017efc644faa96f216"
+        },
+        {
+          "slug": "sre-slos-and-error-budgets",
+          "title": "SLOs & Error Budgets",
+          "summary": "SLI, SLO, SLA, burn-rate alerting and reliability as a budget you spend",
+          "position": 9,
+          "path": "phases/19-devops-and-platform-engineering/sre-slos-and-error-budgets.md",
+          "questionsPath": "questions/sre-slos-and-error-budgets.json",
+          "sha256": "91a99f6514a7a4f2302c6215854920c8848e9a9c2f59a4265641fb4bf9d4261a"
+        },
+        {
+          "slug": "terraform-and-iac-patterns",
+          "title": "Terraform & IaC Patterns",
+          "summary": "State, locking, replacement, modules, adoption patterns",
+          "position": 10,
+          "path": "phases/19-devops-and-platform-engineering/terraform-and-iac-patterns.md",
+          "questionsPath": "questions/terraform-and-iac-patterns.json",
+          "sha256": "d92dcd0c8eda568480af2ac21a18176e6af82a9917548fd91b0231cfeb04f939"
         }
       ]
     }
