@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "What is the Kubernetes network model, and who implements it?",
+    "answer_markdown": "It is a contract, not an implementation: every Pod gets its own cluster-unique IP address, every Pod can reach every other Pod's IP without NAT on any node, node agents can reach Pods on their node, and a Pod sees its own IP as the same address others use to reach it. Kubernetes itself implements none of this — a CNI plugin does, and the kubelet invokes that plugin binary whenever a Pod is created to allocate an IP and wire up the network namespace. The 'without NAT' clause is the load-bearing part: it means no port mapping and no port collisions, so two Pods can both listen on port 80 because they have different IPs, which is what makes service discovery and mesh sidecars possible at all.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does a Service actually route traffic to Pods? Be specific about what a Service is.",
+    "answer_markdown": "A Service is not a proxy process — it is a set of packet-rewriting rules programmed into every node's kernel. When you create a Service, the endpoint controller resolves its selector to the IPs of ready Pods and writes them into EndpointSlice objects. kube-proxy watches those and programs the node accordingly: iptables NAT chains by default, IPVS hash tables at larger scale, or eBPF programs with Cilium. Traffic sent to the ClusterIP is destination-NAT'd directly to a Pod IP, with conntrack keeping the rest of the connection on the same Pod and un-NAT'ing the reply. Nothing listens on a ClusterIP, so `tcpdump` on it shows nothing and the address exists only as a match condition. This is exactly why Services are fast — there is no extra hop — and why they structurally cannot route on hostname, path or header, since matching on IP and port never involves reading the HTTP payload.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A Service has no endpoints. Diagnose it.",
+    "answer_markdown": "There are exactly two causes and you must check both, because they produce identical symptoms. Either the Service's selector does not match the Pods' labels — compare `kubectl get svc x -o jsonpath='{.spec.selector}'` against `kubectl get pods --show-labels`, character by character, since it is usually a typo or a label changed on one side only — or the labels match fine but no Pod is ready, because only ready Pods enter EndpointSlices, which `kubectl get pods` reveals as `Running` with `0/1` in the READY column. Critically, DNS eliminates nothing here: the ClusterIP is allocated when the Service is created and resolves forever whether or not any Pod backs it, so 'nslookup works' is not evidence. Note also that with no endpoints there is no DNAT rule to match, so packets to the ClusterIP are dropped and you get a timeout rather than a connection refused.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why would you use a headless Service instead of a normal ClusterIP?",
+    "answer_markdown": "Setting `clusterIP: None` tells Kubernetes to allocate no virtual IP and program no NAT rules, so DNS returns the individual Pod IPs instead of one Service address. You need this whenever you must address a *specific* replica rather than a random one. StatefulSet workloads are the main case: a replicated database, a leader election, or a shard-aware client needs to reach `db-0.db.default.svc.cluster.local` deterministically, and a normal ClusterIP would DNAT that to whichever backend it chose. Combined with the per-replica stable storage that `volumeClaimTemplates` provides, headless DNS is what gives each replica a fixed identity — a fixed name and a fixed disk.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is `ndots:5` and why does it cost you latency?",
+    "answer_markdown": "The kubelet writes `options ndots:5` into every Pod's `/etc/resolv.conf`. It means that any name containing fewer than five dots is tried against every entry in the cluster search path *before* being tried as an absolute name. So `api.github.com` has two dots and gets looked up as `api.github.com.default.svc.cluster.local`, then `.svc.cluster.local`, then `.cluster.local`, then the node's search domains — four or more NXDOMAIN round trips, usually doubled by separate IPv4 and IPv6 lookups, before the real answer arrives. The result is tens of milliseconds of measurable overhead on every external call plus needless load on CoreDNS, and it hits hardest on short-lived connections that resolve repeatedly. Fixes are a trailing dot to make the name absolute, a lower `ndots` via `dnsConfig`, NodeLocal DNSCache, or simply reusing connections so you resolve once.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Are Pods network-isolated by default? Explain how NetworkPolicy changes that, and the mistake that breaks everything.",
+    "answer_markdown": "No — by default all Pod-to-Pod traffic is allowed across all namespaces, which follows directly from a flat network with no NAT. A NetworkPolicy selects some Pods and flips them to default-deny for the directions it names, with its rules becoming the exceptions. Two details cause most confusion: policies are purely additive and can never deny, so multiple policies selecting the same Pod are unioned and you cannot write a rule that blocks what another policy allows; and merely mentioning a direction isolates it, so listing `policyTypes: [Egress]` with an empty egress rule set blocks all outbound traffic. The classic mistake is restricting egress and forgetting to allow DNS to CoreDNS on port 53, so every name lookup in those Pods fails and the app reports errors that look like the remote service being down. The related trap is outbound calls to cloud services hanging with no error at all, because policy drops packets rather than rejecting them — a drop produces a timeout, a rejection answers immediately, and that distinction is the fastest way to tell a policy problem from bad credentials.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "You scale a Deployment from 2 replicas to 10 under heavy load, but the new Pods receive almost no traffic. Why?",
+    "answer_markdown": "Service load balancing is per-connection, not per-request. The DNAT decision is made once when a connection is established and conntrack pins the rest of that connection to the same Pod. A client using HTTP keep-alive therefore opens one connection and sends every subsequent request over it, so existing connections stay on the original two Pods while the eight new ones sit idle. Nothing is broken — the Service is balancing connections exactly as designed, and you wanted it to balance requests. This is especially pronounced with gRPC, where long-lived HTTP/2 connections carry many streams and a plain ClusterIP balances them terribly. Getting per-request balancing requires an L7 proxy or a service mesh rather than a bare Service.",
+    "difficulty": "hard"
+  }
+]

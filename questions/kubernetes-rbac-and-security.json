@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Walk through the three stages every request to the Kubernetes API server passes through, and what a failure at each looks like.",
+    "answer_markdown": "First authentication, which establishes who you are from a client certificate, an OIDC token, or a ServiceAccount token — failing it gives a 401, meaning the server does not know you. Second authorization, where RBAC checks whether any rule permits that verb on that resource for that subject — failing it gives a 403, meaning you are definitely you but not on the list. Third admission, which inspects the object's contents in two ordered phases: mutating webhooks may alter the object (injecting a sidecar, adding defaults), then validating webhooks may only accept or reject it. Only after all three does the object get persisted to etcd. Keeping them distinct matters diagnostically, because engineers who conflate them add RBAC rules to fix admission failures or regenerate certificates to fix a 403.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You bind a ClusterRole using a RoleBinding. What access does the subject actually get, and why is it designed this way?",
+    "answer_markdown": "Only access within the RoleBinding's own namespace — the binding's scope wins over the role's. Even though the ClusterRole is a cluster-scoped object, referencing it from a namespaced RoleBinding limits the grant to that one namespace, which the Kubernetes docs state explicitly. The design exists for reuse: you can define a role like `secret-reader` once and bind it in twenty namespaces without maintaining twenty copies of the same rule set. The useful mental model is that a ClusterRole is cluster-*scoped* as an object but not cluster-*wide* as a grant; only a ClusterRoleBinding makes it that. Note also that the reverse combination, a Role with a ClusterRoleBinding, simply does not exist — a namespaced Role cannot be granted cluster-wide.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Can you write an RBAC rule that grants access to all Secrets except the TLS ones?",
+    "answer_markdown": "No. RBAC is purely additive and has no deny rules — the docs say so flatly — which means a request is allowed if any rule anywhere permits it, and there is no way to subtract an exception from a broader grant. If a subject needs less, you must grant less from the start, using narrow `resourceNames` to name specific objects and preferring `get` over `list`. This trips up anyone reasoning from firewall or cloud IAM experience, where an explicit deny overrides an allow. It also explains why permissions accumulate across every binding a subject appears in, and therefore why `kubectl auth can-i --list` is the only reliable way to see effective access rather than reading the YAML.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why can't RBAC stop someone from running a privileged container, and what does?",
+    "answer_markdown": "Because RBAC authorizes verbs against resource types, not the contents of the object being submitted. Whether the Pod runs as root or requests `privileged: true`, the verb is `create pods` either way, so no RBAC rule can distinguish them. Inspecting the object is admission control's job, which runs after authorization: Pod Security Admission is the built-in answer, where you label a namespace with one of three profiles (privileged, baseline, restricted) and a mode (enforce, audit, warn). It replaced PodSecurityPolicy in v1.25, largely because when several PSPs matched a Pod, which one applied depended on an ordering nobody could reliably predict. For more expressive rules there is in-tree ValidatingAdmissionPolicy using CEL, or policy engines like Kyverno and OPA Gatekeeper. The takeaway is that RBAC and admission control are not alternatives — each closes the other's gap.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A developer asks for `create` on `pods/exec` in their namespace so they can debug. Why is this a bigger grant than it appears?",
+    "answer_markdown": "Because exec is code execution inside every Pod in that namespace, which means the developer inherits the union of everything those Pods can reach. From a shell they can read any Pod's mounted ServiceAccount token, any Secret mounted as a file, and any Secret injected as an environment variable. Their own RBAC has not changed at all, but if any Pod in that namespace runs with a powerful ServiceAccount, `pods/exec` is a path to that ServiceAccount's permissions. This is why exec is treated as a privileged verb rather than a read-only debugging convenience, and why it is better granted time-boxed and audited than left standing. The same reasoning applies to `create pods`, since a Pod spec can mount any Secret in the namespace, hostPath the node's filesystem, or request hostNetwork.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A Pod is getting 403 errors from the API server. How do you actually determine what it can and cannot do?",
+    "answer_markdown": "Find which ServiceAccount the Pod uses, then ask the API server rather than reading YAML: `kubectl auth can-i <verb> <resource> --as=system:serviceaccount:<namespace>:<name> -n <namespace>` runs the real authorization evaluation, and `kubectl auth can-i --list --as=...` prints the effective accumulated permissions. Reading the manifests is unreliable because permissions add up across every Role, ClusterRole and binding the subject appears in, so no single file tells you the answer. The 403 response body also usually names the specific missing permission, which is worth reading before changing anything. And confirm it really is a 403 and not a 401 or an admission denial, since those need entirely different fixes.",
+    "difficulty": "medium"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the difference between a CRD and an operator?",
+    "answer_markdown": "A CustomResourceDefinition adds a new type to the Kubernetes API, so the apiserver stores and serves your objects and all the usual machinery — kubectl, RBAC, watches, labels, events, GitOps — works on them for free. That is all it does: a CRD with no controller is inert storage, a row in etcd that nothing acts on. The operator is the controller that watches those objects and does the work, turning the noun into something with behaviour. Together they are the operator pattern: a new noun plus a control loop that encodes the operational knowledge for running it. Inheriting the whole API surface is also why extending Kubernetes this way beats building a separate side API with its own auth and clients.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain level-triggered versus edge-triggered reconciliation, and why Kubernetes chose one.",
+    "answer_markdown": "Edge-triggered means reacting to transitions — 'a resource was created', 'a field changed' — so the controller acts on events. Level-triggered means reacting to current state: here is what is desired and here is what exists, close the gap. Kubernetes controllers are level-triggered, and events serve only as a hint that it is worth looking again. That is visible in the API: a controller-runtime Reconcile is handed a Request containing just a name and namespace, with no event payload, so it must go and fetch the object itself. The payoff is robustness. A missed event is harmless because nothing depended on the event, and repeated calls are safe because each one re-derives the answer. This is precisely why the system survives network partitions, dropped watches and controller crashes — after any of them the controller re-lists and re-derives, with no state to lose because it never kept any.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why must a reconcile loop be idempotent, and what does that look like in practice?",
+    "answer_markdown": "Because it will be called repeatedly with nothing changed, as a matter of normal operation rather than exception: periodic resyncs, an operator restart that re-lists every object, an unrelated field being edited, a watch reconnecting. Calling it a hundred times must be indistinguishable from calling it once, or ordinary operation creates duplicate resources or errors. In practice that means always deriving the desired shape from spec rather than from any notion of what happened, checking whether each piece already exists before creating it, and treating 'already in the desired state' as a successful no-op. The strongest test is to invoke the reconciler with completely empty status, simulating an operator that restarted and lost all memory: a correct level-triggered controller does the right thing anyway, while an edge-triggered one is lost because it missed events while down and has no record of its own progress.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does a custom resource split spec from status, and what rule follows from it?",
+    "answer_markdown": "They have opposite ownership. `spec` is desired state owned by the user: the operator reads it and must never write it, because a controller that 'fixes' a spec value gets reverted by the user's next kubectl apply, and you have built a fight instead of a control loop. `status` is observed state owned by the controller: the user reads it and never writes it. Status is also a subresource with its own endpoint and RBAC verb, so a controller can be granted patch on status without any permission to change spec. The rule that follows is easy to state and easy to violate: never store controller state in spec, and never make a decision by reading status. Status is a report, not a memory — a controller deciding from status is remembering, and remembering breaks the moment status is stale, the controller restarts, or somebody edits the object.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A namespace has been stuck in Terminating for an hour. What is happening and how do you fix it?",
+    "answer_markdown": "Almost certainly a stuck finalizer. Deleting a namespace requires deleting everything in it, and if one object carries a finalizer, `kubectl delete` does not remove that object — the apiserver only sets metadata.deletionTimestamp and waits for the controller to do its cleanup and then remove its own finalizer string. If that controller is gone or crash-looping, nobody will ever remove the string, so the object never deletes, the namespace never empties, and it sits Terminating indefinitely. Find the culprit by listing every namespaced resource in that namespace: `kubectl api-resources --verbs=list --namespaced -o name | xargs -n1 kubectl get -n <ns> --ignore-not-found`. The correct fix is usually to get the controller running again and let it finish. Force-patching the finalizer to an empty array does clear the namespace, but it skips the cleanup the finalizer existed to perform, so the external S3 bucket, DNS record or cloud load balancer survives unowned and still billing. The docs warn against exactly this, and the ordering lesson is to delete custom resources before uninstalling their operator.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "When is an operator genuinely worth building rather than shipping a Helm chart?",
+    "answer_markdown": "The test is whether there is ongoing operational work or only installation work. A Helm chart is templating: it renders YAML at install time and then it is gone. An operator is a running control loop that keeps acting forever, so it earns its complexity only when something needs doing continuously — failover and promotion, backups and point-in-time restore, version upgrades with an ordered procedure, resharding, certificate renewal on a schedule. Databases, message brokers and cert-manager all qualify; a stateless web service does not. Be honest that operators are commonly over-adopted: 'we wrote an operator' is often a costlier way of saying 'we have a Helm chart with a control loop bolted on', and now you own a distributed system whose bugs corrupt state rather than merely failing an install. cert-manager is the clearest positive example, because it issues a certificate, stores it in a Secret, and then renews it before expiry forever — work on a clock that no amount of install-time templating can substitute for.",
+    "difficulty": "medium"
+  }
+]

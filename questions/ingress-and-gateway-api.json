@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the difference between a Service and an Ingress?",
+    "answer_markdown": "A Service operates at L4: it destination-NATs packets based on IP and port and never sees the HTTP payload, so it cannot route on hostname, path or header. An Ingress describes L7 routing — which host and path goes to which Service, and where TLS terminates — all of which requires actually reading the request, so it needs a proxy that terminates the connection. The other driver is cost: a `LoadBalancer` Service provisions one cloud load balancer per Service, each with its own IP and monthly bill, so forty microservices means forty load balancers. An Ingress collapses them into a single entry point that routes internally.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You created an Ingress with correct rules and nothing happens — no traffic, no error. Why?",
+    "answer_markdown": "Almost certainly no ingress controller is installed, or `ingressClassName` names a class that does not exist. An Ingress is only a declarative record in etcd; the thing that does the work is a separate ingress controller — nginx-ingress, Traefik, Envoy Gateway, or a cloud provider's — running as a Deployment that watches Ingress objects and reconfigures a real proxy. Kubernetes does not ship one, and if nothing is watching your object there is no error, no event and no warning. The tell is an empty `ADDRESS` column in `kubectl get ingress` after a few minutes, since the address is populated by the controller. Verify with `kubectl get pods -n ingress-nginx` and `kubectl get ingressclass`.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does Gateway API exist if Ingress already works?",
+    "answer_markdown": "Ingress hit three structural limits. First, annotation sprawl: the spec only covers host, path, backend and TLS, so rewrites, timeouts, rate limits, canary weights and header manipulation were all implemented as vendor annotations, meaning `nginx.ingress.kubernetes.io/rewrite-target` is meaningless to Traefik and a supposedly portable resource became unportable. Second, it handles HTTP only, so TCP, UDP and gRPC needed extensions. Third and most important, it has no role separation: a single Ingress object mixes which load balancer infrastructure to use, which TLS certificates and listeners to expose, and which paths route where. Because the RBAC boundary is the object and the object contains everything, giving an app team write access also lets them change TLS config and other teams' hostnames, while withholding it makes every routing change a platform ticket. Gateway API splits these into GatewayClass, Gateway and HTTPRoute so permissions follow real ownership, and turns the former annotations into typed, validated fields.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How does Gateway API's role separation actually work in terms of who owns what?",
+    "answer_markdown": "Three resources map onto three roles. GatewayClass is owned by the infrastructure provider and declares which controller implementation backs the class. Gateway is owned by the cluster operator or platform team and defines listeners, ports, protocols, TLS certificates, and — via `allowedRoutes` — which namespaces may attach. HTTPRoute is owned by the application team, living in their own namespace, and declares hostnames, paths, header matches, backends and traffic weights for their own service only. This makes RBAC meaningful: an app team gets write access to HTTPRoute in one namespace, ships routing changes and canary weights without a ticket, and cannot touch the platform's TLS configuration or another team's routes. Attachment is bidirectional consent — the route requests a Gateway and the Gateway must permit that namespace — and unlike Ingress, the result is reported in status conditions so a refused route explains itself.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Where does TLS get terminated, and how can a single IP serve certificates for many different domains?",
+    "answer_markdown": "TLS terminates at the ingress controller's proxy, which loads certificates from Secrets of type `kubernetes.io/tls` containing `tls.crt` and `tls.key`. It selects which certificate to present per connection using SNI — the hostname the client sends in the ClientHello, before any encryption is established — which is what allows one Gateway on one IP to serve dozens of domains with different certificates. Certificates should be managed by cert-manager rather than by hand: it watches Ingress and Gateway objects, requests certificates from an issuer such as Let's Encrypt via ACME, proves domain ownership, writes the Secret, and renews before expiry — the reconciliation loop applied to certificates.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your TLS certificate is valid and your HTTPRoute exists, but you get a 404 from nginx rather than from your app. What is going on?",
+    "answer_markdown": "Hostname is evaluated twice at two different layers, and they can disagree. First the SNI hostname from the ClientHello is used to select a certificate and match a listener, which succeeded — that is why TLS is fine. Then, after decryption, the controller reads the HTTP `Host` header to select a route, and something rewrote it: a cloud load balancer configured with a fixed Host, an intermediate proxy, or a client connecting by IP so the header is the IP address. No route declares that hostname, so the controller returns its own default 404. Everything about the TLS layer reports success because the TLS layer genuinely did succeed. The tell is that the 404 body belongs to the controller rather than your application, and the controller's access log shows the actual Host it received. This same two-layer split is why TLS passthrough can only route on SNI — without terminating, the Host header is still encrypted and unavailable.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Walk through what happens when you run `kubectl apply -f deployment.yaml`.",
+    "answer_markdown": "`kubectl` sends a REST request to the kube-apiserver, which authenticates you, authorises the action, runs admission control, validates the object, and persists it to etcd. The Deployment controller sees the new object through its watch and creates a ReplicaSet; the ReplicaSet controller then creates Pod objects with an empty `spec.nodeName`. The scheduler notices those unscheduled Pods, picks a node, and writes a Binding that sets `nodeName`. Finally the kubelet on that node sees a Pod assigned to itself, pulls the image, and starts the container via the CRI. The key detail interviewers listen for is that none of these components ever talk to each other — every interaction goes through the API server, which is why RBAC and the audit log can see all of it.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why does etcd need an odd number of members?",
+    "answer_markdown": "etcd uses the Raft consensus protocol, which requires a strict majority of members (a quorum) to accept any write. Three members tolerate one failure because two of three is still a majority. Four members also tolerate only one failure, since losing two of four leaves two, which is not a majority of four — so the fourth member adds cost and failure surface while adding zero fault tolerance. The practical consequence of losing quorum is nastier than a simple outage: etcd goes read-only rather than down, so `kubectl get` keeps working and the cluster looks healthy while every write silently fails and rollouts freeze mid-flight.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the reconciliation loop, and why is it described as level-triggered rather than edge-triggered?",
+    "answer_markdown": "Every controller runs the same four steps forever: read the desired state you declared, observe the actual state of the world, take one action to narrow the gap, and repeat. It is level-triggered because a controller compares current state against desired state rather than reacting to individual events. That distinction matters for reliability: an edge-triggered system that misses an event drifts permanently, whereas a level-triggered controller that misses an event simply corrects on its next pass. This is precisely why Kubernetes self-heals after a controller restart or a network blip, and why `replicas: 3` is a standing fact that gets re-evaluated continuously rather than a command that ran once.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Which component actually starts a container, and why does it watch the API server rather than being told what to do?",
+    "answer_markdown": "Only the kubelet starts containers, and it does so through the CRI by calling the container runtime such as containerd or CRI-O. No other component — not the scheduler, not the controller-manager — creates a running process. The kubelet pulls work by watching the API server for Pods assigned to its own node, rather than having work pushed to it. That pull direction has a real consequence: a node that loses connectivity to the control plane keeps its existing containers running and keeps restarting crashed ones locally, because nothing external was ever holding them up. It is also why the scheduler's entire output is a single field, `spec.nodeName`.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "If the entire control plane goes down, do your running applications go down with it?",
+    "answer_markdown": "No. Existing Pods keep serving traffic, kubelets keep restarting crashed containers using locally held Pod specs, and kube-proxy keeps forwarding because its rules are already programmed into each node's kernel. What you lose is every change: no new Pods, no scaling, no rollouts, no rescheduling of a failed node's workloads, and no `kubectl`. The cluster is frozen rather than dead. This separation is deliberate — it is what makes a rolling control plane upgrade safe — but it also produces the counterintuitive incident where a node dies and its Pods are never rescheduled, because the controller that would notice is not running.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why do controllers use watches and informers instead of polling the API server, and what bug does that design introduce?",
+    "answer_markdown": "A watch is a long-lived streaming connection that pushes changes as they happen, so controllers do not repeatedly ask for the full object list. Client libraries wrap watches in an informer, which does one initial LIST and then maintains a local in-memory cache updated by the watch stream, meaning controller code reads its own cache and makes zero API calls for ordinary reads. Without this, thousands of watchers polling would overwhelm the API server. The bug it introduces is staleness: that cache is only eventually consistent, so a controller can act on data a few hundred milliseconds old. Well-written controllers therefore expect write conflicts and retry rather than trusting what they just read.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why does Kubernetes need StatefulSets, DaemonSets and Jobs when it already has Deployments?",
+    "answer_markdown": "A Deployment encodes one specific promise: the replicas are interchangeable, so any Pod can serve any request, they can start in any order, and losing one loses nothing. That promise is false for most infrastructure. A database replica needs to know it is replica 0 and needs its own disk back after rescheduling, so it needs a StatefulSet. A log shipper needs one Pod on every node — a count you cannot correctly hardcode — so it needs a DaemonSet. A migration succeeds by finishing and exiting, which a Deployment would treat as a crash and restart forever, so it needs a Job. Each controller exists because the desired-state loop it runs is genuinely different, not because of a feature gap.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What are the three guarantees a StatefulSet provides, and what real requirement drives each one?",
+    "answer_markdown": "First, stable identity: each Pod gets an ordinal and a name like web-0 that the replacement Pod reuses, which matters because a cluster member's identity has to survive a restart. Second, stable per-Pod DNS via a headless Service (clusterIP: None), which publishes one record per Pod so web-0.web resolves to replica 0 specifically — a normal Service round-robins across replicas, which is exactly wrong when a peer list must reach a particular member. Third, stable storage via volumeClaimTemplates, which stamps out one PersistentVolumeClaim per replica (data-web-0, data-web-1) so a rescheduled Pod re-binds its own data rather than starting empty or fighting siblings over one shared volume. Ordered start-up, reverse-order scale-down and highest-to-lowest rolling updates then protect quorum by ensuring only one member changes state at a time.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your StatefulSet rollout is stuck: web-0 is not Ready and web-1 was never created. A colleague suggests scaling up to force progress. What is actually happening?",
+    "answer_markdown": "The StatefulSet's default OrderedReady pod management policy means Pod N+1 is only created after Pod N reports Ready, so a stalled web-0 blocks every higher ordinal indefinitely. Scaling up changes nothing, because the controller will still refuse to create anything past the non-Ready ordinal — the rollout does not partially succeed, it stops. The fix is to diagnose web-0 itself: a bad image tag, a failing readiness probe, or an unbound PersistentVolumeClaim are the usual causes. This ordering is not a bug but the guarantee you asked for, since it is what stops two members of a replicated database going down at once. Setting podManagementPolicy: Parallel would start all Pods simultaneously and give up that protection.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your monitoring DaemonSet reports metrics from most nodes but nothing from the GPU and spot node pools. What is the most likely cause?",
+    "answer_markdown": "Those pools are almost certainly tainted, and your DaemonSet has no matching toleration. A taint marks a node as 'do not schedule here unless you explicitly accept this', and teams routinely taint GPU, spot and control-plane nodes to keep general workloads off expensive or preemptible hardware — which is exactly how an agent ends up missing the nodes you most want to watch. Kubernetes helps only partway: the DaemonSet controller automatically adds tolerations for node conditions like not-ready, unreachable and disk-pressure, so agents survive on sick nodes, but it does not add tolerations for taints you invented. A monitoring DaemonSet usually wants a blanket `tolerations: [{operator: Exists}]` so it also lands on taints added after it was written. Check taints first, then nodeSelector and affinity, then whether the Pods are simply Pending for lack of resources.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A Job hangs on a slow query instead of erroring. Does backoffLimit eventually stop it? What actually bounds it?",
+    "answer_markdown": "No. backoffLimit caps the number of Pod *failures* before the Job is marked Failed, counted across the whole Job with exponential backoff between retries — and a hung Pod has never failed, so the counter never increments. Only activeDeadlineSeconds bounds wall-clock time; when it expires the Job is terminated even mid-retry and even mid-successful-run, which makes it both a genuine safety net and a genuine footgun. This distinction matters because hanging is the more common production failure mode than clean errors, and it produces no alert: nothing has failed, so nothing fires. On a CronJob this compounds, because the default concurrencyPolicy: Allow lets tomorrow's run start alongside today's hung one, accumulating concurrent Pods that all hold database connections and write to the same destination.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A CronJob that ran reliably for months has silently stopped firing. There are no failed Jobs and no Kubernetes Events. Why?",
+    "answer_markdown": "The most likely cause is that it accumulated more than 100 missed start times and permanently gave up. The CronJob controller counts how many scheduled times it missed since the last run, and past 100 it stops scheduling entirely with 'Cannot determine if job needs to be started: Too many missed start times'. Controller downtime, the CronJob being suspended for a while, or clock skew all produce this. The reason it is so hard to spot is that Kubernetes logs a single line and emits no Event, so nothing in normal monitoring notices — the CronJob can be dead for weeks while looking healthy in kubectl get cronjobs. Setting startingDeadlineSeconds bounds the window the controller counts missed schedules over, which is the standard fix, and alerting on last-successful-run time rather than on failures catches the class of problem generally.",
+    "difficulty": "hard"
+  }
+]

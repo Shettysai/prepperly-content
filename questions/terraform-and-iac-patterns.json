@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the Terraform state file, and why can't Terraform work without it?",
+    "answer_markdown": "It maps each resource block in your configuration to the real cloud resource ID that block created. That mapping exists nowhere else: your config contains no IDs, and the cloud provider has a list of resources with no idea which config block each belongs to. So without state, Terraform cannot distinguish \"this resource does not exist yet\" from \"this exists and needs changing\" — it assumes nothing exists and creates a duplicate of your entire infrastructure while the originals keep running and billing. This is also why state is treated with more care than the config: the config is reproducible from Git, the state file is not reproducible from anything. It additionally records whatever the provider returned, including generated passwords and keys in plaintext, so it belongs in encrypted remote storage with access control, never in Git.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why is remote state with locking non-negotiable on a team?",
+    "answer_markdown": "Terraform reads state, decides what to change, executes, then writes state back. If two applies interleave those steps, the second one's write overwrites the first one's record. The resources the first apply created are now real, billing, and absent from state — orphaned. Terraform will never manage or destroy them again, and worse, it will happily create duplicates on the next run because as far as state is concerned they were never made. Local state fails progressively: first nobody else can apply at all, then somebody copies the file and two divergent records exist, then two people apply simultaneously and the record is corrupted. A remote backend solves both halves — shared encrypted storage makes team use possible, and a lock acquired before any write serialises applies so the second one waits rather than corrupting. Worth noting the lock is taken at apply, not at plan, which is why you save a plan and apply that exact plan rather than trusting a plan reviewed an hour ago.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A plan says forces replacement on your production database. Walk through what you do.",
+    "answer_markdown": "Stop, because -/+ and \"must be replaced\" mean destroy then create, not upgrade in place — the data goes. First read the plan properly: find the attribute line tagged with forces replacement, which names the exact cause. That attribute is immutable in the provider's API, so the provider's only mechanism for changing it is delete and recreate. Then look for a non-replacing route to the same outcome: an in-place upgrade path the provider supports, a managed version upgrade operation, a replica promotion, or a different attribute that achieves the goal. If replacement is genuinely unavoidable, it stops being an apply and becomes a planned migration with verified backups, a restore rehearsal, a maintenance window and a rollback plan. Two further points. The summary line reading \"1 to destroy\" is what people read instead of the detail above it, and it makes destroying your production database look small — so grep the plan for forces replacement and must be replaced before reading anything else, because a mechanical check survives time pressure and judgement does not. And prevent_destroy on that resource should have failed the plan before a human ever saw an approvable diff.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do prevent_destroy and a provider's deletion_protection differ, and why would you set both?",
+    "answer_markdown": "They are enforced by different systems at different points, so they catch different failures. deletion_protection is enforced by the cloud provider, which rejects a delete call regardless of what issued it — Terraform, the console, a script. prevent_destroy is enforced by Terraform and fails the plan, so you never reach the point of typing yes. The reason both matter is the replacement case: a destroy-and-recreate is not seen by the cloud as deletion of a protected thing, it is a delete followed by a create. If only the cloud guard exists, the plan looks approvable, the apply starts, the delete is refused mid-operation, and you are left with state and reality inconsistent partway through a change. prevent_destroy stops that earlier, at planning time, before anything has been attempted.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Workspaces or a directory per environment, and why?",
+    "answer_markdown": "Directories, for long-lived environments like dev, staging and prod. With workspaces, which environment you are about to modify depends on a CLI selection you last changed at some unremembered point — the files look identical for dev and prod, so the target is invisible ambient state. Environment differences then have to be expressed as conditionals scattered through the config, meaning nobody can read prod's actual shape without mentally evaluating them. With a directory per environment, the path names the target, changing directory is a visible act, each environment's backend config lives with it, and each environment's real configuration reads as plain data in its own tfvars. Shared logic goes in modules so duplication stays low. Workspaces are genuinely good for ephemeral, identical stacks — a per-pull-request environment — where there is no meaningful divergence to express and the whole point is many identical copies.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You are adopting resources someone created by hand. What does import do, and what must the plan look like before you trust it?",
+    "answer_markdown": "import writes the state mapping between a config block and an existing real resource ID without creating anything, bringing an unmanaged resource under management. The critical check is that the plan immediately after an import shows no changes at all. If it shows changes, your configuration does not accurately describe the real resource, and applying would modify live infrastructure to match your guess — which is exactly the opposite of adoption. So you iterate on the config, adding and correcting attributes until the plan is empty, and only then is the resource genuinely adopted. Applying the first non-empty plan is the mistake here, and it can be destructive if one of the mismatched attributes happens to be one that forces replacement.",
+    "difficulty": "hard"
+  }
+]

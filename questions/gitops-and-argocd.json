@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What does GitOps actually change compared with a pipeline that runs kubectl apply at the end?",
+    "answer_markdown": "It inverts the direction of control. Instead of CI pushing into the cluster, an agent running inside the cluster pulls the desired state from Git and reconciles the cluster toward it. Three concrete consequences follow. No cluster credentials need to live in the CI system, because CI's job now ends at committing a new image tag to a config repo. Every deployment is a reviewable commit with an author, a timestamp and a diff, so \"what is running in production\" is answerable from Git rather than from job history plus manual changes nobody logged. And recovery becomes re-applying the repository, so rebuilding a cluster is pointing a fresh one at the repo instead of following a runbook.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Explain the difference between Synced and Healthy, and describe what a resource that is Synced but Unhealthy is telling you.",
+    "answer_markdown": "They answer two different questions. Synced compares the live manifests in the cluster against the manifests rendered from Git — it is purely a diff of desired versus actual configuration. Healthy asks whether the workload is actually working, which for a Deployment means the expected replicas are available and passing their readiness checks. Synced plus Unhealthy means the delivery mechanism did its job perfectly and the workload itself is broken: a bad image tag, a failing probe, insufficient quota, a crash on startup. The diagnostic value is that it tells you to stop reading YAML diffs and start reading pod events and container logs, because the manifest is not the problem. The reverse combination, OutOfSync but Healthy, usually just means the old version is running fine and your new commit has not been applied yet.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Someone runs kubectl edit on a production Deployment during an incident and their change disappears a few seconds later. What happened, and what should they have done?",
+    "answer_markdown": "With self-healing enabled, the controller continuously compares live state against Git and reverts anything that does not match. The manual edit was detected as drift and corrected. This is not a bug — it is the entire guarantee the model provides. If manual changes could persist, Git would no longer describe production and every claim about auditability and reproducibility would be false. The correct path for a change you want to keep is a commit, which also gets you review and history. During a genuine emergency where committing is too slow, the right move is to deliberately disable auto-sync first, make the change, then reconcile the repository to match afterwards — so the divergence is a known, temporary, deliberate state rather than a surprise.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "An application reports that its last sync succeeded, its health is fine, but it stays OutOfSync forever. Syncing again succeeds and changes nothing. Diagnose it.",
+    "answer_markdown": "Something outside Git is mutating the live object after it is applied, so the diff can never close. Common causes are a mutating admission webhook injecting a sidecar or annotation, a CRD applying a default to a field you left unset, or another controller writing a computed value into the spec. Each sync applies your manifest faithfully and succeeds, the external mutation happens again immediately, and the next comparison finds the same difference. The signature to recognise is exactly this combination: sync operations reporting success while the app stays OutOfSync. Syncing again, forcing, or replacing will never fix it, because none of them change who owns that field. The fix is ignoreDifferences scoped to the specific path being mutated. Critically, do not theorise about which field it is — fetch the normalized-live and predicted-live versions of the resource and diff them directly, which names the field exactly. Guessing costs days; reading the two sides of the comparison costs minutes. Keep the ignore rule as narrow as possible, because ignoring a whole spec disables real drift detection on that resource.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A sync fails and the application shows a sync error, but no manifests were applied at all. What mechanism produces this, and what is the right response?",
+    "answer_markdown": "A failing PreSync hook blocks the entire sync. PreSync hooks run as Jobs before any manifest is applied, so if one exits non-zero nothing downstream happens — the sync halts with an error while the cluster is untouched. A typical case is a schema-migration job that refuses to run because the migration is destructive and no explicit override was supplied. This looks like a broken deployment but is a guard working correctly. The right response is not to find the flag that disables the check, because that flag then persists and the next genuinely dangerous change goes through unremarked. The right response is an explicit, auditable approval path for the dangerous operation, performed knowingly, with the default staying protective. Practically, also note the failure message lives in the logs of a Job pod that may already have been cleaned up, so retaining hook logs is worth configuring in advance.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why do most teams prefer a directory per environment over a branch per environment in a GitOps repo?",
+    "answer_markdown": "Long-lived environment branches diverge. Every promotion becomes a merge between branches that have accumulated their own history, so you get conflicts on routine changes and, worse, silent divergence where staging has drifted from prod in ways nobody can see without checking out both. With a directory per environment on a single branch, the entire state of every environment is visible in one checkout, so diffing staging against prod is a single command. Promotion is an ordinary edit to a path rather than a merge, which also makes accidental promotion harder — you must edit the prod path deliberately rather than carelessly merging into a prod branch. Since the reason to adopt GitOps in the first place is eliminating unexplained divergence between environments, using a layout that reintroduces it defeats the purpose.",
+    "difficulty": "medium"
+  }
+]
