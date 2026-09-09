@@ -35,19 +35,19 @@ Picture a concert venue selling tickets from two separate box offices, each keep
 
 ```mermaid
 sequenceDiagram
-  participant A as "Node A"
-  participant B as "Node B"
+  participant A as Node A
+  participant B as Node B
   Note over A,B: Network partition — link between A and B is down
-  participant U1 as "Buyer 1"
-  participant U2 as "Buyer 2"
-  U1->>A: "book last seat"
-  U2->>B: "book last seat"
+  participant U1 as Buyer 1
+  participant U2 as Buyer 2
+  U1->>A: book last seat
+  U2->>B: book last seat
   alt CP system
-    A-->>U1: "error: cannot confirm, link down"
-    B-->>U2: "error: cannot confirm, link down"
+    A-->>U1: error: cannot confirm, link down
+    B-->>U2: error: cannot confirm, link down
   else AP system
-    A-->>U1: "booked (using local data)"
-    B-->>U2: "booked (using local data)"
+    A-->>U1: booked (using local data)
+    B-->>U2: booked (using local data)
     Note over A,B: reconciled later — one booking must be refunded
   end
 ```

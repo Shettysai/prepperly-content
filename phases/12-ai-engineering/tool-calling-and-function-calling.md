@@ -57,7 +57,7 @@ sequenceDiagram
   App->>Model: messages + tool schemas
   Model-->>App: tool_call get_weather{city}
   App->>Tool: execute
-  Tool-->>App: "18C, raining"
+  Tool-->>App: 18C, raining
   App->>Model: append result, resend
   Model-->>App: final text answer
 ```

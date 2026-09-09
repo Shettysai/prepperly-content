@@ -50,14 +50,14 @@ sequenceDiagram
   participant G as API gateway
   participant O as Order service
   participant P as Payment service
-  C->>G: "POST /checkout"
-  Note over G: "generate trace-id: abc123"
-  G->>O: "createOrder (trace-id: abc123)"
-  O->>P: "charge (trace-id: abc123)"
-  Note over P: "span: 3200ms - the slow one"
+  C->>G: POST /checkout
+  Note over G: generate trace-id: abc123
+  G->>O: createOrder (trace-id: abc123)
+  O->>P: charge (trace-id: abc123)
+  Note over P: span: 3200ms - the slow one
   P-->>O: ok
   O-->>G: ok
-  G-->>C: "201 Created"
+  G-->>C: 201 Created
 ```
 
 Spans nest. The gateway's span is the parent; the order service's span is its child; the payment span is a child of that. Because each span records a parent ID alongside its own, a collector can reassemble the tree from spans that arrived separately, out of order, from four different machines.

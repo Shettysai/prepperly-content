@@ -38,19 +38,19 @@ Imagine five people trying to elect a group leader by shouting their vote across
 
 ```mermaid
 sequenceDiagram
-  participant N1 as "Node 1 (candidate)"
-  participant N2 as "Node 2"
-  participant N3 as "Node 3"
-  participant N4 as "Node 4"
-  participant N5 as "Node 5"
+  participant N1 as Node 1 (candidate)
+  participant N2 as Node 2
+  participant N3 as Node 3
+  participant N4 as Node 4
+  participant N5 as Node 5
   Note over N1: leader timeout expires -> becomes candidate
-  N1->>N2: "requestVote (term: 5)"
-  N1->>N3: "requestVote (term: 5)"
-  N1->>N4: "requestVote (term: 5)"
-  N1->>N5: "requestVote (term: 5)"
-  N2-->>N1: "vote granted"
-  N3-->>N1: "vote granted"
-  N4-->>N1: "vote granted"
+  N1->>N2: requestVote (term: 5)
+  N1->>N3: requestVote (term: 5)
+  N1->>N4: requestVote (term: 5)
+  N1->>N5: requestVote (term: 5)
+  N2-->>N1: vote granted
+  N3-->>N1: vote granted
+  N4-->>N1: vote granted
   Note over N1: 4 of 5 = majority -> becomes leader
 ```
 

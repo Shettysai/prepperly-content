@@ -49,13 +49,13 @@ sequenceDiagram
   participant C as Client
   participant S as Server
   participant D as Store
-  C->>S: "POST /charge (key: k1)"
-  S->>D: "reserve k1"
-  Note over S: "charges card, saves result"
-  S-->>C: "200 - response lost in transit"
-  C->>S: "POST /charge (key: k1) retry"
-  S->>D: "k1 already exists"
-  S-->>C: "200 - same saved response, no second charge"
+  C->>S: POST /charge (key: k1)
+  S->>D: reserve k1
+  Note over S: charges card, saves result
+  S-->>C: 200 - response lost in transit
+  C->>S: POST /charge (key: k1) retry
+  S->>D: k1 already exists
+  S-->>C: 200 - same saved response, no second charge
 ```
 
 The server stores the outcome against the key. On any repeat, it returns the stored response instead of redoing the work. Stripe keeps these records for 24 hours, which comfortably covers any realistic retry window.

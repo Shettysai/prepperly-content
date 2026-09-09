@@ -35,18 +35,18 @@ Two people try to book the last seat on a flight within the same second, from tw
 
 ```mermaid
 sequenceDiagram
-  participant W as "Writer"
-  participant A as "Replica A"
-  participant B as "Replica B"
-  participant R1 as "Reader 1"
-  participant R2 as "Reader 2"
-  W->>A: "write: seats = 0"
-  A-->>W: "ack"
+  participant W as Writer
+  participant A as Replica A
+  participant B as Replica B
+  participant R1 as Reader 1
+  participant R2 as Reader 2
+  W->>A: write: seats = 0
+  A-->>W: ack
   Note over A,B: replication to B is still in flight
-  R1->>A: "read seats"
-  A-->>R1: "0"
-  R2->>B: "read seats"
-  B-->>R2: "1 (stale)"
+  R1->>A: read seats
+  A-->>R1: 0
+  R2->>B: read seats
+  B-->>R2: 1 (stale)
   Note over B: B catches up moments later -> 0
 ```
 

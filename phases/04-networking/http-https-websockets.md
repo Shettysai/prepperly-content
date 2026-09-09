@@ -44,16 +44,16 @@ sequenceDiagram
   participant S as Server
   rect rgb(240, 240, 240)
   Note over B,S: HTTP: one request, one response, done
-  B->>S: "GET /page"
-  S->>B: "200 OK + body"
+  B->>S: GET /page
+  S->>B: 200 OK + body
   end
   rect rgb(230, 245, 255)
   Note over B,S: WebSocket: upgrade once, then both sides push freely
-  B->>S: "GET /chat (Upgrade: websocket)"
-  S->>B: "101 Switching Protocols"
-  B->>S: "message"
-  S->>B: "message"
-  S->>B: "message"
+  B->>S: GET /chat (Upgrade: websocket)
+  S->>B: 101 Switching Protocols
+  B->>S: message
+  S->>B: message
+  S->>B: message
   end
 ```
 
