@@ -58,6 +58,26 @@ flowchart LR
 
 ## How it actually works
 
+That diagram is the decision loop. Here is what the loop is actually driving — config and state on one side, real cloud resources on the other, with the tool and a provider plugin in between:
+
+```mermaid
+flowchart LR
+  CFG["Config files (.tf)"] --> CLI["IaC tool"]
+  ST[("Remote state + lock")] <--> CLI
+  CLI --> PRV["Provider plugin"]
+  PRV -->|"cloud API calls"| CLOUD["Cloud control plane"]
+  subgraph Res["Managed resources"]
+    VM["Compute instances"]
+    NETW["VPC + firewall rules"]
+    DB[("Managed database")]
+  end
+  CLOUD --> VM
+  CLOUD --> NETW
+  CLOUD --> DB
+```
+
+The **provider plugin** is the piece beginners miss. The tool itself knows nothing about any cloud; a provider translates your generic resource declarations into that specific cloud's API calls, which is how one tool manages AWS, Azure and Cloudflare side by side. Note too that the arrows into the resources come only from the cloud API — the tool never touches a server directly, it only ever asks the control plane.
+
 The cycle is **write, plan, apply**.
 
 You write config declaring what should exist. `plan` compares three things — your config, the state file, and the real infrastructure — and prints what it would change, without changing anything. `apply` executes it and updates the state file.

@@ -43,6 +43,23 @@ Imagine finding the nearest taxi on a paper map covering a whole country. Checki
 
 That is exactly what **geospatial indexing** does. The trick is turning a two-dimensional coordinate into a one-dimensional key — a grid cell ID — because a one-dimensional key is something a normal database index can handle. A **geohash** does this by repeatedly halving the world: each character added to the string narrows the box, so nearby places share a prefix, and "find things near me" becomes "find keys starting with this prefix".
 
+The index sits at the centre of a system with two very differently-shaped inflows:
+
+```mermaid
+flowchart LR
+  DR["Driver apps"] --> LGW["Location ingest gateway"]
+  RI["Rider apps"] --> AGW["API gateway"]
+  LGW --> LS["Location service"]
+  LS --> GEO[("Geo index: cell -> drivers")]
+  AGW --> MS["Matching service"]
+  MS --> GEO
+  MS --> ETA["ETA / routing service"]
+  MS --> TS[("Trip store (durable)")]
+  TS --> PAY["Payments + trip history"]
+```
+
+Drivers and riders enter through **different front doors** on purpose: location updates are a firehose of disposable writes, ride requests are rare and must be durable. Follow the two arrows out of the geo index and the split is clear — ephemeral data on the left, money and records on the right.
+
 ## How it actually works
 
 Two data flows with wildly different volumes. Location updates are enormous and constant; ride requests are comparatively rare.

@@ -45,6 +45,27 @@ That is a **trie** (prefix tree): each node is one character, and the path from 
 
 But a trie alone isn't enough. Once you reach the "syst" node, everything beneath it could be thousands of queries, and gathering and sorting them per keystroke is far too slow. So you **precompute** the answer: each node stores its own top suggestions, already ranked. Lookup becomes "walk to the node, read the list" — no searching at all.
 
+Precomputation splits the system into a fast online half and a slow offline half:
+
+```mermaid
+flowchart LR
+  U["User keystrokes"] --> CDN["Edge cache"]
+  CDN --> GW["API gateway"]
+  subgraph Read["Read tier (stateless)"]
+    S1["Suggest server 1"]
+    S2["Suggest server N"]
+  end
+  GW --> S1
+  GW --> S2
+  S1 --> TR[("In-memory trie snapshot")]
+  S2 --> TR
+  U -.->|"query logs"| LOGS[("Log store")]
+  LOGS --> PIPE["Offline aggregation + trie build"]
+  PIPE --> TR
+```
+
+The dotted line is the only connection between the halves, and it runs the *long* way round — through logs and a batch job, not back through the request. Nothing on the read path writes anything, which is why those servers can be cloned freely.
+
 ## How it actually works
 
 Two separate systems, and keeping them separate is the design.

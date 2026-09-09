@@ -47,6 +47,31 @@ Two ways to run a newspaper delivery service.
 
 Feeds are read far more than written, so pushing at write time is the default. The trouble starts when one publisher has 100 million subscribers.
 
+Because the two paths are optimised for opposite things, they end up as two distinct halves of the architecture:
+
+```mermaid
+flowchart LR
+  CL["Clients"] --> GW["API gateway"]
+  subgraph Write["Write path"]
+    PSV["Post service"]
+    FQ["Fan-out queue"]
+    FW["Fan-out workers"]
+  end
+  subgraph Read["Read path"]
+    FSV["Feed service"]
+  end
+  GW --> PSV
+  GW --> FSV
+  PSV --> PDB[("Post store")]
+  PSV --> FQ --> FW
+  FW --> GRAPH[("Social graph store")]
+  FW --> FC[("Feed cache: post IDs")]
+  FSV --> FC
+  FSV --> PDB
+```
+
+The feed cache is the seam between the halves: workers write into it, the read path only ever reads from it. That is what makes a feed read cheap — the expensive work already happened, in the background, before anyone asked.
+
 ## How it actually works
 
 With **fan-out on write**, publishing a post triggers a background job that looks up the author's followers and appends the post ID to each follower's precomputed feed list — typically a capped list in Redis, holding a few hundred post IDs. Reading is then a single cache read.

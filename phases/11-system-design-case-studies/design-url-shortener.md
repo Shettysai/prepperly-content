@@ -48,6 +48,26 @@ Think of a cloakroom at a theatre. You hand over a coat (the long URL) and get a
 
 Two properties fall out of the analogy. Tickets must be unique, or two people get the same coat. And the cloakroom does far more coat *retrievals* than coat *deposits*, so the retrieval path is what you optimise.
 
+That asymmetry shapes the whole system, so it is worth seeing the boxes before the mechanics. This is the diagram to draw on the whiteboard:
+
+```mermaid
+flowchart LR
+  U["Client"] --> GW["Edge cache + gateway"]
+  subgraph Services
+    RD["Redirect service (read)"]
+    SH["Shorten service (write)"]
+  end
+  GW --> RD
+  GW --> SH
+  RD --> CA[("Cache: key -> URL")]
+  CA --> KV[("Key-value store (sharded)")]
+  SH --> IDG["ID generator (ranges)"]
+  SH --> KV
+  RD --> Q["Click queue -> analytics"]
+```
+
+Notice three things. Read and write are **separate services** even though they share one datastore, because they scale on different axes. The ID generator exists only on the write side. And analytics hangs off a queue, not off the redirect — so it can never slow a redirect down.
+
 ## How it actually works
 
 The key insight is that a short URL is a **base62 encoding** of a number. Base62 uses `0-9a-zA-Z` — 62 characters, all URL-safe with no escaping. Give each URL a unique integer ID, encode that integer in base62, and the short key falls out.

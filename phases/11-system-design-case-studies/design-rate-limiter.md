@@ -48,6 +48,25 @@ Two properties fall out, and both are desirable. The steady drip enforces the *a
 
 This is the **token bucket** algorithm, and it is the default answer for good reason.
 
+Where the buckets live matters as much as how they work, so place the components first:
+
+```mermaid
+flowchart LR
+  CL["Clients"] --> GW["API gateway"]
+  subgraph GW2["Gateway node"]
+    MW["Rate-limit middleware"]
+    LOC[("Local token cache")]
+  end
+  GW --> MW
+  MW <--> LOC
+  MW <--> RED[("Redis cluster: shared counters")]
+  MW -->|"allowed"| APP["Application services"]
+  MW -->|"rejected"| ERR["429 + Retry-After"]
+  RED --> RULES[("Rule config: limits per plan")]
+```
+
+The limiter sits *before* the application, so a rejected request costs almost nothing. And the counters sit outside the gateway node, in Redis — the local cache next to the middleware is only a latency optimisation, never the source of truth.
+
 ## How it actually works
 
 The limiter sits in front of the application — usually in an API gateway — so rejected requests never consume application resources.

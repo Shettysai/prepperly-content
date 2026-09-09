@@ -30,6 +30,26 @@ Without it, someone manually runs tests and copies files to a server — slow, a
 
 Think of a pipeline as an assembly line with quality inspectors stationed at fixed points. A faulty part gets pulled off the line the moment an inspector spots it — it never reaches the next station, let alone the finished car. **Continuous Integration** is the first inspector: every time someone pushes code, a server automatically builds the project and runs the test suite, catching problems in minutes instead of days later when they're tangled up with other people's changes.
 
+Zoom out and the assembly line runs from a developer's commit all the way to production:
+
+```mermaid
+flowchart LR
+  DEV["Developer commit / PR"] --> VCS[("Git repository")]
+  VCS -->|"webhook"| CI["CI runner pool"]
+  subgraph Pipeline["Pipeline"]
+    CIS["CI stages: lint, test, build"]
+    ART[("Artifact / image registry")]
+  end
+  CI --> CIS
+  CIS --> ART
+  ART --> STG["Staging environment"]
+  STG -->|"automated checks"| GATE{"Approval gate"}
+  GATE -->|"approved"| PRD["Production environment"]
+  GATE -->|"rejected"| DEV
+```
+
+The artifact registry is the hinge. The pipeline builds an artifact **once** and then promotes that same artifact through each environment — it never rebuilds per environment, because a rebuild could produce something subtly different from what you just tested. And the rejected arrow loops back to the developer, not forward.
+
 ## How it actually works
 
 **Continuous Delivery** takes CI further: once tests pass, the code is automatically packaged and made ready to release, but a human still clicks a button to actually deploy it. **Continuous Deployment** removes even that click — every change that passes every stage goes straight to production with no manual gate at all. The three terms describe how far automation extends past the initial test run, not three different tools.
@@ -47,6 +67,25 @@ flowchart LR
 ```
 
 Note the failure path: a failure at *any* stage routes straight to "stop and notify," never forward to deploy. Popular tools — GitHub Actions, Jenkins, GitLab CI — all implement this same stage-based shape; only the configuration syntax differs between them.
+
+Real pipelines are not a straight line, though. Stages that don't depend on each other run **in parallel**, and gates collect their results:
+
+```mermaid
+flowchart LR
+  I["Install deps"] --> L["Lint"]
+  I --> UT["Unit tests"]
+  I --> SEC["Security scan"]
+  L --> G1{"All pass?"}
+  UT --> G1
+  SEC --> G1
+  G1 -->|"no"| STOP["Stop — notify"]
+  G1 -->|"yes"| B["Build image"]
+  B --> DS["Deploy staging + E2E"]
+  DS --> G2{"Manual gate"}
+  G2 -->|"approve"| DP["Deploy production"]
+```
+
+Lint, unit tests and the security scan all read the same installed dependencies and none needs another's output, so running them together makes the pipeline as slow as its *slowest* check rather than the sum of all three. The gate after them is what keeps "fail fast" intact: every branch must pass before anything is built. Whether `G2` requires a human is exactly the line between Continuous Delivery and Continuous Deployment.
 
 ## Worked example
 

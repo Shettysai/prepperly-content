@@ -33,6 +33,34 @@ Docker runs one container on one machine. Real applications need many containers
 
 Think of Kubernetes as a building manager, not a security guard. A security guard reacts to one incident at a time. A building manager holds a standing instruction — "this floor should always have exactly 3 working elevators" — and continuously checks reality against that instruction, calling a repair crew the moment an elevator breaks, without anyone asking them to. You give Kubernetes a *desired state* ("keep 3 copies of my app running"), and it spends its entire existence closing the gap between that desired state and whatever is actually true right now.
 
+Before the vocabulary, get the shape of a cluster. Users arrive at the left; the manager's office is the control plane at the top:
+
+```mermaid
+flowchart LR
+  U["Users"] --> SVC["Service (stable address)"]
+  subgraph Cluster["Kubernetes cluster"]
+    subgraph CP["Control plane"]
+      API["kube-apiserver"]
+      ETCD[("etcd: desired state")]
+    end
+    subgraph N1["Worker node 1"]
+      PA["Pod"]
+      PB["Pod"]
+    end
+    subgraph N2["Worker node 2"]
+      PC["Pod"]
+    end
+  end
+  SVC --> PA
+  SVC --> PB
+  SVC --> PC
+  API <--> ETCD
+  API -->|"schedules pods"| N1
+  API -->|"schedules pods"| N2
+```
+
+Two things to take from this. Your app's copies are spread across **separate machines**, so losing one node does not take the app down. And user traffic never touches the control plane — it flows straight to the pods, so the cluster keeps serving requests even while the management layer is busy or degraded.
+
 ## How it actually works
 
 The smallest unit Kubernetes manages is a **Pod** — one or more containers that always run together on the same machine, sharing the same network address and storage. Most of the time a Pod holds exactly one container; multiple containers in one Pod is for tightly-coupled helpers, like a logging sidecar.
