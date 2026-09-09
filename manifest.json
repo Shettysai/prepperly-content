@@ -308,7 +308,7 @@
           "position": 1,
           "path": "phases/04-networking/api-gateways-and-proxies.md",
           "questionsPath": "questions/api-gateways-and-proxies.json",
-          "sha256": "ac2c574aa06c79306dec1e8c3637e7734e616553298ca41183a8213785bd506c"
+          "sha256": "b49205b821fd85949b802d6d9da8312da6a889a731794c9ff95f2912bdecb43b"
         },
         {
           "slug": "cdn-and-edge-caching",
@@ -317,7 +317,7 @@
           "position": 2,
           "path": "phases/04-networking/cdn-and-edge-caching.md",
           "questionsPath": "questions/cdn-and-edge-caching.json",
-          "sha256": "ba57b6380be575e5f9685219d4988adbb3c2db31eb7b8297257c0b33a1b9732e"
+          "sha256": "eca0b95938a638a530695c6e744ade3749dde6343130853b56e092e151e7f5ad"
         },
         {
           "slug": "dns-load-balancing",
@@ -326,7 +326,7 @@
           "position": 3,
           "path": "phases/04-networking/dns-load-balancing.md",
           "questionsPath": "questions/dns-load-balancing.json",
-          "sha256": "be00d329412b2558750d11e74c4976892c24d75f8a3876eb937df2c172cb5ca0"
+          "sha256": "3ad8cbcc7aa256a9676f96fdafd6db124f805cdf0df0e87b9c26746bebb5bce8"
         },
         {
           "slug": "grpc-and-protobuf",
@@ -335,7 +335,7 @@
           "position": 4,
           "path": "phases/04-networking/grpc-and-protobuf.md",
           "questionsPath": "questions/grpc-and-protobuf.json",
-          "sha256": "bca15d3886a2bdb2cd5635c7d46a6ff4060821d19a3d8923cd03fff885a0c5ec"
+          "sha256": "87149dde06e20aefd97bf97eb69287adecb5cadce16c5f5ddedbb513b481bdcc"
         },
         {
           "slug": "http-https-websockets",
@@ -344,7 +344,7 @@
           "position": 5,
           "path": "phases/04-networking/http-https-websockets.md",
           "questionsPath": "questions/http-https-websockets.json",
-          "sha256": "5c2634869746372bef5bd6aa650b47d1b61b1edfeb5be0eb2ef6dc7b46a890f6"
+          "sha256": "5e20a1606468e88ffc590fee54362ede765965e1e51ca4e4cdbcc0dc04f6036e"
         },
         {
           "slug": "mutual-tls-explained",
@@ -353,7 +353,7 @@
           "position": 6,
           "path": "phases/04-networking/mutual-tls-explained.md",
           "questionsPath": "questions/mutual-tls-explained.json",
-          "sha256": "3f05c7e37b319bd9dec165d5a0d8cc0cb061fd24de51c2c9cb79f72b0204d243"
+          "sha256": "7e7a3a4469e48e764aa5b89f6d0495ef62489597927933855e7a78ef7b3b5d30"
         },
         {
           "slug": "network-performance",
@@ -362,7 +362,7 @@
           "position": 7,
           "path": "phases/04-networking/network-performance.md",
           "questionsPath": "questions/network-performance.json",
-          "sha256": "77aeee13ff4933fd570400f508f7879164f4307e74039918109ca7608cd71d0c"
+          "sha256": "64a61858fb07c84141b45a12a11fe8dfefa6c098d4828dcd9950d3a3ed771ba8"
         },
         {
           "slug": "osi-model",
@@ -380,7 +380,7 @@
           "position": 9,
           "path": "phases/04-networking/tcp-ip-udp.md",
           "questionsPath": "questions/tcp-ip-udp.json",
-          "sha256": "281fa68fde2c341caecb867d5d53047582981ebb163b2fd70a5729399b34e1de"
+          "sha256": "99b1cfd18b7fd25c95a33c477c56d7d646677f13a383388f4fa5f73a42c9536f"
         },
         {
           "slug": "tls-and-certificates",
@@ -389,7 +389,7 @@
           "position": 10,
           "path": "phases/04-networking/tls-and-certificates.md",
           "questionsPath": "questions/tls-and-certificates.json",
-          "sha256": "790e67e8b526a5dcaf70a47a4b95aec26b159cff7dcabc3671367d932947f553"
+          "sha256": "7c2e50678faa48279cda71e1f8555204b8ab88b90b5fb1296d558d4b1a6b58c2"
         },
         {
           "slug": "websockets-vs-polling",
@@ -398,7 +398,7 @@
           "position": 11,
           "path": "phases/04-networking/websockets-vs-polling.md",
           "questionsPath": "questions/websockets-vs-polling.json",
-          "sha256": "bffa122f8dcfbbe2feb31d64e891595bbc5f43352e4d6a898c2f6415613b558c"
+          "sha256": "3365b402e818f85a2f2b940c846a782e3943bed4d25fd9d42ba6bc023c222811"
         }
       ]
     },
@@ -424,7 +424,7 @@
           "position": 2,
           "path": "phases/05-databases/connection-pooling.md",
           "questionsPath": "questions/connection-pooling.json",
-          "sha256": "3d0734486f568fec3605a9db1e712e37470c66b77dcb7937a21638f19e842a31"
+          "sha256": "a1333ee2fdbd3afd7822d7874ceab096a6b5216755195697f0f4f7668fbf296b"
         },
         {
           "slug": "database-migrations",
@@ -433,7 +433,7 @@
           "position": 3,
           "path": "phases/05-databases/database-migrations.md",
           "questionsPath": "questions/database-migrations.json",
-          "sha256": "8e5b218937139a2a25172d40fd61b0dfd3af9cdbac4f723087b160ec4c722993"
+          "sha256": "4761fa111905402f1413617228550927e142c9b28cf88079c07b90554d3a8450"
         },
         {
           "slug": "indexing-and-transactions",
@@ -442,7 +442,7 @@
           "position": 4,
           "path": "phases/05-databases/indexing-and-transactions.md",
           "questionsPath": "questions/indexing-and-transactions.json",
-          "sha256": "90e9ab2d686738e7067dd194983e4b4130425fa23fb7d256fdf180e9b5b07ed3"
+          "sha256": "483045ae9517b09574993c1a1520593c0c8d0ba1f13cd07472ef29f7d9f23922"
         },
         {
           "slug": "normalization-and-schema-design",
@@ -451,7 +451,7 @@
           "position": 5,
           "path": "phases/05-databases/normalization-and-schema-design.md",
           "questionsPath": "questions/normalization-and-schema-design.json",
-          "sha256": "7e888f81fdc439228689bfe32bd39a61797e83153b693093bd080e44cb449ade"
+          "sha256": "960dee36fdacbc201837e1ce47ef7fdd597d086a608210aca320599894d0a375"
         },
         {
           "slug": "query-optimization",
@@ -460,7 +460,7 @@
           "position": 6,
           "path": "phases/05-databases/query-optimization.md",
           "questionsPath": "questions/query-optimization.json",
-          "sha256": "2934cc8dfbd67461b886fa18c034c6acd06ed024ee94464eb52e05833df304b5"
+          "sha256": "8df0d1d5ce843f40740f45ab05790e4aebd2276d28be1cd2e3318dc9ff13fbe7"
         },
         {
           "slug": "redis-and-caching-patterns",
@@ -469,7 +469,7 @@
           "position": 7,
           "path": "phases/05-databases/redis-and-caching-patterns.md",
           "questionsPath": "questions/redis-and-caching-patterns.json",
-          "sha256": "b8bf6d6b25ac085b929bfc137c2d386c196030dcc6bd9f7a9d1ab278525c8119"
+          "sha256": "a659982fd59ed25aa13c5e4f2be7b6c65b50acd19de290e5cd5f4de247e150b2"
         },
         {
           "slug": "relational-vs-nosql",
@@ -478,7 +478,7 @@
           "position": 8,
           "path": "phases/05-databases/relational-vs-nosql.md",
           "questionsPath": "questions/relational-vs-nosql.json",
-          "sha256": "f3d0cb5c6812e283eb48237c603bc4ce1e1a19c7f14e25b6546c031ac7d7c092"
+          "sha256": "d8cfd60c7a4ea9862c8cd1fc5296e35e57826f5cb9a6b123b4e9fc0e9d706199"
         },
         {
           "slug": "search-and-inverted-indexes",
@@ -487,7 +487,7 @@
           "position": 9,
           "path": "phases/05-databases/search-and-inverted-indexes.md",
           "questionsPath": "questions/search-and-inverted-indexes.json",
-          "sha256": "41648b34e30a515a62b624d2c084657777419de4d021285cac177a5658203519"
+          "sha256": "c21c15a1c052a226f5523e83b05c28b34e328991419aa2d9db6568a2f66353fa"
         },
         {
           "slug": "sql-queries-and-joins",
@@ -496,7 +496,7 @@
           "position": 10,
           "path": "phases/05-databases/sql-queries-and-joins.md",
           "questionsPath": "questions/sql-queries-and-joins.json",
-          "sha256": "c6b57e57512e6a6299a1a011546fff81dd8797f2fb7f02b948397b4269bed4a5"
+          "sha256": "0d3162e498bb5c1e69885139a51749070c13bd4dfe96d7d153a7da718f91532f"
         },
         {
           "slug": "time-series-and-analytics-databases",
@@ -505,7 +505,7 @@
           "position": 11,
           "path": "phases/05-databases/time-series-and-analytics-databases.md",
           "questionsPath": "questions/time-series-and-analytics-databases.json",
-          "sha256": "e4d44e7268d52714ec5a1e2da7d50f9a628f2110348669a7097b89ba1d4ab4ba"
+          "sha256": "b6fd1b52b2379d5ed0619ad4135bc23d302cca132db48d23372257c82c6ed602"
         }
       ]
     },
@@ -522,7 +522,7 @@
           "position": 1,
           "path": "phases/06-distributed-systems/consensus-algorithms.md",
           "questionsPath": "questions/consensus-algorithms.json",
-          "sha256": "2aff43068705ce3ff7fc4b3244201afa2465224ef84fd572faa77a5e277dcb8d"
+          "sha256": "18be661a5c282e0efe097d9a3caa543b3efa09d23e81baa8151d37578410683e"
         },
         {
           "slug": "consistency-models",
@@ -531,7 +531,7 @@
           "position": 2,
           "path": "phases/06-distributed-systems/consistency-models.md",
           "questionsPath": "questions/consistency-models.json",
-          "sha256": "138b45ef687337126e2e67d34bb9a03cc3de4e68a38895d7c33fc1ce955e2e02"
+          "sha256": "4def4fe9905744a47a65ffe09e6486f2d32605d392b43da32a8e36035bb7ae2e"
         },
         {
           "slug": "distributed-tracing-and-observability",
@@ -540,7 +540,7 @@
           "position": 3,
           "path": "phases/06-distributed-systems/distributed-tracing-and-observability.md",
           "questionsPath": "questions/distributed-tracing-and-observability.json",
-          "sha256": "db6305cb2f247e76329177396a09162a469d5a359d0ccc0618250f0553ee829d"
+          "sha256": "828451c63014cb1466b69ee176e36d8505d6ecf8c52745ad92df32d67c2056c1"
         },
         {
           "slug": "distributed-transactions",
@@ -549,7 +549,7 @@
           "position": 4,
           "path": "phases/06-distributed-systems/distributed-transactions.md",
           "questionsPath": "questions/distributed-transactions.json",
-          "sha256": "8657708331a9003ce081ab72ca9b7b0980478f6bd29492e533f2a9bdc4d1db3b"
+          "sha256": "d942d4dd86630b7bd58b6f41edd02cc736d56cf07ae474a111f31730d6451eae"
         },
         {
           "slug": "event-sourcing-and-cqrs",
@@ -558,7 +558,7 @@
           "position": 5,
           "path": "phases/06-distributed-systems/event-sourcing-and-cqrs.md",
           "questionsPath": "questions/event-sourcing-and-cqrs.json",
-          "sha256": "b85614e4c4d01425bad660d2c31cc19351b6da176e5ec7ec8d11f23202029cfe"
+          "sha256": "45a125d527e3f097339538fd0084c2c6bf381478c5cf4cfe2d02e36ffda692fb"
         },
         {
           "slug": "idempotency-and-retries",
@@ -567,7 +567,7 @@
           "position": 6,
           "path": "phases/06-distributed-systems/idempotency-and-retries.md",
           "questionsPath": "questions/idempotency-and-retries.json",
-          "sha256": "b6e1e12df7892ffb0949cf9567dc7e4cda3d50525af83a12808f056fa34e81ee"
+          "sha256": "7c6d7b78c9534fef7f99c4e307e628c366e0aa673d342f1cb9464f1fd12e282b"
         },
         {
           "slug": "leader-election-and-coordination",
@@ -576,7 +576,7 @@
           "position": 7,
           "path": "phases/06-distributed-systems/leader-election-and-coordination.md",
           "questionsPath": "questions/leader-election-and-coordination.json",
-          "sha256": "b2fd4c0c0475ec24ee0f2be176bf649837a9c2d432ae7fe9db1f3794ea459058"
+          "sha256": "fe0cb5c1e7c785e6f1fb739068a15c2fb81fe51c69f46f844a362a21feb8141c"
         },
         {
           "slug": "message-queues",
@@ -585,7 +585,7 @@
           "position": 8,
           "path": "phases/06-distributed-systems/message-queues.md",
           "questionsPath": "questions/message-queues.json",
-          "sha256": "aa867fab3719bd37d3a2ba3ad98a6a99d5b5026fe17c451f5f7f9a0b212e8f62"
+          "sha256": "39e13b68a7a8358b9800d1cabcc27e1b7b929c018b2e87559be4cbf75101a1f8"
         },
         {
           "slug": "replication-and-partitioning",
@@ -594,7 +594,7 @@
           "position": 9,
           "path": "phases/06-distributed-systems/replication-and-partitioning.md",
           "questionsPath": "questions/replication-and-partitioning.json",
-          "sha256": "d53ffc8dd92342349ef4276a5ee30f6d692474d85381e340ce88a5689892f94d"
+          "sha256": "7d6d467dc0a126c07649c21d9c848b671480f6c9cfbb22dafd4fdca7dc0e2756"
         },
         {
           "slug": "service-discovery-and-mesh",
@@ -603,7 +603,7 @@
           "position": 10,
           "path": "phases/06-distributed-systems/service-discovery-and-mesh.md",
           "questionsPath": "questions/service-discovery-and-mesh.json",
-          "sha256": "720dc7730653646971c813154603aab2e522a72461cbeb200eb82bd22c446f1d"
+          "sha256": "fb53d07a1b1f71bab54227edd6016ad722996c0ab2e33db6e1557b085cbf4b83"
         }
       ]
     },
@@ -620,7 +620,7 @@
           "position": 1,
           "path": "phases/07-system-design/api-design.md",
           "questionsPath": "questions/api-design.json",
-          "sha256": "5684da3923c59a65feea6157da2a5dad6698abb4459dd888850efa9b2b91aa1f"
+          "sha256": "906e7bcf5ae7d6c5bdc4d02c74d0ad49bf4a02b922653830ee73182d69c0a318"
         },
         {
           "slug": "caching-strategies",
@@ -629,7 +629,7 @@
           "position": 2,
           "path": "phases/07-system-design/caching-strategies.md",
           "questionsPath": "questions/caching-strategies.json",
-          "sha256": "8daa46574b6a2e187a02c323bd73308ecaf3189293c100780c6049f7bc07ee90"
+          "sha256": "0675a65fb1b324a812357512b63fd225bfbd6bbda60386eefe234959fe8e309b"
         },
         {
           "slug": "cap-and-tradeoffs-in-practice",
@@ -638,7 +638,7 @@
           "position": 3,
           "path": "phases/07-system-design/cap-and-tradeoffs-in-practice.md",
           "questionsPath": "questions/cap-and-tradeoffs-in-practice.json",
-          "sha256": "55dcba0f8b6bd6dcef28e0fc7433c1e21e18dca28666d73328db9fe5d179545b"
+          "sha256": "ac9a4cc221a5dc3d6f3ba38be1f9f2fd510ba0b9e4ed7b1ce01278955210bd7f"
         },
         {
           "slug": "capacity-planning",
@@ -647,7 +647,7 @@
           "position": 4,
           "path": "phases/07-system-design/capacity-planning.md",
           "questionsPath": "questions/capacity-planning.json",
-          "sha256": "66621b220e455c15f4964ec54c528ad8a18632065810d72cfef39c8daaf394df"
+          "sha256": "5188f429f226050ceb7ea68f4aee7e85f236c8256c00ccf0f81bfc3f236545df"
         },
         {
           "slug": "database-sharding",
@@ -656,7 +656,7 @@
           "position": 5,
           "path": "phases/07-system-design/database-sharding.md",
           "questionsPath": "questions/database-sharding.json",
-          "sha256": "aab8201b657125743f8b10eee4cfb36d690329139e40ace758d689cbebf04cf6"
+          "sha256": "eeb241bba1c373b42059ca9b0dac6acea2eed1948e6e32d2dd1577851b37b4d5"
         },
         {
           "slug": "designing-for-failure",
@@ -665,7 +665,7 @@
           "position": 6,
           "path": "phases/07-system-design/designing-for-failure.md",
           "questionsPath": "questions/designing-for-failure.json",
-          "sha256": "795ba4dbfb0091a0e4520549b3c28ef5ba12e5aa5adaa292d9f5761539be2a36"
+          "sha256": "229e7adfcf180d53bc9feebefc53fc98c9acc22cb69521e90bad6d0403cf3b04"
         },
         {
           "slug": "load-balancing-strategies",
@@ -674,7 +674,7 @@
           "position": 7,
           "path": "phases/07-system-design/load-balancing-strategies.md",
           "questionsPath": "questions/load-balancing-strategies.json",
-          "sha256": "986e60a32a8a0408cd221573c07144db1f02318e300b55cd09e562c6ef3dc466"
+          "sha256": "8dfea8187e79c128aa6812115a4f668d5ec7234e8b363f4340319bdc79e72721"
         },
         {
           "slug": "monolith-vs-microservices",
@@ -683,7 +683,7 @@
           "position": 8,
           "path": "phases/07-system-design/monolith-vs-microservices.md",
           "questionsPath": "questions/monolith-vs-microservices.json",
-          "sha256": "74a47687e877c0754734448cbbed0ebd1c0a485b855e7851100ba58cc7067160"
+          "sha256": "27952a3fca22bf714bf715e5c0239ccf9a0c5e84e7d8f8380809c29387e5f679"
         },
         {
           "slug": "multi-tenancy-and-isolation",
@@ -692,7 +692,7 @@
           "position": 9,
           "path": "phases/07-system-design/multi-tenancy-and-isolation.md",
           "questionsPath": "questions/multi-tenancy-and-isolation.json",
-          "sha256": "08739213fde59249e7ecb24bbac059e63ce7ebc7b4c808959d0ff2788cf42b0b"
+          "sha256": "ae92b3cafa802dbf37ea1da11db735797e2b9b075ef284ebfd159213fb95c1e1"
         },
         {
           "slug": "rate-limiting-and-throttling",
@@ -701,7 +701,7 @@
           "position": 10,
           "path": "phases/07-system-design/rate-limiting-and-throttling.md",
           "questionsPath": "questions/rate-limiting-and-throttling.json",
-          "sha256": "bc15a6849d251437cca14763a3d5835321a777304bfcc65a8a12f07874d69201"
+          "sha256": "33d149181b7d08e6c9fb2b57b95771bd472a1a347b885146bf72e805449d0d1c"
         },
         {
           "slug": "scalability-and-performance",
@@ -710,7 +710,7 @@
           "position": 11,
           "path": "phases/07-system-design/scalability-and-performance.md",
           "questionsPath": "questions/scalability-and-performance.json",
-          "sha256": "7f19b8b8f4b724fe4ad09ec0c66d786f076b154ff16c1333f843b0846995119d"
+          "sha256": "ea77de9915b183d74f2e59492588b9f8a244f6803955374c1fbe2b8b8c30e124"
         }
       ]
     },
@@ -727,7 +727,7 @@
           "position": 1,
           "path": "phases/08-node-js/cluster-module-and-worker-threads.md",
           "questionsPath": "questions/cluster-module-and-worker-threads.json",
-          "sha256": "9c7103adb42d1a7374f301640dc1f9c1c0cd1ad424b43e08963472cf24e66c7c"
+          "sha256": "1ae01180c55f05c82bb778bd4c17668875e1a4f5040babe8ac0908aa8000c38d"
         },
         {
           "slug": "error-handling-patterns",
@@ -736,7 +736,7 @@
           "position": 2,
           "path": "phases/08-node-js/error-handling-patterns.md",
           "questionsPath": "questions/error-handling-patterns.json",
-          "sha256": "dc1c7bd802ba6b8a086f851eeea7f8a745e8a3033c03523d91d4bced725a1992"
+          "sha256": "f1ffdd19cac62850d2fe658ecc3f1ba64e6d3bb3d95ad175f137f1f8971ed8bb"
         },
         {
           "slug": "event-loop-and-async-io",
@@ -745,7 +745,7 @@
           "position": 3,
           "path": "phases/08-node-js/event-loop-and-async-io.md",
           "questionsPath": "questions/event-loop-and-async-io.json",
-          "sha256": "2a27d46fd6a744bf6947141467bbbae125531b696393105d527085fe4344a221"
+          "sha256": "cb52f730ce3a7bad0420379c7396dfe68e7bb3d03e5869bd95324dfc488252df"
         },
         {
           "slug": "express-and-middleware",
@@ -754,7 +754,7 @@
           "position": 4,
           "path": "phases/08-node-js/express-and-middleware.md",
           "questionsPath": "questions/express-and-middleware.json",
-          "sha256": "7a300f49fd6921c58d5c1632cb3834ef51fc51b901b3a51bbe34a073d462c78a"
+          "sha256": "c0dcea3816ce8efb18019d94d72fde15b729f558f8ebfe172843f707ab41f6bf"
         },
         {
           "slug": "nestjs-and-di-patterns",
@@ -763,7 +763,7 @@
           "position": 5,
           "path": "phases/08-node-js/nestjs-and-di-patterns.md",
           "questionsPath": "questions/nestjs-and-di-patterns.json",
-          "sha256": "581632c0f67976a48af41f8c59ca7179262a2466a7a9e3cc73b81a3cef716761"
+          "sha256": "8a9b4680ffb879cfa36e1aa21b78317b6ecf8dcfaacde3b9a1f34743da35761a"
         },
         {
           "slug": "performance-profiling",
@@ -772,7 +772,7 @@
           "position": 6,
           "path": "phases/08-node-js/performance-profiling.md",
           "questionsPath": "questions/performance-profiling.json",
-          "sha256": "3786c009970dfe18119b4982c5216112d544a762e7f3499fa5ffe05ab4229801"
+          "sha256": "3f3664ac383dd38fa3661deb9231be7de74afaa13c851cfb65a1c784f3e023f2"
         },
         {
           "slug": "security-best-practices",
@@ -781,7 +781,7 @@
           "position": 7,
           "path": "phases/08-node-js/security-best-practices.md",
           "questionsPath": "questions/security-best-practices.json",
-          "sha256": "b463ecd3907a02b98b99c6464579976094796c1f7e709ea5cfa3bbc21d735e2a"
+          "sha256": "f178f0c06a68365112d6c96070ddbf8d194cea43e263d83b092aa9ca7fd5c365"
         },
         {
           "slug": "streams-and-buffers",
@@ -790,7 +790,7 @@
           "position": 8,
           "path": "phases/08-node-js/streams-and-buffers.md",
           "questionsPath": "questions/streams-and-buffers.json",
-          "sha256": "a2dfd55a68870977cd74c10689b0f579db38d2206cb5a166744841de2f034358"
+          "sha256": "282609f10bf71e9b974720e4d56609b498ddbc1587b983c0478c3bf2922fbacc"
         },
         {
           "slug": "testing-node-applications",
@@ -799,7 +799,7 @@
           "position": 9,
           "path": "phases/08-node-js/testing-node-applications.md",
           "questionsPath": "questions/testing-node-applications.json",
-          "sha256": "832d19ecd256c2d2c401a71ac2d3cd4c9b367763f55a1abc801a6d38b5374cbb"
+          "sha256": "24f4773049bfbe40660152e6e7a240b0734a0282538d2a5f3d03dab7b69246ab"
         },
         {
           "slug": "typescript-in-node",
@@ -808,7 +808,7 @@
           "position": 10,
           "path": "phases/08-node-js/typescript-in-node.md",
           "questionsPath": "questions/typescript-in-node.json",
-          "sha256": "ded6e8e200b287cef0554adaedfac69223083a7526a2c60f8cc1a7cc4f31f0b8"
+          "sha256": "d5f25f257a4e41bf5804a6e2c206beb5181145080b08c08bf051b34e7235393d"
         },
         {
           "slug": "v8-engine-and-garbage-collection",
@@ -817,7 +817,7 @@
           "position": 11,
           "path": "phases/08-node-js/v8-engine-and-garbage-collection.md",
           "questionsPath": "questions/v8-engine-and-garbage-collection.json",
-          "sha256": "2c4ff2ab2df803428760b483bdfd609780e23bc56fb88d3d604482aaabd8c79f"
+          "sha256": "66da9c49edf72a167a251de750d4156400e14e9d6820fff1be4693632bfa1e17"
         }
       ]
     },
@@ -834,7 +834,7 @@
           "position": 1,
           "path": "phases/09-backend-engineering/api-versioning.md",
           "questionsPath": "questions/api-versioning.json",
-          "sha256": "b0bdb9bc39acdfb26eb28c6b59a29b2ae94260246ef9689ddb2f99c72d31fb9a"
+          "sha256": "02d73cb11ec8cce93f0eaeba1c2992d34a8cb269c3a02d8fd7b596b5b694e290"
         },
         {
           "slug": "authentication-authorization",
@@ -843,7 +843,7 @@
           "position": 2,
           "path": "phases/09-backend-engineering/authentication-authorization.md",
           "questionsPath": "questions/authentication-authorization.json",
-          "sha256": "56af94aa7aff4b92c169a8b561b27635c8d02e13baee804ed9c6ab39f80868bb"
+          "sha256": "84ad0c855d73f89527fba4bce2ed0e9519d9d828e86c1d2fb2c1da951b52d7b2"
         },
         {
           "slug": "cicd-pipelines",
@@ -852,7 +852,7 @@
           "position": 3,
           "path": "phases/09-backend-engineering/cicd-pipelines.md",
           "questionsPath": "questions/cicd-pipelines.json",
-          "sha256": "1ffea5ca70ad72fef505cf149cfb0f91a3a39c7570939a6190f54d1bafcd4afd"
+          "sha256": "8aebda9ad1807f4ec65b03976df0a40f3e49e80c0db4ffe85eff899f9e9881ff"
         },
         {
           "slug": "docker-containerization",
@@ -861,7 +861,7 @@
           "position": 4,
           "path": "phases/09-backend-engineering/docker-containerization.md",
           "questionsPath": "questions/docker-containerization.json",
-          "sha256": "5dbca43b83209e08259f486348a864618d1a3931db79d6eec95d8f8aa577498a"
+          "sha256": "47975148b1fa270388630f440c5de294e0120acd0b9aba0ad91950796e99244f"
         },
         {
           "slug": "gpu-scheduling-in-kubernetes",
@@ -870,7 +870,7 @@
           "position": 5,
           "path": "phases/09-backend-engineering/gpu-scheduling-in-kubernetes.md",
           "questionsPath": "questions/gpu-scheduling-in-kubernetes.json",
-          "sha256": "16ddd5e35ea59c98c89eab81ca186ee8ad0b4dc1d54a78ac2d314b912b02c14b"
+          "sha256": "96686ab23427bec79dc3f9391c95205227e235892997026d7b6348d47b544965"
         },
         {
           "slug": "infrastructure-as-code",
@@ -879,7 +879,7 @@
           "position": 6,
           "path": "phases/09-backend-engineering/infrastructure-as-code.md",
           "questionsPath": "questions/infrastructure-as-code.json",
-          "sha256": "df60fc40e3f99646920640473a6cf00bfb5f4701be6ec04446f241b497483745"
+          "sha256": "4ee3bdf2b9729443ac339ed468e4291724eac71b6887f81c2f984c6a63ed2168"
         },
         {
           "slug": "kubernetes-basics",
@@ -888,7 +888,7 @@
           "position": 7,
           "path": "phases/09-backend-engineering/kubernetes-basics.md",
           "questionsPath": "questions/kubernetes-basics.json",
-          "sha256": "83b275b7bfa677962a739de19d3fa9aa551c084901a4fca47c57cccbf2164694"
+          "sha256": "1cd9b4fb24ed53789e6886473fd092533899c5c3f3e6c111326acf8aef6480d4"
         },
         {
           "slug": "logging-and-monitoring",
@@ -897,7 +897,7 @@
           "position": 8,
           "path": "phases/09-backend-engineering/logging-and-monitoring.md",
           "questionsPath": "questions/logging-and-monitoring.json",
-          "sha256": "96f2b3a68c3205fa94442796f559ab7004edd91f2d0ea577a9fa33abb1514fd5"
+          "sha256": "a26228cdb5e8c60dc4da5c8e0b09d224d414b2c2478c578842ba788eb8ba81df"
         },
         {
           "slug": "message-brokers-in-practice",
@@ -906,7 +906,7 @@
           "position": 9,
           "path": "phases/09-backend-engineering/message-brokers-in-practice.md",
           "questionsPath": "questions/message-brokers-in-practice.json",
-          "sha256": "f98e989fe5c00c3c363e4dafedb8038382f6693282a822ace49d37430555337f"
+          "sha256": "d2c7776982540fb525dd19b64e2542d8c63432c81549f74896fb99c80c456cef"
         },
         {
           "slug": "secrets-management",
@@ -915,7 +915,7 @@
           "position": 10,
           "path": "phases/09-backend-engineering/secrets-management.md",
           "questionsPath": "questions/secrets-management.json",
-          "sha256": "0f83dc61bc7c92b5f8af655afe23c5c72cce3dd0a5d2ce7c4ef45e8f349edbb4"
+          "sha256": "d9bb01866460743308699b99806b84804cd2ef78ca2bea5f2054eb43e19d455e"
         },
         {
           "slug": "serverless-and-faas",
@@ -924,7 +924,7 @@
           "position": 11,
           "path": "phases/09-backend-engineering/serverless-and-faas.md",
           "questionsPath": "questions/serverless-and-faas.json",
-          "sha256": "01f0b78d0e4c7d05484a49ced2a983a442087adada42977508cd4fe07e5d003a"
+          "sha256": "9c6ef5b77a7e85a3f1772f620448417f68e5e0a930f1880bb5c0b1257613ebc4"
         },
         {
           "slug": "web-security-fundamentals",
@@ -933,7 +933,7 @@
           "position": 12,
           "path": "phases/09-backend-engineering/web-security-fundamentals.md",
           "questionsPath": "questions/web-security-fundamentals.json",
-          "sha256": "db8af08ace356a2b140485389dd7dc7bbf2fb12a8e73966f5c599d476c3ae3a5"
+          "sha256": "6cd9072cb12badb0c9024e13dda24f1a25ee7c6ed2becd86c8dcda4a8fde0b67"
         }
       ]
     },
@@ -994,7 +994,7 @@
           "position": 1,
           "path": "phases/11-system-design-case-studies/design-chat-system.md",
           "questionsPath": "questions/design-chat-system.json",
-          "sha256": "f5fbc4a2565138f18962333fd16f80c4c0c1cfc00e372959c130d42883a12196"
+          "sha256": "94e821d83fb14ea86cad205e6050c8a2e996e7692262a4faa7acc226e4cb1d7a"
         },
         {
           "slug": "design-news-feed",
@@ -1003,7 +1003,7 @@
           "position": 2,
           "path": "phases/11-system-design-case-studies/design-news-feed.md",
           "questionsPath": "questions/design-news-feed.json",
-          "sha256": "e1ea7f34b541b5577ce3c17b8be2a05e1945b5c54bb245fde4ee8efccc2124de"
+          "sha256": "533aeddc0cc741c8e2999f1fd448525f4510e4f91cf69735a441ab159d6274b6"
         },
         {
           "slug": "design-notification-system",
@@ -1012,7 +1012,7 @@
           "position": 3,
           "path": "phases/11-system-design-case-studies/design-notification-system.md",
           "questionsPath": "questions/design-notification-system.json",
-          "sha256": "cba8fdc6b42cdde275edcecb014c395927e2b3c47a94dfc4b7d97c34e591cddd"
+          "sha256": "057b44e05880e83442a34770bfadae927778d28913837f2f2235b53c75962cbc"
         },
         {
           "slug": "design-rate-limiter",
@@ -1021,7 +1021,7 @@
           "position": 4,
           "path": "phases/11-system-design-case-studies/design-rate-limiter.md",
           "questionsPath": "questions/design-rate-limiter.json",
-          "sha256": "0bdf650ef3fa14d3dd6c1a4fbde8617b78258d3e2dae62f776525b95aa14d3bd"
+          "sha256": "d2d572dd792ba62077e6c1a6eafd7baede1b31dd5ff8ca91ea302e269d5c7abc"
         },
         {
           "slug": "design-ride-sharing",
@@ -1030,7 +1030,7 @@
           "position": 5,
           "path": "phases/11-system-design-case-studies/design-ride-sharing.md",
           "questionsPath": "questions/design-ride-sharing.json",
-          "sha256": "4b71decf8e1b1a1360068d782a0c3217b543d1ea6d1ad74079cf91c9f82c228e"
+          "sha256": "0245c93bf23d01b95871f9ca70deab1662184a70c91d04c1aa1cd3491b288147"
         },
         {
           "slug": "design-search-autocomplete",
@@ -1039,7 +1039,7 @@
           "position": 6,
           "path": "phases/11-system-design-case-studies/design-search-autocomplete.md",
           "questionsPath": "questions/design-search-autocomplete.json",
-          "sha256": "04fba82aa799c695847ec787966b79f139c90749e73ca1e7dc362a0911014301"
+          "sha256": "c67cd9ed0681999fbf06c045c759c2f6de96388caaf5dbfc61486f9cb3524b73"
         },
         {
           "slug": "design-url-shortener",
@@ -1048,7 +1048,7 @@
           "position": 7,
           "path": "phases/11-system-design-case-studies/design-url-shortener.md",
           "questionsPath": "questions/design-url-shortener.json",
-          "sha256": "981c2bd50163886e92050e3a50e7eb36db75d32052b49baad459a75ab6fc808f"
+          "sha256": "b573e5d41908570009fe7146c9865b92689d4eca61893d9b20eb511824b95d3f"
         },
         {
           "slug": "design-video-streaming",
@@ -1057,7 +1057,7 @@
           "position": 8,
           "path": "phases/11-system-design-case-studies/design-video-streaming.md",
           "questionsPath": "questions/design-video-streaming.json",
-          "sha256": "282ea577e8c23db786b863090644c2b49549109b40fb3b2fee5a3d900c92e8ab"
+          "sha256": "63fcd32e94953e15eccc9a2762bbf6e966b7ef2fa163d002dbcfe75253ce75a4"
         }
       ]
     },
@@ -1074,7 +1074,7 @@
           "position": 1,
           "path": "phases/12-ai-engineering/agent-orchestration.md",
           "questionsPath": "questions/agent-orchestration.json",
-          "sha256": "2e3a39fa739c4de84d4eb2a18038aff5955b05f498f070ee33961817a1cff5da"
+          "sha256": "0f207462e1ddb7e682af0f52a94ab70b160e0fe5648aa51d9fc432116df87f2e"
         },
         {
           "slug": "attention-and-transformers",
@@ -1083,7 +1083,7 @@
           "position": 2,
           "path": "phases/12-ai-engineering/attention-and-transformers.md",
           "questionsPath": "questions/attention-and-transformers.json",
-          "sha256": "c5dbcc8f60e14aa4eec2e0187768bcdb507f67b7d5be41f611225db6ce913274"
+          "sha256": "7bfe2917e619fa496feb82222c9da7107298a74a926918a0d8caceb273e58a38"
         },
         {
           "slug": "embeddings-and-vector-math",
@@ -1092,7 +1092,7 @@
           "position": 3,
           "path": "phases/12-ai-engineering/embeddings-and-vector-math.md",
           "questionsPath": "questions/embeddings-and-vector-math.json",
-          "sha256": "f75368de2a042ce47b8037207909cd0985a4905fa642112151701bd7c4256a09"
+          "sha256": "ebaf16c710a3bbad520e5b21501195074238e64322c8d9f3c9de975e232c3fd8"
         },
         {
           "slug": "kv-cache-and-context-windows",
@@ -1101,7 +1101,7 @@
           "position": 4,
           "path": "phases/12-ai-engineering/kv-cache-and-context-windows.md",
           "questionsPath": "questions/kv-cache-and-context-windows.json",
-          "sha256": "50434728786eb66f6cdbd24e73f36aeda56916f827e313b42d9232c78f2e0f37"
+          "sha256": "14708141bb9da40611f7abdf432d769b9b73d6fcc1a745c0881b8eef9c6bc6a6"
         },
         {
           "slug": "llm-cost-and-latency",
@@ -1110,7 +1110,7 @@
           "position": 5,
           "path": "phases/12-ai-engineering/llm-cost-and-latency.md",
           "questionsPath": "questions/llm-cost-and-latency.json",
-          "sha256": "e96d41a58fd3bf63715df1d3235b4c7934ed053af36121969bf2f06f54948e21"
+          "sha256": "a194a41490fa9e7648ae35786946492394701e81c0cf1ec1a0812f57839aaa8c"
         },
         {
           "slug": "llm-evaluation-and-testing",
@@ -1119,7 +1119,7 @@
           "position": 6,
           "path": "phases/12-ai-engineering/llm-evaluation-and-testing.md",
           "questionsPath": "questions/llm-evaluation-and-testing.json",
-          "sha256": "05fad0e7725774420f64ddeadf58f146308c508656aed29ba5765bedc68298a1"
+          "sha256": "599b75091cb831a61b0fddee5868efcec272b55bd6a4f6eed97d34b29112cd92"
         },
         {
           "slug": "llm-fundamentals",
@@ -1128,7 +1128,7 @@
           "position": 7,
           "path": "phases/12-ai-engineering/llm-fundamentals.md",
           "questionsPath": "questions/llm-fundamentals.json",
-          "sha256": "a74a68668a67523cdaccebc2647242808bd0336caa8743547ab35b91dc74b743"
+          "sha256": "610e5dd90701980286518cbf2e9799b7d9103bfe3abda3e040271ce6233780b3"
         },
         {
           "slug": "llm-safety-and-guardrails",
@@ -1137,7 +1137,7 @@
           "position": 8,
           "path": "phases/12-ai-engineering/llm-safety-and-guardrails.md",
           "questionsPath": "questions/llm-safety-and-guardrails.json",
-          "sha256": "71cd7d6e011d71d355ab5aa18165a8ee783bad71e88caaf6e8584b1db68b5400"
+          "sha256": "cb38b0c04ead66e95647aad34c23cad0e04bf7ebea798f15d57371c2eb34f105"
         },
         {
           "slug": "mcp-and-agent-tool-protocols",
@@ -1146,7 +1146,7 @@
           "position": 9,
           "path": "phases/12-ai-engineering/mcp-and-agent-tool-protocols.md",
           "questionsPath": "questions/mcp-and-agent-tool-protocols.json",
-          "sha256": "45b18dac1ae09a3af1dbebb01d77e96ccdf3bf482558fbb3816887fcd448d957"
+          "sha256": "c1ff03697de654c7f92c2808fd99e3285618d8d943698b79069898591e63437b"
         },
         {
           "slug": "prompt-engineering",
@@ -1155,7 +1155,7 @@
           "position": 10,
           "path": "phases/12-ai-engineering/prompt-engineering.md",
           "questionsPath": "questions/prompt-engineering.json",
-          "sha256": "1da181f56421dc9311493c1011902ed1d1be0cb8f8c3fbd6c543e932b2d56058"
+          "sha256": "4bb16be0e1053167e1db7cd809e9559359c68ef8dd2b523a71f3789f7f59aa65"
         },
         {
           "slug": "rag-in-production",
@@ -1182,7 +1182,7 @@
           "position": 13,
           "path": "phases/12-ai-engineering/sampling-and-decoding.md",
           "questionsPath": "questions/sampling-and-decoding.json",
-          "sha256": "332b0ddbe21e72d16ce5982f6267ef015dff2d986799deb54b522575f02d14e1"
+          "sha256": "fd1baaa20809d96262407e48b605df939d5503bade5df0aaff098d7dd3cbad84"
         },
         {
           "slug": "tool-calling-and-function-calling",
@@ -1191,7 +1191,7 @@
           "position": 14,
           "path": "phases/12-ai-engineering/tool-calling-and-function-calling.md",
           "questionsPath": "questions/tool-calling-and-function-calling.json",
-          "sha256": "79cee409681b129a46a14f959a7b3a43d08d1e45b3011be827b99126893f6bf5"
+          "sha256": "9cc22d099d24ec4827d878e57974b3d7b7f573ece7cc1437cf71c8ab23e92806"
         },
         {
           "slug": "vector-databases",
@@ -1200,7 +1200,7 @@
           "position": 15,
           "path": "phases/12-ai-engineering/vector-databases.md",
           "questionsPath": "questions/vector-databases.json",
-          "sha256": "15372c7d052cceb10abf3213257ce6336df82b2869594fe6392211515ef30489"
+          "sha256": "667f53ae7df8ec3b2ac65953928476dfa69a30a0a4a4fbdddd05dea999fe12ab"
         }
       ]
     },
@@ -1475,7 +1475,7 @@
           "position": 1,
           "path": "phases/16-security-identity-and-pki/certificate-lifecycle-and-rotation.md",
           "questionsPath": "questions/certificate-lifecycle-and-rotation.json",
-          "sha256": "bbb6fab8c0e504c33430948a4e8aff2bd4408bf260bef40e84dbf62566d49791"
+          "sha256": "5519388a17b7606917d1d71e3487e57f3e917e64e3f795e78e4f22be297ee6b8"
         },
         {
           "slug": "connection-reuse-and-handshake-cost",
@@ -1484,7 +1484,7 @@
           "position": 2,
           "path": "phases/16-security-identity-and-pki/connection-reuse-and-handshake-cost.md",
           "questionsPath": "questions/connection-reuse-and-handshake-cost.json",
-          "sha256": "091a8e6236b8a7ff7ca410ba3a01e223075260f18f3cc4e3785aeac1d74fbd1c"
+          "sha256": "87a0023609e05f5b2799a0f2285645bed718bd6e932c42411ec3981fb68c7b3f"
         },
         {
           "slug": "mtls-failure-modes",
@@ -1493,7 +1493,7 @@
           "position": 3,
           "path": "phases/16-security-identity-and-pki/mtls-failure-modes.md",
           "questionsPath": "questions/mtls-failure-modes.json",
-          "sha256": "8ebee62120dbfd4e5a65205284d55c71647a38ed0dac6980cb4fc6f4933341e9"
+          "sha256": "55236963026838f4d09ceca8e8b38d36e7f7f0b41e6380e2af87f3e19a88dc17"
         },
         {
           "slug": "mtls-in-service-meshes",
@@ -1502,7 +1502,7 @@
           "position": 4,
           "path": "phases/16-security-identity-and-pki/mtls-in-service-meshes.md",
           "questionsPath": "questions/mtls-in-service-meshes.json",
-          "sha256": "a6f879ba038aea66a31bf242c08c7a1382f1a4c22dcb7068074f4a5aff58e4ef"
+          "sha256": "f606748acc477ac32d6d17ce1dd8317747254bcee2cf752f264b5619750766b1"
         },
         {
           "slug": "mtls-vs-token-auth",
@@ -1511,7 +1511,7 @@
           "position": 5,
           "path": "phases/16-security-identity-and-pki/mtls-vs-token-auth.md",
           "questionsPath": "questions/mtls-vs-token-auth.json",
-          "sha256": "06dae5a6c54c3e1843dd7906b2a43c324370d0f1a1b9b855f2919669f80d138a"
+          "sha256": "fe5c719f7205b5db8e8da60d5e0da69b4b7c4e5752af505998cdabe80199fb7c"
         },
         {
           "slug": "pki-and-certificate-authorities",
@@ -1520,7 +1520,7 @@
           "position": 6,
           "path": "phases/16-security-identity-and-pki/pki-and-certificate-authorities.md",
           "questionsPath": "questions/pki-and-certificate-authorities.json",
-          "sha256": "350258171d333b0acf5d6ac10fe78c5db85ba752ed453acdfe1e889960020ee4"
+          "sha256": "d88027cd5b75e7da1f0da4d72b83590de66fa1601331889ec1667a491926a4c3"
         },
         {
           "slug": "secure-defaults-and-common-footguns",
@@ -1529,7 +1529,7 @@
           "position": 7,
           "path": "phases/16-security-identity-and-pki/secure-defaults-and-common-footguns.md",
           "questionsPath": "questions/secure-defaults-and-common-footguns.json",
-          "sha256": "e3bbb3214b9a5e7b8a75077ce7297cdd52f76ba8267628a953ca1dfd2b0f9b90"
+          "sha256": "8b390984bff9d0a4bb2ce0ccc55bca9d65dde1138e94edf45a409880271d1134"
         },
         {
           "slug": "tls-termination-and-passthrough",
@@ -1538,7 +1538,7 @@
           "position": 8,
           "path": "phases/16-security-identity-and-pki/tls-termination-and-passthrough.md",
           "questionsPath": "questions/tls-termination-and-passthrough.json",
-          "sha256": "bac580b92dc01714ec5968aaae9615047f0654c83ce5ed18ef15dedb90802b50"
+          "sha256": "b6e2f41490739010b657506f9fd4bfb02e925ab30a2aa4916048211216910fd7"
         },
         {
           "slug": "workload-identity-and-spiffe",
@@ -1547,7 +1547,7 @@
           "position": 9,
           "path": "phases/16-security-identity-and-pki/workload-identity-and-spiffe.md",
           "questionsPath": "questions/workload-identity-and-spiffe.json",
-          "sha256": "0cf6fe89fbf7287835e3838d19a895eb3a635bb04b0b8980bb1da726b80ab085"
+          "sha256": "7cd8bb7e4bccf3a40a389bacc58e2b3c967f9596266ba7b30a85311f410e41cd"
         },
         {
           "slug": "x509-and-der-decoded",
@@ -1556,7 +1556,7 @@
           "position": 10,
           "path": "phases/16-security-identity-and-pki/x509-and-der-decoded.md",
           "questionsPath": "questions/x509-and-der-decoded.json",
-          "sha256": "1f718d40858732175cd71de14d4378540fb2372dad86c49363b981223627aabf"
+          "sha256": "63e125bd9b77998e16b563f4c1f459ee53984761fd0a7018951c5e36f0dce2f5"
         }
       ]
     },
@@ -1573,7 +1573,7 @@
           "position": 1,
           "path": "phases/17-llm-infrastructure-and-gpus/continuous-batching-and-throughput.md",
           "questionsPath": "questions/continuous-batching-and-throughput.json",
-          "sha256": "152f6fca20eb2a71fd01aec1ac2f8a07e3e808e08d098709c9a41619377cb7e0"
+          "sha256": "745076845345a6c4c52b21149473ec6c9a4a39294a5c5b64a2a646f9e94a9bef"
         },
         {
           "slug": "deploying-a-model-end-to-end",
@@ -1582,7 +1582,7 @@
           "position": 2,
           "path": "phases/17-llm-infrastructure-and-gpus/deploying-a-model-end-to-end.md",
           "questionsPath": "questions/deploying-a-model-end-to-end.json",
-          "sha256": "353b929ca6ec6e37b246b9ae09af11407b1299185a0bcf475f3fb9d95195a9e9"
+          "sha256": "241157f47e5fa937cea037247a7680034f39998355f9bdc358cdfd28c49a6ec3"
         },
         {
           "slug": "fine-tuning-and-lora",
@@ -1591,7 +1591,7 @@
           "position": 3,
           "path": "phases/17-llm-infrastructure-and-gpus/fine-tuning-and-lora.md",
           "questionsPath": "questions/fine-tuning-and-lora.json",
-          "sha256": "ef6d93a565db435fb8b9543c193b16f8dcff1ace98e3ffc8a7d94d8594d5dcc9"
+          "sha256": "d29cb953604e46580d611b6f3ad2f397bf3c9e26a6a6b558b45f73b503f6c570"
         },
         {
           "slug": "gpu-autoscaling-and-cold-starts",
@@ -1600,7 +1600,7 @@
           "position": 4,
           "path": "phases/17-llm-infrastructure-and-gpus/gpu-autoscaling-and-cold-starts.md",
           "questionsPath": "questions/gpu-autoscaling-and-cold-starts.json",
-          "sha256": "8323301d49011670e358c990ffbce41cd709f813eff82dac8921f1bd5230ba5c"
+          "sha256": "fb6d535f3a7f985a1051119f1696220d23f51df6e3a2d1306fa348d3d34f18f6"
         },
         {
           "slug": "gpu-fundamentals-for-engineers",
@@ -1609,7 +1609,7 @@
           "position": 5,
           "path": "phases/17-llm-infrastructure-and-gpus/gpu-fundamentals-for-engineers.md",
           "questionsPath": "questions/gpu-fundamentals-for-engineers.json",
-          "sha256": "15ef33b30e822565309e0e114c78d5a8db21f657878a3e85d10853e579dd7b82"
+          "sha256": "53c652a09d7be86aab1ab5d526cbcc6f72cd9329b9b77fd5119d5175c31e706e"
         },
         {
           "slug": "gpu-memory-math",
@@ -1618,7 +1618,7 @@
           "position": 6,
           "path": "phases/17-llm-infrastructure-and-gpus/gpu-memory-math.md",
           "questionsPath": "questions/gpu-memory-math.json",
-          "sha256": "b2a43dbfcffe38c70e95130a2d1f7336425194e6d9f6fdea10787eeab9d098ed"
+          "sha256": "024efd297cd267d331284a74efb55b121adef57c6bf5a58bd54c771e29133d10"
         },
         {
           "slug": "inference-servers-vllm-and-tgi",
@@ -1627,7 +1627,7 @@
           "position": 7,
           "path": "phases/17-llm-infrastructure-and-gpus/inference-servers-vllm-and-tgi.md",
           "questionsPath": "questions/inference-servers-vllm-and-tgi.json",
-          "sha256": "8feeadca676316695d382505f2d0e614ff1eb883aa015c084eab9db5f12fc094"
+          "sha256": "a7c7d247667f8448552c77d3f5f8c96c5070fe2f695170a2fd7a19048fedc2cc"
         },
         {
           "slug": "multi-gpu-and-model-parallelism",
@@ -1636,7 +1636,7 @@
           "position": 8,
           "path": "phases/17-llm-infrastructure-and-gpus/multi-gpu-and-model-parallelism.md",
           "questionsPath": "questions/multi-gpu-and-model-parallelism.json",
-          "sha256": "9c4d59140bd1f810d943c568b8a5d2313e0203fe003a8451c95c806d8df08382"
+          "sha256": "e365ee511b2a6fa304a98a4c86fe8c65c1691db53a2f81a08c528033a857c500"
         },
         {
           "slug": "quantization-explained",
@@ -1645,7 +1645,7 @@
           "position": 9,
           "path": "phases/17-llm-infrastructure-and-gpus/quantization-explained.md",
           "questionsPath": "questions/quantization-explained.json",
-          "sha256": "d42558ee9bff9678ef8af1a071aafaa8788f0cc4400222053edfba08c6ce24b9"
+          "sha256": "91f2cd61c17079c59c039b9c365770d42d8115aedf82d790e153fd8ac7bbed70"
         },
         {
           "slug": "self-hosted-vs-api-economics",
@@ -1654,7 +1654,7 @@
           "position": 10,
           "path": "phases/17-llm-infrastructure-and-gpus/self-hosted-vs-api-economics.md",
           "questionsPath": "questions/self-hosted-vs-api-economics.json",
-          "sha256": "edab01b940c3b1e79dfbd458621e2b7d9a0c4a5ab282ea3f79fb86396ef52595"
+          "sha256": "9e5f022fa80727fc3afaa244f47f0621df28db6c52c0aa2a375e1b58368d9cd5"
         },
         {
           "slug": "serving-latency-and-benchmarking",
@@ -1663,7 +1663,7 @@
           "position": 11,
           "path": "phases/17-llm-infrastructure-and-gpus/serving-latency-and-benchmarking.md",
           "questionsPath": "questions/serving-latency-and-benchmarking.json",
-          "sha256": "6e37a6449396deb5e53b93ee846eab06363c32929e045156d46a65237bb9c3d1"
+          "sha256": "5c5902a4a981d0cef579a6effaa1206fe076586051191923b4ed0450af52f266"
         }
       ]
     },
@@ -1680,7 +1680,7 @@
           "position": 1,
           "path": "phases/18-kubernetes-in-depth/configmaps-and-configuration.md",
           "questionsPath": "questions/configmaps-and-configuration.json",
-          "sha256": "b02e775b2c4b7b15e010918e6bbf4f0f7d1efb7e5e3981afe74fab1c55f790d0"
+          "sha256": "a03b38d209ca54fbc52fe2cc3b69061336ad3f10d72104fe10aa21740bee14ec"
         },
         {
           "slug": "ingress-and-gateway-api",
@@ -1689,7 +1689,7 @@
           "position": 2,
           "path": "phases/18-kubernetes-in-depth/ingress-and-gateway-api.md",
           "questionsPath": "questions/ingress-and-gateway-api.json",
-          "sha256": "5d5dba6dd90f29797160d472efccff33a9dac553a5501434819afb18e30d494b"
+          "sha256": "ccbcfa93ff81063b9c6068328dd3817e1894b4cc046038642f2b9bd40664827f"
         },
         {
           "slug": "kubernetes-architecture",
@@ -1698,7 +1698,7 @@
           "position": 3,
           "path": "phases/18-kubernetes-in-depth/kubernetes-architecture.md",
           "questionsPath": "questions/kubernetes-architecture.json",
-          "sha256": "d53ad4b99146deefafbc5e5cb18d5761480268beb8f1c4ccb9d878ad9c7303b1"
+          "sha256": "ee884d6e4bcfc2ca6406863a73d5e5c6bf78a7a1dd68dfd24d895525d77a3c21"
         },
         {
           "slug": "kubernetes-autoscaling",
@@ -1707,7 +1707,7 @@
           "position": 4,
           "path": "phases/18-kubernetes-in-depth/kubernetes-autoscaling.md",
           "questionsPath": "questions/kubernetes-autoscaling.json",
-          "sha256": "b78d3a11a115b92ad5a1c2cc2adbc07e9c3d907890574c7d3065279d191c62b5"
+          "sha256": "35a648216eaa8e78153d92143a74fc39369d67954dcd69e1931109fe7b3cc916"
         },
         {
           "slug": "kubernetes-debugging",
@@ -1716,7 +1716,7 @@
           "position": 5,
           "path": "phases/18-kubernetes-in-depth/kubernetes-debugging.md",
           "questionsPath": "questions/kubernetes-debugging.json",
-          "sha256": "170b016d687634176debf74fe13f76d242990c22397dba3061ecc7faf2914af3"
+          "sha256": "6a3f8a1360c5db091332cc962f775dc71789874269804291e69da48cc565f50b"
         },
         {
           "slug": "kubernetes-networking",
@@ -1725,7 +1725,7 @@
           "position": 6,
           "path": "phases/18-kubernetes-in-depth/kubernetes-networking.md",
           "questionsPath": "questions/kubernetes-networking.json",
-          "sha256": "6f3dd6d34cb3e59d70c14b02ae5f51921cce591ecf917e9280dc1dcc2626272e"
+          "sha256": "c9bcdc14946852242fab38624b01b4eb64a951e473ba04a6e7c4a9490c8a8a44"
         },
         {
           "slug": "kubernetes-operators-and-crds",
@@ -1734,7 +1734,7 @@
           "position": 7,
           "path": "phases/18-kubernetes-in-depth/kubernetes-operators-and-crds.md",
           "questionsPath": "questions/kubernetes-operators-and-crds.json",
-          "sha256": "3e81ca84c9a88742c59bf1d821bc3f9f93877d464f6a3cba5b7c462704166f13"
+          "sha256": "78a6c1703ffb0e7bbcf27e5d3e9a2be97b994535e0617bce2487ac4b52f8e8d9"
         },
         {
           "slug": "kubernetes-rbac-and-security",
@@ -1743,7 +1743,7 @@
           "position": 8,
           "path": "phases/18-kubernetes-in-depth/kubernetes-rbac-and-security.md",
           "questionsPath": "questions/kubernetes-rbac-and-security.json",
-          "sha256": "d84ed5c051d72d8ff1c8845636d5cebfcea1bc4eb2f272b7910629e507542647"
+          "sha256": "066a0e8648d5ef3196e106ba3d357b57e89cc2a92bcce31978297bb35b5d9e58"
         },
         {
           "slug": "kubernetes-storage",
@@ -1752,7 +1752,7 @@
           "position": 9,
           "path": "phases/18-kubernetes-in-depth/kubernetes-storage.md",
           "questionsPath": "questions/kubernetes-storage.json",
-          "sha256": "0bfb07dbd843965e7fc90f1e8e8a49f37ae7e57ea374e9223dd55bd212774903"
+          "sha256": "c36040fe8c965246577cebcf2e082bbcb8babe525c38527a15d3bd0c207c9b0c"
         },
         {
           "slug": "pod-lifecycle-and-scheduling",
@@ -1761,7 +1761,7 @@
           "position": 10,
           "path": "phases/18-kubernetes-in-depth/pod-lifecycle-and-scheduling.md",
           "questionsPath": "questions/pod-lifecycle-and-scheduling.json",
-          "sha256": "1521e719ba1e0d3306ab15ff9172b0202139b0ab961d264f8909b7f089c159aa"
+          "sha256": "d7d7ab307b13907ed5d3f76b1f536b0d0fcf02c4f5fd23e81801ba41cb4c78c5"
         },
         {
           "slug": "statefulsets-daemonsets-and-jobs",
@@ -1770,7 +1770,7 @@
           "position": 11,
           "path": "phases/18-kubernetes-in-depth/statefulsets-daemonsets-and-jobs.md",
           "questionsPath": "questions/statefulsets-daemonsets-and-jobs.json",
-          "sha256": "2384a2156af937ea7a473ed8b8f1f590079c7fe1bac09cf1818604b3a74a2042"
+          "sha256": "396342b751e23a271cf7bbe263acee3661d97dd7f0b5b7d4d178a07786df9bda"
         }
       ]
     },
@@ -1787,7 +1787,7 @@
           "position": 1,
           "path": "phases/19-devops-and-platform-engineering/chaos-and-resilience-testing.md",
           "questionsPath": "questions/chaos-and-resilience-testing.json",
-          "sha256": "3fb202e93560e4113d57bcba795799f6a217e2f0893b31d21118f4b61b737cfe"
+          "sha256": "25c221d8d405151eac44ce27a624571571d33d5df7dd3a6c3e6fa372353c75c1"
         },
         {
           "slug": "cicd-pipeline-design",
@@ -1796,7 +1796,7 @@
           "position": 2,
           "path": "phases/19-devops-and-platform-engineering/cicd-pipeline-design.md",
           "questionsPath": "questions/cicd-pipeline-design.json",
-          "sha256": "d9ff2277be0bcb24ad4dbaa2da01b7a31547d4d578b298350ef2493049c30339"
+          "sha256": "0ae70e75dea316f574c78a8272c331a25a4a4e8f5eee95032b07dac7efae2193"
         },
         {
           "slug": "container-images-and-oci",
@@ -1805,7 +1805,7 @@
           "position": 3,
           "path": "phases/19-devops-and-platform-engineering/container-images-and-oci.md",
           "questionsPath": "questions/container-images-and-oci.json",
-          "sha256": "3e0663b2c002fd54aee59309cc9563a4aae3014bc20c19d9c7fcf5e73cd29aea"
+          "sha256": "5d9f72830ecdac4c90e4afe8dc046beb0371acc32b56aae70fffefd21049afe2"
         },
         {
           "slug": "gitops-and-argocd",
@@ -1814,7 +1814,7 @@
           "position": 4,
           "path": "phases/19-devops-and-platform-engineering/gitops-and-argocd.md",
           "questionsPath": "questions/gitops-and-argocd.json",
-          "sha256": "42e241a0eabb605205cbb75ca3b2d3c33b7dbcf85c8519c6849627fcd7b7dfdb"
+          "sha256": "b28664790a3bd909854ddf68fd2b1d67d43435f4f8c4631c30adff1a3c7d9b8b"
         },
         {
           "slug": "helm-and-templating",
@@ -1823,7 +1823,7 @@
           "position": 5,
           "path": "phases/19-devops-and-platform-engineering/helm-and-templating.md",
           "questionsPath": "questions/helm-and-templating.json",
-          "sha256": "f2db15b824df7e84e3ec98e06f991b6f2a6c78c7ed854d9660c4c7084df36adb"
+          "sha256": "805332b30d13eee6ee3d367fa51d61dd2c8a48b9cc701c10211be53a83b3a042"
         },
         {
           "slug": "load-and-performance-testing",
@@ -1832,7 +1832,7 @@
           "position": 6,
           "path": "phases/19-devops-and-platform-engineering/load-and-performance-testing.md",
           "questionsPath": "questions/load-and-performance-testing.json",
-          "sha256": "6f28ae023dbcdf671638e0ebeccc2e2d7b54421823c69637d1e2ce6fb6eb55c0"
+          "sha256": "a63c24ccb875c115e564e02d6e6bc5113b881fd4d8532ff8bf27ab8eb1aaa0b7"
         },
         {
           "slug": "observability-with-opentelemetry",
@@ -1841,7 +1841,7 @@
           "position": 7,
           "path": "phases/19-devops-and-platform-engineering/observability-with-opentelemetry.md",
           "questionsPath": "questions/observability-with-opentelemetry.json",
-          "sha256": "3f4d1ecc0d6761bdfa4041cfd1caf085630874403ea4a42c9bdf74a30662bb33"
+          "sha256": "580ee571947aa7ba46c6a10a764dca412f69b3e35993cb05927ae879a8588c65"
         },
         {
           "slug": "platform-engineering",
@@ -1850,7 +1850,7 @@
           "position": 8,
           "path": "phases/19-devops-and-platform-engineering/platform-engineering.md",
           "questionsPath": "questions/platform-engineering.json",
-          "sha256": "1d81ed475a6882e58c4b8206734a0ab04d3ced6120ab7f3eb229f0c386896f04"
+          "sha256": "55c2663d35f2fc79de94f4b153d55350b2a176850faeebc4870ae8b5717c6d92"
         },
         {
           "slug": "progressive-delivery",
@@ -1859,7 +1859,7 @@
           "position": 9,
           "path": "phases/19-devops-and-platform-engineering/progressive-delivery.md",
           "questionsPath": "questions/progressive-delivery.json",
-          "sha256": "aede45eeb4b5f4f34bb31b37fc9da652c69f60545442c7017efc644faa96f216"
+          "sha256": "8df25765c30939a8d3cb8f6f81e904bad7150ed5ac518b225e28f07f8161a5c5"
         },
         {
           "slug": "sre-slos-and-error-budgets",
@@ -1868,7 +1868,7 @@
           "position": 10,
           "path": "phases/19-devops-and-platform-engineering/sre-slos-and-error-budgets.md",
           "questionsPath": "questions/sre-slos-and-error-budgets.json",
-          "sha256": "91a99f6514a7a4f2302c6215854920c8848e9a9c2f59a4265641fb4bf9d4261a"
+          "sha256": "8f84f1019cc8b48b3f9ab8c535c6cfd1a8f801655a8c40510fe9a4613100ac5c"
         },
         {
           "slug": "terraform-and-iac-patterns",
@@ -1877,7 +1877,7 @@
           "position": 11,
           "path": "phases/19-devops-and-platform-engineering/terraform-and-iac-patterns.md",
           "questionsPath": "questions/terraform-and-iac-patterns.json",
-          "sha256": "d92dcd0c8eda568480af2ac21a18176e6af82a9917548fd91b0231cfeb04f939"
+          "sha256": "865df8931a7943871e92557a5350e222ebcb7b3dfe1bb4a5374e7e5e6b55bce7"
         }
       ]
     }

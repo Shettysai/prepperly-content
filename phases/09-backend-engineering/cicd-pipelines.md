@@ -160,6 +160,15 @@ Neither technique changes *what* the pipeline checks, only how quickly it report
 | Runner/agent | The machine that actually executes the pipeline's steps |
 | Caching | Skips redoing unchanged, expensive work (like dependency installs) |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [GitHub Actions](https://docs.github.com/en/actions) | CI/CD living in the repository host | Your code is on GitHub — the default with the least setup |
+| [GitLab CI](https://docs.gitlab.com/ci/) | Pipelines with built-in registry and environments | You self-host GitLab, or want CI and registry in one product |
+| [Argo CD](https://argo-cd.readthedocs.io/en/stable/) | Pull-based GitOps delivery to Kubernetes | You want CI to build and something else to deploy — separate the two halves |
+| [Dagger](https://docs.dagger.io/getting-started/introduction/) | Pipelines as code, runnable locally | "Works in CI, fails locally" has become a real cost |
+
 ## Common mistakes
 
 - Treating a green pipeline as proof the app fully works — it only proves what the tests actually cover, so weak coverage gives false confidence.

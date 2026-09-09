@@ -228,6 +228,17 @@ Decimal GB; subtract about 7% for the GiB your tools report, then add KV cache a
 | Overhead | ~1–2 GB | Nothing much |
 | Training extra | 12–20 bytes/param total | Optimizer choice |
 
+## Tools & frameworks
+
+This topic is arithmetic first — these tools check your arithmetic, they do not replace it.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [vLLM](https://docs.vllm.ai/en/latest/) | `gpu_memory_utilization` and KV cache sizing | You are turning the memory formula into a real config value |
+| [NVML and `nvidia-smi`](https://docs.nvidia.com/deploy/nvml-api/index.html) | Observe actual allocation against your estimate | Your arithmetic said it fits and it went out of memory anyway |
+| [HuggingFace Transformers](https://huggingface.co/docs/transformers/index) | Parameter counts, layer counts and hidden size | You need the numbers the formula consumes, taken from the real config |
+| [bitsandbytes](https://huggingface.co/docs/bitsandbytes/main/en/index) | See how dtype changes memory | You want to watch fp16, int8 and int4 halve the weight footprint each step — Python |
+
 ## Common mistakes
 
 - Sizing weights only and calling it done. The KV cache routinely exceeds the weights under real concurrency.

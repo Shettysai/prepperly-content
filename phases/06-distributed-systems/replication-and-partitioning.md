@@ -95,6 +95,16 @@ This is exactly the problem **consistent hashing** solves: instead of a plain mo
 | Consistent hashing | Resharding without moving everything | More complex to implement than plain modulo |
 | Replicated + partitioned | Scale and safety together | More operational complexity overall |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PostgreSQL docs (replication)](https://www.postgresql.org/docs/current/) | Streaming and logical replication | You want read scaling or failover on a single-primary relational database |
+| [Vitess](https://vitess.io/docs/) | MySQL sharding middleware | MySQL has outgrown one node and you cannot rewrite the application |
+| [Citus](https://docs.citusdata.com/en/stable/) | Postgres extension for sharding | You want distributed Postgres with the same SQL surface you already use |
+| [Cassandra](https://cassandra.apache.org/doc/latest/) | Consistent hashing with tunable replicas | Replication and partitioning are the product, not a feature bolted on |
+| [MongoDB sharding](https://www.mongodb.com/docs/manual/sharding/) | Shard keys and balancing | You are studying shard-key choice — these docs are unusually clear on it |
+
 ## Common mistakes
 
 - Assuming replication alone solves scaling — it helps with reads and safety, but every write still has to go through the leader, which remains a bottleneck; only partitioning spreads write load across machines.

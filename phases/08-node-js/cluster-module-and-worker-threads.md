@@ -128,6 +128,17 @@ This is the exact same trap as horizontal scaling with a load balancer — clust
 | Crash impact | One worker crashing doesn't affect others | An uncaught error can be isolated per-thread |
 | Typical use | Scaling an HTTP server across cores | Image resizing, hashing, parsing large files |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Node.js `cluster`](https://nodejs.org/api/cluster.html) | Forking processes that share one listening socket | You are scaling an I/O-bound HTTP server across cores |
+| [Node.js `worker_threads`](https://nodejs.org/api/worker_threads.html) | Threads sharing memory inside one process | You have CPU-bound work that would otherwise block the event loop |
+| [Piscina](https://piscinajs.dev/) | Worker-thread pool with queueing | You need a pool rather than a single worker — do not hand-roll the lifecycle |
+| [PM2](https://pm2.keymetrics.io/docs/usage/quick-start/) | Process manager with a built-in cluster mode | You need production process supervision outside a container orchestrator |
+
+The whole decision is `cluster` for I/O concurrency and `worker_threads` for CPU work; getting that backwards is the most common Node interview error.
+
 ## Common mistakes
 
 - Assuming cluster workers share memory — they're separate processes, so an in-memory cache or counter built in one worker is invisible to the others.

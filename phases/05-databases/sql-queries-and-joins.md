@@ -107,6 +107,15 @@ This pattern — a `LEFT JOIN` followed by filtering for `IS NULL` on the right 
 | FULL OUTER JOIN | All rows from both tables, matched where possible |
 | CROSS JOIN | Every row from one table paired with every row from the other |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PostgreSQL SQL reference](https://www.postgresql.org/docs/current/) | Join types, CTEs, window functions | You need authoritative semantics, including how `NULL` behaves in joins |
+| [Node.js `sqlite`](https://github.com/nodejs/node/blob/main/doc/api/sqlite.md) | Built-in SQLite, nothing to install | You want to practise joins in a runnable script with zero setup |
+| [SQLFluff](https://docs.sqlfluff.com/en/stable/) | Dialect-aware SQL linter | Your team argues about SQL formatting in review |
+| [MySQL docs](https://dev.mysql.com/doc/) | Join and function dialect differences | You are interviewing somewhere that runs MySQL — the dialects diverge |
+
 ## Common mistakes
 
 - Using an `INNER JOIN` when you actually need every row from one side — this silently drops data (like customers with zero orders) without any error, producing a report that looks correct but is quietly missing rows.

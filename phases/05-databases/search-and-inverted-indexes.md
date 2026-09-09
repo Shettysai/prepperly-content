@@ -290,6 +290,18 @@ Neither replaces the other. Lexical search is unbeatable on exact terms — prod
 | `b` | Length normalisation: how much long documents are penalised |
 | Shard-local scoring | IDF is per shard, so scores are not globally comparable |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PostgreSQL docs (FTS)](https://www.postgresql.org/docs/current/) | `tsvector` and GIN inverted indexes in-database | The corpus is modest and you want one datastore, not two |
+| [Elasticsearch](https://www.elastic.co/docs) | Distributed search and analytics engine | You need relevance tuning, aggregations and scale beyond one node |
+| [OpenSearch](https://docs.opensearch.org/latest/) | Apache-2.0 fork of Elasticsearch | You need an open licence, or AWS-managed search |
+| [Apache Solr](https://solr.apache.org/guide/solr/latest/index.html) | A server built directly on the Lucene index library | You want to see what an inverted index actually is beneath the API |
+| [Typesense](https://typesense.org/docs/) | Typo-tolerant search server | You want instant-search UX on a small dataset without Elasticsearch's operations |
+
+Elasticsearch relicensed away from Apache-2.0 in 2021, which is why OpenSearch exists; know the fork exists rather than trusting a study note for current licensing.
+
 ## Common mistakes
 
 - **Different analyzers at index and query time.** The most common cause of "the word is right there but search returns nothing". One definition, both sides.

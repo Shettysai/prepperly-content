@@ -356,6 +356,16 @@ The pattern behind both halves: **a green status is not evidence that work happe
 | Slow tools | Own job with its own timeout | Shared budgets starve later steps |
 | Monorepo | Affected-target selection from the real graph | Path filters go stale silently |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [GitHub Actions](https://docs.github.com/en/actions) | Reusable workflows, matrices, caching | You are designing pipeline *structure*, not just running commands in sequence |
+| [Argo CD](https://argo-cd.readthedocs.io/en/stable/) | The deploy half of CI/CD, pull-based | You are separating build from deploy — the core design decision in this topic |
+| [Dagger](https://docs.dagger.io/getting-started/introduction/) | Portable pipelines you can run locally | Pipeline logic must not be locked into one CI vendor, and "works on my machine" must include the pipeline |
+| [Turborepo](https://turborepo.dev/docs) | Task graph with remote caching | Monorepo CI time is the bottleneck and most of each run is rebuilding unchanged packages |
+| [cosign](https://github.com/sigstore/cosign) | Sign and verify artifacts | The pipeline must produce provenance a deploy step can actually verify |
+
 ## Common mistakes
 
 - Ordering stages by perceived importance instead of cost, so trivial errors take twenty minutes to report.

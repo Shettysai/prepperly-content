@@ -258,6 +258,18 @@ And the recovery case, worth rehearsing before you need it. With `Retain`, delet
 | PV `Released`, will not re-bind | Stale `claimRef` — clear it manually |
 | Data gone after namespace delete | `Delete` reclaim policy |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Persistent Volumes docs](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) | PV/PVC, StorageClass, access modes | You need to understand why `ReadWriteOnce` means one *node*, not one pod |
+| [CSI docs](https://kubernetes-csi.github.io/docs/) | The storage driver interface | You are debugging a stuck volume and need provisioning, attach and mount as three distinct steps |
+| [Longhorn](https://longhorn.io/docs/) | Replicated block storage inside the cluster | You are on-prem and need replicated volumes without a SAN |
+| [Rook / Ceph](https://rook.io/docs/rook/latest-release/Getting-Started/intro/) | Block, file and object storage from one operator | You need all three storage types and can staff Ceph |
+| [OpenEBS](https://openebs.io/docs/) | Container-attached storage | You want to pick a storage engine per workload — local for speed, replicated for durability |
+
+`ReadWriteOnce` is the number-one storage confusion, and a StatefulSet's PVCs deliberately survive deletion of the StatefulSet.
+
 ## Common mistakes
 
 - Reading `ReadWriteOnce` as "one Pod". It is one **node**, so Pods co-scheduled there all mount it — which is how data gets corrupted rather than merely blocked.

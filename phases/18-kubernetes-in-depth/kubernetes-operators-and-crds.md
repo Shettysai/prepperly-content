@@ -393,6 +393,18 @@ Two more traps. **Reconciling on your own status writes**: patching status uncon
 | `status` subresource | Reporting progress | Unconditional writes → infinite reconcile loop |
 | Operator vs Helm chart | Ongoing operations vs install-time templating | Operator adopted for templating = complexity with no payoff |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Custom Resources docs](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) | CRDs versus aggregated API servers | You are deciding whether you need an operator at all |
+| [Kubebuilder](https://book.kubebuilder.io/) | Scaffold controllers in Go | You are writing a real operator — this is the standard path and where the ecosystem's examples live |
+| [Operator SDK](https://sdk.operatorframework.io/docs/) | Go, Ansible or Helm operators | You want an operator without writing Go |
+| [Metacontroller](https://metacontroller.github.io/metacontroller/) | Write controllers as webhooks in any language | Your team is Node or Python and Go is the actual blocker |
+| [kubernetes-client/javascript](https://github.com/kubernetes-client/javascript) | Watch and reconcile from Node | You are building a small controller in TypeScript rather than adopting a framework |
+
+Most teams should configure an existing operator rather than write one — and if you do write one, the reconcile loop must be idempotent and level-triggered, which is the single most common operator bug.
+
 ## Common mistakes
 
 - Writing an edge-triggered controller that acts on "what changed" instead of comparing desired to actual. It breaks on the first missed event, restart or replay.

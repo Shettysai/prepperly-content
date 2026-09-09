@@ -205,6 +205,20 @@ One more failure worth naming: **partial completion of side effects.** An agent 
 | Sequential pipeline | Fixed known stages | If stages are fixed, you may not need an agent |
 | Human in the loop | Irreversible or costly actions | Latency; needs a resumable design |
 
+## Tools & frameworks
+
+This layer churns faster than anything else in the chapter, so treat these as current defaults rather than settled choices.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [LangGraph (JS)](https://docs.langchain.com/oss/javascript/langgraph/overview) | Graph-structured agent state machines | The agent needs cycles, checkpoints and human-in-the-loop, not a straight-line chain |
+| [Vercel AI SDK](https://ai-sdk.dev/docs/introduction) | Typed tool-calling loops in TypeScript | You want a small TS-native agent loop and no framework to learn |
+| [LangChain (JS)](https://docs.langchain.com/oss/javascript/langchain/overview) | Chain and retriever glue | You are prototyping quickly and want prebuilt integrations over your own abstractions |
+| [Temporal](https://docs.temporal.io/) | Durable execution for long-running agents | The run takes hours and must survive a process restart |
+| [CrewAI](https://docs.crewai.com/) | Role-based multi-agent teams | You genuinely need multi-agent role delegation — Python-only, with no JS equivalent |
+
+The `js.langchain.com` host now redirects into `docs.langchain.com/oss/javascript/`, so link the new one.
+
 ## Common mistakes
 
 - Shipping with only a step cap; a single step can still be slow or expensive, so you need time and cost limits too.

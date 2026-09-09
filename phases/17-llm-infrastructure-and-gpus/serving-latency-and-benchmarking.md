@@ -306,6 +306,18 @@ Notice why the factor is 1.8 and not 2. The fixed 250ms TTFT does not scale with
 | Both up | over capacity and over-batched | add replicas and lower the batch |
 | Both flat, throughput flat | bottleneck is not the GPU | check client, network, tokenizer |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [GuideLLM](https://github.com/vllm-project/guidellm) | TTFT, ITL and throughput sweeps | You want the vLLM-ecosystem tool, closest to how you will actually serve |
+| [Triton perf_analyzer](https://github.com/triton-inference-server/perf_analyzer) | Concurrency-sweep latency measurement | You are benchmarking Triton, or want a mature sweep harness whatever you serve with |
+| [LLMPerf](https://github.com/ray-project/llmperf) | Benchmark hosted LLM endpoints | You are comparing API providers on TTFT and tokens per second |
+| [NVIDIA NIM benchmarking guide](https://docs.nvidia.com/nim/benchmarking/llm/latest/index.html) | Methodology for LLM latency metrics | You want the definitions right before you measure anything |
+| [Grafana](https://grafana.com/docs/grafana/latest/) | Track TTFT and ITL percentiles in production | A benchmark is not production — instrument both and compare them |
+
+Prefill and decode have different bottlenecks, one compute-bound and one memory-bandwidth-bound, so a benchmark that reports a single average number hides the thing you need to see.
+
 ## Common mistakes
 
 - Reporting one end-to-end latency number for a streaming endpoint, hiding whether the wait is before the first token or between tokens.

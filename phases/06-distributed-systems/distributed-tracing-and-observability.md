@@ -128,6 +128,18 @@ The trap: whichever you choose, the decision must be **consistent across service
 | Head (random) | Request start | Only by luck |
 | Tail | Request end | Yes, by rule |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OpenTelemetry JS](https://opentelemetry.io/docs/languages/js/) | Vendor-neutral instrumentation for Node | Always start here — instrument once, change backend later |
+| [OTel Collector](https://opentelemetry.io/docs/collector/) | Receive, process and export telemetry | You want sampling and redaction outside your application code |
+| [Jaeger](https://www.jaegertracing.io/docs/) | Trace storage and query UI | You are self-hosting traces; Jaeger v2 is an OTel Collector distribution |
+| [Grafana Tempo](https://grafana.com/docs/tempo/latest/) | Object-storage-backed trace backend | Trace volume is high and you want cheap retention, not indexed search |
+| [Semantic conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/) | Standard attribute names | You are naming spans and attributes so dashboards stay portable |
+
+OpenTracing and the Jaeger client libraries are dead — Jaeger v1 reached end of life on 31 December 2025, and the OTel Zipkin exporter is deprecated too. Instrument with OpenTelemetry SDKs only.
+
 ## Common mistakes
 
 - Logging without a correlation ID, so you can never reassemble one request's story from several services' logs.

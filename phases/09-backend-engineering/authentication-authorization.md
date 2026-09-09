@@ -121,6 +121,19 @@ Both users are equally authenticated and hold the same role, yet one is authoriz
 | JWT | You carry proof of identity with you | Signed token in an `Authorization` header |
 | OAuth 2.0 | Delegated login via a trusted provider | "Continue with Google/GitHub" |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OAuth 2.0](https://oauth.net/2/) | Delegated authorization framework | You are granting third-party access — and learning what OAuth is *not* for |
+| [OpenID Connect](https://openid.net/developers/how-connect-works/) | Authentication layer on top of OAuth | You need identity, not just an access token |
+| [jose](https://github.com/panva/jose) | JWT/JWS/JWKS in Node, done correctly | You are verifying tokens — never decode-without-verify |
+| [Keycloak](https://www.keycloak.org/documentation) | Self-hosted identity provider | You need OIDC or SAML inside your own infrastructure |
+| [Auth.js](https://authjs.dev/) | Auth for JavaScript applications | A Node or Next app needs sessions and providers wired quickly |
+| [node-casbin](https://github.com/apache/casbin-node-casbin) | RBAC/ABAC policy enforcement | Authorization has outgrown `if (user.role === 'admin')` |
+
+node-casbin moved to the Apache org, so link the `apache/` path — the old `casbin/node-casbin` URL only redirects.
+
 ## Common mistakes
 
 - Treating "the user is logged in" as sufficient — always check authorization separately, and for the *specific* resource, not just the general role.

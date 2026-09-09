@@ -161,6 +161,16 @@ Two more traps. A DLQ nobody watches is a silent data-loss bucket — alert on i
 | Best for | Event streams, replay, analytics | Complex routing, task queues | Simple decoupling on AWS |
 | Ops burden | High | Medium | None (managed) |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Kafka](https://kafka.apache.org/documentation/) | Consumer groups, offsets, rebalancing | You need the operational details interviews actually probe |
+| [KafkaJS](https://kafka.js.org/docs/getting-started) | Node client with manual offset control | You are implementing at-least-once with explicit commits |
+| [RabbitMQ](https://www.rabbitmq.com/docs) | Acks, DLQs, prefetch, quorum queues | You need dead-letter routing and per-message ack semantics |
+| [NATS JetStream](https://docs.nats.io/concepts/jetstream) | Streams, consumers and ack policies | You want low latency at a fraction of Kafka's operational weight |
+| [BullMQ](https://docs.bullmq.io/) | Retries, delays and DLQs in Node | The work is background jobs inside one application |
+
 ## Common mistakes
 
 - Assuming global ordering. Order holds within a partition; use a key to group what must stay ordered.

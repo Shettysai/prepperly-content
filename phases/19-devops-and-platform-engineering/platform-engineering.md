@@ -253,6 +253,18 @@ The related trap is measuring the platform by its own output. "We shipped twelve
 | Cognitive load | The amount a team must understand to ship |
 | DORA metrics | Deploy frequency, lead time, change failure rate, restore time |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Backstage](https://backstage.io/docs/overview/what-is-backstage/) | Developer portal, service catalogue, scaffolding templates | You need service ownership and new-service scaffolding in one place and can staff running it |
+| [Crossplane](https://docs.crossplane.io/latest/) | Cloud resources as Kubernetes APIs | You want the platform API *to be* the Kubernetes API, reconciled continuously |
+| [Port](https://docs.port.io/) | Managed developer portal | You want the portal outcome without operating Backstage yourself |
+| [Terraform](https://developer.hashicorp.com/terraform/docs) | The provisioning layer beneath the platform | Golden paths still have to create real infrastructure somewhere |
+| [Argo CD](https://argo-cd.readthedocs.io/en/stable/) | Delivery mechanism for platform-managed apps | Self-service has to land somewhere that actually deploys |
+
+A platform is a *product* with users and golden paths, not a tool list — pick the shortest path your developers will actually take, or this table becomes the anti-pattern the topic warns about.
+
 ## Common mistakes
 
 - Building the platform as a project rather than a product, so it ships once and then rots as nobody owns its roadmap.

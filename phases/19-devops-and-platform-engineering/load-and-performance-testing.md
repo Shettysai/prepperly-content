@@ -235,6 +235,19 @@ On tools, at an awareness level: **k6** scripts tests in JavaScript, supports ar
 | Queue depth | Near zero | Growing without bound |
 | Errors | Near zero | Timeouts and rejections |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [k6](https://grafana.com/docs/k6/latest/) | Scripted load tests in JavaScript with thresholds | Node/TS teams — scenarios are JavaScript, and thresholds can gate CI |
+| [autocannon](https://github.com/mcollina/autocannon) | Fast single-endpoint HTTP benchmarking | You want a throughput number now and do not want to write a script |
+| [Vegeta](https://github.com/tsenart/vegeta) | Constant-rate attack with latency histograms | You need a fixed request *rate* rather than fixed concurrency |
+| [Gatling](https://docs.gatling.io/) | Scenario-based load testing with reports | You need rich HTML reports and multi-step user journeys |
+| [Locust](https://docs.locust.io/en/stable/) | Python-scripted distributed load | You are a Python shop, or you need distributed workers with minimal setup |
+| [JMeter](https://jmeter.apache.org/usermanual/index.html) | The long-standing enterprise standard | Your organisation has already standardised on it and the reports are expected |
+
+The crucial distinction is open versus closed workload models: fixed concurrency (closed) hides the queueing that a fixed arrival rate (open) exposes.
+
 ## Common mistakes
 
 - Reporting an average. It describes nobody; report percentiles at a stated concurrency.

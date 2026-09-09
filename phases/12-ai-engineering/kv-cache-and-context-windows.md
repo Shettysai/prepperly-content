@@ -185,6 +185,15 @@ And that is the tension in one line: **the optimisation that makes long context 
 | Higher batch size | Maximum context length per request |
 | Both | Money — a bigger or additional GPU |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [vLLM](https://docs.vllm.ai/en/latest/) | PagedAttention KV cache management | You want to see how a KV cache is really paged and shared between requests |
+| [tiktoken](https://github.com/openai/tiktoken) | Count tokens before you send them | You are budgeting a context window precisely — Python |
+| [tiktoken (JS port)](https://github.com/dqbd/tiktoken) | Token counting from Node | A Node service has to enforce a context budget before it calls the model |
+| [Anthropic docs](https://platform.claude.com/docs/en/intro) | Entry point for prompt caching and context limits | Your system prompt is long and stable — provider-side caching cuts both cost and latency |
+
 ## Common mistakes
 
 - Treating the context window as a text-length setting rather than a VRAM reservation, then being surprised that raising it drops throughput.

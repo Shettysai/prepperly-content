@@ -188,6 +188,17 @@ Two caveats the model omits. This holds only while you stay memory-bound: push t
 | OOM at 14 GB on a 24 GB card | KV cache and overhead, not weights |
 | Works locally, fails in container | Driver/CUDA/PyTorch version mismatch |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [NVML and `nvidia-smi`](https://docs.nvidia.com/deploy/nvml-api/index.html) | Query utilisation, memory and clocks | The first command to run on any GPU box |
+| [DCGM Exporter](https://github.com/NVIDIA/dcgm-exporter) | GPU metrics into Prometheus | You need fleet-level utilisation rather than one host at a time |
+| [Nsight Systems](https://developer.nvidia.com/nsight-systems) | Timeline profiling of GPU workloads | You need to see kernel against transfer against idle time to know what is slow |
+| [PyTorch](https://docs.pytorch.org/docs/stable/index.html) | The API through which you actually touch the GPU | You want to understand device transfers and memory allocation — Python |
+
+Read the `nvidia-smi` utilisation number carefully: it means a kernel was resident, not that the GPU was used efficiently.
+
 ## Common mistakes
 
 - Treating `GPU-Util` as percent-of-capacity. It is percent-of-time-any-kernel-ran; one small kernel reports 100%.

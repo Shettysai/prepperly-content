@@ -122,6 +122,16 @@ Manually attaching `.on('error', ...)` to every stream works but is easy to forg
 | Duplex | Both read and write | TCP socket |
 | Transform | Duplex that modifies data in transit | `zlib.createGzip()`, a CSV parser |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Node.js `stream` docs](https://nodejs.org/api/stream.html) | Readable/Writable/Transform and `pipeline` | You need the reference — and `pipeline` over `.pipe()` for error propagation |
+| [undici](https://undici.nodejs.org/) | Streaming HTTP bodies without buffering | You are proxying or transforming a large response |
+| [Node.js `zlib` docs](https://nodejs.org/api/stream.html) | A concrete Transform stream to study | You want a real Transform to reason about backpressure with |
+
+The tooling story here is deliberately thin: streams are a core API, not an ecosystem.
+
 ## Common mistakes
 
 - Using `fs.readFileSync()` or loading an entire request body into a string for large files, defeating the purpose of streaming.

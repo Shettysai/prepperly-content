@@ -124,6 +124,16 @@ With sessions in local memory, a user can get randomly logged out depending on w
 | Failure impact | Single point of failure | One machine dying doesn't take down the system |
 | Cost curve | Gets expensive fast at the high end | More linear, but adds operational complexity |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [k6](https://grafana.com/docs/k6/latest/) | Scripted load tests with thresholds | You need percentile latency under a realistic request mix |
+| [autocannon](https://github.com/mcollina/autocannon) | Quick HTTP throughput numbers | You want a fast before-and-after on one endpoint |
+| [Node.js `perf_hooks`](https://nodejs.org/api/perf_hooks.html) | In-process timing and marks | You need to find which internal phase is costing the milliseconds |
+| [Grafana Pyroscope](https://grafana.com/docs/pyroscope/latest/) | Continuous profiling | The slowness only shows up in production under real load |
+| [Redis](https://redis.io/docs/latest/) | Cache and shared state | The cheapest scale win is usually not doing the same work twice |
+
 ## Common mistakes
 
 - Designing capacity around average load instead of peak load, so the system fails exactly when traffic matters most.

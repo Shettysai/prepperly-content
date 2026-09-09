@@ -141,6 +141,16 @@ Kubernetes doesn't kill all 3 old Pods and then start 3 new ones — that would 
 | Node | A physical or virtual machine that runs Pods |
 | `kubectl` | The command-line tool used to talk to a Kubernetes cluster |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Kubernetes docs](https://kubernetes.io/docs/home/) | Concepts and object reference | You need semantics — it is the only source worth trusting |
+| [kubectl reference](https://kubernetes.io/docs/reference/kubectl/) | The commands you will actually type | You are learning `get -o yaml`, `describe` and `explain` |
+| [kind](https://kind.sigs.k8s.io/) | Kubernetes in Docker, locally | You need a throwaway multi-node cluster in seconds |
+| [minikube](https://minikube.sigs.k8s.io/docs/) | Local single-node cluster with addons | You want built-in ingress, dashboard and storage addons |
+| [Helm](https://helm.sh/docs/) | Packaging and templating manifests | You have started copy-pasting YAML between environments |
+
 ## Common mistakes
 
 - Thinking a Pod and a container are the same thing — a Pod can hold multiple containers that share a network namespace and storage.

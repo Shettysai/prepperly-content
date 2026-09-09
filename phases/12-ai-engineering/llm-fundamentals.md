@@ -196,6 +196,16 @@ Notice too that `singing` tokenized as `["s","inging"]` rather than the intuitiv
 | Completion tokens | Everything generated | Usually priced higher |
 | Hallucination | Plausible-shaped but false output | A consequence of the objective, not a bug |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Anthropic docs](https://platform.claude.com/docs/en/intro) | Model behaviour, parameters and capabilities | You want to learn what the knobs actually do before turning them |
+| [OpenAI API docs](https://developers.openai.com/api/docs) | Reference for the most widely assumed API shape | Interviews assume this request and response shape, so know it even if you use another provider |
+| [Ollama](https://docs.ollama.com/) | Run open models locally | You want to experiment with no per-token cost and no network round trip |
+| [HuggingFace Transformers](https://huggingface.co/docs/transformers/index) | Model internals and the model hub | You want to look inside a model rather than call an API — Python |
+| [tiktoken](https://github.com/openai/tiktoken) | Tokenization made visible | You want the one demo that makes "context window" concrete |
+
 ## Common mistakes
 
 - Counting characters or words instead of tokens, then being surprised by a context-length error.

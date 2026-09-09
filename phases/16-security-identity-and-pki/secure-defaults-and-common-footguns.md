@@ -214,6 +214,18 @@ The pattern across all of these: the insecure state is reachable by *omission*. 
 - Is `NODE_TLS_REJECT_UNAUTHORIZED` set anywhere in Dockerfiles, CI config, or process managers?
 - Does any code read the caller's identity from a header when a verified certificate is available on the socket?
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Mozilla SSL Config Generator](https://ssl-config.mozilla.org/) | Known-good TLS configuration per server | You are about to hand-write a cipher suite list |
+| [OWASP Cheat Sheets](https://cheatsheetseries.owasp.org/) | The footgun catalogue, each with the fix | You have a specific "is this safe?" question and want a sourced answer |
+| [Helmet](https://helmet.js.org/) | Secure headers by default in Node | You run Express, which ships insecure headers until you add these |
+| [Kyverno](https://kyverno.io/docs/introduction/) | Enforce secure defaults as cluster policy | You want the insecure option to be impossible to set by accident, not just discouraged |
+| [Trivy](https://trivy.dev/) | Misconfiguration scanning across IaC and images | You want insecure defaults caught before they deploy rather than in review |
+
+The biggest Node footgun is not in this table because no tool catches it for you: `rejectUnauthorized: false` and `NODE_TLS_REJECT_UNAUTHORIZED=0` silently discard the whole point of TLS.
+
 ## Common mistakes
 
 - Believing `requestCert: true` means mTLS is on. It is half the setting; without `rejectUnauthorized: true` nothing is enforced.

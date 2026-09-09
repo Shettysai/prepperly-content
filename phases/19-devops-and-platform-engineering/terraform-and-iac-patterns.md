@@ -313,6 +313,18 @@ The right response is an **explicit, auditable approval path**: a one-off operat
 | `import` | Adopts an existing resource | Plan not empty after: config mismatches reality |
 | State splitting | Limits blast radius per apply | One state: every apply risks everything |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Terraform language docs](https://developer.hashicorp.com/terraform/language) | Modules, state, `for_each`, `moved` blocks | You are refactoring and need the resources to survive it |
+| [OpenTofu](https://opentofu.org/docs/) | MPL-licensed fork of Terraform | The BUSL licence is a blocker for your organisation |
+| [Terragrunt](https://docs.terragrunt.com/getting-started/quick-start/) | DRY multi-environment wrapper | Root-module duplication across many environments has become the maintenance cost |
+| [Trivy](https://trivy.dev/) | Scan IaC for insecure defaults | You want the public bucket caught in review, not in production |
+| [Crossplane](https://docs.crossplane.io/latest/) | Reconciled-by-controller alternative | You want continuous reconciliation rather than plans that only run when someone runs them |
+
+`count` versus `for_each`, and the index-shift destruction that follows from picking `count`, is the single most valuable practical lesson here.
+
 ## Common mistakes
 
 - Committing state to Git. It holds plaintext secrets and breaks the instant two people apply.

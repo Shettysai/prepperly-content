@@ -216,6 +216,18 @@ The hard cases are the ones where a correct renewal still causes an outage.
 | Pin mismatch | One client, every rotation | Pinned the leaf instead of the CA |
 | Monitor silent | Nothing alerted | Checker ran inside the broken system |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [cert-manager](https://cert-manager.io/docs/) | Automated issuance and renewal in Kubernetes | Any Kubernetes workload that needs certificates — this is the de facto standard |
+| [step-ca](https://smallstep.com/docs/step-ca/) | Private CA issuing short-lived certificates | You want rotation to be routine because lifetimes are measured in hours |
+| [Certbot](https://certbot.eff.org/) | ACME client for public certificates | You are on a plain VM serving public HTTPS |
+| [acme.sh](https://github.com/acmesh-official/acme.sh) | Shell ACME client with no dependencies | The environment is too minimal or constrained for Certbot to fit |
+| [Vault PKI](https://developer.hashicorp.com/vault/docs/secrets/pki) | CA as a service, with policy and audit | You need issuance audited and roles scoped per team |
+
+Note what none of these do: cert-manager renews the certificate, it does not make your process reload it — that gap is where outages come from.
+
 ## Common mistakes
 
 - Renewing on a calendar reminder. Reminders get missed and their owners change teams. Renewal must be a running process, and a *failing* renewal must page.

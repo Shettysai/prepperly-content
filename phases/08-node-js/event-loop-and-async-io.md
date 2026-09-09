@@ -127,6 +127,15 @@ Every `await` schedules its continuation as a new microtask, and Node keeps drai
 | Close callbacks | Cleanup, e.g. `socket.on('close', ...)` |
 | (between every phase and callback) | Microtasks: `process.nextTick()` queue fully drained first, then the Promise queue |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Node.js profiling guide](https://nodejs.org/learn/getting-started/profiling) | Diagnosing loop phases and blocking | You are learning phase ordering — this is the authoritative explanation |
+| [Node.js `perf_hooks`](https://nodejs.org/api/perf_hooks.html) | `monitorEventLoopDelay` for measuring lag | You need to prove the loop is blocked, with numbers |
+| [Clinic.js](https://clinicjs.org/) | `clinic doctor` diagnoses loop blocking | You suspect a block but cannot yet name the culprit |
+| [Node.js `diagnostics_channel`](https://nodejs.org/api/diagnostics_channel.html) | Low-overhead internal instrumentation | You want tracing hooks without monkey-patching core modules |
+
 ## Common mistakes
 
 - Assuming `setTimeout(fn, 0)` runs before Promises — microtasks always drain completely before the next event loop phase, including timers.

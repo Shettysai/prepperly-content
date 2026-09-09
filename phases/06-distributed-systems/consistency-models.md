@@ -99,6 +99,15 @@ Many real systems solve this by routing a user's own reads back to whichever rep
 | Read-your-own-writes | You always see your own recent writes | Medium | Posting your own comment or profile edit |
 | Eventual | All copies converge, eventually | Fastest | Shopping cart, DNS, "likes" count |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Jepsen analyses](https://jepsen.io/analyses) | Empirical consistency testing of real systems | You want evidence a database honours the guarantee it advertises |
+| [CockroachDB docs](https://docs.cockroachlabs.com/docs/) | Serializable isolation in a distributed SQL database | You want to see what strong consistency costs in latency terms |
+| [Cassandra docs](https://cassandra.apache.org/doc/latest/) | Tunable per-query `ONE`/`QUORUM`/`ALL` | You want to show that consistency is a dial, not a property of the database |
+| [MongoDB docs](https://www.mongodb.com/docs/) | Read and write concerns, causal sessions | You want read-your-writes demonstrated as an explicit, opt-in setting |
+
 ## Common mistakes
 
 - Assuming eventual consistency means the data is unreliable forever — it converges, usually within milliseconds to a few seconds, it just doesn't guarantee an instant, global view at the moment of the write.

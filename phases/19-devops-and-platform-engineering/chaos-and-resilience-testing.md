@@ -227,6 +227,18 @@ Two disciplines that keep this productive:
 | Stakeholder notice | Support and on-call know | Real incident response triggered |
 | Re-run after fixing | Verify the remedy | You assume a fix you never tested |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Principles of Chaos Engineering](https://principlesofchaos.org/) | The method: hypothesis, blast radius, abort conditions | Before any tool — chaos without a hypothesis is just an outage you caused |
+| [Chaos Mesh](https://chaos-mesh.org/docs/) | Kubernetes-native fault injection as CRDs | You are on Kubernetes and want experiments reviewed and version-controlled as manifests |
+| [LitmusChaos](https://docs.litmuschaos.io/) | Chaos experiments with a hub of prebuilt scenarios | You want ready-made experiments and a control-plane UI rather than authoring each fault |
+| [tc (netem)](https://man7.org/linux/man-pages/man8/tc.8.html) | Latency, loss and partition at the host | You need one precise network fault and a whole framework is overkill |
+| [Chaos Monkey](https://github.com/Netflix/chaosmonkey) | The original instance-termination tool | Historical reference, and as the "randomly kill things" baseline to compare against |
+
+`grafana/xk6-disruptor` now redirects to a `grafana-cold-storage/` org — treat it as no longer maintained and prefer Chaos Mesh or LitmusChaos.
+
 ## Common mistakes
 
 - Injecting a fault with no written hypothesis, which yields anecdotes instead of findings and is indistinguishable from causing an incident.

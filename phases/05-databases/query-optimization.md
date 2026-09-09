@@ -135,6 +135,15 @@ Composite column order matters the same way: an index on `(status, created_at)` 
 | Estimated 10, actual 400k | Stale statistics | `ANALYZE` |
 | Index exists but unused | Function on the column | Expression index or rewrite |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PostgreSQL `EXPLAIN (ANALYZE, BUFFERS)`](https://www.postgresql.org/docs/current/using-explain.html) | Real row counts, timings and I/O | First step, always — estimates lie, `ANALYZE` measures |
+| [explain.dalibo.com](https://explain.dalibo.com/) | Visualise a plan and find the hot node | The plan has grown too large to read as text |
+| [pgMustard](https://www.pgmustard.com/) | Scored plan analysis with hints | You want prioritised advice rather than raw plan reading |
+| [Percona Toolkit](https://www.percona.com/toolkit/) | MySQL slow-query digest and online DDL | You are on MySQL and need `pt-query-digest` to find the worst query |
+
 ## Common mistakes
 
 - Treating every Seq Scan as a bug. On a small table, or when most rows match, it's the correct choice.

@@ -155,6 +155,16 @@ A bloated image doesn't just waste disk — it slows down every deploy, since th
 | Docker network | Lets containers reach each other by service name |
 | Multi-stage build | Compiles in one stage, ships only the output in a smaller final stage |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Docker docs](https://docs.docker.com/) | Build, run, Compose | It is the baseline everyone is asked about |
+| [BuildKit](https://docs.docker.com/build/buildkit/) | Cache mounts, parallel stages, build secrets | Builds are slow, or a secret must not land in a layer |
+| [distroless](https://github.com/GoogleContainerTools/distroless) | Minimal runtime base images | You are shrinking attack surface — no shell, no package manager |
+| [Trivy](https://trivy.dev/) | Image vulnerability and misconfiguration scanning | Before you push: CVEs in the base image are the usual finding |
+| [dive](https://github.com/wagoodman/dive) | Inspecting layer contents and wasted space | Your image is 1.2GB and you need to see exactly why |
+
 ## Common mistakes
 
 - Storing important data inside the container's own filesystem, then losing it when the container restarts or is replaced — use a volume instead.

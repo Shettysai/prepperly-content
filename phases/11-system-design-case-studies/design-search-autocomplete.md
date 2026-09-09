@@ -221,6 +221,19 @@ Output:
 | Typos | Fuzzy fallback only on empty result | Fuzzy matching every keystroke is too slow |
 | Personalisation | Rerank global results | A per-user trie multiplies storage by user count |
 
+## Tools & frameworks
+
+These are the concrete technologies worth naming at the whiteboard for this design.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Redis](https://redis.io/docs/latest/) | Sorted sets for prefix-scored suggestions | You want single-digit-millisecond prefix reads |
+| [Elasticsearch](https://www.elastic.co/docs) | FST-based completion suggester | You need fuzziness and weighting, not just prefixes |
+| [Typesense](https://typesense.org/docs/) | Typo-tolerant instant search | The corpus is small-to-medium and you want this working today |
+| [Algolia](https://www.algolia.com/doc) | Managed instant-search service | Latency and relevance matter and you will not operate a cluster |
+
+The underlying data structure is a trie or FST — no tool teaches you that, so study it directly.
+
 ## Common mistakes
 
 - Traversing the subtree and sorting results at request time, which cannot meet the latency budget at scale.

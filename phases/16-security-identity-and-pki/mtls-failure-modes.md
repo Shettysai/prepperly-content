@@ -185,6 +185,16 @@ Finally, the encrypted-key case. If the private key file is passphrase-protected
 | Client distrusts server | `SELF_SIGNED_CERT_IN_CHAIN` | TLS handshake | client's `ca` is missing |
 | `rejectUnauthorized: false` on client | `200` (silently insecure) | none | client verified nothing |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OpenSSL `s_client`](https://docs.openssl.org/) | Reproduce the handshake outside your app | First move in any mTLS incident — it separates the client from the application |
+| [Wireshark](https://www.wireshark.org/docs/) | See which side sent the alert | You need to know whether the client or the server did the rejecting |
+| [testssl.sh](https://testssl.sh/) | Enumerate accepted certificates, CAs and ciphers | You want to confirm what the server will actually accept, not what it is configured to accept |
+| [cert-manager](https://cert-manager.io/docs/) | Inspect Certificate and Order status | The real failure is that the certificate was never issued, not a handshake bug |
+| [crt.sh](https://crt.sh/) | Certificate Transparency search | You need to verify a public certificate exists and check the SANs it carries |
+
 ## Common mistakes
 
 - Debugging only the client. Half the failures are only explained by the server's log, and `ECONNRESET` is exactly the case where the client knows nothing.

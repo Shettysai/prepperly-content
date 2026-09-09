@@ -210,6 +210,15 @@ The sharper version of the same lesson concerns etcd. Lose quorum — two of thr
 | kubelet | Actually starting containers | API server + CRI | That node's Pods go stale; node turns `NotReady` |
 | kube-proxy | Service forwarding rules on the node | API server + kernel | Service virtual IPs stop working on that node |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Cluster architecture docs](https://kubernetes.io/docs/concepts/architecture/) | Control plane and node components | You need the authoritative map of who owns which decision |
+| [etcd](https://etcd.io/docs/) | The cluster's source of truth | You need to understand why etcd health *is* cluster health, and what a slow disk does to the API server |
+| [kind](https://kind.sigs.k8s.io/) | A multi-node cluster you can break safely | Learning by killing components and watching precisely what stops working |
+| [kubectl reference](https://kubernetes.io/docs/reference/kubectl/) | `get --raw`, `explain`, component status | You want to inspect the API server directly rather than through an abstraction |
+
 ## Common mistakes
 
 - Saying the scheduler "starts" or "places" Pods. It writes one field and stops; the kubelet starts everything.

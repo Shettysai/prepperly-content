@@ -128,6 +128,18 @@ The third mistake is reaching for a new database too early. Partitioning a Postg
 | Need one row by primary key | Stay on OLTP |
 | Report tolerates minutes of lag | Async replication is fine |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [TimescaleDB / TigerData](https://www.tigerdata.com/docs) | Time-series extension for Postgres | You want hypertables and compression without leaving SQL and Postgres |
+| [ClickHouse](https://clickhouse.com/docs) | Columnar OLAP database | You are scanning billions of rows analytically and can denormalise to do it |
+| [Prometheus](https://prometheus.io/docs/introduction/overview/) | Metrics TSDB with pull scraping | You want operational metrics with short retention, not business analytics |
+| [VictoriaMetrics](https://docs.victoriametrics.com/) | Prometheus-compatible TSDB with long retention | Prometheus cardinality or retention has itself become the problem |
+| [DuckDB](https://duckdb.org/docs/) | In-process OLAP engine | You want analytics over a file, inside a script, with no server at all |
+
+Prometheus is a *metrics* store, not a general time-series database — conflating the two is a common and costly mistake.
+
 ## Common mistakes
 
 - Running heavy analytics on the production OLTP database, so dashboards degrade customer traffic.

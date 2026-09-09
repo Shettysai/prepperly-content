@@ -137,6 +137,18 @@ Failing quickly and retrying later beats blocking every connection. Adding a col
 | Batch every backfill | Avoids long locks and replica lag |
 | `CREATE INDEX CONCURRENTLY` | Doesn't block writes |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Prisma Migrate](https://www.prisma.io/docs) | Schema-diff migrations for Node | Your schema is already declared in a Prisma file |
+| [Drizzle Kit](https://orm.drizzle.team/docs/overview) | TypeScript-schema migrations | You want SQL-shaped, type-safe migrations without a DSL in between |
+| [Atlas](https://atlasgo.io/getting-started) | Declarative schema-as-code with linting | You need migration *linting* and a CI gate that blocks destructive changes |
+| [Flyway](https://documentation.red-gate.com/fd/flyway-documentation-138346877.html) | Versioned plain-SQL migrations | You want ordered SQL files in a polyglot org where Node is not the only client |
+| [Knex migrations](https://knexjs.org/guide/migrations.html) | Programmatic up/down migrations | You need imperative data backfills, not only schema changes |
+
+Whichever you pick, the interview point is forward-only, expand-contract — `down()` migrations are largely a development fiction in production.
+
 ## Common mistakes
 
 - Renaming or dropping a column in the same deploy as the code change, breaking instances still running old code.

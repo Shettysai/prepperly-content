@@ -238,6 +238,18 @@ Notice the uncomfortable part: the upcaster had to invent `currency: 'USD'`. Tha
 | Complex collaborative state with concurrent editors | Read and write load are both modest and similar in shape |
 | Reads and writes need wildly different shapes or scale | A read replica or a materialised view already solves it |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Kurrent (formerly EventStoreDB)](https://docs.kurrent.io/) | Purpose-built event store with streams | Event sourcing is the core model, not an add-on to something else |
+| [Kafka](https://kafka.apache.org/documentation/) | Durable partitioned log | You want the log as an integration backbone across services |
+| [Postgres as event store](https://www.postgresql.org/docs/current/) | Append-only table plus projections | Most real systems — one database, transactional appends, no new operations |
+| [Temporal](https://docs.temporal.io/) | Event-sourced workflow state | The events you care about are *process* steps, not domain facts |
+| [Axon](https://www.axoniq.io/) | Full CQRS/ES framework on the JVM | You are a JVM shop wanting the whole pattern prescribed; nothing in Node matches its scope |
+
+EventStoreDB was renamed Kurrent, so use that name. And note the default: event sourcing in Postgres is the pragmatic choice, and a dedicated event store is a decision that needs justifying.
+
 ## Common mistakes
 
 - **Saying event sourcing and CQRS are the same thing.** They are independent choices that happen to compose well. Being able to separate them cleanly is the single strongest signal on this topic.

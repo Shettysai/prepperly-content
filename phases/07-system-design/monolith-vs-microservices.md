@@ -125,6 +125,17 @@ Neither option is free. Option A trades speed and availability for always-correc
 | Operational cost | Low — one thing to deploy/monitor | High — many things to deploy/monitor |
 | Best for | Small teams, early-stage products | Large teams, independently-scaling parts |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [NestJS](https://docs.nestjs.com/) | Modular Node framework, monolith or services | You want module boundaries inside a monolith you might later split |
+| [Turborepo](https://turborepo.dev/docs) | Monorepo task orchestration and caching | Several services live in one repo and CI has become the bottleneck |
+| [Nx](https://nx.dev/docs/getting-started/intro) | Monorepo with a dependency graph and boundaries | You want import rules between modules actually enforced, not documented |
+| [OpenTelemetry JS](https://opentelemetry.io/docs/languages/js/) | Cross-service tracing | The moment you split, because a stack trace stops being enough |
+
+The tooling here is really monorepo and boundary tooling. Microservices trade an in-process call for a network call, and these are the tools that make that survivable.
+
 ## Common mistakes
 
 - Splitting into microservices before there's a real scaling or team problem — it adds network failures for no benefit yet.

@@ -139,6 +139,15 @@ Denormalise when the read is frequent and expensive, the write comparatively rar
 |---|---|
 | Normalise | Writes frequent, correctness critical |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PostgreSQL docs](https://www.postgresql.org/docs/current/) | Types, constraints, generated columns | You are pushing invariants into the schema instead of application code |
+| [Drizzle ORM](https://orm.drizzle.team/docs/overview) | Schema as TypeScript, types derived from it | You want one definition producing both the DDL and the TS types |
+| [SQLFluff](https://docs.sqlfluff.com/en/stable/) | SQL and DDL linting and formatting | Schema changes go through review and style arguments are wasting time |
+| [MongoDB docs](https://www.mongodb.com/docs/) | Embedding versus referencing patterns | You are on a document store, where "normalize" means something different |
+
 ## Common mistakes
 
 - Enforcing uniqueness only in application code. Without a database constraint, concurrent requests will eventually create duplicates.

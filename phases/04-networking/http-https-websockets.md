@@ -110,6 +110,18 @@ Replace polling with one WebSocket per user, and the server only sends data the 
 | Starts as | Plain request | TLS handshake first | Normal HTTP request that "upgrades" |
 | Common status codes | 200, 301, 404, 500 | Same as HTTP | 101 (switching protocols) to start |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [MDN WebSockets API](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) | Protocol and browser API reference | You need the authoritative behaviour, not one library's opinion of it |
+| [ws](https://github.com/websockets/ws) | Minimal Node WebSocket server and client | You want the raw protocol with no framing conventions added on top |
+| [Socket.IO](https://socket.io/docs/v4/) | WebSocket library with rooms and fallbacks | You need reconnection, rooms and acks, and accept a custom protocol to get them |
+| [undici](https://undici.nodejs.org/) | Node's modern HTTP/1.1 client | You need connection pooling and control that the `fetch` defaults hide |
+| [curl](https://curl.se/docs/manpage.html) | Command-line HTTP debugging | You are reproducing a request outside your app to prove where the bug is |
+
+Socket.IO is not WebSockets — it is a protocol carried over them, so a Socket.IO client cannot talk to a plain `ws` server.
+
 ## Common mistakes
 
 - Thinking WebSockets replace HTTP entirely — most real apps still use HTTP for page loads and regular API calls, adding a WebSocket only for the specific parts that genuinely need live, two-way updates.

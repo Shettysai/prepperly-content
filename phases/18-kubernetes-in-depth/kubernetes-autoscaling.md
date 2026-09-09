@@ -269,6 +269,18 @@ Two more traps once this runs. **HPA and PodDisruptionBudget deadlock on scale-d
 | Replica count oscillates | HPA and VPA on the same metric |
 | Scale-down stalls silently | PDB would be violated by the eviction |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Autoscaling docs](https://kubernetes.io/docs/concepts/workloads/autoscaling/) | HPA, VPA, and how they interact | You need to understand why HPA and VPA fighting over the same metric is a real failure mode |
+| [metrics-server](https://github.com/kubernetes-sigs/metrics-server) | Supplies CPU and memory readings to HPA | HPA reports `<unknown>` — this missing component is almost always why |
+| [KEDA](https://keda.sh/docs/2.20/) | Scale on queue depth, Kafka lag, or cron | The right signal is not CPU, and CPU-based scaling lags the actual load |
+| [Karpenter](https://karpenter.sh/docs/) | Provision right-sized nodes on demand | Pods are `Pending` because no node fits, not because replica count is too low |
+| [Cluster Autoscaler](https://github.com/kubernetes/autoscaler) | Node-group scaling | You need broad cloud support and predictable, pre-declared node groups |
+
+Pod autoscaling and node autoscaling are different layers — "scaled to 20 replicas, 12 Pending" is the symptom that teaches the difference.
+
 ## Common mistakes
 
 - Treating HPA, VPA and Cluster Autoscaler as one feature, then wondering which knob did nothing.

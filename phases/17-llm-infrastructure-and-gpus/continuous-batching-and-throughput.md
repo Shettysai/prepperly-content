@@ -270,6 +270,17 @@ One more wrinkle worth knowing about. Prefill and decode compete for the same GP
 | KV cache used | up, linearly |
 | Queue wait time | down, until VRAM runs out |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [vLLM](https://docs.vllm.ai/en/latest/) | Continuous batching and PagedAttention | The default serving engine — this is where the technique landed for most teams |
+| [SGLang](https://docs.sglang.io/) | RadixAttention, batching that is prefix-cache aware | Many requests share long prefixes, as with agents and few-shot prompts |
+| [TensorRT-LLM](https://nvidia.github.io/TensorRT-LLM/) | In-flight batching over compiled kernels | You want maximum throughput on NVIDIA and accept a per-model compile step |
+| [GuideLLM](https://github.com/vllm-project/guidellm) | Measure the throughput against latency trade-off | You need to prove batching helped and find where TTFT starts degrading |
+
+HuggingFace TGI pioneered continuous batching in the open but its repository was archived read-only in March 2026, so it is history here rather than an option.
+
 ## Common mistakes
 
 - Confusing prefill and decode, then being unable to explain why batching helps so much. The fixed weight read dominating decode is the reason.

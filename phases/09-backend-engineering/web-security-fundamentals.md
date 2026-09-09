@@ -159,6 +159,17 @@ That layering is the real lesson. **Defence in depth**: parameterised queries *a
 | SSRF | Server fetches attacker's URL | Host allowlist + network segmentation |
 | IDOR | Missing per-object authorisation | Scope every query by the authenticated user |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OWASP Top 10](https://owasp.org/www-project-top-ten/) | The canonical vulnerability list | You are prepping — these are the categories you will be asked about |
+| [OWASP Cheat Sheets](https://cheatsheetseries.owasp.org/) | Concrete mitigation per vulnerability | You know the class of bug and need the fix |
+| [MDN CSP guide](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP) | Content-Security-Policy in detail | You are writing a CSP that actually blocks XSS rather than logging it |
+| [OWASP ZAP](https://www.zaproxy.org/docs/) | Open-source dynamic application scanner | You want an automated first pass against a running app |
+| [Semgrep](https://docs.semgrep.dev/) | Static analysis with security rules | You want injection patterns caught in CI, in your own code |
+| [OWASP WrongSecrets](https://github.com/OWASP/wrongsecrets) | Deliberately vulnerable practice app | You are learning by exploiting — reading about XSS is not the same as doing it |
+
 ## Common mistakes
 
 - Escaping input on the way *in* rather than encoding on the way *out*. The correct encoding depends on where it's rendered, which you only know at output time.

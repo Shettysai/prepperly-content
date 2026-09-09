@@ -210,6 +210,16 @@ Output:
 | Destructive tool | Idempotency key plus human approval |
 | Model returns text, no calls | Normal termination — return the text |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Vercel AI SDK](https://ai-sdk.dev/docs/introduction) | Typed tools backed by Zod schemas in TypeScript | You are on Node or TS and want the cleanest tool-calling ergonomics available |
+| [Zod](https://zod.dev/) | Define and validate tool parameters | Always — the model will eventually send arguments that do not match your schema |
+| [OpenAI API docs](https://developers.openai.com/api/docs) | The raw tool-call request and response shape | You want to understand the protocol beneath whichever SDK you use |
+| [Anthropic docs](https://platform.claude.com/docs/en/intro) | Entry point for tool-use semantics | You need to know how providers differ, particularly on parallel tool calls |
+| [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) | Expose tools over a standard protocol | The same tools have to serve more than one client |
+
 ## Common mistakes
 
 - Writing tool descriptions for humans rather than for selection; the model reads them as a prompt.

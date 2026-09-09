@@ -115,6 +115,16 @@ A CDN also does not help where people assume it does: personalised responses, wr
 | Many edges, one origin | Origin shield | Collapses a miss storm into one fetch |
 | Frequent edits | Surrogate keys | Purge many URLs in one call |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Cloudflare Cache](https://developers.cloudflare.com/cache/) | CDN caching rules and purge | You want cache behaviour expressed as rules, not origin headers alone |
+| [CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/) | AWS-integrated CDN | Your origin is already S3 or an ALB and you want one IAM boundary |
+| [Fastly](https://docs.fastly.com/) | CDN with instant purge and VCL | You need sub-second global purge of one specific object |
+| [Varnish](https://www.varnish.org/docs/index.html) | Self-hosted caching reverse proxy | You must keep the cache inside your own perimeter for compliance |
+| [Cloudflare Workers](https://developers.cloudflare.com/workers/) | Compute at the edge | The response varies per user, so a single static cache entry cannot work |
+
 ## Common mistakes
 
 - Assuming a CDN speeds up everything. It does nothing for uncacheable, personalised, or write traffic.

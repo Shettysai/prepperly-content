@@ -188,6 +188,17 @@ The practical fix is to scope ordering to what actually matters. Nobody can perc
 | Server sharding | Consistent hashing on user ID | Limits routing churn when a server is added or lost |
 | Storage | Delete after delivery, or tier to cold storage | 146 TB/year of history dominates cost |
 
+## Tools & frameworks
+
+These are the concrete technologies worth naming at the whiteboard for this design.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [ws](https://github.com/websockets/ws) | WebSocket connection handling | You are building the persistent-connection layer yourself |
+| [Redis Streams](https://redis.io/docs/latest/develop/data-types/streams/) | Fan-out between server instances | Two users on different servers must see each other's messages |
+| [Cassandra](https://cassandra.apache.org/doc/latest/) | Write-heavy message history store | You are storing every message, partitioned by conversation |
+| [Centrifugo](https://centrifugal.dev/docs/getting-started/introduction) | Ready-made realtime hub with presence | You would rather not build connection routing and presence yourself |
+
 ## Common mistakes
 
 - Choosing HTTP polling for real-time delivery, then discovering it costs more than WebSockets while feeling slower.

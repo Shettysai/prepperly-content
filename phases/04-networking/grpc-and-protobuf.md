@@ -134,6 +134,17 @@ The third trade-off is debuggability. You cannot `curl` a gRPC endpoint and read
 | Debugging | `curl`, readable | Needs tooling |
 | Best for | Public APIs, browsers | Internal service-to-service |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [gRPC (Node)](https://grpc.io/docs/languages/node/) | RPC framework over HTTP/2 | You control both ends and want generated, typed clients |
+| [Protocol Buffers](https://protobuf.dev/) | Schema and binary wire format | Payload size or schema evolution matters more than human-readable payloads |
+| [Buf](https://buf.build/docs/) | Proto linting, breaking-change detection, codegen | Several teams edit `.proto` files and you need a compatibility gate in CI |
+| [Connect (Node)](https://connectrpc.com/docs/node/getting-started/) | gRPC-compatible RPC callable from browsers | The same service must be callable by a browser without a translating proxy |
+
+Connect and gRPC-Web exist because browsers cannot speak raw gRPC — that distinction is a common interview follow-up.
+
 ## Common mistakes
 
 - Changing or reusing a protobuf field number. Names are cosmetic; numbers are the contract, and reusing one silently misinterprets old data.

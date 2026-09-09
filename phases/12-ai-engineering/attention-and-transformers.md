@@ -200,6 +200,18 @@ Two consequences worth carrying. First, this triangle is why one forward pass tr
 | Positional encoding | Injects order | Attention alone is order-blind |
 | Residual + norm | Keeps deep stacks trainable | Each block adjusts, not rebuilds |
 
+## Tools & frameworks
+
+Three entries is the honest count here: this is a theory topic whose tooling is a Python research stack.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PyTorch](https://docs.pytorch.org/docs/stable/index.html) | `scaled_dot_product_attention` and the primitives under it | You want to implement attention yourself to actually understand it — Python |
+| [HuggingFace Transformers](https://huggingface.co/docs/transformers/index) | Reference implementations of every architecture | You would rather read real model code than another blog diagram |
+| [tiktoken](https://github.com/openai/tiktoken) | Tokenization, the step before attention | You need to see what a token actually is before reasoning about sequence length |
+
+There is no Node path into these internals, so do not go looking for one.
+
 ## Common mistakes
 
 - Saying attention "chooses" a token; it produces a weighted blend of all of them, and usually a diffuse one.

@@ -194,6 +194,15 @@ Both attacks land as a safe default. Delimiting and instruction-hardening reduce
 | Delimiters around user input | Any untrusted content | Free — always do it |
 | Output validation in code | Always | Free — the only real guarantee |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Prompting Guide](https://www.promptingguide.ai/) | Technique catalogue with the papers behind each | You want to learn the named techniques and where each one applies |
+| [Anthropic prompt engineering](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview) | Vendor guidance that reflects real model behaviour | You are writing prompts for one specific model family |
+| [OpenAI Cookbook](https://developers.openai.com/cookbook) | Runnable prompting recipes | You want working code rather than principles |
+| [promptfoo](https://www.promptfoo.dev/docs/intro/) | A/B test prompt variants | You are about to "improve" a prompt by feel — measure the change instead |
+
 ## Common mistakes
 
 - Writing "don't do X" instead of stating what to do — negative instructions are followed far less reliably than positive ones.

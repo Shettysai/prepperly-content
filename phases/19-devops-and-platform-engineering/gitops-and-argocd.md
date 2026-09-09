@@ -313,6 +313,18 @@ Per-env directories win in practice. Long-lived environment branches diverge, co
 | PreSync hook | Runs a Job before applying | Job fails: entire sync blocked, nothing applied |
 | App-of-apps | One app manages many apps | Absent: manual bootstrap per service |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Argo CD](https://argo-cd.readthedocs.io/en/stable/) | Pull-based reconciliation of manifests | It is the most-asked-about GitOps tool, and you want one application-centric UI over many clusters |
+| [Flux](https://fluxcd.io/flux/) | Toolkit-style GitOps controllers | You would rather compose small controllers than operate one application UI |
+| [Kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/) | Environment overlays without templating | Per-environment differences are genuinely patches, not variables |
+| [Helm](https://helm.sh/docs/) | Packaged, parameterised releases | You are consuming third-party charts you do not want to fork |
+| [SOPS](https://github.com/getsops/sops) | Encrypted secrets committed to git | GitOps needs secrets in git and you have no external secret store to pull from |
+
+The real operational traps are worth naming: a permanently OutOfSync resource caused by a server-defaulted field, and sync waves or hooks quietly blocking a deploy.
+
 ## Common mistakes
 
 - Treating a reverted manual edit as a tool bug. Reverting drift is the point; commit the change or deliberately pause auto-sync.

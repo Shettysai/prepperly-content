@@ -199,6 +199,18 @@ Finally, evaluate RAG stages **separately**. A single end-to-end score cannot te
 | Online / production | Continuously | Unknown unknowns, drift |
 | Adversarial / red team | Pre-release, periodically | Injection, jailbreaks, unsafe output |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [promptfoo](https://www.promptfoo.dev/docs/intro/) | Declarative prompt and model test matrices | You want evals as a config file running in CI — the most Node-friendly option here |
+| [Ragas](https://docs.ragas.io/en/stable/) | RAG-specific metrics such as faithfulness and recall | You need retrieval scored separately from generation — Python |
+| [DeepEval](https://deepeval.com/) | Pytest-style assertions over model output | You want unit-test ergonomics for evals — Python |
+| [Langfuse](https://langfuse.com/docs) | Trace-linked datasets and scores | Your evals must run against real production traces, not a hand-written fixture set |
+| [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) | Standard academic benchmarks | You are comparing base models on published benchmarks rather than your own task |
+
+None of these validate your LLM-as-judge for you — that judge needs its own agreement check against human labels, and no tool does it for you.
+
 ## Common mistakes
 
 - Writing tests that assert exact string equality on generated prose, which fail on correct answers and get deleted within a week.

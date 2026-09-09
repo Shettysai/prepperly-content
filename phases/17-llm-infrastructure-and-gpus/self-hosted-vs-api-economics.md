@@ -183,6 +183,18 @@ Three complications change the shape rather than the number. **Fine-tuning and L
 | Ops hours x engineer rate | Often exceeds the GPU bill below a few GPUs |
 | GPU hourly rate | Linear, and the least important of these |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [LiteLLM](https://docs.litellm.ai/) | One API over both hosted and self-hosted models | You want to run the comparison without rewriting client code for each side |
+| [OpenRouter](https://openrouter.ai/docs/quickstart) | Live per-token pricing across models | You need the API side of the arithmetic from real prices rather than a blog post |
+| [RunPod](https://docs.runpod.io/overview) | GPU hourly pricing | You need the self-hosted side of the arithmetic, denominated in GPU-hours |
+| [GuideLLM](https://github.com/vllm-project/guidellm) | Measure your achievable tokens per second | Your cost per token needs *your* throughput, not a vendor's benchmark |
+| [Langfuse](https://langfuse.com/docs) | Actual token volume in production | The break-even depends on volume, and volume is measured rather than guessed |
+
+There is no universal answer in this table: the break-even is throughput-dependent, so it is a calculation with two inputs you have to measure yourself.
+
 ## Common mistakes
 
 - Comparing the GPU hourly rate to the API price without dividing by utilisation — the error behind every "10x cheaper" claim.

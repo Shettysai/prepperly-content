@@ -132,6 +132,15 @@ Consistent hashing is the legitimate cousin of stickiness: it also routes a give
 | Consistent hashing | Hash of a key on a ring | Per-server caches, sharding | Uneven if keys are skewed |
 | Random | Uniformly at random | Very large fleets | No load awareness |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [HAProxy](https://docs.haproxy.org/) | L4/L7 balancing with many algorithms | You want to compare round-robin, least-connections and EWMA for real |
+| [NGINX](https://nginx.org/en/docs/) | Reverse proxy and upstream balancing | The common default, and its `upstream` docs are the clearest primer |
+| [Envoy](https://www.envoyproxy.io/docs/envoy/latest/) | Outlier detection and zone-aware routing | You need per-endpoint health ejection and locality awareness |
+| [Netflix concurrency-limits](https://github.com/Netflix/concurrency-limits) | Adaptive concurrency limiting | Your fixed connection limits are wrong and should be derived from latency instead |
+
 ## Common mistakes
 
 - Using `hash(key) % n` for cache routing, so every scaling event invalidates nearly the whole cache at once.

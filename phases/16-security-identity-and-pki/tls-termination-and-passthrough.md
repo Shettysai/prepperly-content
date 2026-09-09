@@ -196,6 +196,17 @@ The general lesson: **identity moved from a channel property to a data property,
 | Socket (`getPeerCertificate`) | Cryptography, per connection | Anything terminates TLS in front |
 | Header (XFCC / `Client-Cert`) | Network reachability + header stripping | Backend reachable off-proxy, or header appended not overwritten |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [NGINX](https://nginx.org/en/docs/) | Terminate TLS, or use `stream` for passthrough | You want the clearest docs showing both modes side by side |
+| [HAProxy](https://docs.haproxy.org/) | TCP mode with SNI-based routing | You need passthrough but still have to route by hostname |
+| [Envoy](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/security/ssl) | Termination, origination and passthrough | You are re-encrypting to the backend instead of sending plaintext across the last hop |
+| [Gateway API](https://gateway-api.sigs.k8s.io/) | `Terminate` versus `Passthrough` TLS modes | You are in Kubernetes, where this choice is an explicit field rather than a config style |
+
+The trade-off decides the tool: termination gives you L7 routing, WAF and caching but the load balancer sees plaintext, while passthrough preserves end-to-end mTLS and gives up every L7 feature.
+
 ## Common mistakes
 
 - Assuming client-certificate identity survives a terminating proxy. It cannot; the proxy was the peer.

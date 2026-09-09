@@ -146,6 +146,17 @@ The second payload is rejected at the boundary with a precise message. In TypeSc
 | `as X` | An unchecked assertion — a promise you make, not a check |
 | `strict: true` | The setting that makes `null` handling real |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [TypeScript docs](https://www.typescriptlang.org/docs/) | The language, `tsconfig`, module resolution | You hit `moduleResolution` or ESM/CJS interop questions |
+| [tsx](https://tsx.is/) | Running TypeScript directly, no build step | Local development and one-off scripts |
+| [typescript-eslint](https://typescript-eslint.io/) | Type-aware linting | You want rules that need type information, not just syntax |
+| [Zod](https://zod.dev/) | Runtime validation that infers TS types | You are crossing a trust boundary — types vanish at runtime |
+
+Modern Node can strip types natively, so "do I even need a build step" is now a live question: treat tsx as one option rather than the only path.
+
 ## Common mistakes
 
 - Using `as` to silence an error. The error was information; the assertion just hides it.

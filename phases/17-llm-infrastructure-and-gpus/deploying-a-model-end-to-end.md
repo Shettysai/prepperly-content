@@ -244,6 +244,16 @@ Two related traps. **Sizing that only fits when idle:** `--gpu-memory-utilizatio
 | livenessProbe | process hung? | restart | tight, only after startup passes |
 | readinessProbe | can it serve now? | withhold traffic | tight, never restarts |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [vLLM](https://docs.vllm.ai/en/latest/) | OpenAI-compatible inference server | The serving layer — its API shape means existing clients need no changes |
+| [NVIDIA GPU Operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html) | Drivers, container toolkit and device plugin in Kubernetes | You are deploying on Kubernetes, where this is the prerequisite layer |
+| [KServe](https://kserve.github.io/website/) | Model-serving CRDs with autoscaling | You want a serving abstraction rather than hand-written Deployments |
+| [Modal](https://modal.com/docs) | Serverless GPU deployment | You want a GPU endpoint today without touching Kubernetes — driven from Python |
+| [Baseten](https://docs.baseten.co/overview) | Managed model deployment and autoscaling | You want production serving without owning the GPU plumbing |
+
 ## Common mistakes
 
 - Using default probe timings, getting `CrashLoopBackOff`, and debugging the image instead of the YAML.

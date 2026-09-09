@@ -153,6 +153,16 @@ The usual culprits share this shape: a `Map` cache with no eviction, a listener 
 | Need to step through live code | Inspector | `node --inspect app.js` |
 | Which of my functions is slow | Timing marks | `performance.now()` |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Node.js profiling guide](https://nodejs.org/learn/getting-started/profiling) | Built-in `--prof` and inspector workflow | Always start here — no dependency, and it usually suffices |
+| [Clinic.js](https://clinicjs.org/) | Flame, bubbleprof and doctor views | You need a picture, and help choosing *which* profiler to reach for |
+| [speedscope](https://github.com/jlfwong/speedscope) | Interactive flamegraph viewer | You have a `.cpuprofile` and need to actually read it |
+| [Pyroscope](https://grafana.com/docs/pyroscope/latest/) | Continuous production profiling | The regression only reproduces under production traffic |
+| [autocannon](https://github.com/mcollina/autocannon) | Generating the load you profile under | Profiling an idle process teaches you nothing |
+
 ## Common mistakes
 
 - Optimising by intuition instead of measuring. The bottleneck is rarely where you think.

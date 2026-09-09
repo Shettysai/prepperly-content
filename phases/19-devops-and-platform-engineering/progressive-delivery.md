@@ -220,6 +220,18 @@ These combine rather than compete, and the mature pattern uses both layers: cana
 | Flag debt | Flags left in the code after the decision was made |
 | Expand-migrate-contract | Schema discipline that keeps rollback code-only |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Argo Rollouts](https://argo-rollouts.readthedocs.io/en/stable/) | Canary and blue-green with analysis steps | You want promotion or rollback decided by metrics, not by someone watching a dashboard |
+| [Flagger](https://docs.flagger.app/) | Progressive delivery driven by mesh or ingress | You are on Flux, or you want the traffic shifting done by the mesh you already run |
+| [OpenFeature](https://openfeature.dev/docs/reference/intro/) | Vendor-neutral feature-flag SDK | You want to decouple release from deploy without locking into a flag vendor |
+| [Unleash](https://docs.getunleash.io/) | Self-hostable feature flag service | You need a flag backend you control and can run on-prem |
+| [Prometheus](https://prometheus.io/docs/introduction/overview/) | The metrics the analysis gates on | Always — a canary with no defined failure metric is just a slow deploy |
+
+Canary and feature flags solve different halves: traffic shifting moves *requests*, flags move *behaviour*. Both need a failure metric agreed before you start.
+
 ## Common mistakes
 
 - Treating deploy and release as one event, pushing the team toward rare, large, risky releases.

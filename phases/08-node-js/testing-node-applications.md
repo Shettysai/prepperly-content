@@ -158,6 +158,16 @@ The real lesson is the signature: `placeOrder` takes `charge` and `now` as argum
 | `t.mock.fn()` | A stand-in function that records its calls |
 | `t.mock.method(obj, 'name')` | Spy on a real method; auto-restored after the test |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Node.js `test` runner](https://nodejs.org/api/test.html) | Built-in test runner and mocks | You are starting a new project — no dependency, and it now covers most needs |
+| [Vitest](https://vitest.dev/guide/) | Fast ESM/TS-native runner | You want watch mode, TypeScript with no config, and a Jest-like API |
+| [Testcontainers (Node)](https://node.testcontainers.org/) | Real Postgres or Redis in tests via Docker | Mocking the database has stopped catching real bugs |
+| [MSW](https://mswjs.io/docs/) | Intercepting HTTP at the network layer | You want the same mocks in unit tests and in the browser |
+| [nock](https://github.com/nock/nock) | HTTP interception in Node | You are Node-only and want request-shape assertions |
+
 ## Common mistakes
 
 - Forgetting `await` on `assert.rejects` — the assertion never runs and the test passes green while proving nothing.

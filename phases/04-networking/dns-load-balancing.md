@@ -88,6 +88,17 @@ This is why teams planning a migration lower a record's TTL *in advance* — som
 | L7 load balancer | Routes by HTTP content (path, headers, cookies) — smarter, more expensive |
 | Health check | Load balancer stops sending traffic to a server that fails to respond correctly |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/) | DNS with health checks and routing policies | You need latency- or geo-based steering across regions |
+| [CoreDNS](https://coredns.io/manual/toc/) | Pluggable DNS server | You are inside Kubernetes, or need custom DNS plugin behaviour |
+| [HAProxy](https://docs.haproxy.org/) | L4/L7 load balancer | DNS TTLs are too coarse and you need real connection-level balancing |
+| [ExternalDNS](https://kubernetes-sigs.github.io/external-dns/latest/) | Syncs Kubernetes resources to DNS providers | Services and Ingresses should own their own public DNS records |
+
+Read this table the way the topic argues it: DNS for coarse region-steering, a real load balancer for anything finer.
+
 ## Common mistakes
 
 - Assuming DNS changes take effect instantly — cached answers with a long TTL can keep pointing at an old IP for minutes to days after you update a record.

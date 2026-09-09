@@ -131,6 +131,16 @@ The trap is the interaction. A limiter that returns 429 without `Retry-After` in
 | Per-endpoint | An expensive route consuming all capacity |
 | Global | Aggregate overload from many well-behaved clients |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [rate-limiter-flexible](https://github.com/animir/node-rate-limiter-flexible) | Distributed limits backed by Redis | Multiple Node instances must share one budget |
+| [express-rate-limit](https://github.com/express-rate-limit/express-rate-limit) | Simple per-route limits | A single instance, where in-memory limits are good enough |
+| [Kong Rate Limiting](https://developer.konghq.com/plugins/rate-limiting/) | Limits at the gateway | You want limiting applied before requests reach your app at all |
+| [NGINX `limit_req`](https://blog.nginx.org/blog/rate-limiting-nginx) | Leaky-bucket limiting at the proxy | You already run NGINX and want no application change |
+| [Cloudflare Rate Limiting](https://developers.cloudflare.com/waf/rate-limiting-rules/) | Edge limiting before origin | The traffic is abusive and should never reach your infrastructure |
+
 ## Common mistakes
 
 - Keeping limiter state in process memory across many instances, so the effective limit is your limit times the instance count.

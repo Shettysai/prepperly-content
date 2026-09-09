@@ -188,6 +188,17 @@ And the failure mode nobody warns you about: a TP group runs in lockstep, so the
 | Multi-node | TP inside each node, PP across nodes |
 | Choosing 2x40GB or 1x80GB | 1x80GB — no communication, overhead paid once |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PyTorch FSDP](https://docs.pytorch.org/docs/stable/fsdp.html) | Shard parameters, gradients and optimizer state | You are training a model that does not fit on one GPU — Python |
+| [DeepSpeed](https://www.deepspeed.ai/) | ZeRO stages and CPU or NVMe offload | You need offload to fit the model at all, not just to fit it faster — Python |
+| [vLLM](https://docs.vllm.ai/en/latest/) | `tensor_parallel_size` for serving | You are splitting *inference* across GPUs, which is a different problem from training |
+| [Nsight Systems](https://developer.nvidia.com/nsight-systems) | See what NCCL collectives cost | Scaling is sublinear and you suspect the interconnect rather than the compute |
+
+Keep the two halves of this table apart: FSDP and DeepSpeed are training parallelism, vLLM's tensor parallelism is inference, and conflating them is the standard confusion.
+
 ## Common mistakes
 
 - Expecting 8 GPUs to give 8x. With TP over PCIe it can be closer to 1x past a low degree.
