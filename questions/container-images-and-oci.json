@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is a container image, at the level of the actual bytes?",
+    "answer_markdown": "It is not a single file. It is a set of content-addressed blobs: an ordered collection of filesystem layers, each a compressed tar archive of filesystem changes, plus one configuration blob holding the entrypoint, environment variables, user, working directory and the ordered list of layers. A manifest ties them together, referencing the config and each layer by digest — the hash of its own content. Optionally an image index sits above that, mapping platforms to per-platform manifests so one reference serves both amd64 and arm64. The single idea that makes everything else follow is content addressing: because every piece is named by the hash of its own content, deduplication across images is automatic, integrity verification during a pull is free, and an immutable reference to exact bytes becomes possible.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Explain the difference between a tag and a digest, and when each is appropriate.",
+    "answer_markdown": "A tag is a mutable pointer — a human-readable name that resolves to a manifest, and somebody can repoint it at different bytes at any time without telling you. A digest is the hash of the content itself, so it can only ever refer to those exact bytes. This is why deploying the same tag twice can give you different software: you deployed myapp:v2 on Monday and again on Friday, the tag moved in between, and nothing in your deployment recorded which bytes actually ran. Deploy by digest whenever you need certainty, because it is exact, verifiable and reproducible — and if the pull succeeds, hash verification proves the bytes are the ones you asked for. The practical convention is tags for humans reading dashboards and digests for anything that must be certain, with pipelines resolving tag to digest once and then promoting the digest. Note that :latest is not a version at all, just a conventionally named mutable pointer.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why does Dockerfile instruction order matter, and what is the rule?",
+    "answer_markdown": "Layers form an ordered chain where each is a diff against everything beneath it, so when a layer's inputs change, that layer and every layer after it must be rebuilt — never anything before it. The rule that follows is that rarely-changing inputs go before frequently-changing ones: copy your dependency manifests and install dependencies before copying source code. Get it backwards, with COPY . . before the install, and every one-line code change invalidates the copy layer and forces a full dependency reinstall. The consequence people miss is that this affects deployment bandwidth as well as build time. If your application code sits in a small top layer, a node that already has the base pulls only that small layer on a new revision. Order it wrongly and the same code change moves the large dependency layer too, which matters most during scale-out when you are already under load.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do multi-stage builds reduce image size, and why is that different from deleting files in a later layer?",
+    "answer_markdown": "A multi-stage build uses several FROM statements: early stages compile with all the heavy toolchain present, and the final stage starts from a minimal base and copies in only the outputs. The stages you discard contribute no layers to the final image, so the compilers, headers and dev dependencies were never in it at all. Deleting files in a later layer is fundamentally different: because each layer is a diff over the ones beneath, a file removed in layer 5 is still fully present in layer 3 and recoverable by anyone who has the image. This is exactly why RUN rm secret.txt does not remove a secret from an image — a very common and consequential misunderstanding. Multi-stage builds avoid the whole class, because content in a discarded stage never became a layer in the first place.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "You chose a distroless base for security and now cannot debug the container in production. What do you actually do?",
+    "answer_markdown": "Distroless has no shell, so kubectl exec into a shell fails outright and every reflex — ls, cat, curl, ps — is unavailable. The answer is an ephemeral debug container: attach a container with a full toolchain to the running pod, sharing its process and network namespaces, without restarting anything. Targeting the app container's process namespace lets you inspect its processes, and the shared network namespace means curl against localhost reaches the app. Two practical details are worth knowing. First, a distroless runtime image usually still ships its language runtime, just not at a conventional path and not on PATH — so a Node.js distroless image has a node binary at some absolute path like /nodejs/bin/node, which is how you run a one-off script inside one, typically piping the script over stdin since there is no shell to receive a copied file. Second, using shell-form CMD in a shell-less image fails at container start rather than at build, which is a common way this bites people the first time.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A scan reports dozens of CVEs in your image. What actually reduces them most?",
+    "answer_markdown": "Base-image currency, because most findings come from packages in the base image rather than from your own code — libraries and utilities you never invoke but which are present and therefore counted. Rebuilding on a current base image fixes more findings than any other single action, which reframes CVE management as a routine maintenance schedule rather than an incident response. Beyond that, a minimal base such as distroless shrinks what is there to find in the first place, running as a non-root user reduces what an attacker gains after a compromise, and dropping Linux capabilities removes powers almost no application needs. The reason non-root and dropped capabilities matter is that container isolation is not a VM boundary — containers share the host kernel, so being root inside one is a considerably better position from which to exploit a kernel vulnerability.",
+    "difficulty": "medium"
+  }
+]

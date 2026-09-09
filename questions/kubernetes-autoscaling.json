@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Name the three independent axes of Kubernetes autoscaling and what each one actually changes.",
+    "answer_markdown": "The Horizontal Pod Autoscaler changes the replica count — more Pods, each the same size. The Vertical Pod Autoscaler changes each Pod's CPU and memory requests and limits — same replica count, bigger Pods. The Cluster Autoscaler, or Karpenter, changes the number of nodes. They solve genuinely different problems: load varying over time, requests having been guessed wrong in the first place, and Pods not fitting on the machines you have. The reason candidates should keep them distinct is that they interact in specific ways — Pod scaling and node scaling are natural partners, because more Pods need somewhere to fit, whereas horizontal and vertical scaling on the same signal actively conflict.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Work through how the HPA computes a replica count. You have 4 replicas, a 50% CPU target, and observe 90%.",
+    "answer_markdown": "The formula is `desiredReplicas = ceil(currentReplicas × currentMetricValue / desiredMetricValue)`, so `ceil(4 × 90 / 50) = ceil(7.2) = 8` replicas. The loop runs every 15 seconds by default and converges in steps rather than jumping, because each new observation already reflects the previous correction. Two damping mechanisms surround it: a tolerance of 10%, so a ratio within 10% of 1.0 produces no action at all, and a stabilisation window — scale-up is applied immediately, while scale-down consults the highest count recommended over the previous 300 seconds by default. That asymmetry is deliberate: being briefly over-provisioned costs far less than flapping between replica counts.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Can you run the HPA and the VPA on the same metric? Explain exactly what happens.",
+    "answer_markdown": "No — they fight, and the loop is worth being able to trace. Suppose both watch CPU. Load rises, so the VPA raises the CPU request. Because HPA utilisation is a percentage *of the request*, the same absolute usage now reports as a lower percentage, so the HPA concludes it is over-provisioned and removes replicas. Fewer replicas means each remaining Pod handles more traffic, CPU utilisation climbs again, the VPA grows the request again, and the two chase each other indefinitely. Since the VPA has historically had to evict Pods to resize them, this oscillation also churns Pods rather than just numbers. Three combinations work instead: HPA on CPU with VPA on memory only, HPA on a custom metric like queue depth with VPA on both CPU and memory, or VPA in Off mode as a recommender that a human or CI applies.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Your queue worker has an HPA on CPU at a 70% target. The queue has 184,000 messages and the HPA is sitting at 2 replicas. What is wrong?",
+    "answer_markdown": "Nothing is broken — the HPA is behaving correctly and the metric is simply answering a question nobody needed. The worker is I/O-bound: it spends most of its life blocked waiting on network calls to the queue and a database, so its CPU genuinely sits around 14% whether the backlog is ten messages or a hundred thousand. CPU is a proxy for load, not a measure of it, and the proxy fails whenever the bottleneck is not CPU. The honest signal is queue depth, which is honest by definition, because a message is only waiting if no worker could take it — precisely 'demand exceeds capacity'. KEDA expresses this directly with a ScaledObject and a queue trigger, feeding backlog into an HPA it creates for you, and it also enables scale-to-zero, which a plain HPA cannot do since its floor is 1. Set maxReplicaCount deliberately, since 184,000 messages at 50 per replica would otherwise request 3,680 Pods.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What triggers the Cluster Autoscaler, and why does that mean Pods pend before nodes appear?",
+    "answer_markdown": "The Cluster Autoscaler does not watch CPU, load, or the HPA — it watches for unschedulable Pods, meaning Pods the scheduler could not place, and asks whether adding a node of an existing node-group shape would let them fit, checking about every 10 seconds. That makes the Pending state the trigger rather than a symptom, and imposes a strict ordering: load rises, the HPA adds Pods, some Pods go Pending, the autoscaler notices, the cloud API provisions a node, the node joins, the kubelet pulls images, and only then do the Pods start. That whole path takes minutes, not seconds. It also means alerting on Pending Pods during scale-up is alerting on the mechanism working, and that the highest-leverage speed-up is not autoscaler tuning but making a new node useful faster through smaller images, pre-pulled layers, or a regional registry cache.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your cluster scales up fine but never scales back down, and the bill reflects it. What do you investigate?",
+    "answer_markdown": "Look for Pods that cannot be evicted, since a node is only removed when it has been under-utilised (below 50% by default) and unneeded for over 10 minutes *and* every Pod on it can be rescheduled elsewhere. The usual blockers are a PodDisruptionBudget that eviction would violate — a `minAvailable: 1` PDB on a single-replica Deployment means that Pod can never be voluntarily evicted, so its node can never be drained — local storage such as `emptyDir` or `hostPath`, where evicting would destroy data the autoscaler cannot know is disposable, Pods with no controller to recreate them, and kube-system Pods without a PDB. The characteristic pattern is a handful of such Pods scattered one per node, each pinning a whole machine indefinitely. The `safe-to-evict` annotation overrides the local-storage case, and Karpenter attacks the problem differently by provisioning right-sized nodes from Pod requirements and actively consolidating workloads onto fewer nodes.",
+    "difficulty": "hard"
+  }
+]

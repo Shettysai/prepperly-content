@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why should configuration live outside the container image rather than inside it?",
+    "answer_markdown": "Because baking environment-specific values into the image means you are no longer shipping one piece of software — the image you tested in staging is a different artefact from the one running in production, so every test result is a claim about something you never deployed. Promoting a build stops meaning anything. The rule to internalise is that the image is the code and the ConfigMap is the environment: build once, ship the same digest everywhere, and let the cluster supply the differences. That is also what makes an image digest a trustworthy identity for a release, since the same bytes are what got tested and what got promoted.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Is a Kubernetes Secret encrypted? Explain precisely what protection it does and does not give you.",
+    "answer_markdown": "No — a Secret is base64-encoded, not encrypted. Base64 is a transport format so that arbitrary byte data survives JSON, and `base64 -d` recovers the plaintext instantly with no key. The Kubernetes docs state it directly: Secrets are by default stored unencrypted in etcd, and anyone with API access can retrieve or modify them, as can anyone with access to etcd. What a Secret actually buys you is a separate RBAC surface you can lock down independently, slightly more careful handling by Kubernetes, and a hook where real encryption can be turned on. Genuine protection comes from three separate things: encryption at rest configured on the apiserver (ideally KMS-backed), tight RBAC on the `secrets` resource, and simply not mounting secrets a Pod does not need.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A teammate edited a ConfigMap ten minutes ago and says the change hasn't taken effect. How do you diagnose it?",
+    "answer_markdown": "The first question is which injection path the Pod uses, because the two behave oppositely. If the value came in as an environment variable, it was snapshotted when the container started and can never update — a Unix process's environment is fixed at exec time, so nothing outside can change it. The Pods must be replaced. If it came in as a mounted volume, the kubelet does re-sync the file, roughly every minute or two, so either they checked too early, or the application read the file once at startup and cached it, or it is a `subPath` mount — which bind-mounts the resolved file and therefore freezes at Pod start exactly like an env var. Note that seeing the new value in `kubectl get configmap` proves only that the object changed, not what any Pod holds.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you make a config change actually roll out to running Pods, and why doesn't Kubernetes do this for you?",
+    "answer_markdown": "Kubernetes deliberately does not restart Pods when a ConfigMap changes, because it has no way to know whether your application can tolerate a reload or a restart at that moment. The standard pattern is the checksum annotation: compute a hash of the config and put it in the Pod template's annotations. Changing an annotation changes the Pod template hash, which produces a new ReplicaSet, which is an ordinary rolling update with all its usual safety and rollback. Helm generates this with a sha256sum over the rendered ConfigMap template. The alternative is immutable ConfigMaps: set `immutable: true`, never edit in place, and instead create a new versioned name and change the reference — which forces the same rollout by a different route.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why do teams add an external secrets operator instead of just creating Kubernetes Secrets, and what operational sharpness comes with it?",
+    "answer_markdown": "Because a Kubernetes Secret is a reasonable delivery mechanism but a poor storage mechanism, and the vault should be the source of truth with the cluster Secret merely a projection of it. That inversion means rotation happens in one audited place, no credential is ever committed to git, and the in-cluster Secret becomes a disposable cache. Two sharp edges are worth naming. First, syncs are typically all-or-nothing per store: an ExternalSecret listing many keys fails as a unit if one is missing or misnamed, so the target Secret is never written and every Pod mounting it stays stuck at start-up — one typo fails much wider than expected. Second, the operator needs its own vault credential, which is a chicken-and-egg problem; a static token in the cluster reintroduces exactly the secret you were removing, so the good answer is platform attestation of the workload's ServiceAccount token exchanged for vault access.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Describe how a compromised Pod could escalate to holding every credential in its namespace.",
+    "answer_markdown": "By default a Pod gets its ServiceAccount token mounted at /var/run/secrets/kubernetes.io/serviceaccount/token. An attacker who achieves code execution in the container reads that token and calls the API server directly from inside the cluster network. If that ServiceAccount has been granted `get` or `list` on `secrets` — often added casually 'for debugging' — the attacker retrieves the database password, the API keys and the TLS private keys with no further exploitation required. `list` is worse than `get`, because it returns everything without needing to know a name. The defences in order of leverage: do not grant get/list on secrets, set `automountServiceAccountToken: false` on the many Pods that never call the API so there is no token to steal, and enable encryption at rest — noting encryption does nothing against this API path, since it protects a stolen etcd backup instead, which is why RBAC is the primary control here.",
+    "difficulty": "hard"
+  }
+]

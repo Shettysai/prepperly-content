@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "What is the difference between a PersistentVolume and a PersistentVolumeClaim, and why split them at all?",
+    "answer_markdown": "The PVC is the application's request — \"10Gi, ReadWriteOnce\" — and it lives in the app's namespace alongside its manifests. The PV is the actual storage, a cluster-scoped object representing a real disk. They bind one-to-one and exclusively, so a bound PV serves exactly one PVC for its lifetime, and a PVC with no match stays Pending. The split exists to separate two roles: an application developer knows they need 20Gi of fast storage but should not need to know the cloud provider, disk product, encryption key or availability zone, while a cluster administrator knows all of that and should not be involved in every deployment. Because a Pod references only the claim name and never the volume, the same manifest runs unchanged on clusters with completely different storage backends.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What does `ReadWriteOnce` actually restrict, and what is the classic design mistake that follows from misreading it?",
+    "answer_markdown": "It restricts read-write mounting to a single **node**, not a single Pod. Multiple Pods scheduled onto that same node can all mount it simultaneously; a Pod on any other node cannot mount it at all. The classic mistake is running a multi-replica database Deployment with all replicas sharing one RWO PVC. Two outcomes follow, and the second is worse. If the replicas land on different nodes, the extras hang in ContainerCreating with a multi-attach error — annoying but safe. If they land on the same node, the mount succeeds and multiple database processes write to one data directory concurrently, which corrupts it, and it looks like it worked. Switching to ReadWriteMany does not fix this: RWX makes concurrent mounting possible but does nothing about databases assuming exclusive ownership of their files. The real fix is one volume per replica, which is what StatefulSet `volumeClaimTemplates` provides.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How can Kubernetes permanently destroy your data, and how do you prevent it?",
+    "answer_markdown": "Dynamically provisioned PVs default to `persistentVolumeReclaimPolicy: Delete`, which means deleting the PVC destroys the PV object *and the real underlying cloud disk*. The path to data loss is short and entirely ordinary: `kubectl delete pvc`, or `kubectl delete namespace staging`, or a GitOps sync that prunes a resource whose name changed. There is no confirmation prompt, no recycle bin and no undo. Prevent it by setting `reclaimPolicy: Retain` on any StorageClass backing stateful workloads, so a deleted PVC leaves the PV in Released with its data intact. Storage object in use protection, on by default, adds a finalizer so a PVC still mounted by a running Pod goes to Terminating instead of deleting — but that will not save you from deleting a claim whose Pod is already gone.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do StatefulSets handle storage differently from Deployments?",
+    "answer_markdown": "A Deployment's Pods are interchangeable, so a PVC reference in its template is shared by every replica. A StatefulSet instead declares `volumeClaimTemplates`, and the controller creates one PVC per replica with a deterministic name — `data-postgres-0`, `data-postgres-1`, and so on. That naming is the mechanism: `postgres-1` always claims `data-postgres-1`, so deleting the Pod and rescheduling it onto a different node re-binds it by ordinal to the identical volume with identical data. Combined with per-replica DNS from a headless Service, each replica gets a fixed name and a fixed disk, which is exactly what a replicated database needs. Two sharp edges: scaling down deliberately does not delete the PVCs, so scaling back up reattaches the old data while you keep paying for those disks in the meantime; and `volumeClaimTemplates` is immutable after creation, so resizing means editing each PVC individually or recreating the StatefulSet.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A single-replica Deployment with an RWO volume has a rolling update that hangs forever, but the app stays up. Explain it.",
+    "answer_markdown": "The default `RollingUpdate` strategy creates the new Pod before terminating the old one, so for a moment two Pods exist. If the new Pod is scheduled onto a different node, it cannot attach the RWO volume that the old Pod's node still holds exclusively, so it waits with a multi-attach warning. The old Pod is still running and serving, so there is no outage — which is why this reads as a storage failure rather than a strategy mismatch. The fix is `strategy: { type: Recreate }`, which fully terminates the old Pod before creating the new one, accepting brief downtime in exchange for a rollout that actually completes. Any single-replica Deployment with an RWO volume should use Recreate; if you cannot tolerate that downtime you need a genuinely replicated architecture, not a different access mode.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is dynamic provisioning, and why is `volumeBindingMode: WaitForFirstConsumer` recommended on multi-zone clusters?",
+    "answer_markdown": "Dynamic provisioning is the reconciliation loop applied to disks: the PV controller sees a PVC with no matching PV, reads its StorageClass to learn which provisioner to call and with what parameters, invokes the CSI driver's `CreateVolume`, creates the resulting PV, and binds it — so no administrator pre-creates volumes. The default `volumeBindingMode: Immediate` provisions as soon as the PVC is created, before any Pod exists. On a multi-zone cluster that is a trap, because a disk created in `us-east-1a` can only be attached by a node in that zone, so the scheduler inherits a constraint it never got to influence and the Pod is permanently Pending if that zone lacks capacity. `WaitForFirstConsumer` delays provisioning until a Pod is scheduled, so the volume is created in whichever zone the scheduler actually chose.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Should you run a production database on Kubernetes?",
+    "answer_markdown": "It depends, and the honest framing matters more than a yes or no. Kubernetes makes stateless services easier and databases harder, because a Deployment assumes replicas are interchangeable and disposable while every database assumes the opposite: distinct roles, data locality, ordered restarts, and failover as a correctness-critical operation with split-brain risk. StatefulSets recover identity and storage but give you no backups, point-in-time recovery, safe leader election, pooling, or major-version upgrade path. Prefer a managed service like RDS or Cloud SQL when the database is not your differentiator — you are buying backups, HA and patching from people who do it full time. Choose Kubernetes when you have a real reason: many small per-tenant databases, on-premise or air-gapped with no managed option, unusual extensions, egress costs or latency that make co-location matter, or genuine multi-cloud portability. In that case use a mature operator such as CloudNativePG, use fast block storage rather than network filesystems, and test restore rather than assuming backup. The failure mode to avoid is the middle ground — a hand-rolled StatefulSet with no operator, no tested restore, and a Delete reclaim policy.",
+    "difficulty": "hard"
+  }
+]

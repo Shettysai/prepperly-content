@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "What problem does OpenTelemetry actually solve? Why not just use your observability vendor's own agent and SDK?",
+    "answer_markdown": "Instrumentation is the most widely scattered code in a system — it sits in every request handler, every database call, every outbound client — which makes it the most expensive code to rewrite. When that code is written against a vendor's proprietary SDK, the instrumentation and the backend become one decision, so changing vendor means touching every service. OpenTelemetry splits the decision in two: you write against a standard API and SDK, and the data leaves over a standard wire protocol called OTLP. Where it goes is then configuration, not code, and you can even fan the same telemetry out to two backends at once while evaluating a replacement. The vendor agent is usually easier on day one; OTel is what keeps day 800 cheap.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "You have metrics, logs and traces. What is each genuinely best at, and what does the cost of each scale with?",
+    "answer_markdown": "Metrics are pre-aggregated numbers, and their cost scales with the number of distinct time series rather than with traffic — a counter serving a billion requests is still one series — which makes them the correct home for dashboards and alerting. Logs are per-event detail and their cost scales linearly with traffic, so they are right for depth on a single event and wrong for anything you need to watch continuously. Traces are the only signal that captures causality across service boundaries, telling you which call caused which and where the latency actually went, but their volume is traffic multiplied by spans per request, so they nearly always need sampling. Choosing the wrong signal is what produces surprise bills: deriving a rate by counting log lines is both expensive at query time and silently wrong whenever logs are dropped.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "An engineer adds a customer_id label to an existing request-duration histogram to help the support team. Why can this take down your entire metrics backend?",
+    "answer_markdown": "Every unique combination of label values becomes its own stored time series, and once a series exists it is generally retained for the whole retention window rather than forgotten when traffic moves on. A histogram with 10 buckets labelled by route (40) and status class (5) is 2,000 series and does not grow with traffic. Adding customer_id with 50,000 customers multiplies that to 100 million series. Nothing fails loudly, because metrics export is fire-and-forget: the application stays perfectly healthy while the metrics backend's memory climbs and then dies, taking every dashboard and alert with it exactly when you need them to diagnose the problem. The fix is a cardinality budget computed as the product of each label's distinct values before merging, enforced centrally in the Collector. The support team's question belongs on span attributes instead, where high cardinality is free because a span is one event rather than a permanent series.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How does trace context travel between services, and where does a trace most commonly break silently?",
+    "answer_markdown": "The W3C traceparent header carries the version, trace ID, parent span ID and flags including the sampling decision. Each service reads it, makes its own span a child of that parent, and must re-attach it to every outgoing call. A trace breaks at the first hop that fails to forward the header, and the break produces no error at all — you get two structurally valid traces instead of one, and the second service looks as though it was never called, which sends people debugging the wrong component. Two boundaries cause nearly all real breakages. Message queues have no HTTP headers, so context must be written explicitly into message metadata and read back by the consumer. Custom HTTP clients bypass the auto-instrumentation that patches the standard client, which is the same class of bug as a hand-rolled client silently losing connection pooling: replacing a default means inheriting everything the default was doing for you.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why run an OpenTelemetry Collector instead of exporting straight from your applications to the backend? What is the difference between agent and gateway deployment?",
+    "answer_markdown": "The Collector centralises work you would otherwise duplicate and get subtly wrong in every service: batching many small exports into few large ones, retrying, enriching with cluster and version metadata, redacting attributes that should never have carried personal data, and fanning the same stream out to multiple backends. Redaction in particular is far safer centrally, because one Collector rule beats hoping that every team remembered. As an agent it runs per host or as a sidecar, so the application's export is a localhost call that cannot fail on the network and host metadata can be attached locally. As a gateway it is a shared, independently scaled service, and it is the only place that can hold a whole trace in memory — which is what tail sampling requires. Most mature setups run both: agents collect and forward, the gateway decides what to keep.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why is tail sampling worth the extra infrastructure over simply sampling 1% of traces at the start of each request?",
+    "answer_markdown": "Head sampling decides before the request's outcome is known, so it keeps errors only by luck — at 1%, roughly 99% of your failures have no trace, which means the traces you own are overwhelmingly recordings of things that worked. Tail sampling buffers a trace's spans until it completes and then applies rules: keep every errored trace, keep everything slower than a latency threshold, keep a small random slice of healthy traffic. You store a similar volume but the retained set is heavily weighted toward the requests you will actually investigate. The costs are real and worth stating in an interview: the gateway becomes stateful, holding spans in memory until it can tell a trace is finished, and every service in a trace must reach the same gateway instance or you buffer an incomplete trace and make a decision on partial information.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why do semantic conventions matter? It seems like a naming argument.",
+    "answer_markdown": "Semantic conventions specify the attribute names for common concepts, such as http.request.method or server.address, and their value is portability rather than tidiness. If every service uses the same names, a dashboard for p99 latency by route works against any service in the organisation, a vendor's out-of-the-box views populate with no configuration, and an alert definition can be templated once and reused. If teams each invent their own — method, httpMethod, http_verb — then every dashboard is bespoke, no two services are comparable, and migrating backends becomes a mapping exercise on top of everything else. It is the same reason a standard wire protocol matters: consistency is what turns individual instrumentation into a system you can query.",
+    "difficulty": "easy"
+  }
+]

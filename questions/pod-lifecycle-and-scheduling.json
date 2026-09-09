@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "Is `CrashLoopBackOff` a Pod phase? Name the actual phases.",
+    "answer_markdown": "No. A Pod has exactly five phases: Pending, Running, Succeeded, Failed and Unknown. `CrashLoopBackOff` and `ImagePullBackOff` are container states — specifically a `waiting` state with a reason — reported inside a phase. This confuses people because `kubectl get pods` prints the container reason in the STATUS column, making it look like a phase. Precisely: a Pod showing `ImagePullBackOff` is in phase Pending, while a Pod showing `CrashLoopBackOff` is in phase Running, because its containers were created and the kubelet is restarting them with an increasing backoff that caps at five minutes.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does the scheduler choose a node?",
+    "answer_markdown": "In two stages, then a write. Filtering eliminates every node that could not possibly host the Pod, using boolean checks: enough unreserved CPU and memory, tolerations for the node's taints, satisfied `nodeSelector` and required node affinity, attachable volumes, free ports. Scoring then ranks the survivors with weighted plugins — preferring less-utilised nodes, nodes that already cache the image, and spreading replicas across failure domains. Binding writes `spec.nodeName` and the scheduler's job ends there. If nothing survives filtering the Pod stays Pending and the scheduler records exactly why, in a message like `0/5 nodes are available: 3 Insufficient memory, 2 node(s) had untolerated taint` — that message is the answer, not a hint.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is the difference between a liveness probe and a readiness probe, and what goes wrong if you check a database connection in the wrong one?",
+    "answer_markdown": "A failing liveness probe restarts the container; a failing readiness probe only removes the Pod from Service endpoints and never restarts anything. Dependency checks belong in readiness, where the consequence is 'take me out of rotation until my dependency returns'. Put a database check in a liveness probe and a database outage causes every one of your containers to be killed and restarted repeatedly — you have converted someone else's outage into a self-inflicted crash loop. Worse, when the database recovers your Pods are mid-backoff, so your outage now outlasts the dependency's. The rule is that liveness must only test whether this process is wedged, never whether its dependencies are up.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Explain the asymmetry between requests and limits. Why does exceeding a CPU limit behave completely differently from exceeding a memory limit?",
+    "answer_markdown": "Requests drive scheduling and limits drive runtime enforcement — they are read by different components at different times and never interact. The scheduler only looks at requests, summing those of all Pods already bound to a node; it ignores limits entirely and ignores actual usage, so a node whose Pods requested 8 cores while idling at 0.2 is a full node to the scheduler. The kernel only enforces limits, and the asymmetry comes from the nature of the two resources. CPU is compressible, so exceeding its limit means the CFS scheduler simply grants fewer time slices — the process runs slower but stays alive, and the symptom is latency plus a rising throttling metric rather than a restart. Memory is incompressible, since you cannot give a process a fraction of a byte, so exceeding a memory limit gets the container OOMKilled with exit code 137 and restarted. In short: a CPU limit degrades you silently, a memory limit kills you loudly, which is why many teams set memory requests equal to limits and set CPU requests with no CPU limit at all.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A Pod shows phase `Running` with no restarts, but receives no traffic. What is happening?",
+    "answer_markdown": "Its readiness probe is failing, so the endpoint controller has removed it from the Service's EndpointSlices while the kubelet leaves it running — readiness never restarts anything. The Service still exists with a valid ClusterIP that DNS resolves, but it has zero endpoints, so callers get connection timeouts or a 503 from an ingress controller. The visible tell is `0/1` in the READY column of `kubectl get pods`, which people routinely read past because the STATUS column says Running. Confirm it with an empty endpoint list, then check the probe's path and port against what the app actually serves, and whether the probe is testing a dependency rather than the process itself.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why do requests get dropped during an ordinary rolling deploy, and how do you fix it?",
+    "answer_markdown": "Deleting a Pod runs two sequences concurrently with no synchronisation between them. The Pod is marked Terminating and the endpoint controller starts removing it from EndpointSlices, a removal that must then propagate to kube-proxy on every node. Simultaneously the kubelet sends SIGTERM immediately, waits `terminationGracePeriodSeconds`, then SIGKILLs. So your app can stop listening while nodes still hold forwarding rules pointing at it, and in-flight or newly arriving requests hit a closed port. The fix has two parts used together: a `preStop` hook that sleeps a few seconds, since the grace period does not begin until `preStop` finishes, giving endpoint removal time to propagate; and handling SIGTERM by draining — stop accepting new connections, finish in-flight requests, then exit — rather than exiting immediately.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What decides which Pods get evicted first when a node runs out of memory?",
+    "answer_markdown": "The QoS class, which Kubernetes derives from your requests and limits rather than you setting it directly. Guaranteed means every container specifies both requests and limits and they are equal for both CPU and memory. Burstable means at least one request is set but the Guaranteed condition is not met. BestEffort means no requests or limits anywhere. Under node memory pressure the kubelet evicts BestEffort Pods first, then Burstable Pods exceeding their requests, and Guaranteed Pods last. The practical implication is that omitting resource specs entirely is not modest — it puts your Pod first in the queue to be killed.",
+    "difficulty": "easy"
+  }
+]
