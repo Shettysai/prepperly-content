@@ -48,6 +48,24 @@ Video works the same way. **Transcoding** (baking in several sizes) happens once
 
 Crucially, chunks are just files fetched over ordinary HTTP. There is no exotic streaming protocol — which is exactly why CDNs, built for caching HTTP files, work so well here.
 
+The bakery and the shops are genuinely separate systems, joined only by storage:
+
+```mermaid
+flowchart LR
+  UP["Uploader"] --> API["Upload API"]
+  API --> BLOB[("Blob storage: raw")]
+  BLOB --> TQ["Transcode queue"]
+  TQ --> TW["Transcode worker fleet"]
+  TW --> CH[("Chunks + manifests: 240p-4K")]
+  TW --> META[("Metadata DB")]
+  CH --> CDN["CDN edge servers"]
+  PL["Player"] --> API2["Playback API"]
+  API2 --> META
+  PL --> CDN
+```
+
+Trace the player's arrows: it talks to the playback API once for metadata, then fetches every chunk straight from the CDN. No request for actual video ever reaches your servers, which is the reason this design carries so much traffic on so little infrastructure.
+
 ## How it actually works
 
 Upload and playback are two almost entirely separate systems.

@@ -48,6 +48,30 @@ Think of a postal sorting office. Letters arrive from many senders in many forma
 
 The critical design choice is that sorting is **decoupled** from delivery. The service asking for a notification gets an immediate acknowledgement and moves on; the actual sending happens later, in the background, with retries. Without that decoupling, a service posting an order confirmation would block on a slow SMS provider.
 
+Laid out as components, the sorting office and the carriers are visibly different tiers:
+
+```mermaid
+flowchart LR
+  SVC["Internal services"] --> API["Notification API"]
+  API --> PREF[("Preferences + device tokens")]
+  API --> TPL[("Template store")]
+  API --> QS["Per-channel priority queues"]
+  subgraph Workers["Worker tier"]
+    WP["Push workers"]
+    WE["Email workers"]
+    WS["SMS workers"]
+  end
+  QS --> WP
+  QS --> WE
+  QS --> WS
+  WP --> PROV["Third-party providers"]
+  WE --> PROV
+  WS --> PROV
+  WP --> DLQ["Dead letter queue"]
+```
+
+The queues in the middle are the whole design. Everything left of them is fast and synchronous; everything right of them is slow, retried, and allowed to fail — which is exactly where the untrustworthy third-party providers sit.
+
 ## How it actually works
 
 A notification service accepts a request, applies user preferences, renders the template, and places a job on a **per-channel queue**. Workers dedicated to each channel consume those queues and call the third-party provider.

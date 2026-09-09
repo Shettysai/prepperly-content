@@ -33,6 +33,23 @@ No prior topic in this course is required. Helpful context: `authentication-auth
 
 A container is like a shipping container for cargo: no matter what's inside — furniture, electronics, food — it has a standard shape that any ship, crane, or truck can handle without caring about the contents. Docker does the same for software: it defines a standard, isolated unit that bundles your app with its runtime, libraries, and configuration, so any machine running Docker can run it identically.
 
+Extending the analogy: the container has to be packed somewhere, shipped through a port, and unloaded somewhere else. That end-to-end journey is the picture worth holding:
+
+```mermaid
+flowchart LR
+  SRC["Source + Dockerfile"] --> BLD["docker build"]
+  BLD --> IMG["Image (tagged)"]
+  IMG --> PUSH["docker push"]
+  PUSH --> REG[("Registry: Docker Hub / ECR")]
+  REG --> PULL["docker pull"]
+  PULL --> RT["Container runtime on host"]
+  RT --> C1["Container (running)"]
+  C1 --> VOL[("Volume: persistent data")]
+  C1 <--> NET["Docker network"]
+```
+
+The registry in the middle is what makes "it works on my machine" stop being a problem: the machine that builds the image is not the machine that runs it, and the identical bytes cross between them. Note also that the volume sits *outside* the container — the one piece of the picture that survives when the container is thrown away.
+
 ## How it actually works
 
 An **image** is the blueprint — a read-only snapshot of everything your app needs, built in layers (base OS, then dependencies, then your code). A **container** is a running instance of that image, similar to how a class relates to an object in programming: one image can spin up any number of identical, independent containers.
@@ -53,6 +70,27 @@ flowchart TB
 ```
 
 All three containers start from the exact same image layers; only their writable top layer and running state differ. That sharing is why spinning up a fourth identical container is nearly instant — Docker isn't copying the whole image again, just adding a thin new layer on top.
+
+The same layering is what makes instruction order matter during a build. Watch the cache decide, instruction by instruction:
+
+```mermaid
+sequenceDiagram
+  participant D as Dockerfile
+  participant B as Build engine
+  participant C as Layer cache
+  participant R as Registry
+  D->>B: FROM node:20-alpine
+  B->>C: layer cached?
+  C-->>B: hit — reuse
+  D->>B: COPY package.json + npm ci
+  B->>C: hit while lockfile unchanged
+  D->>B: COPY . .
+  B->>C: miss — code changed
+  Note over B: rebuild this layer and every later one
+  B->>R: push only new layers
+```
+
+A cache miss invalidates every layer *after* it, never before. That is the whole reason you copy your dependency manifest and install dependencies before copying your source: your code changes constantly, your dependencies rarely, so putting the slow install step above the frequently-changing copy keeps it cached.
 
 ## Worked example
 

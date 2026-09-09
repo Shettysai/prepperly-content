@@ -45,6 +45,26 @@ The fix is to keep a phone line open. A **WebSocket** is a persistent, bidirecti
 
 Polling ("any messages? any messages?") is the alternative, and it is wasteful in both directions: too frequent and you burn battery and server capacity on empty answers, too infrequent and messages feel slow.
 
+Statefulness changes the shape of the whole system, so start with the components:
+
+```mermaid
+flowchart LR
+  CL["Mobile / web clients"] --> LB["Load balancer"]
+  subgraph Stateful["Connection tier"]
+    CS1["Chat server 1"]
+    CS2["Chat server N"]
+  end
+  LB --> CS1
+  LB --> CS2
+  CS1 <--> SD[("Service discovery: user -> server")]
+  CS2 <--> SD
+  CS1 --> MS[("Message store")]
+  CS2 --> INB["Offline inbox queues"]
+  INB --> PS["Push service (APNs / FCM)"]
+```
+
+The connection tier is the part with no equivalent in a request/response design. Because a socket belongs to one specific server, the service discovery table is not an optimisation — without it, no server can find where a recipient is connected. The offline path hanging off to the right is a completely separate delivery route for users with no socket at all.
+
 ## How it actually works
 
 Users connect to **chat servers** that hold their WebSocket. A **service discovery** layer records which server holds which user, usually in Redis. Sending a message means: persist it, look up where the recipient is connected, and forward it to that server, which pushes it down the socket.
