@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "Why doesn't `LIKE '%term%'` work as a search implementation?",
+    "answer_markdown": "It fails three ways at once. It cannot use an index, because a B-tree is sorted by the beginning of each value and a leading wildcard gives it no starting point, so every query becomes a full scan of every byte of every row. It matches the wrong things and misses the right ones, because it compares character sequences rather than words — it hits the middle of unrelated words, and a search for `databases` misses a document that says only `database`. Most importantly it cannot rank: it returns matching rows in scan order, so a document titled 'Database Design' and one mentioning databases once in a footnote come back indistinguishable. For search, ordering is not a nicety, it is the product, and those three failures are exactly what an inverted index plus a scoring function fixes.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is an inverted index, and what does a postings list contain beyond document IDs?",
+    "answer_markdown": "It reverses the natural direction of the data: instead of each document listing the words it contains, each word lists the documents containing it, exactly like the index at the back of a textbook. It has two parts — a sorted term dictionary, so looking up a term is a binary search rather than a scan, and for each term a postings list of matching document IDs. Postings also carry term frequency, which is how often the term appears in that document and feeds relevance scoring, and often positions recording where each occurrence sits. Positions are what make phrase and proximity queries possible: the phrase 'machine learning' requires `learning` at a position exactly one after `machine`, whereas without positions you can only ask whether both words appear somewhere, which also matches an article about servicing a washing machine. Positions roughly double index size, so they are sometimes disabled on fields that never need phrase search.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why don't my search results match even though the word is clearly in the document?",
+    "answer_markdown": "Almost always an analyzer mismatch. The index does not contain your document's words — it contains the output of the analyzer that processed them, after tokenization, lowercasing, stop-word removal and stemming. If the indexing side stemmed `Databases` down to `databas` but the query side only lowercases to `databases`, the query term simply is not in the index, so you get zero results while the word sits plainly visible in the document. This is the most confusing class of search bug there is, because both the data and the query look correct and the engine returns nothing without an error. The debugging move is to stop reasoning and ask the engine what it stored: run the document text and the query text through the analyze endpoint, list the terms actually in the index, and compare. The fix is one authoritative analyzer definition used by both sides — and because the index already holds the old analyzer's output, changing it requires reindexing from the primary store.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Explain TF-IDF's intuition and why BM25 replaced it as the default.",
+    "answer_markdown": "Two ideas combine. Term frequency says a document mentioning `sharding` twelve times is probably more about sharding than one mentioning it once. Inverse document frequency says a term appearing in nearly every document tells you almost nothing, while a term in three documents out of a million is enormously informative, so each term is weighted by its rarity across the corpus. Together: a rare word that appears often in this document is a strong signal. BM25, the default in Lucene and therefore in Elasticsearch and OpenSearch, fixes two flaws in the raw version. It adds saturation, passing term frequency through a curve that flattens so the tenth occurrence adds far less than the second, tuned by `k1`. And it adds length normalisation, dividing by document length relative to the corpus average with `b` controlling the strength, so a 10,000-word document is not favoured simply for containing more words.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why can search results order strangely on a small index, and what does that reveal about how scoring works?",
+    "answer_markdown": "Because relevance is computed per shard using that shard's own local statistics. Inverse document frequency depends on how many documents contain a term, and a shard only knows about its own documents, so the same document can score differently depending on which shard it landed on. The coordinator then merges results from every shard as though the scores were comparable, which they are not strictly. With large, evenly distributed shards this is invisible, because each shard's statistics closely approximate the whole corpus. It becomes visible exactly when you are most likely to be debugging: a small index, a skewed distribution, or a twenty-document test corpus that orders oddly with nothing wrong in the query. Engines offer a mode that gathers global statistics first at the cost of an extra round trip, which is a diagnostic tool rather than a default. The broader point is that a BM25 score is only meaningful as an ordering within one result set — there is no threshold that means 'good match'.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Would you use a search engine or a vector database, and what is the difference between a filter and a query?",
+    "answer_markdown": "Use lexical search when terms matter exactly — product codes, error strings, names, quoted phrases — because in those cases a semantically similar answer is a wrong answer. Use vector search for paraphrase and intent, where `laptop` should match `notebook computer` despite zero term overlap, which is the hard ceiling of an inverted index. Most real product search ships hybrid, running both and fusing the rankings. On the second half: a query contributes to the relevance score, while a filter is a plain boolean like `price < 100`. That distinction is a performance lever, because a filter's answer does not depend on the query text, so its result set can be cached and reused across every search that uses it, and cheap filters run first to shrink the set expensive scoring must touch. Putting `category = shoes` in the scoring part computes a score for a condition that was never a matter of degree.",
+    "difficulty": "medium"
+  }
+]

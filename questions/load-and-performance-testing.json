@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "What is the difference between load, stress, soak and spike testing?",
+    "answer_markdown": "They answer four different questions and need four different setups. A load test holds expected peak demand to confirm the system meets its targets under normal conditions. A stress test pushes past that peak until something breaks, to find the ceiling and see whether failure is graceful or a collapse. A soak test holds a moderate load for hours to expose slow problems a short run cannot show — memory leaks, connection leaks, disks filling. A spike test slams the system with a sudden jump to check both survival and recovery afterwards. The common mistake is running only the first and calling it capacity testing, because a load test at expected demand cannot tell you whether you were at 10% or 95% of the limit.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How do you find a system's actual capacity, and why is the \"knee\" the number you want?",
+    "answer_markdown": "You ramp load in steps and watch throughput and latency together rather than measuring a single point. Below the ceiling, throughput rises to match whatever you offer and latency stays near the real service time. As you approach the ceiling, requests start waiting for a busy worker so latency creeps up while throughput still tracks. Then throughput flattens because the system is doing all it can, and latency climbs steeply since extra load has nowhere to go but a queue. That bend is the knee, and it is the capacity number because past it more load buys no throughput at all and costs unbounded latency. Little's Law explains why informally — concurrency is roughly throughput times latency — so with throughput pinned, rising load must show up as rising latency. Your safe operating point should sit below the knee, since running at 90% of capacity means one bad minute of traffic tips you over the cliff.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why are average latencies inadequate, and what should you report instead?",
+    "answer_markdown": "An average blends the fast majority with the slow minority and produces a number nobody actually experienced, while hiding the tail entirely — and the tail is exactly where users notice. Report percentiles instead, typically p50, p95 and p99, and always state the concurrency they were measured at, because a percentile without a load level is meaningless: the same system gives wildly different p99s at 50% and 95% of capacity. Even percentiles need care about the window, since a p99 computed over ten minutes dilutes a thirty-second stall into a small fraction of the samples. Shorter windows, or reporting a maximum alongside the percentiles, keeps short stalls visible.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Your load test reports p99 of 200ms but users see multi-second stalls — what went wrong?",
+    "answer_markdown": "The most likely cause is coordinated omission from a closed-model load generator. In a closed model each virtual user sends its next request only after the previous one returns, so when the system stalls those users are blocked and stop issuing requests during exactly the period you most wanted measured. The stall then contributes a handful of slow samples instead of thousands, and the generator's cooperation with the slowdown removes the evidence of it. A long percentile window compounds this by diluting whatever slow samples did get recorded. The fix is to re-measure with an open, arrival-rate model where requests are scheduled at a fixed rate regardless of response times and each request's latency is counted from the moment it should have been sent, and to report maximums alongside percentiles. It is also worth confirming the generator itself was not saturated, since a starved client under-reports latency the same way.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Explain open versus closed workload models and why the choice changes your results.",
+    "answer_markdown": "A closed model fixes the number of virtual users, each looping request-after-response, so the offered rate is a consequence of how fast the system replies — as the system slows, the generator automatically applies less load. An open model fixes the arrival rate: requests are scheduled independently of whether earlier ones have returned. The choice changes results because a closed model has negative feedback built in, which suppresses queue growth and hides latency spikes, while an open model lets the queue grow exactly as it would in production. Closed models are a reasonable fit when your real clients genuinely are a fixed pool, such as a set number of worker processes; open models better reflect internet traffic, where users arrive whether or not you are ready for them. Either way you should state which model produced a number, because the two are not comparable.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Your load test shows excellent latency, but the same code is slow in production. What test-realism problems would you check?",
+    "answer_markdown": "Start with the request mix: hammering one URL with one parameter means every cache in the stack serves from memory, so you measured the cache rather than the system, and the effect is large enough to make a broken design look fast. Spread keys over a realistic range, use endpoints in production proportions, and include think time between a user's actions, or you have modelled a bot and sized for traffic nobody will send. Check data volume next, since a query against ten thousand rows may use a plan it abandons at ten million, so a small dataset hides exactly the regression you are hunting. Then check the environment: different instance sizes, replica counts or network paths mean you carefully measured a different system. Finally remember the test only tells you what is slow, never why, so attribute the bottleneck with profiling and traces before tuning — tuning before attributing is guesswork that occasionally gets lucky and always costs time.",
+    "difficulty": "hard"
+  }
+]
