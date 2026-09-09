@@ -10,8 +10,8 @@ links:
   - title: Vector Database Basics — HNSW
     url: "https://www.tigerdata.com/blog/vector-database-basics-hnsw"
     kind: resource
-  - title: OpenAI — Create embeddings (API reference)
-    url: "https://platform.openai.com/docs/api-reference/embeddings/create"
+  - title: OpenAI — Embeddings guide
+    url: "https://platform.openai.com/docs/guides/embeddings"
     kind: resource
   - title: "Video: Vector Databases — Introduction, Embeddings and Similarity Search"
     url: "https://www.youtube.com/watch?v=jqlgFmcXvq8"
