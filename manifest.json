@@ -1173,7 +1173,7 @@
           "position": 12,
           "path": "phases/12-ai-engineering/rag-retrieval-augmented-generation.md",
           "questionsPath": "questions/rag-retrieval-augmented-generation.json",
-          "sha256": "7e805707254c52464289739bfbff348548ad99039fc1f4de478ca75b134fc0b1"
+          "sha256": "fb278a6aba388fd0b738245c4d5f2dfee808ea502299854a7b43e0bee64edd68"
         },
         {
           "slug": "sampling-and-decoding",
@@ -1200,7 +1200,7 @@
           "position": 15,
           "path": "phases/12-ai-engineering/vector-databases.md",
           "questionsPath": "questions/vector-databases.json",
-          "sha256": "667f53ae7df8ec3b2ac65953928476dfa69a30a0a4a4fbdddd05dea999fe12ab"
+          "sha256": "63d2d6c92cd0eba772933176e8fed21807ecb7082c6de7c2a830dc729a1af1dc"
         }
       ]
     },

@@ -7,8 +7,8 @@ links:
   - title: Prompt Engineering Guide — Retrieval Augmented Generation
     url: "https://www.promptingguide.ai/research/rag"
     kind: resource
-  - title: OpenAI — Create embeddings (API reference)
-    url: "https://platform.openai.com/docs/api-reference/embeddings/create"
+  - title: OpenAI — Embeddings guide
+    url: "https://platform.openai.com/docs/guides/embeddings"
     kind: resource
   - title: Unstructured — Chunking strategies
     url: "https://docs.unstructured.io/open-source/core-functionality/chunking"
