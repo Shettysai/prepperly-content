@@ -212,6 +212,18 @@ Alert fatigue is the sharper danger, and burn-rate alerting is partly a cure. Ev
 | Slow burn | 6 hours | 6x | Ticket, fix this week |
 | Static threshold | — | — | Pages on blips, misses slow leaks |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Google SRE Book](https://sre.google/sre-book/table-of-contents/) | SLI, SLO and error-budget definitions | You want the source — this is what interviewers are quoting at you |
+| [SRE Workbook](https://sre.google/workbook/table-of-contents/) | Practical SLO implementation | You have the theory and now have to pick an actual SLI and window |
+| [Sloth](https://sloth.dev/) | Generate Prometheus SLO rules and alerts | Multi-window multi-burn-rate alerts are easy to hand-write wrong |
+| [OpenSLO](https://openslo.com/) | Vendor-neutral SLO specification | SLOs should be reviewable code, not config buried in a dashboard |
+| [Prometheus Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/) | Route and inhibit burn-rate alerts | You need to turn burn rate into a page that is genuinely worth waking someone for |
+
+Burn-rate alerting on a *ratio* is the key technique — alerting on raw error count gives you noise at low traffic and silence at high traffic.
+
 ## Common mistakes
 
 - Measuring uptime instead of a ratio of successful events, which calls a service healthy while it returns 500s.

@@ -191,6 +191,19 @@ The threshold is a tuning knob, not a constant. Set it too low and you lose the 
 | Feed freshness | Slight delay (async workers) | Always current |
 | Best for | Normal users, read-heavy workloads | Celebrities, inactive users |
 
+## Tools & frameworks
+
+These are the concrete technologies worth naming at the whiteboard for this design.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Redis](https://redis.io/docs/latest/) | Sorted sets holding precomputed per-user timelines | You fan out on write and reads must be O(1) |
+| [Kafka](https://kafka.apache.org/documentation/) | The fan-out pipeline for new posts | You need "post created" decoupled from "N timelines updated" |
+| [Cassandra](https://cassandra.apache.org/doc/latest/) | Wide rows of timeline entries | Timelines are too large to keep entirely in Redis |
+| [PostgreSQL](https://www.postgresql.org/docs/current/) | Source of truth for posts and follows | The social graph and the content still need a consistent home |
+
+The interview is really about fan-out-on-write versus on-read and the celebrity problem; the tools are secondary to that choice.
+
 ## Common mistakes
 
 - Storing full post content in every follower's feed instead of post IDs, multiplying storage by the average follower count.

@@ -190,6 +190,16 @@ Two more levers with unusually good returns:
 | Tokens per request (p50/p99) | Where the outliers are |
 | Cache hit rate | Whether your caching is real |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [LiteLLM](https://docs.litellm.ai/) | One API plus cost tracking across providers | You are comparing providers, or need cost attributed per request |
+| [Langfuse](https://langfuse.com/docs) | Tracing with token and cost per span | You know the bill is too high but not which prompt is spending it |
+| [Helicone](https://docs.helicone.ai/getting-started/quick-start) | Proxy-based logging, caching and cost | You want observability from changing a base URL and nothing else |
+| [OpenRouter](https://openrouter.ai/docs/quickstart) | Cross-provider routing and price comparison | You need live per-token pricing across many models, not a stale table |
+| [tiktoken](https://github.com/openai/tiktoken) | Token counting for cost estimates | You want the spend estimate before you ship, rather than after the invoice |
+
 ## Common mistakes
 
 - Optimising cost per call while ignoring failure rates, retries, and human escalation.

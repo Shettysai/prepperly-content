@@ -127,6 +127,18 @@ The third trap is health checks that only prove a process is listening. A TCP-le
 | Least connections | Request durations vary widely |
 | Consistent hashing | Same key must reach the same backend |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Envoy](https://www.envoyproxy.io/docs/envoy/latest/) | L7 proxy and data plane | You need programmable routing driven by a control plane, not a config file you edit by hand |
+| [NGINX](https://nginx.org/en/docs/) | Reverse proxy and load balancer | You want the simplest thing that works, with static config living in git |
+| [Kong Gateway](https://developer.konghq.com/gateway/) | Plugin-based API gateway | You need auth, quotas and rate limits without writing them yourself |
+| [Traefik](https://doc.traefik.io/traefik/) | Auto-configuring edge router | Your backends come and go, and you want service discovery built in |
+| [Caddy](https://caddyserver.com/docs/) | HTTPS-by-default web server | You want automatic certificates with near-zero configuration |
+
+Envoy is the one to be able to discuss in an interview — Istio, Contour and most Gateway API implementations are Envoy underneath.
+
 ## Common mistakes
 
 - Treating the three terms as different products. They're overlapping roles, and one process often plays all three.

@@ -296,6 +296,18 @@ Portable across every conformant implementation, and validated by the API server
 | Rules work on nginx, break on Traefik | Vendor annotations | Move to Gateway API filters |
 | HTTPRoute ignored | Gateway did not permit that namespace | `HTTPRoute` status conditions |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Gateway API](https://gateway-api.sigs.k8s.io/) | The successor to Ingress | You are building a new cluster — Ingress is effectively frozen |
+| [ingress-nginx](https://kubernetes.github.io/ingress-nginx/) | The most-deployed Ingress controller — but announced as heading for retirement in favour of Gateway API implementations | You have an existing cluster to keep running, and because it is what interviews assume; plan the migration rather than starting here |
+| [Istio](https://istio.io/latest/docs/) | Gateway API with mesh integration (Envoy Gateway sits underneath) | You already run a mesh and want one ingress story instead of two control planes |
+| [Traefik](https://doc.traefik.io/traefik/) | Ingress and Gateway API controller | You want CRD-driven routing with sane defaults and less YAML per route |
+| [cert-manager](https://cert-manager.io/docs/) | TLS certificates for your Gateways | Any HTTPS ingress — this is the paired tool, not an optional extra |
+
+Gateway API's split of `Gateway` (infrastructure) from `HTTPRoute` (application) is a role-separation answer, and that separation is the whole reason it exists.
+
 ## Common mistakes
 
 - Creating an Ingress with no controller installed and expecting traffic. Nothing watches the object and nothing warns you; the empty `ADDRESS` is the only signal.

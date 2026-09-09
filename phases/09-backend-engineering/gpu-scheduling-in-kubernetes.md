@@ -174,6 +174,18 @@ One more trap: distinguishing "out of devices" from "device held by a zombie". A
 | Pending with free GPUs elsewhere | `nodeSelector` too narrow, or CPU/memory won't fit | `kubectl describe pod` events |
 | Card idle in `nvidia-smi` but unschedulable | Device allocated to a stuck Pod | `kubectl get pods -o wide` on that node |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [NVIDIA GPU Operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html) | Installs drivers, container toolkit and device plugin | Any GPU cluster — do not install drivers by hand |
+| [k8s-device-plugin](https://github.com/NVIDIA/k8s-device-plugin) | Advertises `nvidia.com/gpu` as a schedulable resource | You need to understand why GPU requests are integer and non-oversubscribable |
+| [MIG user guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/latest/) | Hardware-partitioning one A100 or H100 | You run many small inference workloads and whole-GPU allocation wastes money |
+| [Kueue](https://kueue.sigs.k8s.io/docs/) | Job queueing and quota for batch workloads | Training jobs must queue fairly instead of failing to schedule |
+| [DCGM Exporter](https://github.com/NVIDIA/dcgm-exporter) | GPU utilisation metrics into Prometheus | You need to prove the GPUs you paid for are actually busy |
+
+The core point is that GPUs are non-shareable integer resources by default, unlike CPU; MIG and time-slicing are the two ways around that, with very different isolation guarantees.
+
 ## Common mistakes
 
 - Setting `requests` lower than `limits` for `nvidia.com/gpu`, out of CPU habit — the API server rejects it, and there is no overcommit to gain anyway.

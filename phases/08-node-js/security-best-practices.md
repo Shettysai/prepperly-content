@@ -133,6 +133,18 @@ The naive version passes every type check you'd write — `username` really is a
 | Man-in-the-middle | Enforce HTTPS everywhere, use HSTS headers |
 | Dependency vulnerabilities | Run `npm audit` and keep dependencies updated |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OWASP Cheat Sheets](https://cheatsheetseries.owasp.org/) | Per-vulnerability practical guidance | You know the class of bug and need the concrete fix |
+| [Helmet](https://helmet.js.org/) | CSP, HSTS and friends as middleware | Every Express app, before anything cleverer |
+| [`npm audit`](https://docs.npmjs.com/cli/v10/commands/npm-audit/) | Dependency vulnerability report | It is built in with zero setup — wire it into CI |
+| [argon2](https://github.com/ranisalt/node-argon2) | Password hashing | You are building a new system — Argon2id is the current recommendation over bcrypt |
+| [gitleaks](https://github.com/gitleaks/gitleaks) | Secret scanning across git history | A key was committed, or you want a pre-commit gate so one never is |
+
+Do not reach for `csurf`: it was **archived in May 2025**, so use [csrf-csrf](https://github.com/Psifi-Solutions/csrf-csrf) on Express or [@fastify/csrf-protection](https://github.com/fastify/csrf-protection) on Fastify instead.
+
 ## Common mistakes
 
 - Trusting `req.body` or `req.query` without validating type and shape, opening the door to injection or crashes from malformed input.

@@ -127,6 +127,16 @@ Pagination fixes the first problem for REST or GraphQL alike — never return an
 | 409 Conflict | Duplicate or out of stock |
 | 500 Internal Server Error | Unhandled server exception |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OpenAPI Specification](https://spec.openapis.org/oas/latest.html) | The REST contract format | Any HTTP API that more than one team consumes |
+| [Spectral](https://stoplight.io/open-source/spectral) | Lints OpenAPI against style rules | You want a CI gate on API consistency instead of review comments |
+| [GraphQL](https://graphql.org/learn/) | Client-specified query language | Clients need wildly different field sets and you control the schema |
+| [tRPC](https://trpc.io/docs) | End-to-end typed RPC for TypeScript | Both ends are TypeScript in one repo and you want no codegen step |
+| [Zod](https://zod.dev/) | Runtime request and response validation | Types alone do not validate — Zod makes the boundary actually safe |
+
 ## Common mistakes
 
 - Using verbs in URLs (`/getUser`, `/deleteOrder`) instead of letting the HTTP method be the verb and the URL be the noun.

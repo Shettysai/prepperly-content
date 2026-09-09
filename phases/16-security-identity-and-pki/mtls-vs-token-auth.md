@@ -177,6 +177,16 @@ Reach for it when:
 | Credential leaking into logs is the top risk | mTLS |
 | Authorisation must change within minutes | Tokens with short `exp` |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [jose](https://github.com/panva/jose) | JWT signing and verification in Node | You are doing token auth properly, including JWKS rotation |
+| [OAuth 2.0](https://oauth.net/2/) | The bearer-token delegation model | The caller is a user or a third party rather than one of your own workloads |
+| [SPIFFE](https://spiffe.io/docs/latest/spiffe-about/spiffe-concepts/) | Cryptographic workload identity | The caller is a workload and you want real identity instead of a shared secret |
+| [Node.js `tls`](https://nodejs.org/api/tls.html) | Client certificates in application code | You have to implement mTLS yourself because there is no proxy to do it |
+| [HashiCorp Vault](https://developer.hashicorp.com/vault/docs) | Short-lived credentials of either kind | You accept that the real fix is lifetime, whichever mechanism you choose |
+
 ## Common mistakes
 
 - Saying "certificates are more secure than tokens" without saying *why*. The math is the same; the difference is challenge-response versus bearer possession. Name that and you sound like you have used both.

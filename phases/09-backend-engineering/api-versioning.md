@@ -159,6 +159,17 @@ The harder truth: versioning isn't free. Every live version is code you test, se
 | Change a field's type (`"7"` → `7`) | Yes | Yes |
 | Make an optional parameter required | Yes | Yes |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OpenAPI Specification](https://spec.openapis.org/oas/latest.html) | Versioning the contract explicitly | Any versioning scheme at all — it needs a machine-readable contract first |
+| [Buf](https://buf.build/docs/) | Breaking-change detection for protobuf schemas | You are on gRPC and want the break caught in CI, before release |
+| [Spectral](https://stoplight.io/open-source/spectral) | Enforcing versioning conventions | Your rule is "URL path versioning" and you want it enforced, not documented |
+| [GraphQL](https://graphql.org/learn/) | Field-level `@deprecated` instead of versions | The schema evolves per-field and you never want to ship a `/v2` |
+
+The strongest answer is usually "don't version, evolve additively" — these tools mostly exist to prove a change really was additive.
+
 ## Common mistakes
 
 - Treating "add a field" and "rename a field" as equally safe. One is invisible to old clients, the other breaks all of them.

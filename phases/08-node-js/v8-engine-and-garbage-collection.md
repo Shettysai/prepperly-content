@@ -110,6 +110,17 @@ The surprise: `getName` never references `bigData`, but because it's defined in 
 | Old generation | Where long-lived objects end up; collected less often (Mark-Sweep-Compact) |
 | Memory leak | Objects kept reachable (by a reference you forgot about) so GC can't free them |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Node.js profiling guide](https://nodejs.org/learn/getting-started/profiling) | Heap snapshots and `--inspect` | You are diagnosing a leak — compare two snapshots, never one |
+| [Node.js `perf_hooks`](https://nodejs.org/api/perf_hooks.html) | GC performance entries | You need pause duration and frequency, measured |
+| [Clinic.js](https://clinicjs.org/) | Memory and GC visualisation | You want the heap growth curve rather than raw numbers |
+| [Node.js diagnostics WG](https://github.com/nodejs/diagnostics) | Diagnostic tooling and best practices | You are choosing between the many overlapping diagnostic options |
+
+Every tool here is diagnostic: this is a "read the runtime" topic with no framework to recommend, which is itself worth knowing.
+
 ## Common mistakes
 
 - Adding event listeners repeatedly without ever calling `.off()`/`.removeListener()`, silently accumulating references that keep old objects alive.

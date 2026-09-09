@@ -210,6 +210,17 @@ The second hard part: **not annoying users.** Technical correctness isn't enough
 | User fatigue | Aggregation, per-user caps, quiet hours | Correct delivery can still be a bad outcome |
 | Provider limits | Outbound rate limiting + failover | Quotas bind before your own capacity does |
 
+## Tools & frameworks
+
+These are the concrete technologies worth naming at the whiteboard for this design.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) | Push to Android, iOS and web | You need mobile push — you do not build your own push transport |
+| [Apple User Notifications](https://developer.apple.com/documentation/usernotifications) | APNs delivery semantics | You need iOS-specific behaviour and the token lifecycle |
+| [Novu](https://docs.novu.co/) | Multi-channel notification infrastructure | You need email, push, SMS and in-app under one preference model |
+| [Amazon SQS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/) | Queue with retries and a DLQ | Delivery must survive a provider outage and retry with backoff |
+
 ## Common mistakes
 
 - Calling the provider synchronously inside the caller's request, so an order confirmation blocks on a slow SMS gateway.

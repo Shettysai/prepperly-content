@@ -228,6 +228,18 @@ The lesson is about error handling, not indexes: **a migration that swallows its
 | Cache | Tenant in the key, built by the cache helper | Wrong answers and a leak in front of the database |
 | Deletion and residency | Per-tenant keys, region on the tenant record | Cannot prove deletion, cannot satisfy residency |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PostgreSQL docs (RLS)](https://www.postgresql.org/docs/current/) | Row-Level Security for per-tenant filtering | Shared-table tenancy, and you want isolation the ORM cannot bypass |
+| [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) | Namespace-scoped permission boundaries | Tenants are namespaces and you need a hard control-plane boundary |
+| [Open Policy Agent](https://www.openpolicyagent.org/docs) | Externalised authorization policy | Tenancy rules are complex enough to deserve a language of their own |
+| [Kyverno](https://kyverno.io/docs/introduction/) | Kubernetes policy as resources | You are enforcing per-namespace quotas and network policy without writing Go |
+| [Prisma / Drizzle](https://orm.drizzle.team/docs/overview) | Where tenant scoping actually gets forgotten | You are reviewing query layers — a missing `tenant_id` is the classic leak |
+
+The recurring real bug is a query path or migration that forgets tenant scoping. RLS survives a developer mistake; application-level filtering does not.
+
 ## Common mistakes
 
 - **Trusting a tenant ID from the client.** It must come from a verified token or a server-side mapping. Anything the caller can edit is not identity.

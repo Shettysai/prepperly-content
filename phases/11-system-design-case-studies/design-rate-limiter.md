@@ -191,6 +191,17 @@ The check and the decrement must be one atomic operation. Redis `INCR` is atomic
 | Redis is down | Fail open | An unavailable limiter shouldn't cause an outage |
 | Response | `429` + `Retry-After` | Lets clients back off instead of hammering |
 
+## Tools & frameworks
+
+These are the concrete technologies worth naming at the whiteboard for this design.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Redis](https://redis.io/docs/latest/develop/using-commands/transactions/) | Atomic counters, plus Lua for sliding windows | You are limiting across instances and the counter must be shared and atomic |
+| [rate-limiter-flexible](https://github.com/animir/node-rate-limiter-flexible) | Token bucket and sliding window in Node | You want the algorithms already implemented and tested |
+| [NGINX `limit_req`](https://blog.nginx.org/blog/rate-limiting-nginx) | Leaky bucket at the proxy | You want limiting before the application, with no code change |
+| [Cloudflare Rate Limiting](https://developers.cloudflare.com/waf/rate-limiting-rules/) | Enforcement at the edge | The traffic should never reach your origin at all |
+
 ## Common mistakes
 
 - Keeping counters in each server's memory, so the real limit is your limit multiplied by the number of servers.

@@ -93,6 +93,15 @@ This is why picking an isolation level isn't just a performance knob — it chan
 | Repeatable Read | Yes | Yes | No |
 | Serializable | Yes | Yes | Yes |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PostgreSQL `EXPLAIN`](https://www.postgresql.org/docs/current/using-explain.html) | See whether an index was actually used | Always, before you add an index — the planner may ignore the one you built |
+| [Use The Index, Luke](https://use-the-index-luke.com/) | Index design and composite-key ordering | You want to understand *why* column order in a composite index decides everything |
+| [PostgreSQL docs](https://www.postgresql.org/docs/current/) | Isolation levels and MVCC semantics | You need the exact anomaly each isolation level still permits |
+| [MySQL docs](https://dev.mysql.com/doc/) | InnoDB locking and gap locks | You are on MySQL — its locking behaviour differs meaningfully from Postgres |
+
 ## Common mistakes
 
 - Adding an index to every column "just in case" — this bloats storage and slows down every write without necessarily speeding up the reads you actually run.

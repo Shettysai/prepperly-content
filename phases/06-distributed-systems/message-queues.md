@@ -95,6 +95,19 @@ The fix isn't to chase a perfect exactly-once guarantee (which is extremely expe
 | Point-to-point queue | One consumer per message | Distributing work across workers |
 | Publish/Subscribe | All subscribers get the message | Broadcasting an event to many services |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Kafka](https://kafka.apache.org/documentation/) | Partitioned durable log | You need replay, ordered per-key streams, and many independent consumers |
+| [KafkaJS](https://kafka.js.org/docs/getting-started) | Kafka client for Node | You are producing and consuming from Node without a JVM |
+| [RabbitMQ](https://www.rabbitmq.com/docs) | Broker with flexible routing | You need per-message routing, priorities and complex topologies |
+| [NATS JetStream](https://docs.nats.io/concepts/jetstream) | Lightweight streaming and queueing | You want low latency and a tiny operational footprint |
+| [Amazon SQS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/) | Managed queue with visibility timeouts | You want a queue and refuse to operate a broker |
+| [BullMQ](https://docs.bullmq.io/) | Redis-backed job queue for Node | Background jobs inside one Node app — not a cross-service event bus |
+
+Kafka is a log, SQS and RabbitMQ are queues, BullMQ is a job runner. The interview question is almost always which of those three shapes you actually need.
+
 ## Common mistakes
 
 - Assuming a queue guarantees exactly-once delivery by default — most real systems default to at-least-once, and it's the consumer's responsibility to handle potential duplicates safely through idempotency.

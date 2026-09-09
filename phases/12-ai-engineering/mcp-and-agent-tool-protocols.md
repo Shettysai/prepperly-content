@@ -317,6 +317,17 @@ The defences that actually hold are structural, and they are the same ones that 
 | Resources primitive | Context the app supplies | Application-controlled, URI-addressed |
 | Prompts primitive | Reusable workflows a user triggers | User-controlled |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [MCP introduction](https://modelcontextprotocol.io/docs/getting-started/intro) | What MCP is, and its architecture | Start here — read it before you open any SDK |
+| [MCP specification](https://modelcontextprotocol.io/specification/latest) | The wire protocol itself | You are implementing a server, or debugging a transport that misbehaves |
+| [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) | Build MCP servers and clients in TypeScript | You are on Node or TS — this is the reference implementation for this curriculum |
+| [Vercel AI SDK](https://ai-sdk.dev/docs/introduction) | Tool calling with typed schemas | You want to compare MCP against plain provider-native tool calling before adopting it |
+
+These docs are versioned by date and this protocol moves quickly, so the unversioned URLs above are deliberate — they follow the current revision instead of pinning to a superseded one.
+
 ## Common mistakes
 
 - Reaching for a protocol when three internal functions in one app would do; plain function calling is less machinery and one fewer trust boundary.

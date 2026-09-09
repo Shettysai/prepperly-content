@@ -143,6 +143,16 @@ The same trap eats `array.forEach(async ...)`, un-awaited `.map()` calls, and ev
 | Wrapping a lower-level failure | `new Error(msg, { cause: err })` keeps the original stack |
 | Async work started without `await` | Attach `.catch()` or you cannot ever catch it |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Node.js `errors` docs](https://nodejs.org/api/errors.html) | Error classes, `cause`, `AggregateError` | You need the reference for matching on `error.code` instead of `message` |
+| [Zod](https://zod.dev/) | Validation errors at the boundary | Most "errors" are bad input — reject it before it becomes an exception |
+| [p-retry](https://github.com/sindresorhus/p-retry) | Separating retryable failures from permanent ones | You need `AbortError` semantics rather than retrying a 400 forever |
+| [Sentry (Node)](https://docs.sentry.io/platforms/javascript/guides/node/) | Capturing and grouping unhandled errors | You want to know the top failure by volume, not by whoever complained loudest |
+| [Boom](https://github.com/hapijs/boom) | HTTP-friendly error objects | You are mapping domain errors to status codes and want it done consistently |
+
 ## Common mistakes
 
 - Writing `catch (err) {}` to make a stack trace go away — you've hidden a bug, not fixed it.

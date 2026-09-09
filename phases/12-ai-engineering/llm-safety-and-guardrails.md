@@ -224,6 +224,20 @@ For irreversible actions, add a human gate. Refunds, deletions, outbound email t
 | Permission scoping | Yes | No — the real boundary |
 | Human approval | Yes | No, if genuinely enforced |
 
+## Tools & frameworks
+
+Be clear-eyed reading this table: most of it is Python, and none of it solves prompt injection.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OpenAI Moderation API](https://developers.openai.com/api/docs/guides/moderation) | Hosted content classification | You need a fast, cheap content check callable from Node today |
+| [NeMo Guardrails](https://docs.nvidia.com/nemo/guardrails/about-nemo-guardrails-library/overview) | Dialogue rails written in a config DSL | You need conversation-flow constraints rather than content filtering — Python |
+| [Guardrails AI](https://guardrailsai.com/guardrails/docs) | Output validators and structure enforcement | You want typed, validated output with retry-on-failure built in — Python |
+| [LLM Guard](https://github.com/protectai/llm-guard) | Input and output scanners, including prompt injection | You want jailbreak and PII scanning as a separate service — Python, and detection is best-effort |
+| [Zod](https://zod.dev/) | Validate model output structurally in Node | Always — this is the one guardrail you can deploy inside a Node service today |
+
+Prompt injection has no solved tooling, so the honest Node answer is schema validation plus a hosted moderation call, with least-privilege tools behind both.
+
 ## Common mistakes
 
 - Relying on a system prompt saying "never reveal these instructions" as a security control.

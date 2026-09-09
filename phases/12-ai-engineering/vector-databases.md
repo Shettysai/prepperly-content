@@ -174,6 +174,21 @@ Note the memory line too. 100,000 vectors of 384 dimensions is 147MB as float32,
 | Dot product | Sum of products | Normalised vectors — faster, same ranking |
 | Euclidean (L2) | Straight-line distance | Image embeddings, spatial data |
 
+## Tools & frameworks
+
+Read this table as one axis — in-process, then in-database, then dedicated service, then managed — because that ordering is the interview answer.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [pgvector](https://github.com/pgvector/pgvector) | Vectors in Postgres, so one datastore | You are under roughly 10M vectors and value operational simplicity over peak recall |
+| [Qdrant](https://qdrant.tech/documentation/) | Dedicated vector database with strong filtering | You need payload filtering at scale and can operate another service |
+| [Milvus](https://milvus.io/docs) | Distributed vector database with many index types | You are at billions of vectors and need horizontal sharding |
+| [Pinecone](https://docs.pinecone.io/guides/get-started/overview) | Managed serverless vector database | You refuse to operate this layer at all and will pay to avoid it |
+| [Weaviate](https://docs.weaviate.io/weaviate) | Vector database with built-in hybrid search | You want BM25 and vector fused inside one query rather than in your code |
+| [hnswlib](https://github.com/nmslib/hnswlib) | In-process HNSW index | You have fewer than about 100k vectors and a database would be overkill |
+
+The Milvus docs site returns a redirect loop to automated clients, so a link checker may flag it even though the page is real in a browser.
+
 ## Common mistakes
 
 - Mixing embeddings from two different models in one index; the spaces are unrelated and results are meaningless.

@@ -309,6 +309,15 @@ console.log('verify()  :', cert.verify(ca.publicKey));        // true
 | Using `base ** exp` instead of `modPow` | Hangs or exhausts memory (~40M digits) |
 | Assuming short-form length | Parser breaks on any real certificate |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OpenSSL `asn1parse` and `x509`](https://docs.openssl.org/) | Decode DER and PEM structures | The canonical way to see what is actually inside a certificate |
+| [asn1js](https://lapo.it/asn1js/) | Browser ASN.1 decoder with a byte view | You are learning DER's tag-length-value encoding and want to see the bytes line up |
+| [@peculiar/x509](https://github.com/PeculiarVentures/x509) | Parse and build X.509 in TypeScript | You are handling certificates inside a Node service rather than at the shell |
+| [RFC 5280](https://www.rfc-editor.org/info/rfc5280/) | The X.509 specification itself | You need the authoritative meaning of an extension, because tools disagree |
+
 ## Common mistakes
 
 - Slicing the TBS bytes from `valueStart` instead of `offset`. Off by the 4-byte tag+length header, and verification fails with no diagnostic at all. Always slice from the tag byte.

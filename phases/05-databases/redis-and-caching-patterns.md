@@ -142,6 +142,16 @@ The deepest trap is a cache that stops being optional. If the database only surv
 |---|---|---|
 | Stampede | Hot key expires under load | Lock, or refresh before expiry |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Redis docs](https://redis.io/docs/latest/) | Data structures, eviction, persistence | You need the reference for TTLs, `maxmemory-policy` and structure choice |
+| [ioredis](https://github.com/redis/ioredis) | Node client with cluster and Lua support | You need Redis Cluster, pipelines or scripted atomic operations |
+| [node-redis](https://redis.io/docs/latest/develop/clients/nodejs/) | Official Node client | You are starting fresh and want the vendor-maintained client |
+| [BullMQ](https://docs.bullmq.io/) | Redis-backed job queues | You are about to build a queue on raw `LPUSH`/`BRPOP` — don't |
+| [Memcached](https://memcached.org/) | Pure LRU key-value cache | You want *only* a cache, and value operational simplicity over features |
+
 ## Common mistakes
 
 - Updating the cache on write instead of deleting it, creating a race where a stale value persists.

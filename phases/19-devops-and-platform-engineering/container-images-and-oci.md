@@ -326,6 +326,17 @@ The practical convention: tags for humans reading dashboards, digests for anythi
 | Non-root + dropped caps | Reduces post-escape privilege | Container isolation is not a VM boundary |
 | Base-image currency | Rebuild on a current base | Most CVE findings originate there |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OCI image-spec](https://github.com/opencontainers/image-spec) | Manifests, layers, digests | You need to understand why a tag is mutable and a digest is not |
+| [BuildKit](https://docs.docker.com/build/buildkit/) | Modern build engine with cache mounts | Build speed matters, or you need build secrets that must not end up in a layer |
+| [distroless](https://github.com/GoogleContainerTools/distroless) | Minimal base images | You are cutting attack surface and accept that debugging gets harder — pair it with `kubectl debug` |
+| [Kaniko](https://github.com/GoogleContainerTools/kaniko) | Build images without a Docker daemon | You are building inside a cluster and cannot run privileged containers |
+| [Syft](https://github.com/anchore/syft) | SBOM generation, to sign with cosign afterwards | You have supply-chain requirements or SLSA attestations to satisfy |
+| [dive](https://github.com/wagoodman/dive) | Inspect layers and wasted bytes | You have to explain why the image is enormous, layer by layer |
+
 ## Common mistakes
 
 - Treating `:latest` (or any tag) as a version. Tags are mutable pointers; pin digests where certainty matters.

@@ -111,6 +111,16 @@ The same lesson explains expiry outages. A certificate expiring at 3am takes dow
 | Forward secrecy | Past traffic stays safe if key leaks | Absent with old, non-ephemeral ciphers |
 | TLS 1.3 | 1 round trip, fewer weak ciphers | Very old clients cannot connect |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OpenSSL](https://docs.openssl.org/) | Inspect certificates, chains and handshakes | Any TLS incident — `openssl s_client` is the first command you run |
+| [Let's Encrypt](https://letsencrypt.org/docs/) | Free automated public certificates | Any public HTTPS endpoint; there is no reason left to pay for a DV certificate |
+| [Mozilla SSL Config Generator](https://ssl-config.mozilla.org/) | Known-good cipher and protocol configuration | You are about to hand-write a cipher list — don't |
+| [testssl.sh](https://testssl.sh/) | Offline TLS configuration scanner | The endpoint is internal and a hosted scanner cannot reach it |
+| [SSL Labs Server Test](https://www.ssllabs.com/ssltest/) | Public endpoint TLS grading | The site is public and you want the report a security reviewer will read |
+
 ## Common mistakes
 
 - Saying "HTTPS means the site is safe" — it means the connection is private and the domain is verified, nothing about the site's intentions.

@@ -136,6 +136,17 @@ Serverless breaks the model differently: each instance holds its own pool and in
 |---|---|
 | `max` | Connections per instance — multiply by instance count |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [node-postgres (`pg.Pool`)](https://node-postgres.com/) | In-process Postgres pool for Node | A single long-lived Node process owns its own connections |
+| [PgBouncer](https://www.pgbouncer.org/usage.html) | External Postgres connection pooler | Many processes, or serverless functions, would each open a pool of their own |
+| [postgres.js](https://github.com/porsager/postgres) | Modern Postgres client with pooling built in | You want tagged-template SQL and pooling without adopting an ORM |
+| [Prisma](https://www.prisma.io/docs) | ORM with its own connection management | You already use Prisma — its pool settings, not `pg`'s, are the ones in effect |
+
+The classic production bug is transaction-pooling mode breaking prepared statements and session state; PgBouncer's usage doc covers all three pooling modes.
+
 ## Common mistakes
 
 - Increasing pool size to fix slowness, which usually worsens it by pushing the database past its concurrency sweet spot.

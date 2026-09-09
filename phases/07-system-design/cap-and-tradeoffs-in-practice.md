@@ -132,6 +132,15 @@ Second, consistency is not only about correctness — it is about what users can
 | Feed, likes, view counts | Eventual | Nobody can detect the difference |
 | A user's own profile edit | Read-your-writes | They will notice; others won't |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Jepsen](https://jepsen.io/analyses) | Real consistency-violation reports | You are checking whether a vendor's claim survives testing |
+| [CockroachDB](https://docs.cockroachlabs.com/docs/) | CP distributed SQL | You choose consistency and will pay the cross-region latency for it |
+| [Cassandra](https://cassandra.apache.org/doc/latest/) | AP store with tunable quorums | You choose availability and will handle conflicting reads yourself |
+| [DynamoDB](https://docs.aws.amazon.com/dynamodb/) | Eventual reads with a strong-read option | You want the trade-off visible as a per-request flag with a price difference |
+
 ## Common mistakes
 
 - Reciting "pick two" as though partition tolerance were optional in a distributed system. It is not; you are always choosing between C and A when a partition happens.

@@ -245,6 +245,17 @@ Hence the honest conclusion, and why external secret operators exist: a Kubernet
 | Roll out a config change | `checksum/config` annotation | Changes the Pod template, so a normal rolling update |
 | Reduce apiserver load | `immutable: true` | Kubelet stops watching it; requires create-new-name workflow |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [ConfigMap docs](https://kubernetes.io/docs/concepts/configuration/configmap/) | Semantics, mounting, immutability | You need to understand why an env-var ConfigMap change needs a restart but a mounted one does not |
+| [Kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/) | Overlays and `configMapGenerator` content hashes | You want a config change to trigger a rollout automatically instead of remembering to restart |
+| [Helm](https://helm.sh/docs/) | Values-driven templating | One chart has to serve many environments and the differences are variables, not patches |
+| [External Secrets Operator](https://external-secrets.io/latest/) | Pull secrets from an external store into the cluster | The value is a credential — config belongs in a ConfigMap, secrets do not |
+
+The classic bug this tooling papers over: a mounted-volume ConfigMap updates in place while env vars do not, so half your config goes stale.
+
 ## Common mistakes
 
 - Believing a Secret is encrypted. It is base64-encoded; encryption at rest is a separate opt-in that does not stop anyone with `get secrets`.

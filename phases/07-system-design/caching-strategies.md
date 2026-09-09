@@ -127,6 +127,17 @@ Without the fix, a single expiring hot key can send a spike of simultaneous iden
 | FIFO (First In, First Out) | The oldest item added, regardless of use | Simple queues, low overhead |
 | TTL-based | Anything past its expiry time | Data that naturally goes stale (prices, sessions) |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [MDN HTTP guides](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP) | Entry point to MDN's HTTP header guides | You are getting `Cache-Control`, `ETag` and `stale-while-revalidate` right — navigate from here |
+| [Cloudflare Cache](https://developers.cloudflare.com/cache/) | Edge caching and cache rules | The content is public and cacheable before it ever reaches your origin |
+| [Redis](https://redis.io/docs/latest/) | Shared cache with TTL and eviction | Multiple instances must see the same cached value |
+| [Memcached](https://memcached.org/) | Simple distributed LRU cache | You want a cache with no persistence story to reason about |
+
+The table is ordered deliberately: the highest-value cache is usually the free one you get from correct HTTP headers, long before any Redis appears.
+
 ## Common mistakes
 
 - Caching data with no expiry, so a bug in invalidation logic serves wrong data forever instead of self-healing.

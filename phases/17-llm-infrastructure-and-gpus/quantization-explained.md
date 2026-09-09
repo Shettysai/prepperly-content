@@ -208,6 +208,18 @@ Figures are weights only and exclude per-group scales; add KV cache and overhead
 | GGUF | Many types | Varies | CPU and consumer hardware, llama.cpp |
 | bitsandbytes | 8, 4 | None | Quick experiments, QLoRA fine-tuning |
 
+## Tools & frameworks
+
+This is a Python ecosystem end to end — from Node you consume a quantized checkpoint through a server, you do not produce one.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [bitsandbytes](https://huggingface.co/docs/bitsandbytes/main/en/index) | 8-bit and 4-bit NF4 loading | You are doing QLoRA fine-tuning, or want the simplest way to watch quantization work |
+| [AutoAWQ](https://github.com/casper-hansen/AutoAWQ) | Activation-aware weight quantization | You are serving quantized weights and want quality retained |
+| [GPTQ via AutoGPTQ](https://github.com/AutoGPTQ/AutoGPTQ) | Post-training weight quantization | You want the other standard PTQ method to compare against AWQ on your own data |
+| [llama.cpp](https://github.com/ggml-org/llama.cpp) | GGUF K-quant formats for CPU and edge | You are running locally, where GGUF is the practical format |
+| [vLLM](https://docs.vllm.ai/en/latest/) | Serve AWQ, GPTQ and FP8 checkpoints | You already have a quantized model and now need it served |
+
 ## Common mistakes
 
 - Deploying a quantized model without re-running evals, then learning of the regression from user complaints months later.

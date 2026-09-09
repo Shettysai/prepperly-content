@@ -286,6 +286,17 @@ The same lesson applies to StatefulSets from the other direction. Ordered rollou
 | `concurrencyPolicy` | CronJob | `Allow` | Default permits overlapping runs racing on shared state |
 | `startingDeadlineSeconds` | CronJob | unset | Without it, 100 missed schedules kills the CronJob silently |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [StatefulSet docs](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) | Stable identity, ordered rollout, PVC templates | You need stable network IDs and per-replica storage |
+| [Kueue](https://kueue.sigs.k8s.io/docs/) | Job queueing with quotas | Batch jobs should queue and wait rather than fail to schedule |
+| [Volcano](https://volcano.sh/docs/home/introduction/) | Gang scheduling for batch and ML | You need all-or-nothing scheduling, as distributed training does |
+| [Argo project](https://argoproj.github.io/cd/) | Argo Workflows for DAG-based job orchestration | Your jobs have dependencies and a plain `Job` cannot express them |
+
+A StatefulSet is not a database — it gives you identity and storage, and says nothing about replication or leader election.
+
 ## Common mistakes
 
 - Reaching for a StatefulSet because the app "has state". If the state lives in an external database or object store, the Pods are still interchangeable and a Deployment is correct and simpler.

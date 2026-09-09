@@ -156,6 +156,16 @@ Two more that surprise people:
 | Switching model? | Re-embed everything; no mixed index |
 | 384 vs 1536 dims | 1536 for nuance, 384 for cost; measure the recall gap |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Sentence Transformers](https://www.sbert.net/) | Open embedding models and the training recipes | You are self-hosting embeddings or learning how they are trained — Python |
+| [MTEB leaderboard](https://github.com/embeddings-benchmark/mteb) | Benchmark comparing embedding models | You are choosing a model — pick on task scores, never on dimension count |
+| [OpenAI Embeddings API](https://developers.openai.com/api/docs) | Hosted embedding generation | You want good embeddings from Node with no model to host |
+| [FAISS](https://faiss.ai/) | Similarity search index library | You want the HNSW and IVF trade-offs that sit beneath every vector database — Python and C++ |
+| [hnswlib](https://github.com/nmslib/hnswlib) | Small embeddable HNSW index | A few hundred thousand vectors, in-process, with no service to run |
+
 ## Common mistakes
 
 - Comparing vectors from two different models, which produces confident, meaningless numbers.

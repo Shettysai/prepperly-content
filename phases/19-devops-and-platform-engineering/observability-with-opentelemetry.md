@@ -202,6 +202,18 @@ Retention is the cheapest win, because signals have genuinely different useful l
 | Agent | Per host or sidecar | Batch, enrich with host metadata, localhost export |
 | Gateway | Shared, scaled service | Tail sampling, redaction, fan-out to backends |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OpenTelemetry JS](https://opentelemetry.io/docs/languages/js/) | `@opentelemetry/sdk-node` auto-instrumentation | Node services — start with auto-instrumentation and add manual spans only where it is blind |
+| [OTel Collector](https://opentelemetry.io/docs/collector/) | Pipelines for sampling, redaction and routing | Sampling and PII handling belong outside the app, so you can change them without a redeploy |
+| [Semantic conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/) | Standard attribute names | Your dashboards must survive changing backends |
+| [Grafana Tempo](https://grafana.com/docs/tempo/latest/) | Cheap trace storage on object stores | Trace volume is high and search-by-trace-ID is enough — you do not need rich trace search |
+| [Prometheus](https://prometheus.io/docs/introduction/overview/) | The metrics half, via OTLP or scrape | Metrics still carry the alerting load; traces explain, metrics page |
+
+Tail sampling in the Collector is the answer to "we cannot afford 100% of traces" — head sampling throws away exactly the errors you needed. Instrument with OTel SDKs rather than Jaeger clients or OpenTracing: Jaeger v1 reached end-of-life on 31 December 2025 and v2 is an OTel Collector distribution, OpenTracing is superseded, and the OTel Zipkin exporter is deprecated in favour of OTLP.
+
 ## Common mistakes
 
 - Putting an unbounded identifier in a metric label, which multiplies series until the metrics backend falls over — the most common self-inflicted observability outage.

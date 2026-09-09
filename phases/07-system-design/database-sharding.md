@@ -105,6 +105,16 @@ async function getUserByEmail(email, shardCount, shards) {
 | Consistent hashing | Resharding only remaps nearby keys | More complex to implement |
 | Directory-based | Flexible, easy to rebalance | Lookup table can be a bottleneck |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Vitess](https://vitess.io/docs/) | Transparent MySQL sharding | You have an existing MySQL app, cannot change the queries, and must scale writes |
+| [Citus](https://docs.citusdata.com/en/stable/) | Sharded Postgres via an extension | You are on Postgres and want distributed tables in place |
+| [MongoDB sharding](https://www.mongodb.com/docs/manual/sharding/) | Shard-key selection and rebalancing | You are learning shard-key mistakes — these docs enumerate them well |
+| [CockroachDB](https://docs.cockroachlabs.com/docs/) | Automatic range-based sharding | Greenfield, and you want the database to shard itself |
+| [YugabyteDB](https://docs.yugabyte.com/) | Distributed SQL with a Postgres-compatible wire protocol | You want Postgres compatibility with sharding built in |
+
 ## Common mistakes
 
 - Choosing a shard key that doesn't match query patterns, forcing most queries to scan every shard instead of one.

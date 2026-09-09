@@ -270,6 +270,17 @@ One more layer, on the scheduling side. A three-replica Deployment with `podAnti
 | `limits` (CPU) | Kernel CFS | Continuously | Throttled — slower, alive |
 | `limits` (memory) | Kernel OOM killer | Continuously | Container killed, exit 137 |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Scheduling docs](https://kubernetes.io/docs/concepts/scheduling-eviction/) | Affinity, taints, topology spread, preemption | You are diagnosing `Pending` — the reason is always somewhere in here |
+| [Scheduler configuration](https://kubernetes.io/docs/reference/scheduling/config/) | Profiles, plugins and scoring | You need to change *how* scoring works, not just add constraints to a pod |
+| [Descheduler](https://github.com/kubernetes-sigs/descheduler) | Evict pods to rebalance the cluster | The scheduler was right at placement time but the cluster has since drifted |
+| [kind](https://kind.sigs.k8s.io/) | Reproduce scheduling constraints locally | You want to test topology spread without paying for a real multi-zone cluster |
+
+The scheduler places a pod once and never revisits it — that is exactly why the descheduler exists as a separate component.
+
 ## Common mistakes
 
 - Calling `CrashLoopBackOff` a phase. It is a container waiting reason inside phase `Running`.

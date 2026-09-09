@@ -179,6 +179,16 @@ The modern answer is to stop relying on revocation: issue **short-lived certific
 | Validation | Your own policy | Must prove domain control |
 | Cost | Operating the CA | Free (ACME) to expensive |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OpenSSL](https://docs.openssl.org/) | Build a CA and issue certificates by hand | You are learning — doing it manually once is what makes the model click |
+| [step-ca](https://smallstep.com/docs/step-ca/) | A practical private CA | You need a real internal CA rather than the shell script someone wrote in 2019 |
+| [CFSSL](https://github.com/cloudflare/cfssl) | CA toolkit with a signing API | You need programmatic issuance inside a build or bootstrap pipeline |
+| [Vault PKI](https://developer.hashicorp.com/vault/docs/secrets/pki) | Enterprise CA with roles and audit | Several teams issue certificates and you need policy boundaries between them |
+| [crt.sh](https://crt.sh/) | Certificate Transparency logs | You are auditing which certificates exist for your domains, including ones you did not order |
+
 ## Common mistakes
 
 - Saying a signature is "the certificate encrypted with the CA's private key". It is a signed hash of the TBS byte range. That distinction is exactly what verification checks.

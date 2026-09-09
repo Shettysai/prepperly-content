@@ -223,6 +223,19 @@ The subtlety is `Math.floor` on `prefixBlocks`. Sharing works at **block granula
 | Streaming | Multi-second perceived hang |
 | Metrics | No way to tell saturation from a slow model |
 
+## Tools & frameworks
+
+This topic's title names TGI, so note where it sits now: the project went to maintenance mode in December 2025 and its repository was archived read-only in March 2026, and HuggingFace itself now points users at vLLM or SGLang. Study it as the reason continuous batching went mainstream, not as something to deploy.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [vLLM](https://docs.vllm.ai/en/latest/) | High-throughput OpenAI-compatible server | The default choice for self-hosted LLM serving today |
+| [SGLang](https://docs.sglang.io/) | Prefix-cache-optimised serving | You need structured generation, or heavy prefix reuse across requests |
+| [TensorRT-LLM](https://nvidia.github.io/TensorRT-LLM/) | Compiled, NVIDIA-optimised inference | You are squeezing the last throughput out of a model set that will not change |
+| [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html) | Multi-framework model server | You serve more than LLMs and want one platform for all of it |
+| [llama.cpp](https://github.com/ggml-org/llama.cpp) | CPU and quantized local inference | There is no GPU, or the target is a laptop or edge device |
+| [Ollama](https://docs.ollama.com/) | Local model runner built over llama.cpp | You want local development ergonomics — not production serving |
+
 ## Common mistakes
 
 - Putting `model.generate()` in a web handler and concluding the GPU is too slow, when the runtime is the problem.

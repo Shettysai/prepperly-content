@@ -132,6 +132,17 @@ Which is why fencing tokens are load-bearing rather than a nice extra. Timeouts 
 | ZooKeeper | ZAB | Kafka (historically), Hadoop, HBase |
 | Consul | Raft | Service discovery plus locks |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [etcd](https://etcd.io/docs/) | Lease-based leader election | You need exactly one active instance and already run etcd, or Kubernetes |
+| [Kubernetes architecture docs](https://kubernetes.io/docs/concepts/architecture/) | Where Leases and controller coordination are described | You are on Kubernetes — the API server is already a consistent store |
+| [ZooKeeper](https://zookeeper.apache.org/doc/current/) | Ephemeral-node locks and elections | You want the canonical patterns, and ZooKeeper is already in the stack |
+| [Consul](https://developer.hashicorp.com/consul/docs) | Session-based distributed locks | Your deployment spans datacentres and is not all Kubernetes |
+
+Redis `SETNX` locks are *not* safe leader election under a network partition — that is the common wrong answer.
+
 ## Common mistakes
 
 - Assuming leader election gives you exactly one leader. It gives you at most one *lease holder*; process pauses mean two nodes can both believe they lead.

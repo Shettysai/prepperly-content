@@ -177,6 +177,18 @@ The last trap is capacity that does not exist. Scarce GPU types are genuinely un
 | One over-provisioned replica | Absorbs the first surge | One GPU-hour per hour |
 | Bounded queue + 429 | None — bounds latency instead | Explicit rejections |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [KEDA](https://keda.sh/docs/2.20/) | Scale on queue depth or custom metrics | GPU pods should scale on pending requests, and CPU utilisation tells you nothing here |
+| [Karpenter](https://karpenter.sh/docs/) | Just-in-time node provisioning | Node provisioning time is the part of your cold start that dominates |
+| [Cluster Autoscaler](https://github.com/kubernetes/autoscaler) | Node-group-based scaling | You want the conventional, widely-supported option over the newer one |
+| [Knative](https://knative.dev/docs/) | Scale-to-zero with request buffering | Idle GPU cost is unacceptable and you can absorb the cold start it buys |
+| [Modal](https://modal.com/docs) | Managed GPU with fast container starts | You would rather someone else had already solved snapshotting |
+
+No autoscaler fixes this on its own: GPU cold starts are dominated by node provisioning plus multi-gigabyte image and weight pulls, not by the runtime.
+
 ## Common mistakes
 
 - Leaving the default CPU-based HPA on a GPU Deployment, so it never scales and nobody notices until a real spike.

@@ -133,6 +133,15 @@ The discipline that saves you is stating assumptions out loud: "I'm assuming 10 
 | 1 billion requests/day | ~12,000 QPS | char in UTF-8 | 1–4 bytes |
 | Peak multiplier | 2–3x average | Modern server | ~10,000 simple req/s |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [k6](https://grafana.com/docs/k6/latest/) | Load testing to find the saturation point | You need a measured number, not an estimate, before you size anything |
+| [Prometheus](https://prometheus.io/docs/introduction/overview/) | Utilisation and saturation metrics | You want headroom derived from real traffic instead of guessed peaks |
+| [Grafana](https://grafana.com/docs/grafana/latest/) | Dashboards for the four golden signals | You must present saturation to the people who decide budgets |
+| [SRE Workbook](https://sre.google/workbook/table-of-contents/) | Google's capacity and load-shedding practice | You want the methodology rather than another tool |
+
 ## Common mistakes
 
 - Sizing for average traffic and being taken down by the first predictable peak.

@@ -222,6 +222,19 @@ Cost has a crossover rather than a verdict. You pay per invocation and per unit 
 | Long-lived sockets | Not in the function | Native |
 | Best at | Spiky, event-driven, cron, fan-out | Steady high throughput, low latency |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) | The reference FaaS platform | Interviews assume Lambda's model: cold starts, concurrency, timeouts |
+| [Cloudflare Workers](https://developers.cloudflare.com/workers/runtime-apis/nodejs/) | V8-isolate functions at the edge | Cold starts must be near-zero and you accept a partial Node API |
+| [Serverless Framework](https://www.serverless.com/framework/docs) | Deploying functions and their event sources | You want the function and its triggers defined together |
+| [AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) | CloudFormation-native serverless IaC | You are AWS-only and want local invoke plus native CFN |
+| [Knative](https://knative.dev/docs/) | Scale-to-zero on your own Kubernetes | You want FaaS economics without leaving your cluster |
+| [Hono](https://hono.dev/docs) | One handler for Node, Workers and Lambda | You refuse to be locked to a single runtime's handler signature |
+
+Two problems define this topic: cold starts, and connection exhaustion when a thousand concurrent function instances each open a database connection — which is exactly why a pooler or data proxy shows up in serverless architectures.
+
 ## Common mistakes
 
 - Caching per-user data at module scope. It survives the invocation and the next user on that instance can read it.

@@ -196,6 +196,18 @@ The second hard part: **what to cache at the edge.** Edge storage is small relat
 | Long-tail videos | Lazy transcode | Most uploads are never watched |
 | Cost lever | Codec efficiency + edge hit rate | Bandwidth dominates the bill |
 
+## Tools & frameworks
+
+These are the concrete technologies worth naming at the whiteboard for this design.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [FFmpeg](https://ffmpeg.org/documentation.html) | Transcoding into ABR ladders | You are building the transcoding pipeline — everything else wraps this |
+| [hls.js](https://github.com/video-dev/hls.js) | HLS playback in browsers | You are delivering HLS to browsers without native support |
+| [Shaka Player](https://github.com/shaka-project/shaka-player) | DASH and HLS player with DRM | You need DRM such as Widevine or FairPlay, not just adaptive playback |
+| [MDN Media Source Extensions](https://developer.mozilla.org/en-US/docs/Web/API/Media_Source_Extensions_API) | How adaptive playback works in the browser | You need to understand why ABR is a client-side decision |
+| [Mux](https://www.mux.com/docs) | Managed video encoding and delivery | Video is not your product and you want an API |
+
 ## Common mistakes
 
 - Serving video from application servers instead of a CDN — the bandwidth bill and latency both become impossible.

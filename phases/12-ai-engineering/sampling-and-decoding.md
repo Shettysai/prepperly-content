@@ -168,6 +168,15 @@ One more trap: **temperature 0 is not a guarantee of identical output.** Floatin
 | `frequency_penalty` | Downweight tokens by how often they appeared | 0–1 |
 | `presence_penalty` | Downweight any token that appeared at all | 0–1 |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [vLLM](https://docs.vllm.ai/en/latest/) | Sampling parameters: temperature, top-p, top-k | You want every sampling knob in one place with realistic defaults |
+| [HuggingFace Transformers](https://huggingface.co/docs/transformers/index) | `generate()` strategies and configs | You want to learn what each strategy does to the distribution — Python |
+| [Ollama](https://docs.ollama.com/) | Change sampling parameters locally, instantly | You are building intuition by setting temperature to 0, then to 2 |
+| [llama.cpp](https://github.com/ggml-org/llama.cpp) | Sampler implementations you can read | You want the actual code for min-p, mirostat and the rest |
+
 ## Common mistakes
 
 - Tuning temperature and top-p at the same time and losing track of which caused what — change one, measure, then change the other.

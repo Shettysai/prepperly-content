@@ -154,6 +154,18 @@ The other half is **rotating credentials you don't store yourself** — a databa
 | Environment variables | Acceptable | Visible to the process, in `docker inspect` |
 | Secrets manager / vault | Best | Encrypted, audited, auto-rotated |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [HashiCorp Vault](https://developer.hashicorp.com/vault/docs) | Central secrets with dynamic credentials | You want short-lived database credentials instead of static ones |
+| [External Secrets Operator](https://external-secrets.io/latest/) | Syncing external secret stores into Kubernetes | Secrets live in Vault or a cloud KMS and pods need them as Secrets |
+| [SOPS](https://github.com/getsops/sops) | Encrypting secrets in git with KMS or age | You are doing GitOps and secrets must live in the repo without being readable |
+| [Sealed Secrets](https://github.com/bitnami/sealed-secrets) | One-way-encrypted Kubernetes Secrets in git | You want a simpler in-cluster answer than SOPS plus a KMS |
+| [gitleaks](https://github.com/gitleaks/gitleaks) | Detecting committed secrets | Every repo — assume a secret has already been committed |
+
+Kubernetes Secrets are base64-encoded, not encrypted, unless encryption-at-rest is configured; that is the single most common misconception here. Note also that `bitnami-labs/sealed-secrets` now redirects to the `bitnami/` path above.
+
 ## Common mistakes
 
 - Committing a secret and "fixing" it with a later commit. It's still in history — rotate it.

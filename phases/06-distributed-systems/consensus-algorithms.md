@@ -89,6 +89,17 @@ This is the system deliberately choosing safety over availability, exactly match
 | Raft | Designed to be understandable, same guarantees as Paxos | etcd (Kubernetes), Consul, CockroachDB |
 | ZAB | Similar goals, built for one specific system | Apache ZooKeeper |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [etcd](https://etcd.io/docs/) | Raft-backed consistent key-value store | You need a small amount of strongly-consistent shared state |
+| [The Raft site](https://raft.github.io/) | Paper, visualisation and implementations | You are learning the algorithm — the visualisation teaches it faster than prose |
+| [ZooKeeper](https://zookeeper.apache.org/doc/current/) | ZAB-based coordination service | You are in the Kafka or Hadoop ecosystem, where it is already running |
+| [Consul](https://developer.hashicorp.com/consul/docs) | Raft-backed service catalogue and KV store | You want consensus plus service discovery and health checking in one system |
+
+Almost nobody implements Raft. The skill on show is knowing which existing consensus system to delegate to, and why quorum size matters.
+
 ## Common mistakes
 
 - Thinking consensus algorithms are only about picking a leader — leader election is one part, but ongoing log replication and safety guarantees under failure are equally important, and are what actually keep data correct.

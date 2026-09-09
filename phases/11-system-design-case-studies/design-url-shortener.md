@@ -187,6 +187,19 @@ To fix guessability, keep the counter but encode `id XOR secret` (or run the ID 
 | Sharding key | Hash of short key | Always — access is by key, never by range |
 | Cache | LRU on read path | Always — 90%+ hit rate on a Zipfian access pattern |
 
+## Tools & frameworks
+
+These are the concrete technologies worth naming at the whiteboard for this design.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [nanoid](https://github.com/ai/nanoid) | Short collision-resistant IDs | You are generating the short code and want a documented collision probability |
+| [PostgreSQL](https://www.postgresql.org/docs/current/) | Code-to-URL mapping with a unique index | You need a source of truth, and the unique constraint is your collision guard |
+| [Redis](https://redis.io/docs/latest/) | Read-through cache for hot codes | Reads outnumber writes by orders of magnitude |
+| [Snowflake (Twitter)](https://github.com/twitter-archive/snowflake) | Distributed monotonic ID generation | You want sequential IDs without a single sequence as the bottleneck |
+
+`twitter-archive/snowflake` is **archived**, and that is fine here: it is linked as the reference design to read, not as software to run.
+
 ## Common mistakes
 
 - Jumping straight to architecture without asking whether keys must be unguessable — it changes the entire key-generation design.

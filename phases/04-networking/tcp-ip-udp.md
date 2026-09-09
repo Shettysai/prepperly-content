@@ -105,6 +105,15 @@ This is precisely why real-time games and video calls choose UDP and build their
 | Speed | Slower (handshake + acknowledgment overhead) | Faster |
 | Use case | Web, email, file transfer, databases | Video calls, gaming, DNS, live streaming |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Wireshark](https://www.wireshark.org/docs/) | Decode TCP handshakes and retransmits | You need to prove a connection reset came from the peer, not from you |
+| [iperf3](https://iperf.fr/iperf-doc.php) | TCP versus UDP throughput comparison | You want the cost of reliability in real numbers, not in theory |
+| [curl](https://curl.se/docs/manpage.html) | Drive TCP and HTTP requests from the shell | You are reproducing a connection outside your app to isolate the layer |
+| [tc](https://man7.org/linux/man-pages/man8/tc.8.html) | Simulate packet loss | You want to show how TCP recovers from loss and UDP does not |
+
 ## Common mistakes
 
 - Saying "UDP is unreliable so it's bad" — unreliable just means no *automatic* guarantee; many applications handle their own lightweight retries at a higher layer and deliberately prefer UDP's speed.

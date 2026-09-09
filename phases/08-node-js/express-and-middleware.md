@@ -158,6 +158,15 @@ The habit that prevents both: read your `app.use` calls top to bottom as the act
 | `res.send()` / `res.end()` | Stop the chain; request is answered |
 | neither | Request hangs until the client times out |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Express](https://expressjs.com/) | Minimal middleware-based HTTP framework | It is the lingua franca — most interview questions assume it |
+| [Fastify](https://fastify.dev/docs/latest/) | Schema-first, faster alternative | Throughput matters and you want JSON-schema validation built in |
+| [Helmet](https://helmet.js.org/) | Security response headers as middleware | Any Express app — this is the two-line security baseline |
+| [Hono](https://hono.dev/docs) | Small router for edge runtimes and Node | You deploy to Workers or Deno as well as Node from one codebase |
+
 ## Common mistakes
 
 - Registering auth after the routes it's meant to protect — the endpoint silently has no auth.

@@ -312,6 +312,18 @@ kubectl auth can-i --list --as=system:serviceaccount:prod:app-sa -n prod
 | `escalate` on roles | Bypasses the privilege-escalation guard by design |
 | `impersonate` | Become any user or group, including `system:masters` |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [RBAC docs](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) | Roles, bindings, and `kubectl auth can-i` | Always — `can-i` is the debugging command that ends most permission arguments |
+| [Pod Security Standards](https://kubernetes.io/docs/concepts/security/pod-security-standards/) | Baseline and restricted profiles via Pod Security Admission | You need workload-level hardening; this replaced PodSecurityPolicy, which was **removed in v1.25** |
+| [Kyverno](https://kyverno.io/docs/introduction/) | Policy as ordinary Kubernetes resources | You need admission policy and do not want to learn Rego |
+| [OPA / Gatekeeper](https://www.openpolicyagent.org/docs) | Rego-based admission control | Your policy is complex enough to need a real language |
+| [kube-bench](https://github.com/aquasecurity/kube-bench) | CIS benchmark checks | You need an auditable hardening report rather than an opinion |
+
+PodSecurityPolicy was removed in Kubernetes v1.25 — anyone still recommending it is working from stale material.
+
 ## Common mistakes
 
 - Conflating the three gates: adding RBAC rules to fix an admission denial, or regenerating a certificate to fix a 403.

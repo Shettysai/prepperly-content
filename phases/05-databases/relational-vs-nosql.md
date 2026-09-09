@@ -94,6 +94,18 @@ The real lesson: NoSQL's flexibility doesn't remove the need for data modeling �
 | Best for | Money, strict relationships, complex queries | High-volume, flexible, fast-changing data |
 | Examples | PostgreSQL, MySQL | MongoDB, Redis, Cassandra, Neo4j |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PostgreSQL](https://www.postgresql.org/docs/current/) | Relational, with JSONB and extensions | The default — it does documents, vectors and time-series adequately |
+| [MongoDB](https://www.mongodb.com/docs/) | Document database | Your access pattern really is "fetch one aggregate by id" |
+| [DynamoDB](https://docs.aws.amazon.com/dynamodb/) | Managed key-value with predictable latency | Access patterns are known, scale is huge, and you accept designing around them |
+| [Cassandra](https://cassandra.apache.org/doc/latest/) | Wide-column store with multi-datacentre writes | Writes dominate, you are multi-region, and eventual reads are acceptable |
+| [CockroachDB](https://docs.cockroachlabs.com/docs/) | Distributed SQL with serializable transactions | You want horizontal scale but refuse to give up transactions |
+
+The honest interview answer stays "Postgres until you can name the specific property it lacks".
+
 ## Common mistakes
 
 - Believing NoSQL means "no rules at all" — it just means the *database* doesn't enforce a schema; your application code still needs to keep data consistent, or you end up with inconsistent documents that are painful to query reliably.

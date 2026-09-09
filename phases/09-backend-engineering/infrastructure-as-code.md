@@ -182,6 +182,18 @@ The deeper lesson: IaC doesn't remove risk, it makes risk **reviewable**. A `pla
 | State file | The tool's record of what it created; contains secrets |
 | Drift | Reality no longer matches config, usually from manual edits |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Terraform](https://developer.hashicorp.com/terraform/docs) | Declarative multi-cloud provisioning | It is the industry default, and what interviews assume |
+| [OpenTofu](https://opentofu.org/docs/) | MPL-licensed Terraform fork | Terraform's BUSL licence change is a blocker for you |
+| [Pulumi](https://www.pulumi.com/docs/) | IaC in TypeScript and other real languages | Your team would rather write TS than HCL, and needs genuine loops |
+| [Ansible](https://docs.ansible.com/projects/ansible/latest/index.html) | Agentless configuration management | You are configuring existing machines, not creating infrastructure |
+| [Crossplane](https://docs.crossplane.io/latest/) | Provisioning cloud resources via Kubernetes CRDs | You already reconcile everything else through the Kubernetes API |
+
+Ansible's docs moved to the `/projects/ansible/latest/` path, and `docs.ansible.com` rate-limits automated clients hard — expect a bot block rather than a broken page.
+
 ## Common mistakes
 
 - Committing the state file to git — it holds plaintext secrets and breaks the moment two people apply.

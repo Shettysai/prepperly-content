@@ -133,6 +133,17 @@ The distinction is what interviewers are listening for. "Exactly-once delivery" 
 | Exponential, no jitter | Spaced out, but still clustered |
 | Exponential + full jitter | Load spread smoothly — the recommended default |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Redis](https://redis.io/docs/latest/develop/using-commands/transactions/) | `SET NX` plus a TTL as an idempotency-key store | You must deduplicate requests across many app instances |
+| [p-retry](https://github.com/sindresorhus/p-retry) | Retry with exponential backoff in Node | You are wrapping a transiently failing call — do not hand-roll the backoff |
+| [opossum](https://nodeshift.dev/opossum/) | Circuit breaker for Node | Retries are amplifying an outage and you need to stop calling altogether |
+| [Temporal](https://docs.temporal.io/) | Durable retries with at-least-once activities | The retry must survive your process dying mid-operation |
+
+Pair these, never adopt the retry library alone: retries without idempotency are a duplicate-generation machine.
+
 ## Common mistakes
 
 - Retrying non-retryable errors. A 400 or 422 will fail identically forever; retrying wastes capacity and hides the real error from the caller.

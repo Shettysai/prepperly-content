@@ -206,6 +206,17 @@ Also add a timeout. A driver who neither accepts nor declines must release autom
 | Assignment | Atomic check-and-set + timeout | Prevents double-booking and stranded requests |
 | Sharding key | City / region | Rides are local; near-zero cross-shard traffic |
 
+## Tools & frameworks
+
+These are the concrete technologies worth naming at the whiteboard for this design.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Redis geospatial](https://redis.io/docs/latest/develop/data-types/geospatial/) | `GEOADD`/`GEOSEARCH` over nearby drivers | Live driver locations need sub-second proximity queries |
+| [Uber H3](https://h3geo.org/docs/) | Hexagonal geospatial indexing | You are bucketing space into cells for matching and surge pricing |
+| [PostGIS](https://postgis.net/documentation/) | Spatial types and indexes in Postgres | You need persistent geo queries, routes and polygons |
+| [Kafka](https://kafka.apache.org/documentation/) | High-volume location-update ingest | Every driver emits a ping every few seconds |
+
 ## Common mistakes
 
 - Querying `WHERE lat BETWEEN ? AND ? AND lng BETWEEN ? AND ?` and assuming an index makes it fast — a standard index handles one dimension, so the database filters a huge candidate set.

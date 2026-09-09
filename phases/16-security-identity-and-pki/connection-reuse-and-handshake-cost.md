@@ -204,6 +204,18 @@ Step 5 is the one that ends the argument, because it distinguishes "our client i
 | `TIME_WAIT` count | low | thousands |
 | Latency after warming pool | unchanged | drops sharply |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Node.js `http.Agent`](https://nodejs.org/api/http.html#new-agentoptions) | `keepAlive` and pool sizing | Your handshake count is high and you have not yet checked the default agent |
+| [undici](https://undici.nodejs.org/) | Pooled HTTP client with explicit dispatchers | You need real control over pooling and pipelining rather than agent defaults |
+| [OpenSSL `s_client`](https://docs.openssl.org/) | Observe a full handshake against a resumed one | You need to prove session resumption is or is not happening |
+| [Wireshark](https://www.wireshark.org/docs/) | Count handshakes on the wire | The client library claims it reuses connections and you want evidence |
+| [k6](https://grafana.com/docs/k6/latest/) | Measure latency with and without reuse | You need to quantify what the handshake is actually costing you |
+
+The reason this list is measurement-heavy is that a client can silently leave the pooled path, so measure handshakes rather than trusting configuration.
+
 ## Common mistakes
 
 - Building a custom agent for TLS options and not setting `keepAlive: true`, so every request pays a full mutual handshake with nothing in the logs.

@@ -275,6 +275,18 @@ Notice too that the 70B adapter at rank 16 is 80 MB against the 7B's 8 MB at ran
 | Base model quality preserved | Overwritten | Frozen, intact | Frozen, quantized |
 | Peak capacity | Highest | High enough for most tasks | Same as LoRA |
 
+## Tools & frameworks
+
+Every row here is Python: from Node you fine-tune by driving this tooling or a managed service, not from your application.
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [PEFT](https://huggingface.co/docs/peft/index) | LoRA and QLoRA adapters | The standard library for parameter-efficient fine-tuning — Python |
+| [TRL](https://huggingface.co/docs/trl/index) | SFT, DPO and reward training | You are past supervised fine-tuning and into preference tuning — Python |
+| [Unsloth](https://unsloth.ai/docs) | Faster, lower-memory LoRA training | You are fine-tuning on a single consumer or modest cloud GPU |
+| [Axolotl](https://docs.axolotl.ai/) | YAML-configured fine-tuning pipelines | You want reproducible runs from a config file instead of a notebook |
+| [vLLM](https://docs.vllm.ai/en/latest/) | Serve many LoRA adapters on one base model | You have per-tenant adapters — this is the cost argument for LoRA in the first place |
+
 ## Common mistakes
 
 - Reaching for fine-tuning to add knowledge. Tuning teaches *form*; RAG supplies *facts*. If the answer changes when a document changes, you needed retrieval.

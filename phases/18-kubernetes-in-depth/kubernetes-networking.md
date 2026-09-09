@@ -267,6 +267,17 @@ The genuinely subtle version involves per-connection balancing. A client using H
 | New replicas get no traffic | Per-connection balancing with keep-alive | Needs L7 balancing or a mesh |
 | All name lookups fail after a policy | Egress policy without a DNS allow rule | Add UDP/TCP 53 to kube-system |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Services docs](https://kubernetes.io/docs/concepts/services-networking/service/) | ClusterIP, NodePort, LoadBalancer, headless | You need the model everything else builds on |
+| [Cilium](https://docs.cilium.io/en/stable/) | eBPF CNI, network policy and observability | You want policy enforcement and visibility in the same layer, including default-deny egress rules |
+| [CoreDNS](https://coredns.io/manual/toc/) | Cluster DNS and its configuration | Service resolution is failing or slow — `ndots` is the classic culprit |
+| [Gateway API](https://gateway-api.sigs.k8s.io/) | North-south traffic entry | The question is external traffic reaching the cluster, as distinct from pod-to-pod |
+
+A default-deny egress NetworkPolicy silently blocking outbound traffic looks exactly like an auth or DNS failure — check policy before you re-read your credentials.
+
 ## Common mistakes
 
 - Describing a Service as a proxy or load balancer process. It is NAT rules in every node's kernel, which is why it adds no hop and cannot do L7 routing.

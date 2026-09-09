@@ -130,6 +130,16 @@ Then there is **retry amplification**. Three layers each retrying three times me
 | Graceful degradation | Total failure from partial failure | Requires designed fallbacks per feature |
 | Load shedding | Overload collapse | Some users rejected to save the rest |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [opossum](https://nodeshift.dev/opossum/) | Circuit breaker for Node | A dependency is failing and you must fail fast instead of queueing behind it |
+| [p-retry](https://github.com/sindresorhus/p-retry) | Backoff and jittered retries | The failure is transient — and use jitter, or you build a thundering herd |
+| [Chaos Mesh](https://chaos-mesh.org/docs/) | Fault injection in Kubernetes | You want to prove the failure handling works rather than assume it does |
+| [Kubernetes probes](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) | Liveness, readiness and startup semantics | Any Kubernetes rollout — misconfigured probes are themselves a top cause of outages |
+| [Sentry](https://docs.sentry.io/platforms/javascript/guides/node/) | Error aggregation and alerting | You need to know a failure mode exists before a user reports it |
+
 ## Common mistakes
 
 - Network calls with no timeout, which is the single most common cause of cascading failure.

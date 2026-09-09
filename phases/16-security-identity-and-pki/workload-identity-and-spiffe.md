@@ -183,6 +183,17 @@ Watch also for workloads that read their SVID **once at startup**. It works for 
 | Tied to | Nothing | What the platform actually scheduled |
 | Hard dependency | None | Identity control plane |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [SPIFFE concepts](https://spiffe.io/docs/latest/spiffe-about/spiffe-concepts/) | SPIFFE ID, SVID and trust domain | You are learning the model — start here rather than with SPIRE |
+| [SPIRE](https://github.com/spiffe/spire) | The reference SPIFFE implementation | You need attested identity spanning clusters and VMs, not just one cluster |
+| [Istio](https://istio.io/latest/docs/concepts/security/) | SPIFFE identities issued automatically | You are already on a mesh, in which case you have SPIFFE IDs whether you knew it or not |
+| [HashiCorp Vault](https://developer.hashicorp.com/vault/docs) | Identity-based secret access | You want workload identity to unlock secrets, replacing a static token in an env var |
+
+Four rows is the whole field, not a shortlist: this space is narrow because the point of SPIFFE is replacing long-lived shared secrets with attested, short-lived identity.
+
 ## Common mistakes
 
 - Trying to solve bootstrap with a bootstrap secret. That is the same problem one level down. The recursion only breaks when something already trusted — the platform — vouches for the workload.

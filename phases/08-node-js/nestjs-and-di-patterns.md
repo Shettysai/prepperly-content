@@ -240,6 +240,18 @@ Plain Express or Fastify remains the better choice for a small service with a ha
 | Singleton scope (default) | One instance for the whole process | A module-level object |
 | Request scope | One instance per request | Something set on `req` |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [NestJS](https://docs.nestjs.com/) | Modules, providers and the DI container | It is the dominant opinionated Node framework, and the subject of this topic |
+| [TypeScript docs](https://www.typescriptlang.org/docs/) | Decorators and `emitDecoratorMetadata` | You need to understand why Nest's DI depends on your `tsconfig` |
+| [Zod](https://zod.dev/) | Validation at the controller boundary | You want runtime-safe DTOs rather than trusting the type annotation |
+| [Vitest](https://vitest.dev/guide/) | Unit-testing providers with mocked dependencies | You are testing a service in isolation — DI exists to make this possible |
+| [Testcontainers (Node)](https://node.testcontainers.org/) | Real dependencies in integration tests | Mocking the repository has stopped catching real bugs |
+
+One dominant framework means this table is really "Nest plus what you use with it" — the interesting content is the DI mechanics: injection tokens, provider scopes, and resolving circular dependencies with `forwardRef()` or a lazily-resolved `ModuleRef`.
+
 ## Common mistakes
 
 - Storing per-request data on a service field. It is a singleton, so that field is shared by every concurrent request.

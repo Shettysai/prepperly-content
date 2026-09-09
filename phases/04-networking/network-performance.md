@@ -135,6 +135,16 @@ Finally, `ping` tells you nothing about TLS setup, server processing, or bufferb
 | New connection setup | TCP + TLS (2+ RTT) | TCP + TLS (2+ RTT) | 1 RTT, 0 on resume |
 | Survives network change | No | No | Yes (connection ID) |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Wireshark](https://www.wireshark.org/docs/) | Packet capture and protocol analysis | You need to see what actually crossed the wire, not what the logs claim |
+| [iperf3](https://iperf.fr/iperf-doc.php) | Raw throughput and jitter measurement | You are proving whether the network or the application is the bottleneck |
+| [tc](https://man7.org/linux/man-pages/man8/tc.8.html) | Inject latency, loss and bandwidth caps | You need to reproduce a slow-network bug on a fast laptop |
+| [k6](https://grafana.com/docs/k6/latest/) | Scripted load generation in JavaScript | You need latency percentiles under a realistic mix of requests |
+| [autocannon](https://github.com/mcollina/autocannon) | Fast HTTP benchmarking from Node | You want a quick throughput number for one endpoint, with no scripting |
+
 ## Common mistakes
 
 - Buying bandwidth to fix a latency problem. Page loads are dominated by round trips, which bandwidth doesn't reduce.

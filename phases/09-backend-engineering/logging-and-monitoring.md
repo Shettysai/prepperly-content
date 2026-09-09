@@ -159,6 +159,18 @@ The honest test: *if this fires and I do nothing, will a user be harmed?* If no,
 | Errors | How often failing? | 5xx rate as a % |
 | Saturation | How full? | queue depth, event loop lag |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Pino](https://getpino.io/) | Fast structured JSON logging for Node | Any Node service — structured beats `console.log` immediately |
+| [Prometheus](https://prometheus.io/docs/introduction/overview/) | Metrics collection and alert rules | You need numbers over time, not log lines |
+| [Grafana](https://grafana.com/docs/grafana/latest/) | Dashboards across metrics, logs and traces | You are correlating a latency spike with a log burst |
+| [Grafana Loki](https://grafana.com/docs/loki/latest/) | Label-indexed log aggregation | Log volume makes full-text indexing too expensive |
+| [OpenTelemetry JS](https://opentelemetry.io/docs/languages/js/) | Unified logs, metrics and traces | You want one instrumentation layer instead of three agents |
+
+The mistake to name is logging where you should be metering: one log line per request is not a latency histogram.
+
 ## Common mistakes
 
 - Logging free-text sentences instead of JSON, making search and aggregation impossible.

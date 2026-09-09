@@ -132,6 +132,17 @@ Then there is the anomaly sagas cannot avoid. Because each step commits immediat
 | Scales across services | Poorly | Well |
 | Undo mechanism | Real rollback | Compensating transactions |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Temporal (TypeScript SDK)](https://github.com/temporalio/sdk-typescript) | Durable workflow execution in Node | You need sagas with retries and compensation, written as ordinary code |
+| [Temporal docs](https://docs.temporal.io/evaluate/use-cases-design-patterns) | Saga and long-running patterns | You are choosing between orchestration and choreography |
+| [Kafka docs](https://kafka.apache.org/documentation/) | Exactly-once between consume and produce | The "transaction" is really read-process-write inside one system |
+| [PostgreSQL docs](https://www.postgresql.org/docs/current/) | `PREPARE TRANSACTION` and 2PC reference | You want to show why 2PC blocks on coordinator failure — a cautionary tool |
+
+The right answer in most interviews is to avoid distributed transactions and use a saga with idempotent steps; 2PC is here as the thing you explain *away*.
+
 ## Common mistakes
 
 - Assuming a compensation cancels the original. It is a new forward transaction with its own record — a refund, not an erasure.

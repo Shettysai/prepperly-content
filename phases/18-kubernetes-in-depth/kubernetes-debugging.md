@@ -281,6 +281,18 @@ Note the `BackOff` suffix on the pull failures: the kubelet retries with increas
 | NXDOMAIN | Wrong name, or DNS/`ndots` problem |
 | 403 / 401 | Genuine auth problem — it answered you |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Debug running pods](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/) | `kubectl debug` and ephemeral containers | The image is distroless and has no shell to exec into |
+| [kubectl reference](https://kubernetes.io/docs/reference/kubectl/) | `describe`, `logs --previous`, `events` | Always first — events and previous logs answer most CrashLoopBackOffs on their own |
+| [k9s](https://k9scli.io/) | Terminal UI over the cluster | Navigating many namespaces faster than typing kubectl |
+| [stern](https://github.com/stern/stern) | Tail logs across many pods at once | The error is in one of twelve replicas and you do not know which |
+| [Debug tasks index](https://kubernetes.io/docs/tasks/debug/) | The official troubleshooting decision tree | You genuinely do not know where to start |
+
+`kubectl describe pod` plus events is the highest-yield first move, and `--previous` gets the logs of the container that actually crashed — tools come after that habit.
+
 ## Common mistakes
 
 - Guessing instead of walking the chain, so a clean check eliminates nothing because there was no hypothesis.

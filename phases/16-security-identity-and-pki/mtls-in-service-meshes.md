@@ -171,6 +171,18 @@ Both traps have the same shape and it is worth naming: **the mesh secures the tr
 | Control plane on critical path | Cannot issue certs → new pods cannot authenticate |
 | Debugging | `curl` from a shell bypasses the sidecar and behaves differently from real traffic |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Istio security concepts](https://istio.io/latest/docs/concepts/security/) | PeerAuthentication and the mTLS modes | You need STRICT versus PERMISSIVE and the migration path between them |
+| [Linkerd automatic mTLS](https://linkerd.io/2-edge/features/automatic-mtls/) | mTLS with no configuration to write | You want mTLS on by default and nothing for a team to get wrong |
+| [Envoy TLS architecture](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/security/ssl) | What the sidecar is really doing | You are debugging below the mesh abstraction, where the mesh docs stop helping |
+| [Cilium mutual authentication](https://docs.cilium.io/en/stable/network/servicemesh/mutual-authentication/mutual-authentication/) | eBPF-based identity and mTLS | You want mesh identity without running a proxy next to every pod |
+| [SPIRE](https://github.com/spiffe/spire) | The identity source underneath many meshes | Workload identity has to span beyond a single cluster |
+
+PERMISSIVE is the migration tool and the setting teams forget to turn off, which leaves plaintext quietly accepted long after the migration finished.
+
 ## Common mistakes
 
 - Enabling STRICT mesh-wide before verifying zero plaintext, breaking every un-meshed caller at once.

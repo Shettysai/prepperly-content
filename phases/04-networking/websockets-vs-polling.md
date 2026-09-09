@@ -132,6 +132,17 @@ Finally, polling isn't obsolete. For a status check every 30 seconds, polling is
 | Scaling | Stateless, easy | Connection-bound | Needs pub/sub | Needs pub/sub |
 | Good for | Rare updates, status | Legacy fallback | Feeds, notifications, token streaming | Chat, games, collaborative editing |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [ws](https://github.com/websockets/ws) | Raw WebSocket server in Node | You genuinely need bidirectional messaging, not just server push |
+| [MDN WebSockets API](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) | Reference for the push option you are comparing against | You are deciding between WebSockets, SSE and polling on the facts |
+| [Centrifugo](https://centrifugal.dev/docs/getting-started/introduction) | Standalone realtime messaging server | You want fan-out to many clients without building the hub yourself |
+| [Ably](https://ably.com/docs) | Managed realtime pub/sub | You want global presence and delivery guarantees you don't have to operate |
+
+The usual right answer is SSE unless you need client-to-server push, so do not read this table as "always WebSockets".
+
 ## Common mistakes
 
 - Reaching for WebSockets when data only flows one way. SSE is simpler, reconnects itself, and passes through infrastructure without special handling.

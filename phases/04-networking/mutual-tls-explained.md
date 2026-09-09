@@ -201,6 +201,15 @@ The second surprise: mTLS does not replace token auth, it stacks with it. A sing
 | Identity available before your handler runs | no | yes |
 | Cost of a leaked identity | token works anywhere | useless without the private key |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [OpenSSL](https://docs.openssl.org/) | Generate, inspect and test certificates | You are learning the mechanics, or debugging a handshake by hand |
+| [Node.js `tls`](https://nodejs.org/api/tls.html) | Client and server certificates in Node | Your app terminates or initiates mTLS itself, rather than a proxy doing it |
+| [cert-manager](https://cert-manager.io/docs/) | Certificate issuance and renewal in Kubernetes | Workloads need certificates and you refuse to renew them by hand |
+| [step-ca](https://smallstep.com/docs/step-ca/) | Small private CA issuing short-lived certificates | You want your own CA without operating enterprise PKI |
+
 ## Common mistakes
 
 - Saying "mTLS means the client has a certificate" and stopping there. The certificate is public; the CertificateVerify signature is what proves anything.

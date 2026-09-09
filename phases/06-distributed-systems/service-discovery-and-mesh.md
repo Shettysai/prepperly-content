@@ -125,6 +125,18 @@ The general principle beneath this: prefer **failing static** over failing close
 | Service mesh | A sidecar proxy per instance | Uniform retries, mTLS, metrics; config not code | Latency, resource cost, real operational burden |
 | DNS only | Whatever resolves the name | Universally supported, no new infrastructure | Caching and TTLs make failover slow and uneven |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Kubernetes Services](https://kubernetes.io/docs/concepts/services-networking/service/) | DNS-based discovery, built in | You are on Kubernetes and do not yet need a mesh — start here |
+| [Istio (ambient)](https://istio.io/latest/docs/ambient/) | Sidecar-less mesh with ztunnel and waypoints | You need the full L7 feature set and accept the operational cost |
+| [Linkerd](https://linkerd.io/2-edge/overview/) | Minimal Rust-proxy mesh | You want mTLS and golden metrics with the least overhead and config surface |
+| [Cilium](https://docs.cilium.io/en/stable/) | eBPF networking with mesh features | You want one layer for CNI, policy and mesh instead of two stacked layers |
+| [Consul](https://developer.hashicorp.com/consul/docs) | Discovery and mesh across VMs and Kubernetes | Your workloads are not all inside Kubernetes |
+
+Istio's ambient mode is stable and recommended for new clusters, so do not describe Istio as sidecar-only. This is a genuinely contested space — present the trade-off, not a winner.
+
 ## Common mistakes
 
 - Caching a resolved IP address for the lifetime of the process, so the caller keeps dialling an instance that was replaced hours ago.

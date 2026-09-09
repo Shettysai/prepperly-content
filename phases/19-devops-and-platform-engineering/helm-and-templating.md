@@ -367,6 +367,16 @@ Neither wins outright, and the choice follows the use case. **Helm fits distribu
 | Subchart values | Nested under the subchart's name | Top-level override does nothing |
 | Chart version pin | Fixes the chart version per env | Per-env pins drift; dev-only fixes |
 
+## Tools & frameworks
+
+| Tool | What it's for | Reach for it when |
+|---|---|---|
+| [Helm](https://helm.sh/docs/) | Charts, values, hooks, `--dry-run`, and `values.schema.json` for install-time validation | It is the standard — and `helm template --debug` is the debugging tool, while a schema makes a typo'd value fail fast instead of deploying silently wrong |
+| [Kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/) | Patch-based configuration | Templating logic has become unreadable — patch the rendered output instead of branching in a template |
+| [Kyverno](https://kyverno.io/docs/introduction/) | Validate the rendered result at admission | Templates can render perfectly valid YAML that still violates policy |
+
+The trap worth teaching: a chart packaged before its source edit ships stale content, and parity checks that compare packaged artifacts to each other cannot catch it.
+
 ## Common mistakes
 
 - Applying without rendering. `helm template | less` costs seconds and catches most template bugs.
