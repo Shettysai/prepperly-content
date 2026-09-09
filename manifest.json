@@ -481,10 +481,19 @@
           "sha256": "f3d0cb5c6812e283eb48237c603bc4ce1e1a19c7f14e25b6546c031ac7d7c092"
         },
         {
+          "slug": "search-and-inverted-indexes",
+          "title": "Search & Inverted Indexes",
+          "summary": "Word to documents, and how relevance is scored",
+          "position": 9,
+          "path": "phases/05-databases/search-and-inverted-indexes.md",
+          "questionsPath": "questions/search-and-inverted-indexes.json",
+          "sha256": "41648b34e30a515a62b624d2c084657777419de4d021285cac177a5658203519"
+        },
+        {
           "slug": "sql-queries-and-joins",
           "title": "SQL Queries & Joins",
           "summary": "Inner, Outer, Group By",
-          "position": 9,
+          "position": 10,
           "path": "phases/05-databases/sql-queries-and-joins.md",
           "questionsPath": "questions/sql-queries-and-joins.json",
           "sha256": "c6b57e57512e6a6299a1a011546fff81dd8797f2fb7f02b948397b4269bed4a5"
@@ -493,7 +502,7 @@
           "slug": "time-series-and-analytics-databases",
           "title": "Time-Series & Analytical Databases",
           "summary": "OLTP vs OLAP, Columnar",
-          "position": 10,
+          "position": 11,
           "path": "phases/05-databases/time-series-and-analytics-databases.md",
           "questionsPath": "questions/time-series-and-analytics-databases.json",
           "sha256": "e4d44e7268d52714ec5a1e2da7d50f9a628f2110348669a7097b89ba1d4ab4ba"
@@ -543,10 +552,19 @@
           "sha256": "8657708331a9003ce081ab72ca9b7b0980478f6bd29492e533f2a9bdc4d1db3b"
         },
         {
+          "slug": "event-sourcing-and-cqrs",
+          "title": "Event Sourcing & CQRS",
+          "summary": "Storing facts instead of state, and splitting reads from writes",
+          "position": 5,
+          "path": "phases/06-distributed-systems/event-sourcing-and-cqrs.md",
+          "questionsPath": "questions/event-sourcing-and-cqrs.json",
+          "sha256": "b85614e4c4d01425bad660d2c31cc19351b6da176e5ec7ec8d11f23202029cfe"
+        },
+        {
           "slug": "idempotency-and-retries",
           "title": "Idempotency, Retries & Exactly-Once",
           "summary": "Idempotency keys, backoff with jitter, retry storms",
-          "position": 5,
+          "position": 6,
           "path": "phases/06-distributed-systems/idempotency-and-retries.md",
           "questionsPath": "questions/idempotency-and-retries.json",
           "sha256": "b6e1e12df7892ffb0949cf9567dc7e4cda3d50525af83a12808f056fa34e81ee"
@@ -555,7 +573,7 @@
           "slug": "leader-election-and-coordination",
           "title": "Leader Election & Coordination",
           "summary": "Leases, split brain, fencing tokens, etcd patterns",
-          "position": 6,
+          "position": 7,
           "path": "phases/06-distributed-systems/leader-election-and-coordination.md",
           "questionsPath": "questions/leader-election-and-coordination.json",
           "sha256": "b2fd4c0c0475ec24ee0f2be176bf649837a9c2d432ae7fe9db1f3794ea459058"
@@ -564,7 +582,7 @@
           "slug": "message-queues",
           "title": "Message Queues",
           "summary": "Kafka, RabbitMQ, Pub/Sub",
-          "position": 7,
+          "position": 8,
           "path": "phases/06-distributed-systems/message-queues.md",
           "questionsPath": "questions/message-queues.json",
           "sha256": "aa867fab3719bd37d3a2ba3ad98a6a99d5b5026fe17c451f5f7f9a0b212e8f62"
@@ -573,7 +591,7 @@
           "slug": "replication-and-partitioning",
           "title": "Replication & Partitioning",
           "summary": "Leader-follower, Sharding",
-          "position": 8,
+          "position": 9,
           "path": "phases/06-distributed-systems/replication-and-partitioning.md",
           "questionsPath": "questions/replication-and-partitioning.json",
           "sha256": "d53ffc8dd92342349ef4276a5ee30f6d692474d85381e340ce88a5689892f94d"
@@ -582,7 +600,7 @@
           "slug": "service-discovery-and-mesh",
           "title": "Service Discovery & Service Mesh",
           "summary": "Client vs server-side discovery, sidecars, mesh trade-offs",
-          "position": 9,
+          "position": 10,
           "path": "phases/06-distributed-systems/service-discovery-and-mesh.md",
           "questionsPath": "questions/service-discovery-and-mesh.json",
           "sha256": "720dc7730653646971c813154603aab2e522a72461cbeb200eb82bd22c446f1d"
@@ -668,10 +686,19 @@
           "sha256": "74a47687e877c0754734448cbbed0ebd1c0a485b855e7851100ba58cc7067160"
         },
         {
+          "slug": "multi-tenancy-and-isolation",
+          "title": "Multi-Tenancy & Isolation",
+          "summary": "One system, many customers, no leakage",
+          "position": 9,
+          "path": "phases/07-system-design/multi-tenancy-and-isolation.md",
+          "questionsPath": "questions/multi-tenancy-and-isolation.json",
+          "sha256": "08739213fde59249e7ecb24bbac059e63ce7ebc7b4c808959d0ff2788cf42b0b"
+        },
+        {
           "slug": "rate-limiting-and-throttling",
           "title": "Rate Limiting & Throttling",
           "summary": "Token bucket, sliding window, distributed counters",
-          "position": 9,
+          "position": 10,
           "path": "phases/07-system-design/rate-limiting-and-throttling.md",
           "questionsPath": "questions/rate-limiting-and-throttling.json",
           "sha256": "bc15a6849d251437cca14763a3d5835321a777304bfcc65a8a12f07874d69201"
@@ -680,7 +707,7 @@
           "slug": "scalability-and-performance",
           "title": "Scalability & Performance",
           "summary": "Vertical/Horizontal scaling, Bottlenecks",
-          "position": 10,
+          "position": 11,
           "path": "phases/07-system-design/scalability-and-performance.md",
           "questionsPath": "questions/scalability-and-performance.json",
           "sha256": "7f19b8b8f4b724fe4ad09ec0c66d786f076b154ff16c1333f843b0846995119d"
@@ -730,10 +757,19 @@
           "sha256": "7a300f49fd6921c58d5c1632cb3834ef51fc51b901b3a51bbe34a073d462c78a"
         },
         {
+          "slug": "nestjs-and-di-patterns",
+          "title": "NestJS & Dependency Injection",
+          "summary": "Inversion of control, providers, scopes and circular dependencies",
+          "position": 5,
+          "path": "phases/08-node-js/nestjs-and-di-patterns.md",
+          "questionsPath": "questions/nestjs-and-di-patterns.json",
+          "sha256": "581632c0f67976a48af41f8c59ca7179262a2466a7a9e3cc73b81a3cef716761"
+        },
+        {
           "slug": "performance-profiling",
           "title": "Profiling & Debugging Performance",
           "summary": "Flame graphs, event loop lag, heap snapshots",
-          "position": 5,
+          "position": 6,
           "path": "phases/08-node-js/performance-profiling.md",
           "questionsPath": "questions/performance-profiling.json",
           "sha256": "3786c009970dfe18119b4982c5216112d544a762e7f3499fa5ffe05ab4229801"
@@ -742,7 +778,7 @@
           "slug": "security-best-practices",
           "title": "Security best practices",
           "summary": "OWASP, Helmet, Rate limiting",
-          "position": 6,
+          "position": 7,
           "path": "phases/08-node-js/security-best-practices.md",
           "questionsPath": "questions/security-best-practices.json",
           "sha256": "b463ecd3907a02b98b99c6464579976094796c1f7e709ea5cfa3bbc21d735e2a"
@@ -751,7 +787,7 @@
           "slug": "streams-and-buffers",
           "title": "Streams & Buffers",
           "summary": "Readable, Writable, Transform",
-          "position": 7,
+          "position": 8,
           "path": "phases/08-node-js/streams-and-buffers.md",
           "questionsPath": "questions/streams-and-buffers.json",
           "sha256": "a2dfd55a68870977cd74c10689b0f579db38d2206cb5a166744841de2f034358"
@@ -760,7 +796,7 @@
           "slug": "testing-node-applications",
           "title": "Testing Node Applications",
           "summary": "node:test, mocking boundaries, async tests",
-          "position": 8,
+          "position": 9,
           "path": "phases/08-node-js/testing-node-applications.md",
           "questionsPath": "questions/testing-node-applications.json",
           "sha256": "832d19ecd256c2d2c401a71ac2d3cd4c9b367763f55a1abc801a6d38b5374cbb"
@@ -769,7 +805,7 @@
           "slug": "typescript-in-node",
           "title": "TypeScript in Node",
           "summary": "Structural typing, generics, unknown vs any",
-          "position": 9,
+          "position": 10,
           "path": "phases/08-node-js/typescript-in-node.md",
           "questionsPath": "questions/typescript-in-node.json",
           "sha256": "ded6e8e200b287cef0554adaedfac69223083a7526a2c60f8cc1a7cc4f31f0b8"
@@ -778,7 +814,7 @@
           "slug": "v8-engine-and-garbage-collection",
           "title": "V8 Engine & Garbage Collection",
           "summary": "Memory management, Profiling",
-          "position": 10,
+          "position": 11,
           "path": "phases/08-node-js/v8-engine-and-garbage-collection.md",
           "questionsPath": "questions/v8-engine-and-garbage-collection.json",
           "sha256": "2c4ff2ab2df803428760b483bdfd609780e23bc56fb88d3d604482aaabd8c79f"
@@ -882,10 +918,19 @@
           "sha256": "0f83dc61bc7c92b5f8af655afe23c5c72cce3dd0a5d2ce7c4ef45e8f349edbb4"
         },
         {
+          "slug": "serverless-and-faas",
+          "title": "Serverless & FaaS",
+          "summary": "Invocation lifecycle, cold starts, warm-instance state and connection limits",
+          "position": 11,
+          "path": "phases/09-backend-engineering/serverless-and-faas.md",
+          "questionsPath": "questions/serverless-and-faas.json",
+          "sha256": "01f0b78d0e4c7d05484a49ced2a983a442087adada42977508cd4fe07e5d003a"
+        },
+        {
           "slug": "web-security-fundamentals",
           "title": "Web Security Fundamentals",
           "summary": "XSS, CSRF, SQL injection, SSRF, IDOR",
-          "position": 11,
+          "position": 12,
           "path": "phases/09-backend-engineering/web-security-fundamentals.md",
           "questionsPath": "questions/web-security-fundamentals.json",
           "sha256": "db8af08ace356a2b140485389dd7dc7bbf2fb12a8e73966f5c599d476c3ae3a5"
@@ -1095,28 +1140,46 @@
           "sha256": "71cd7d6e011d71d355ab5aa18165a8ee783bad71e88caaf6e8584b1db68b5400"
         },
         {
+          "slug": "mcp-and-agent-tool-protocols",
+          "title": "MCP & Agent Tool Protocols",
+          "summary": "Discovery, Transports, Trust",
+          "position": 9,
+          "path": "phases/12-ai-engineering/mcp-and-agent-tool-protocols.md",
+          "questionsPath": "questions/mcp-and-agent-tool-protocols.json",
+          "sha256": "45b18dac1ae09a3af1dbebb01d77e96ccdf3bf482558fbb3816887fcd448d957"
+        },
+        {
           "slug": "prompt-engineering",
           "title": "Prompt Engineering That Works",
           "summary": "Roles, Few-shot, Structured Output",
-          "position": 9,
+          "position": 10,
           "path": "phases/12-ai-engineering/prompt-engineering.md",
           "questionsPath": "questions/prompt-engineering.json",
           "sha256": "1da181f56421dc9311493c1011902ed1d1be0cb8f8c3fbd6c543e932b2d56058"
         },
         {
+          "slug": "rag-in-production",
+          "title": "RAG in Production",
+          "summary": "Hybrid Search, Reranking, Evaluation",
+          "position": 11,
+          "path": "phases/12-ai-engineering/rag-in-production.md",
+          "questionsPath": "questions/rag-in-production.json",
+          "sha256": "3eb6be2aeccbb63323d9803e18eea9834dfb816db57a7a77fc6e38ba63604096"
+        },
+        {
           "slug": "rag-retrieval-augmented-generation",
           "title": "RAG: Retrieval-Augmented Generation",
           "summary": "Chunking, Embedding, Reranking",
-          "position": 10,
+          "position": 12,
           "path": "phases/12-ai-engineering/rag-retrieval-augmented-generation.md",
           "questionsPath": "questions/rag-retrieval-augmented-generation.json",
-          "sha256": "958c77ac18c7ae795c54c2bd0d2d38e5a486574c090eca57934e8f73a65aa5e0"
+          "sha256": "7e805707254c52464289739bfbff348548ad99039fc1f4de478ca75b134fc0b1"
         },
         {
           "slug": "sampling-and-decoding",
           "title": "Sampling: Temperature, Top-p, Top-k",
           "summary": "Temperature, Top-k, Nucleus",
-          "position": 11,
+          "position": 13,
           "path": "phases/12-ai-engineering/sampling-and-decoding.md",
           "questionsPath": "questions/sampling-and-decoding.json",
           "sha256": "332b0ddbe21e72d16ce5982f6267ef015dff2d986799deb54b522575f02d14e1"
@@ -1125,7 +1188,7 @@
           "slug": "tool-calling-and-function-calling",
           "title": "Tool Calling & Function Calling",
           "summary": "Schemas, Agentic Loop, Errors",
-          "position": 12,
+          "position": 14,
           "path": "phases/12-ai-engineering/tool-calling-and-function-calling.md",
           "questionsPath": "questions/tool-calling-and-function-calling.json",
           "sha256": "79cee409681b129a46a14f959a7b3a43d08d1e45b3011be827b99126893f6bf5"
@@ -1134,7 +1197,7 @@
           "slug": "vector-databases",
           "title": "Vector Databases & Similarity Search",
           "summary": "Cosine, ANN, HNSW Trade-offs",
-          "position": 13,
+          "position": 15,
           "path": "phases/12-ai-engineering/vector-databases.md",
           "questionsPath": "questions/vector-databases.json",
           "sha256": "15372c7d052cceb10abf3213257ce6336df82b2869594fe6392211515ef30489"
@@ -1564,7 +1627,7 @@
           "position": 7,
           "path": "phases/17-llm-infrastructure-and-gpus/inference-servers-vllm-and-tgi.md",
           "questionsPath": "questions/inference-servers-vllm-and-tgi.json",
-          "sha256": "977f2c1c22e065ece390ca78299c941fa4e60d6c94d4afb292e48a4822ee1069"
+          "sha256": "8feeadca676316695d382505f2d0e614ff1eb883aa015c084eab9db5f12fc094"
         },
         {
           "slug": "multi-gpu-and-model-parallelism",
@@ -1763,10 +1826,19 @@
           "sha256": "f2db15b824df7e84e3ec98e06f991b6f2a6c78c7ed854d9660c4c7084df36adb"
         },
         {
+          "slug": "load-and-performance-testing",
+          "title": "Load & Performance Testing",
+          "summary": "Test shapes, finding the saturation knee, percentiles and coordinated omission",
+          "position": 6,
+          "path": "phases/19-devops-and-platform-engineering/load-and-performance-testing.md",
+          "questionsPath": "questions/load-and-performance-testing.json",
+          "sha256": "6f28ae023dbcdf671638e0ebeccc2e2d7b54421823c69637d1e2ce6fb6eb55c0"
+        },
+        {
           "slug": "observability-with-opentelemetry",
           "title": "Observability with OpenTelemetry",
           "summary": "The three signals, OTLP, context propagation, collectors and cardinality cost",
-          "position": 6,
+          "position": 7,
           "path": "phases/19-devops-and-platform-engineering/observability-with-opentelemetry.md",
           "questionsPath": "questions/observability-with-opentelemetry.json",
           "sha256": "3f4d1ecc0d6761bdfa4041cfd1caf085630874403ea4a42c9bdf74a30662bb33"
@@ -1775,7 +1847,7 @@
           "slug": "platform-engineering",
           "title": "Platform Engineering",
           "summary": "Golden paths, self-service, guardrails and the platform as a product",
-          "position": 7,
+          "position": 8,
           "path": "phases/19-devops-and-platform-engineering/platform-engineering.md",
           "questionsPath": "questions/platform-engineering.json",
           "sha256": "1d81ed475a6882e58c4b8206734a0ab04d3ced6120ab7f3eb229f0c386896f04"
@@ -1784,7 +1856,7 @@
           "slug": "progressive-delivery",
           "title": "Progressive Delivery",
           "summary": "Deploy is not release — canary, blue-green, flags and automated analysis",
-          "position": 8,
+          "position": 9,
           "path": "phases/19-devops-and-platform-engineering/progressive-delivery.md",
           "questionsPath": "questions/progressive-delivery.json",
           "sha256": "aede45eeb4b5f4f34bb31b37fc9da652c69f60545442c7017efc644faa96f216"
@@ -1793,7 +1865,7 @@
           "slug": "sre-slos-and-error-budgets",
           "title": "SLOs & Error Budgets",
           "summary": "SLI, SLO, SLA, burn-rate alerting and reliability as a budget you spend",
-          "position": 9,
+          "position": 10,
           "path": "phases/19-devops-and-platform-engineering/sre-slos-and-error-budgets.md",
           "questionsPath": "questions/sre-slos-and-error-budgets.json",
           "sha256": "91a99f6514a7a4f2302c6215854920c8848e9a9c2f59a4265641fb4bf9d4261a"
@@ -1802,7 +1874,7 @@
           "slug": "terraform-and-iac-patterns",
           "title": "Terraform & IaC Patterns",
           "summary": "State, locking, replacement, modules, adoption patterns",
-          "position": 10,
+          "position": 11,
           "path": "phases/19-devops-and-platform-engineering/terraform-and-iac-patterns.md",
           "questionsPath": "questions/terraform-and-iac-patterns.json",
           "sha256": "d92dcd0c8eda568480af2ac21a18176e6af82a9917548fd91b0231cfeb04f939"
