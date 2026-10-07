@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-09",
+  "version": "2026-10-07",
   "phases": [
     {
       "slug": "cs-fundamentals",
@@ -1141,12 +1141,12 @@
         },
         {
           "slug": "mcp-and-agent-tool-protocols",
-          "title": "MCP & Agent Tool Protocols",
+          "title": "MCP (Model Context Protocol)",
           "summary": "Discovery, Transports, Trust",
           "position": 9,
           "path": "phases/12-ai-engineering/mcp-and-agent-tool-protocols.md",
           "questionsPath": "questions/mcp-and-agent-tool-protocols.json",
-          "sha256": "c1ff03697de654c7f92c2808fd99e3285618d8d943698b79069898591e63437b"
+          "sha256": "e6899bf748a9af9ba4da718eacb64e6489740cd791e4e8130f95e77a652964ae"
         },
         {
           "slug": "prompt-engineering",
