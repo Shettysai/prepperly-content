@@ -1,5 +1,5 @@
 ---
-title: MCP & Agent Tool Protocols
+title: MCP (Model Context Protocol)
 slug: mcp-and-agent-tool-protocols
 summary: Discovery, Transports, Trust
 tags: [api-design, security, system-design]
