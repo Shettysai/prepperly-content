@@ -57,6 +57,9 @@ const phases = phaseDirs.map((dir) => {
         position: i + 1,
         path: rel,
         questionsPath: existsSync(join(root, questionsRel)) ? questionsRel : null,
+        questionsSha256: existsSync(join(root, questionsRel))
+          ? createHash("sha256").update(readFileSync(join(root, questionsRel))).digest("hex")
+          : null,
         // Hash of the exact bytes served, so a content edit invalidates the
         // app's cache. Hashing the parsed body instead would miss frontmatter
         // changes (tags, links), which are also user-visible.
