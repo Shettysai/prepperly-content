@@ -1,27 +1,447 @@
 [
   {
-    "prompt": "Your resume claims a large increase in messages per second. How would you explain how you achieved it without overstating what you know?",
-    "answer_markdown": "Start with the baseline, workload, and how throughput was measured. Explain which signal identified the bottleneck, then name the change you personally made and why it addressed that signal. Give the verified result with its duration, latency percentiles, and error rate. If a value or test detail is missing, mark it for verification instead of filling it in from memory; the interviewer is testing whether the number has an evidence trail.",
+    "prompt": "Walk me through how you got Artemis to 800 messages/second.",
+    "answer_markdown": "“I was a founding engineer on Artemis, taking the platform from early build-out toward production. The platform reached 800 messages per second at sub-100 ms platform latency. The work named in my resume was tuning Redis and MongoDB and optimizing Kafka-based asynchronous pipelines, supporting stateful sessions, MCP tool execution, and A2A collaboration.”\n\n**Resume detail to verify:** baseline, workload, exact changes, test duration, latency definition/percentile, and error rate are absent from the resume.",
     "difficulty": "medium"
   },
   {
-    "prompt": "An interviewer asks whether your sub-100 ms result was p50, p95, or p99. What should your answer include?",
-    "answer_markdown": "Name the exact percentile and the measurement window. Define where timing starts and ends, and state the workload and error rate so the number has context. If you only measured p50, say that and do not imply the tail was also below the threshold. The interviewer is checking that you understand latency distributions, not just the headline figure.",
+    "prompt": "What was it before you started? What was the bottleneck?",
+    "answer_markdown": "“My resume records the 800 messages/second result but not the starting throughput or the measured bottleneck. I would check the load-test results and traces before giving those numbers. I should identify the bottleneck from evidence, then connect the Redis, MongoDB, or Kafka change to that evidence.”\n\n**Resume detail to verify:** baseline and bottleneck; do not guess that a database or queue was the first constraint.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How did you find the bottleneck? What tool told you?",
+    "answer_markdown": "“The resume says I owned platform load testing and capacity planning and shipped distributed tracing and operational diagnostics. It does not name the profiler, APM product, trace, or dashboard that identified the Artemis bottleneck. I need to name the actual tool and signal I used, then explain how I ruled out other components.”\n\n**Resume detail to verify:** load-test tool, trace/APM tool, metric, and decision sequence.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Is sub-100 ms p50, p95, or p99? What’s the p99?",
+    "answer_markdown": "“The resume says sub-100 ms platform latency but does not state a percentile or p99. I should not call it p95 or p99 until I confirm the report’s exact metric and time window.”\n\n**Resume detail to verify:** percentile, timing boundaries, test window, and p99 value.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What’s actually inside that 100 ms? Break it down by component.",
+    "answer_markdown": "“I can say the platform result involved stateful agent sessions, MCP tool execution, A2A collaboration, Redis and MongoDB tuning, and Kafka-based asynchronous pipelines. The resume does not provide a component latency breakdown, so I need traces or benchmark notes before attributing milliseconds to any of those stages.”\n\n**Resume detail to verify:** per-stage spans and whether the number includes downstream tool/provider time.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What did you tune in Redis specifically? Why did that help?",
+    "answer_markdown": "“My resume confirms Redis tuning as part of the scale work but does not specify the Redis data model, commands, eviction policy, connection settings, or code change. I need to recover the specific change and explain which measured cost it reduced.”\n\n**Resume detail to verify:** actual Redis change, before/after metric, and correctness/eviction trade-off.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What did you tune in MongoDB? Indexes? Schema? Query shape?",
+    "answer_markdown": "“The resume says MongoDB was tuned for Artemis scale, but it does not identify an index, schema change, or query rewrite. I should bring one concrete query or schema example and show its explain-plan or benchmark evidence rather than choose one of those possibilities by guess.”\n\n**Resume detail to verify:** collection/query, index or schema change, data size, and measurement.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What breaks first if you push to 1,600 messages/second?",
+    "answer_markdown": "“I can’t name the first saturated component from the resume alone. I would test the same workload at stepped rates, watch queue lag, Redis and MongoDB saturation, CPU, errors, and p95/p99, then identify the first resource whose utilization or latency curve changes sharply. My resume names those data systems and Kafka pipelines as scale work, but not the 1,600 messages/second result.”\n\n**Resume detail to verify:** highest tested rate and observed first limit.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How did you measure it? What was the load-test setup?",
+    "answer_markdown": "“I owned platform load testing and capacity planning, and the resume reports an 800 messages/second result. It does not name the generator, traffic mix, concurrency, duration, environment size, or pass criteria. I need to retrieve the run details and state whether 800 was sustained or a short peak.”\n\n**Resume detail to verify:** complete benchmark setup and reproducibility.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Was 800 a target someone gave you, or what you achieved?",
+    "answer_markdown": "“The resume presents 800 messages/second as the scale Artemis reached. It does not say whether that was a committed target, a benchmark target, or a result discovered during testing. I should explain the actual origin of the target and distinguish target from measured outcome.”\n\n**Resume detail to verify:** who set the target, date, acceptance criteria, and evidence of achieved rate.\n\n### B. MCP router",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Design the MCP router on a whiteboard.",
+    "answer_markdown": "“The resume describes a single MCP gateway consolidating nine servers and more than 220 tools. Agents see two meta-tools: discover and execute. I would draw the agent host, gateway, filtered tool catalog, selected MCP server, downstream service, and tracing/audit path. Then I would cover identity and authorization, schema validation, timeouts, server startup, discovery freshness, and failure isolation. I would clearly label which details match the implementation and which are design choices.”\n\n**Resume detail to verify:** actual deployed components, sequence, auth boundary, transport, persistence, and failure policy.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why build a router at all? What was painful before?",
+    "answer_markdown": "“There were nine MCP servers and more than 220 tools. The resume says agents no longer preload every tool schema because the router exposes only discover and execute and finds tools on demand. The pain I can support is the need to avoid putting every downstream tool schema into the agent’s initial tool set.”\n\n**Resume detail to verify:** prior context/token cost, startup impact, and any concrete user or operator pain.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What is on-demand tool discovery? What problem does it solve?",
+    "answer_markdown": "“Instead of loading all 220-plus tool schemas up front, the agent calls the discover meta-tool when it needs a capability; it then uses execute for the selected tool. The resume supports that flow and says agents no longer preload every schema. It does not give a measured context reduction.”\n\n**Resume detail to verify:** exact discover request/result shape, filtering and cache behavior.",
     "difficulty": "easy"
   },
   {
-    "prompt": "Design an MCP router for many tools across several servers. What should you cover on the whiteboard?",
-    "answer_markdown": "Draw the host, authenticated gateway, tool registry or filtered discovery result, selected MCP server, downstream service, and observability path. Explain how the router limits tools to the current task and caller permissions, and how it validates arguments before dispatch. Cover lazy startup, discovery freshness, timeouts, bounded retries, and how one server failure is isolated. Finally, measure the extra network hop and startup cost separately; clearly distinguish this design from what you have personally implemented.",
-    "difficulty": "hard"
-  },
-  {
-    "prompt": "Explain envelope encryption for a multi-tenant BYOK system, including what happens during key rotation or revocation.",
-    "answer_markdown": "Explain that data is encrypted with a data-encryption key and that a tenant or cloud key-management key protects that data key. Identify where each key lives, which service can unwrap it, and how tenant identity is checked before access. For rotation, describe whether data keys are rewrapped, data is re-encrypted, or both, and how old keys remain available during migration. For revocation, explain how new unwraps are blocked, how cached plaintext or keys are handled, and what deletion means for existing ciphertext. Only claim a specific multi-cloud implementation if you can describe its actual key path and evidence.",
-    "difficulty": "hard"
-  },
-  {
-    "prompt": "You joined a small team that built a platform. How do you explain what you personally built versus what the team delivered?",
-    "answer_markdown": "Give the team outcome first, then name the component or decision you owned. Explain the problem, your action, the collaborators or dependencies, and the result you can substantiate. Use “we” for shared delivery and “I” for your direct contribution. A strong answer is specific without claiming sole ownership of work done by the whole team; prepare one decision and one trade-off as follow-ups.",
+    "prompt": "Why lazy server startup? What broke without it?",
+    "answer_markdown": "“The resume says the router uses lazy server startup, but it does not name the failure or cost this avoided. I would explain the actual startup behavior and measured consequence—such as idle resource use or initialization delay—only after checking implementation evidence.”\n\n**Resume detail to verify:** prior behavior, startup trigger, cold-start time, and resource/availability trade-off.",
     "difficulty": "medium"
+  },
+  {
+    "prompt": "With 220+ tools, how does an agent pick the right one?",
+    "answer_markdown": "“The router gives the agent two meta-tools: discover and execute. The agent first discovers relevant tools rather than receiving every schema, then executes the chosen capability. I need to describe the actual selection/filtering rules and what happens when discovery returns several similar tools; those details are not in the resume.”\n\n**Resume detail to verify:** search/ranking/filter mechanism, descriptions, ambiguity handling, and permission filtering.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What’s the latency cost of the extra hop through your gateway?",
+    "answer_markdown": "“The resume does not state the router’s added latency. I would measure gateway overhead separately from server startup and downstream service time, using traces for the discover and execute paths. I should give the measured p50/p95/p99 and say whether discovery is cached.”\n\n**Resume detail to verify:** actual latency measurements; do not invent a millisecond estimate.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What happens when one of the nine MCP servers is down?",
+    "answer_markdown": "“The resume lists nine integrated servers but does not describe the production failure policy. A robust answer should name the implemented timeout, retry, health, and error behavior and explain how other servers remain usable. I need to verify which of those controls Artemis actually shipped.”\n\n**Resume detail to verify:** current behavior for unavailable server and a real test/incident.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do you handle auth to nine different backends?",
+    "answer_markdown": "“The resume names Jira, Bitbucket, Harness, observability, and the agent platform as integrations, but it does not state how credentials or user identity flow to them. I need to explain the real per-backend auth model and how tenant/user authorization is preserved at execution time.”\n\n**Resume detail to verify:** OAuth/delegation/service credentials, secret storage, scopes, rotation, and tenant checks.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do you version tools when a downstream server changes its API?",
+    "answer_markdown": "“Tool/API versioning is not described in the resume. I should explain the mechanism used in the router—if any—such as pinned server versions, schema compatibility checks, adapters, or deprecation policy. If the implementation relied on coordinated updates instead, say that plainly.”\n\n**Resume detail to verify:** actual compatibility and rollout strategy.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "“Cutting agent context overhead”—by how much and how measured?",
+    "answer_markdown": "“The resume supports the qualitative change: agents no longer preload every tool schema because discovery is on demand. It gives no token count or percentage. I should either retrieve an before/after prompt-token measurement or describe the benefit qualitatively without adding a number.”\n\n**Resume detail to verify:** token/context measurement and comparison conditions.\n\n### C. Multi-tenant key management / BYOK",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Explain envelope encryption simply.",
+    "answer_markdown": "“Envelope encryption uses a data-encryption key to encrypt the data, then protects that data key with a separate key managed by a key-management service. My resume says the platform used envelope encryption and per-tenant keys across AWS KMS, Azure Key Vault, and Google Cloud KMS. I should map those generic roles to the actual implementation before claiming a particular key hierarchy.”\n\n**Resume detail to verify:** exact data-key/key-encryption-key flow and where each key is stored.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Why per-tenant keys instead of one key for everything?",
+    "answer_markdown": "“The resume says the system used per-tenant keys and BYOK. A per-tenant key boundary can narrow the impact and simplify tenant-specific rotation or revocation, but I need to describe the actual isolation guarantees and operational cost in our implementation rather than claim a guarantee from the key choice alone.”\n\n**Resume detail to verify:** tenant-to-key mapping, authorization check, key lifecycle, and blast-radius test.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does BYOK work? Where does the customer’s key live?",
+    "answer_markdown": "“My resume confirms BYOK and integrations with AWS KMS, Azure Key Vault, and Google Cloud KMS. It does not say whether customer key material stays in the customer’s KMS, how key access is delegated, or what our service stores. I need to explain the actual contract and key path; I should not say ‘the key never leaves the customer account’ unless that is verified.”\n\n**Resume detail to verify:** custody, cross-account access, wrapped key storage, and exact KMS calls.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What happens when a customer rotates their key?",
+    "answer_markdown": "“Rotation behavior is not specified in the resume. I need to state whether the implementation rewraps data keys, re-encrypts data, supports old and new versions during transition, and how the operation is monitored. I should not imply rotation is seamless until I confirm the actual workflow.”\n\n**Resume detail to verify:** rotation sequence, rollback, failure handling, and data migration.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What happens when a customer revokes their key? What is the deletion story?",
+    "answer_markdown": "“The resume does not describe revocation or deletion. I need to distinguish denying future decrypt operations from deleting ciphertext or destroying wrapped data keys, and explain cached-key expiry and backup retention. Until I verify the platform behavior, I should say the resume establishes BYOK but not the revocation guarantee.”\n\n**Resume detail to verify:** key disable/delete path, cache lifetime, backups, and recovery implications.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why three clouds? Wasn’t one KMS enough?",
+    "answer_markdown": "“The resume lists AWS, Azure, and GCP KMS as part of multi-cloud key management. The platform also ran on AWS and Azure and supported cloud-native integrations. I should explain the actual customer/cloud requirements behind each integration; the resume does not say whether GCP was driven by deployment coverage, customer choice, or another requirement.”\n\n**Resume detail to verify:** cloud requirements, supported product paths, and operational trade-offs.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you avoid a KMS call on every request?",
+    "answer_markdown": "“The resume does not state whether the service cached plaintext or unwrapped data keys, how long any cache lived, or how revocation interacted with it. I need to explain the implemented optimization and its security controls. If we did not cache keys, I should explain the measured latency and cost rather than assume caching.”\n\n**Resume detail to verify:** cache boundary, TTL, invalidation, memory protection, and KMS rate/latency.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What specifically did GDPR/HIPAA require that you built?",
+    "answer_markdown": "“The resume says the multi-cloud key-management work supported GDPR and HIPAA compliance. It does not name a specific control or claim that key management alone made the platform compliant. I should connect each relevant control—such as access restrictions, auditability, retention, or deletion—to the actual requirement and evidence, and avoid making a legal compliance claim beyond my scope.”\n\n**Resume detail to verify:** specific controls, audit artifacts, and compliance owner.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you prove tenant A can never read tenant B’s data?",
+    "answer_markdown": "“My resume supports per-tenant keys and multi-tenant security, but ‘never’ is stronger than the evidence shown there. I would describe the tenant identity check, data access boundary, key selection authorization, and negative cross-tenant tests. I need the actual test or audit evidence before making an absolute guarantee.”\n\n**Resume detail to verify:** threat model, enforcement points, negative tests, and audit evidence.\n\n### D. Founding engineer / scope",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "You joined in September 2025. Walk me through what you personally built.",
+    "answer_markdown": "“I joined Kore.ai as a senior software engineer and founding engineer for Artemis. My resume lists building the MCP router, scaling the platform through Redis/MongoDB tuning and Kafka pipeline work, engineering multi-cloud key management, building voice/chat agents, adding AWS support, and owning load testing and capacity planning. It also describes work across runtime services, Studio/Admin, shared services, and deployment tooling. I would choose two examples and clearly separate hands-on work from broader platform scope.”\n\n**Resume detail to verify:** dates and exact personal role for each bullet.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Which parts were you, and which were your team?",
+    "answer_markdown": "“I can say I lead a small team on the Microsoft partnership delivery, while my resume names several areas I built or owned individually, including the MCP router and load testing/capacity planning. The resume does not assign every component to a person, so I should give a concrete ownership map and credit collaborators rather than claim all platform work as solo work.”\n\n**Resume detail to verify:** team size, co-owners, review/implementation split, and launch responsibilities.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What does “founding engineer” mean day to day here?",
+    "answer_markdown": "“For Artemis, the resume describes work from early build-out to production across runtime services, Studio/Admin, shared services, and deployment tooling. My day-to-day included platform engineering and, specifically, router, scale, key management, load testing, and release reliability work. I should explain which responsibilities I personally handled in a typical week and how the role differed from later-stage maintenance.”\n\n**Resume detail to verify:** a real example week and decision/ownership boundary.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What’s the hardest technical decision you made on Artemis?",
+    "answer_markdown": "“The resume identifies several substantial areas but does not name one decision as the hardest. I could choose the MCP router, multi-cloud key management, or scaling approach only if I can describe the alternatives I considered, the evidence, and the consequences. I should use the decision I actually owned, not pick the most impressive-sounding item.”\n\n**Resume detail to verify:** specific decision, alternatives, trade-off, and outcome.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What would you redo if you started Artemis again?",
+    "answer_markdown": "“The resume does not establish a personal lesson or regret. I should choose one real decision, explain what I would change now, and show what evidence changed my mind. A useful answer can discuss improving measurement or rollout design, but I must tie it to a real Artemis experience rather than claim a lesson I did not learn.”\n\n**Resume detail to verify:** authentic example and concrete improvement.\n\n## Tier 2 — Very likely\n\n### E. Kafka / event-driven",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "The bank says 500K daily transactions is about six per second. Was throughput the hard part?",
+    "answer_markdown": "“That 500K-daily figure is not in my resume, so I should not attribute it to Artemis or another role unless I verify the source. The resume does say I built Kafka producers/consumers at Blue Yonder and optimized Kafka-based asynchronous pipelines at Artemis. I can discuss the actual challenge once I identify the system’s measured throughput, ordering, and reliability requirements.”\n\n**Resume detail to verify:** which project owns the 500K figure; otherwise remove it.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How did you guarantee ordering? What partition key did you choose?",
+    "answer_markdown": "“The resume confirms Kafka producers and consumers but does not state an ordering guarantee or partition key. I need to name the entity whose events had to stay ordered, the actual key, and the trade-off between ordering and partition parallelism. Do not say Kafka guaranteed global order; describe the actual partition-level behavior.”\n\n**Resume detail to verify:** topic/partition design and ordering tests.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Exactly-once, at-least-once, or at-most-once? Why?",
+    "answer_markdown": "“The resume does not state the delivery semantics. I should identify the producer/consumer configuration and side-effect strategy from the project. If processing could repeat, explain how idempotency or deduplication handled it; do not claim exactly-once without defining the boundary.”\n\n**Resume detail to verify:** Kafka settings, commit point, downstream transaction, duplicate behavior.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What happens on consumer-group rebalance mid-processing?",
+    "answer_markdown": "“The resume says I built Kafka consumers, but not how rebalances were handled. I need to describe the real consumer behavior: when offsets are committed, what happens to in-flight work, and how duplicate or lost processing is prevented. I can explain the generic rebalance risk, but not claim a specific Artemis/Blue Yonder implementation from the resume.”\n\n**Resume detail to verify:** consumer library/configuration and in-flight work policy.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What goes into the dead-letter queue, and who drains it?",
+    "answer_markdown": "“A dead-letter queue policy is not in the resume. I should confirm whether the system used one, which failures were retried versus dead-lettered, what diagnostic metadata was kept, and who owned replay. If there was no DLQ, say how poison messages were handled instead.”\n\n**Resume detail to verify:** actual DLQ, retention, replay process, and owner.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "A consumer falls two hours behind. What do you do?",
+    "answer_markdown": "“The resume does not give a specific lag incident, so I would answer this as a troubleshooting approach, not a story I personally experienced. First check lag by partition, arrival rate versus processing rate, rebalance/errors, and downstream saturation. Then identify whether to scale consumers, reduce work per message, or protect dependencies, while preserving ordering and retry limits. I need a real example before saying I did these actions in production.”\n\n**Resume detail to verify:** actual incident if claiming experience.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What were bounded queue and retention controls protecting against?",
+    "answer_markdown": "“The resume says I hardened reliability with bounded queue/retention controls and failure-mode testing. It does not say which resource or failure mode each limit addressed. I should explain the actual bound, what happens when it is reached, and how the retention window balances recovery with storage/operational cost.”\n\n**Resume detail to verify:** queue limits, retention settings, backpressure behavior, and test result.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why Kafka rather than a simpler queue?",
+    "answer_markdown": "“My resume says the Blue Yonder services used Kafka to decouple core transaction workflows, and Artemis used Kafka-based async pipelines. That supports the need for event-driven decoupling. The resume does not record the alternatives considered, so I should explain the actual requirements—such as replay, independent consumers, or throughput—only if those drove the decision.”\n\n**Resume detail to verify:** selection criteria and comparison with the alternative actually evaluated.\n\n### F. MongoDB / Redis",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "“45% query improvement”—from what to what? What changed?",
+    "answer_markdown": "“At Blue Yonder, I designed MongoDB schemas and aggregation pipelines, and my resume reports 45% query-performance improvement. It does not state the baseline, final latency, query, or exact change. I need to retrieve those values and explain whether the improvement was latency or another query metric before using the percentage.”\n\n**Resume detail to verify:** before/after numbers, sample size, query, index/schema/pipeline change.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Walk me through an aggregation pipeline you wrote.",
+    "answer_markdown": "“My resume says I wrote MongoDB aggregation pipelines for NestJS APIs, but it does not name a pipeline. I should prepare one real example: what documents it read, stages and indexes involved, output shape, data volume, and how I measured it. I must not invent a pipeline merely because the resume mentions aggregations.”\n\n**Resume detail to verify:** actual pipeline and explain/benchmark output.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How did you design the schema for stateful agent sessions?",
+    "answer_markdown": "“The Artemis resume claim says the scale work supported stateful agent sessions, but it does not identify the storage schema or which part MongoDB/Redis held. I need to describe the real session lifecycle, partition/key choice, write/read pattern, expiration, and consistency needs. Do not assume the sessions were stored in MongoDB or Redis without checking.”\n\n**Resume detail to verify:** data model and storage ownership.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is Redis holding: cache, sessions, or something else?",
+    "answer_markdown": "“The resume confirms Redis tuning but does not say what data Redis held. I need to name the actual keys/data, TTL and eviction expectations, source of truth, and behavior on a cache miss. Avoid calling it a cache or session store until verified.”\n\n**Resume detail to verify:** Redis data model and failure semantics.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What’s your cache-invalidation strategy?",
+    "answer_markdown": "“The resume does not describe a cache-invalidation strategy. I should explain the actual write path, invalidation trigger, TTL, and what stale data means for the application. If the Redis use was not a cache, say that this question does not fit that component.”\n\n**Resume detail to verify:** actual cache and invalidation code.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What happens if Redis goes down right now?",
+    "answer_markdown": "“The resume confirms Redis tuning but not its role or failover design, so I cannot claim the impact from the resume alone. I need to explain which paths degrade, whether the service falls back to a durable source, and what load would shift elsewhere. Include the tested behavior, not only the desired behavior.”\n\n**Resume detail to verify:** outage test and user-facing impact.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why MongoDB over Postgres for this?",
+    "answer_markdown": "“The resume shows MongoDB schema and aggregation work, but it does not say that I selected MongoDB over PostgreSQL or why. I should explain the requirements and alternatives from the actual decision record. If I inherited the database, say that rather than implying I chose it.”\n\n**Resume detail to verify:** who chose the database and decision criteria.\n\n### G. Monolith to microservices — Blue Yonder",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How did you decide the five service boundaries?",
+    "answer_markdown": "“My resume says I led decomposition of a legacy monolith into five or more NestJS microservices. It does not name the boundaries or the method used to choose them. I need to describe the actual domain/workflow split and what ownership or release coupling each boundary reduced.”\n\n**Resume detail to verify:** service map and boundary rationale.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How did you keep API compatibility during migration?",
+    "answer_markdown": "“The resume says the decomposition improved deployment frequency tenfold while maintaining API compatibility. It does not state the compatibility technique. I should explain the actual contract/versioning strategy, rollout sequence, and tests that prevented existing clients from breaking.”\n\n**Resume detail to verify:** API contracts, migration pattern, and compatibility tests.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What was the rollback plan if a service failed in production?",
+    "answer_markdown": "“Rollback details are not in the resume. I should describe the implemented release and data rollback paths, including whether the old monolith remained available and how database changes stayed compatible. If I did not own the rollback design, say who did and what part I handled.”\n\n**Resume detail to verify:** deployment and data rollback procedure.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "“10x deployment frequency”—from what to what?",
+    "answer_markdown": "“My resume reports a tenfold increase in deployment frequency after the decomposition, but does not give the starting or ending cadence. I need to retrieve the period and define what counted as a deployment before converting this into weekly/daily numbers.”\n\n**Resume detail to verify:** before/after frequency, time window, and source.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What got worse after the split?",
+    "answer_markdown": "“The resume reports improved deployment frequency, but does not list the costs. I should choose a real trade-off we observed—such as more network calls, distributed debugging, or operational overhead—only if it happened. Then explain what we did to manage it and whether the benefit justified the cost.”\n\n**Resume detail to verify:** an actual downside and mitigation.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How did you handle a transaction spanning two new services?",
+    "answer_markdown": "“The resume says Kafka decoupled core transaction workflows but does not state the cross-service consistency pattern. I need to identify the actual design—such as a saga, outbox, compensating action, or a narrower transaction boundary—before answering.”\n\n**Resume detail to verify:** real workflow and consistency guarantees.\n\n### H. Multi-tenant configuration platform",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Design a configuration platform with versioning and rollback.",
+    "answer_markdown": "“At Blue Yonder, I developed a multi-tenant configuration platform with versioning, rollback, and approval workflows for 50-plus internal teams across 200-plus Fortune 500 customer environments. On a whiteboard I would show tenant-scoped config, immutable versions, validation/approval, publish, read path, audit, and rollback to a known version. I would separate that general design from the exact implementation choices I made.”\n\n**Resume detail to verify:** actual storage model and rollout topology.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Does rollback use full snapshots or diffs?",
+    "answer_markdown": "“The resume confirms versioning and rollback but not whether versions were full snapshots or diffs. I need to check the data model and explain how rollback selected and applied a version, including compatibility and audit behavior.”\n\n**Resume detail to verify:** representation and rollback semantics.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do approvals handle an urgent production hotfix?",
+    "answer_markdown": "“The resume confirms approval workflows but does not describe emergency exceptions. I should explain the actual escalation path, who can approve, how the bypass is audited, and how the change is reviewed afterward. If no emergency path existed, say what the normal process required.”\n\n**Resume detail to verify:** real policy and an example.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How is tenant isolation enforced across 200-plus environments?",
+    "answer_markdown": "“The platform served 200-plus Fortune 500 customer environments and 50-plus internal teams. The resume does not state the isolation mechanism. I need to describe tenant identity, storage partitioning, authorization checks, and negative tests from the implementation without claiming a particular model prematurely.”\n\n**Resume detail to verify:** enforcement layer and isolation evidence.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why did Azure Blob beat Git-backed storage? Git gives history.",
+    "answer_markdown": "“My resume says configuration management was re-architected from Git-backed storage to Azure Blob Storage and read/write performance improved by 40%. It does not list the decision criteria. I should compare the actual workload and operational needs, then explain how versioning and rollback were retained after leaving Git.”\n\n**Resume detail to verify:** original bottleneck, Blob design, history/rollback mechanism, and measured trade-offs.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "“40% faster read/write”—from what to what?",
+    "answer_markdown": "“The resume reports a 40% read/write performance improvement after moving to Azure Blob Storage, but it does not give absolute timings or methodology. I should name the operations measured, sample sizes, workload, and before/after values once I verify them.”\n\n**Resume detail to verify:** exact metric, baseline, final value, test/production source.\n\n### I. Observability / MTTR",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "“60% MTTR reduction”—from what to what, in hours?",
+    "answer_markdown": "“At Blue Yonder, my resume says I built observability using APM, MDC trace-ID log correlation, and Elasticsearch/Kibana dashboards, reducing MTTR by 60%. The resume does not specify the baseline hours, incident population, or measurement period. I need the underlying report before quoting exact hours.”\n\n**Resume detail to verify:** incident sample, period, before/after values, MTTR definition.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is MDC trace-ID correlation, mechanically?",
+    "answer_markdown": "“MDC is a logging context that attaches metadata such as a trace ID to log events, so logs from the same request can be searched together. My resume says I built MDC trace-ID correlation and Kibana dashboards. I should explain the actual framework integration and where the ID was created and propagated in that system.”\n\n**Resume detail to verify:** implementation library and propagation points.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does a trace ID survive an asynchronous Kafka hop?",
+    "answer_markdown": "“The resume confirms Kafka consumers/producers and trace-ID log correlation, but it does not state how trace context crossed Kafka. I need to describe the actual headers or instrumentation and how the consumer restored context before logging. Do not claim automatic propagation unless the code or library did it.”\n\n**Resume detail to verify:** headers, producer/consumer instrumentation, and trace view.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Walk me through a real production incident using it.",
+    "answer_markdown": "“The resume does not provide an incident story. I need to choose a real incident I owned, describe the symptom, trace/log evidence, diagnosis, action, recovery, and follow-up. I can mention the observability stack I built, but I should not manufacture an incident or imply I personally owned one unless true.”\n\n**Resume detail to verify:** incident, role, timeline, impact, and learning.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What do you alert on? How do you avoid alert fatigue?",
+    "answer_markdown": "“The resume lists APM, distributed tracing, operational diagnostics, and dashboards but not alert policies. I need to give the actual service-level indicators, thresholds, ownership, and tuning process. If I did not own alerting, distinguish dashboard/diagnostic work from alert policy ownership.”\n\n**Resume detail to verify:** real alerts, thresholds, paging rules, false-positive handling.\n\n### J. Load testing / capacity planning",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Walk me through sizing compute for a new customer.",
+    "answer_markdown": "“My resume says I owned load testing and capacity planning, sizing Azure/AWS compute, VM/instance capacity, and AKS autoscaling for benchmarks and production. I would start with expected workload, concurrency, latency/error targets, per-instance measurements, headroom, and a scale-out test, then validate against production signals. The resume does not give a particular sizing formula or customer example.”\n\n**Resume detail to verify:** actual sizing model, benchmark data, safety headroom, and example.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What tool did you load test with? How realistic was the traffic?",
+    "answer_markdown": "“The resume says I owned platform load testing but does not name the tool or traffic model. I need to name the actual generator and explain how requests, session state, tool calls, pauses, and bursts matched production. Do not guess a common tool such as k6 or JMeter.”\n\n**Resume detail to verify:** tool, traffic profile, test environment, and fidelity limits.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Describe a failure-mode test and what it revealed.",
+    "answer_markdown": "“The resume says I hardened reliability with bounded queue/retention controls and failure-mode testing. It does not identify a specific injected failure or result. I should choose a real test, describe the injected fault, expected behavior, observed behavior, and the fix that followed.”\n\n**Resume detail to verify:** actual fault and result.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How is AKS autoscaling configured? What metric triggers it?",
+    "answer_markdown": "“The resume says I sized Azure compute and AKS autoscaling, but it does not name the trigger metric or configuration. I need to describe the real cluster/node or pod scaling policy and threshold, including cooldown and capacity limits.”\n\n**Resume detail to verify:** HPA/cluster autoscaler settings, metric source, thresholds, and limits.\n\n## Tier 3 — If time or asked\n\n### K. Real-time voice / WebSockets",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Why WebSockets rather than HTTP streaming or SSE?",
+    "answer_markdown": "“The resume says I built real-time voice and chat agents streaming over WebSockets across multiple real-time LLM providers and integrated SIP telephony/contact centers. It does not record the protocol decision. I should explain the actual need for bidirectional messages, interruption/control events, and latency, then compare alternatives based on the shipped use case.”\n\n**Resume detail to verify:** decision criteria and actual alternatives evaluated.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you handle a dropped connection mid-conversation?",
+    "answer_markdown": "“The resume confirms real-time WebSocket conversations but does not describe reconnect behavior. I need to explain whether the client reconnects, how the session is identified, what transcript/state is persisted, and how duplicate or late events are handled.”\n\n**Resume detail to verify:** actual reconnection protocol and tests.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Where does session state live if the user reconnects elsewhere?",
+    "answer_markdown": "“The resume mentions stateful agent sessions and real-time voice/chat, but does not name the state store or failover model. I need to check which state is durable, which is transient, and how another worker restores the conversation.”\n\n**Resume detail to verify:** state location, consistency, TTL, and reconnect behavior.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do you handle barge-in when a user interrupts the agent?",
+    "answer_markdown": "“Barge-in behavior is not specified in the resume. I should describe the actual audio/input detection, cancellation of model or TTS work, and handling of in-flight tool calls only if that path was implemented. Otherwise I can discuss it as a design, not as shipped experience.”\n\n**Resume detail to verify:** voice pipeline and cancellation behavior.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What is the split between hybrid LLM reasoning and deterministic flows?",
+    "answer_markdown": "“My resume says the voice/chat agents combined hybrid LLM reasoning with deterministic flows. A safe high-level explanation is that flexible language tasks use the model while predictable, policy-sensitive steps use explicit flow logic. I need to give a real flow and the decision boundary from the implementation; the resume does not specify them.”\n\n**Resume detail to verify:** one real flow and fallback/handoff rule.\n\n### L. Infra / GitOps",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why ArgoCD over pushing from CI?",
+    "answer_markdown": "“My resume says releases used Helm and ArgoCD GitOps. It does not state the selection rationale. I should explain the actual benefit the team needed—such as desired-state reconciliation or deployment visibility—only if that was part of the decision, and describe what CI still did.”\n\n**Resume detail to verify:** deployment architecture and choice rationale.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "A Helm deploy half-succeeds. What happens?",
+    "answer_markdown": "“The resume confirms Helm and ArgoCD releases but not partial-failure handling. I need to explain the actual health checks, sync/rollback behavior, migration compatibility, and who decides whether to roll forward or back.”\n\n**Resume detail to verify:** release policy and real failure example.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What’s in Terraform versus what’s manual?",
+    "answer_markdown": "“Terraform appears in my skills list, but the resume does not identify infrastructure I provisioned with it or what remained manual. I should name an actual module/resource I owned; otherwise I should describe Terraform as listed familiarity and not claim production ownership.”\n\n**Resume detail to verify:** real Terraform code, state backend, review/apply workflow, and ownership.\n\n### M. Leadership / behavioural",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Tell me about leading the Microsoft partnership delivery.",
+    "answer_markdown": "“My resume says I lead a small engineering team delivering Kore.ai’s Microsoft partnership work, including Azure-native integration and hosted agents on Azure AI Foundry. I would give one concrete delivery goal, how I divided work and managed dependencies, my own decision, and the outcome. The resume does not include team size, dates, or partnership metrics.”\n\n**Resume detail to verify:** team size, personal decisions, scope, and delivery outcome.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Tell me about a disagreement with a senior engineer.",
+    "answer_markdown": "“The resume does not describe a disagreement. I need to choose a real example and explain the differing views, evidence considered, how I handled the discussion, and what decision we reached. I should not invent a conflict to fit the question.”\n\n**Resume detail to verify:** genuine example and outcome.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "What was the hardest production incident you owned end to end?",
+    "answer_markdown": "“The resume mentions customer issue reproduction/fixes, tracing, diagnostics, and reliability work, but no specific incident. I need to choose a real incident I personally owned and be precise about my role, impact, timeline, recovery, and prevention work.”\n\n**Resume detail to verify:** actual incident and ownership.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "How do you divide work across a small team?",
+    "answer_markdown": "“The resume supports that I lead a small team on the Microsoft partnership. It does not say how I assign work. I should describe the real method I use—breaking work by ownership/interface, matching tasks to strengths, agreeing checkpoints, and managing dependencies—then give one example from the partnership.”\n\n**Resume detail to verify:** a real allocation example and team size.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Why are you leaving Kore.ai after a short time?",
+    "answer_markdown": "“A reason for leaving is personal and cannot be inferred from a resume. I should give a truthful, forward-looking explanation that is respectful to Kore.ai, then connect the next role to the work I want to do. I should not claim a reason until I decide what is accurate for me.”\n\n**Resume detail to verify:** your actual reason, timing, and target-role motivation.\n\n## Danger zone — skills listed but likely thin",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "ClickHouse: why columnar, and what did you use it for?",
+    "answer_markdown": "“ClickHouse appears in my skills list, but the resume does not describe a project or use case. I can explain generally that columnar storage is efficient for analytical scans and aggregations, but I should not claim production use until I can name the dataset, queries, and workload.”\n\n**Resume detail to verify:** actual ClickHouse project or remove it from the resume.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "C++: are you prepared to write C++ in an interview?",
+    "answer_markdown": "“C++ is not listed in this resume. I should not imply it is a working interview language. My listed languages are TypeScript, JavaScript, Python, and SQL; I can state which one I am prepared to code in and be direct if C++ is not a current strength.”\n\n**Resume detail to verify:** whether C++ belongs on any other version of the resume.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Python: are you prepared to write it in an interview?",
+    "answer_markdown": "“Python is in my skills list, but this resume does not show a Python project. I should describe my actual level and prepare a small coding exercise in Python if the target role expects it. I must not imply production Python ownership based on the skills line alone.”\n\n**Resume detail to verify:** recent Python work and interview readiness.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Terraform state conflicts: how have you handled them?",
+    "answer_markdown": "“Terraform is listed as a skill, but the resume does not describe Terraform state ownership or conflict handling. I can explain the general need for remote state locking and careful plan/apply ownership, but I should not present that as my personal production experience without a real example.”\n\n**Resume detail to verify:** backend, locking, recovery procedure, and actual use.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "WebRTC: why are STUN and TURN needed?",
+    "answer_markdown": "“My resume says I worked on WebRTC-based real-time streaming for RemotePC sessions at iDrive. At a conceptual level, STUN helps a peer discover its public-facing network address, while TURN relays media when direct peer connectivity fails. The resume does not say whether I implemented or operated either service, so I should separate protocol knowledge from my specific contribution.”\n\n**Resume detail to verify:** your exact WebRTC work and STUN/TURN exposure.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "D3.js and React Testing Library: should they stay on the resume?",
+    "answer_markdown": "“The resume gives concrete evidence for both: I built a sales analytics dashboard with D3.js at BYJU’S, and at iDrive I maintained 90%+ test coverage with Jest and React Testing Library. I should keep each if I can explain one real implementation and the decisions behind it. If the target role does not value them or I cannot discuss details, I can shorten the skills list rather than imply recent depth.”\n\n**Resume detail to verify:** a D3 visualization example and a React Testing Library test you can explain.",
+    "difficulty": "easy"
   }
 ]
