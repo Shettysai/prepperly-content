@@ -1,0 +1,27 @@
+[
+  {
+    "prompt": "Your resume claims a large increase in messages per second. How would you explain how you achieved it without overstating what you know?",
+    "answer_markdown": "Start with the baseline, workload, and how throughput was measured. Explain which signal identified the bottleneck, then name the change you personally made and why it addressed that signal. Give the verified result with its duration, latency percentiles, and error rate. If a value or test detail is missing, mark it for verification instead of filling it in from memory; the interviewer is testing whether the number has an evidence trail.",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "An interviewer asks whether your sub-100 ms result was p50, p95, or p99. What should your answer include?",
+    "answer_markdown": "Name the exact percentile and the measurement window. Define where timing starts and ends, and state the workload and error rate so the number has context. If you only measured p50, say that and do not imply the tail was also below the threshold. The interviewer is checking that you understand latency distributions, not just the headline figure.",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Design an MCP router for many tools across several servers. What should you cover on the whiteboard?",
+    "answer_markdown": "Draw the host, authenticated gateway, tool registry or filtered discovery result, selected MCP server, downstream service, and observability path. Explain how the router limits tools to the current task and caller permissions, and how it validates arguments before dispatch. Cover lazy startup, discovery freshness, timeouts, bounded retries, and how one server failure is isolated. Finally, measure the extra network hop and startup cost separately; clearly distinguish this design from what you have personally implemented.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Explain envelope encryption for a multi-tenant BYOK system, including what happens during key rotation or revocation.",
+    "answer_markdown": "Explain that data is encrypted with a data-encryption key and that a tenant or cloud key-management key protects that data key. Identify where each key lives, which service can unwrap it, and how tenant identity is checked before access. For rotation, describe whether data keys are rewrapped, data is re-encrypted, or both, and how old keys remain available during migration. For revocation, explain how new unwraps are blocked, how cached plaintext or keys are handled, and what deletion means for existing ciphertext. Only claim a specific multi-cloud implementation if you can describe its actual key path and evidence.",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "You joined a small team that built a platform. How do you explain what you personally built versus what the team delivered?",
+    "answer_markdown": "Give the team outcome first, then name the component or decision you owned. Explain the problem, your action, the collaborators or dependencies, and the result you can substantiate. Use “we” for shared delivery and “I” for your direct contribution. A strong answer is specific without claiming sole ownership of work done by the whole team; prepare one decision and one trade-off as follow-ups.",
+    "difficulty": "medium"
+  }
+]

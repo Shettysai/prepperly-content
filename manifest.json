@@ -962,10 +962,19 @@
           "sha256": "0b7ea323fa405f7e10cbaa639dc858bcec49078992cd2d1253d6739b95d3d0f8"
         },
         {
+          "slug": "resume-interview-preparation",
+          "title": "Resume Interview Preparation",
+          "summary": "Turn technical resume claims into clear, evidence-based interview answers",
+          "position": 3,
+          "path": "phases/10-interview-skills/resume-interview-preparation.md",
+          "questionsPath": "questions/resume-interview-preparation.json",
+          "sha256": "76a9ca2b2e54b728fdcbf55a3bd15a6b1dae0512dc22b27dc3ab26e9fa3e46d3"
+        },
+        {
           "slug": "resume-review",
           "title": "Resume Review",
           "summary": "Impact formatting, Keywords",
-          "position": 3,
+          "position": 4,
           "path": "phases/10-interview-skills/resume-review.md",
           "questionsPath": "questions/resume-review.json",
           "sha256": "90cab1af45b9b187ac7b33a43b9c41a6697bc1c611724f81496e6ed1477bcb34"
@@ -974,7 +983,7 @@
           "slug": "whiteboarding-practice",
           "title": "Whiteboarding practice",
           "summary": "Communication, Edge cases",
-          "position": 4,
+          "position": 5,
           "path": "phases/10-interview-skills/whiteboarding-practice.md",
           "questionsPath": "questions/whiteboarding-practice.json",
           "sha256": "c6c250c2a98c87246ed22d7ec741d916c698843024802717ad92da03d3323b54"
