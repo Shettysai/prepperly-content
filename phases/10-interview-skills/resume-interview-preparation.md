@@ -25,6 +25,8 @@ links:
 
 Read [Resume Review](./resume-review.md) first. This topic assumes you already have resume claims about systems, outcomes, or leadership that an interviewer may probe. Keep the actual measurements and your role available; do not rehearse claims you cannot support.
 
+The companion question bank contains the full 89-question practice list, with answer drafts grounded in the resume used to prepare it. It leaves out contact details and calls out information the resume does not establish. Mark each question 🟢, 🟡, or 🔴 based on your own confidence; the resume cannot decide that for you.
+
 ## In one sentence
 
 Resume interview preparation means turning each important resume claim into a short, truthful explanation of the problem, your contribution, the evidence, and what you learned.
