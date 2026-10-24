@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-07",
+  "version": "2026-10-24",
   "phases": [
     {
       "slug": "cs-fundamentals",
@@ -1065,8 +1065,8 @@
           "summary": "Turn technical resume claims into clear, evidence-based interview answers",
           "position": 3,
           "path": "phases/10-interview-skills/resume-interview-preparation.md",
-          "questionsPath": "questions/resume-interview-preparation.json",
-          "questionsSha256": "cd842445b4f9b78a55066a81f40b32685eda21018d31dcb8dc2bfa0b74c0c54b",
+          "questionsPath": null,
+          "questionsSha256": null,
           "sha256": "f38156211e36e7643b0f01942d4f30fa25c6fc052aecfd9062362f7d7850ff50"
         },
         {
